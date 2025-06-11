@@ -11,11 +11,7 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-        }
-        .hero-section {
-            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://placehold.co/1920x1080/2d3748/ffffff?text=Sparkling+Clean+Car');
-            background-size: cover;
-            background-position: center;
+            scroll-behavior: smooth;
         }
         .cta-button {
             transition: all 0.3s ease;
@@ -26,109 +22,89 @@
         }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800">
+<body class="bg-gray-50 text-gray-800">
 
-    <!-- Header / Hero Section -->
-    <header class="hero-section text-white">
-        <div class="container mx-auto px-6 py-24 md:py-32 text-center">
-            <h1 class="text-4xl md:text-6xl font-black tracking-tight mb-4">DIRTY CAR? GET IT CLEANED!</h1>
-            <p class="text-xl md:text-2xl font-light mb-2">Exclusive Offer for OKC</p>
-            <div class="inline-block bg-amber-400 text-gray-900 rounded-full px-8 py-3 my-4">
-                <span class="text-3xl md:text-4xl font-bold">Complete Auto Detail: $99</span>
-            </div>
-            <p class="text-lg md:text-xl font-semibold mt-2 mb-8">The best part? We come to you!</p>
-            <!-- CTA Buttons Container -->
-            <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
-                <!-- Book Online Button -->
-                <a href="https://form.jotform.com/251615738814159" target="_blank" class="cta-button w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg rounded-lg py-4 px-10 shadow-lg">
-                    Book Online Now
-                </a>
-                <!-- Call Now Button -->
-                <a href="tel:+1-405-295-5189" class="cta-button w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-bold text-lg rounded-lg py-4 px-10 shadow-lg">
-                    Call Now to Book
-                </a>
-            </div>
-        </div>
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-gray-900">Michie Auto</a>
+            <a href="#booking" class="cta-button bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg py-2 px-5">
+                Book Now
+            </a>
+        </nav>
     </header>
 
     <!-- Main Content -->
     <main class="container mx-auto p-6 md:p-12">
 
-        <!-- What's Included Section -->
-        <section id="services" class="my-12">
-            <h2 class="text-3xl font-bold text-center mb-10">What's Included in Your $99 Detail</h2>
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <!-- Vacuum Icon -->
-                <div class="bg-white p-8 rounded-xl shadow-md text-center">
-                    <div class="text-blue-600 mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M5 3v4M3 5h4M7 13h10M12 3v10M8 21h8M10 21V11h4v10M5.707 16.293L4.293 17.707M18.293 16.293L19.707 17.707" />
-                            <path d="M3 13h18v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4z" />
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-bold mb-2">Full Interior Vacuum</h3>
-                    <p class="text-gray-600">We meticulously vacuum every corner, including seats, carpets, and trunk.</p>
+        <!-- Hero Section with Image -->
+        <section id="booking" class="grid lg:grid-cols-2 gap-12 items-center my-8 md:my-16 scroll-mt-20">
+            <!-- Image Column -->
+            <div class="w-full">
+                <img 
+                    src="https://michieauto.com/20250611_141506.jpg" 
+                    alt="Pristine car interior after a full detail by Michie Auto"
+                    class="rounded-2xl shadow-2xl w-full h-auto object-cover"
+                    onerror="this.onerror=null;this.src='https://placehold.co/600x400/334155/e2e8f0?text=Michie+Auto';">
+            </div>
+
+            <!-- Text & CTA Column -->
+            <div class="text-center lg:text-left">
+                <h1 class="text-4xl lg:text-5xl font-black text-gray-900 tracking-tight mb-4">DIRTY CAR? GET IT CLEANED!</h1>
+                <p class="text-xl text-gray-600 mb-6">Exclusive mobile detailing offer for the OKC area. The best part? We come to you!</p>
+                <div class="inline-block bg-amber-400 text-gray-900 rounded-lg px-6 py-3 my-4">
+                    <span class="text-3xl font-bold">Complete Auto Detail: $99</span>
                 </div>
-                <!-- Hand Wash (Soap) Icon -->
-                <div class="bg-white p-8 rounded-xl shadow-md text-center">
-                     <div class="text-blue-600 mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                           <path d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0a1.5 1.5 0 013 0v3m0 0a1.5 1.5 0 01-3 0m0 0a1.5 1.5 0 01-3 0m0 0a1.5 1.5 0 013 0" />
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-bold mb-2">Exterior Hand Wash</h3>
-                    <p class="text-gray-600">A gentle hand wash and microfiber dry to protect your paint and leave a streak-free shine.</p>
-                </div>
-                <!-- Windows (Shining) Icon -->
-                <div class="bg-white p-8 rounded-xl shadow-md text-center">
-                    <div class="text-blue-600 mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 3v2M12 19v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-bold mb-2">Crystal Clear Windows</h3>
-                    <p class="text-gray-600">Interior and exterior window cleaning for perfect clarity.</p>
-                </div>
-                 <!-- Wheels & Tires Icon -->
-                <div class="bg-white p-8 rounded-xl shadow-md text-center">
-                     <div class="text-blue-600 mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                           <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                           <path d="M12 12a4 4 0 100-8 4 4 0 000 8z" />
-                           <path d="M12 12h.01" />
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-bold mb-2">Wheels & Tire Shine</h3>
-                    <p class="text-gray-600">We clean the wheels and apply tire shine for that finishing touch.</p>
+                
+                <!-- CTA Buttons Container -->
+                <div class="mt-8 flex flex-col sm:flex-row justify-center lg:justify-start items-center gap-4">
+                    <!-- Book Online Button -->
+                    <a href="https://form.jotform.com/251615738814159" target="_blank" class="cta-button w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg rounded-lg py-4 px-10 shadow-lg flex items-center justify-center gap-2">
+                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V8z" clip-rule="evenodd" /></svg>
+                        Book Online
+                    </a>
+                    <!-- Call Now Button -->
+                    <a href="tel:+1-405-295-5189" class="cta-button w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-bold text-lg rounded-lg py-4 px-10 shadow-lg flex items-center justify-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" /></svg>
+                        Call to Book
+                    </a>
                 </div>
             </div>
         </section>
 
-        <!-- CTA Section -->
-        <section id="booking" class="bg-blue-600 text-white p-8 md:p-16 rounded-2xl text-center my-20">
-            <h2 class="text-4xl font-bold mb-4">Ready for a Spotless Car?</h2>
-            <p class="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">Schedule your $99 mobile detail online or give us a call. We come to your home or office. It's that simple!</p>
-             <!-- CTA Buttons Container -->
-            <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
-                <!-- Schedule Online Button -->
-                <a href="https://form.jotform.com/251615738814159" target="_blank" class="cta-button w-full sm:w-auto bg-white hover:bg-gray-100 text-blue-600 font-bold text-lg rounded-lg py-4 px-10 shadow-lg">
-                    Schedule Online
-                </a>
-                 <!-- Call Now Button -->
-                <a href="tel:+1-405-295-5189" class="cta-button w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-bold text-lg rounded-lg py-4 px-10 shadow-lg">
-                    Call Now to Book
-                </a>
+        <!-- What's Included Section -->
+        <section id="services" class="my-20 md:my-28">
+            <h2 class="text-3xl font-bold text-center mb-12">What's Included in Your $99 Detail</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Cards remain the same -->
+                 <div class="bg-white p-8 rounded-xl shadow-lg text-center">
+                    <div class="text-blue-600 mb-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3v4M3 5h4M7 13h10M12 3v10M8 21h8M10 21V11h4v10M5.707 16.293L4.293 17.707M18.293 16.293L19.707 17.707" /><path d="M3 13h18v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4z" /></svg></div>
+                    <h3 class="text-xl font-bold mb-2">Full Interior Vacuum</h3><p class="text-gray-600">We meticulously vacuum every corner, including seats, carpets, and trunk.</p>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-lg text-center">
+                     <div class="text-blue-600 mb-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0a1.5 1.5 0 013 0v3m0 0a1.5 1.5 0 01-3 0m0 0a1.5 1.5 0 01-3 0m0 0a1.5 1.5 0 013 0" /></svg></div>
+                    <h3 class="text-xl font-bold mb-2">Exterior Hand Wash</h3><p class="text-gray-600">A gentle hand wash and microfiber dry to protect your paint and leave a streak-free shine.</p>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-lg text-center">
+                    <div class="text-blue-600 mb-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v2M12 19v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" /></svg></div>
+                    <h3 class="text-xl font-bold mb-2">Crystal Clear Windows</h3><p class="text-gray-600">Interior and exterior window cleaning for perfect clarity.</p>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-lg text-center">
+                     <div class="text-blue-600 mb-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /><path d="M12 12a4 4 0 100-8 4 4 0 000 8z" /><path d="M12 12h.01" /></svg></div>
+                    <h3 class="text-xl font-bold mb-2">Wheels & Tire Shine</h3><p class="text-gray-600">We clean the wheels and apply tire shine for that finishing touch.</p>
+                </div>
             </div>
         </section>
 
     </main>
     
     <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-6">
+    <footer class="bg-gray-800 text-white py-8">
         <div class="container mx-auto px-6 text-center">
             <p class="font-bold text-lg">Michie Auto</p>
             <p class="text-gray-400">Mobile Auto Detailing in OKC</p>
-            <p class="text-sm text-gray-500 mt-4">&copy; <span id="year"></span> MichieAuto.com - All Rights Reserved.</p>
+             <a href="tel:+1-405-295-5189" class="text-amber-400 hover:text-amber-300 mt-2 inline-block">(405) 295-5189</a>
+            <p class="text-sm text-gray-500 mt-6">&copy; <span id="year"></span> MichieAuto.com - All Rights Reserved.</p>
         </div>
     </footer>
 
