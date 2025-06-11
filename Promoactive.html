@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* This CSS is included directly in the HTML for easy pasting into Jotform */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            text-align: center;
+            background-color: #ffffff;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+        /* --- UPDATED HEADLINE STYLE --- */
+        .headline {
+            /* This new code creates a much more polished look */
+            background: linear-gradient(to bottom, #ffeb3b, #fbc02d); /* Yellow gradient */
+            color: #333;
+            font-weight: bold;
+            padding: 12px 10px;
+            font-size: 1.5em;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border: 1px solid #f9a825; /* A slightly darker border */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* A soft shadow to lift it off the page */
+            text-shadow: 1px 1px 1px rgba(255,255,255,0.5); /* Makes text pop */
+        }
+        .car-image {
+            max-width: 250px;
+            margin-bottom: 25px;
+        }
+        .confirmation-text {
+            font-size: 1.2em;
+            color: #34495e;
+            margin-bottom: 10px;
+        }
+        .price-text {
+            font-size: 1.4em;
+            color: #2c3e50;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+        .pay-button {
+            display: inline-block;
+            background-color: #27ae60; /* A nice green for the payment button */
+            color: #ffffff;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+        }
+        .pay-button:hover {
+            background-color: #2ecc71;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="headline">
+            PROMO APPLIED! <del>$199</del> NOW ONLY $99!
+        </div>
+
+        <!-- The image is correct -->
+        <img src="https://i.imgur.com/HVSgmsg.png" alt="Sparkling Clean Car" class="car-image">
+        
+        <p class="confirmation-text">
+            Great news! You've received <strong>$100 off</strong> with your returning customer promo code.
+        </p>
+
+        <p class="price-text">
+            Your new total is $99
+        </p>
+
+        <!-- The "Pay Now" button is linked to your payment page -->
+        <a href="https://pay.michieauto.com/99promo" class="pay-button" target="_blank">Pay Now</a>
+
+    </div>
+
+</body>
+</html>
