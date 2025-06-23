@@ -81,6 +81,18 @@
                 font-size: 6rem;
             }
         }
+        .feature-list li {
+            position: relative;
+            padding-left: 1.75rem; /* Space for custom bullet */
+            margin-bottom: 0.75rem; /* Spacing between list items */
+        }
+        .feature-list li::before {
+            content: '✓'; /* Checkmark as bullet */
+            color: #28a745; /* Green checkmark */
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
@@ -133,7 +145,43 @@
             Any Vehicle, Any Size!
         </p>
         <p class="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto">
-            Experience premium mobile detailing with no hidden fees. One flat rate for a perfect finish, delivered right to your location.
+            Experience premium mobile detailing with no hidden fees. One flat rate for a perfect finish, delivered right to your location. This price includes SUVs up to 3 rows, pet hair removal, and smoke odor removal.
+        </p>
+    </section>
+
+    <!-- What's Included Section - Detailed list of services -->
+    <section class="section-padding bg-gray-800 rounded-xl mx-4 my-8 shadow-xl">
+        <h3 class="text-4xl md:text-5xl font-bold text-white text-center mb-10">
+            What's Included in Your Detail
+        </h3>
+        <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-lg md:text-xl text-gray-200">
+            <ul class="feature-list space-y-3">
+                <li>Full exterior wash with high-quality soap</li>
+                <li>Hand dry with premium microfiber towels</li>
+                <li>Interior door panel cleaning (including controls & speakers)</li>
+                <li>Window cleaning inside & out for crystal clear visibility</li>
+                <li>Full interior vacuum, including mats and carpets</li>
+                <li>Carpet and mat shampooing for deep cleaning</li>
+                <li>Cloth seats get full shampoo & odor removal treatment</li>
+                <li>Cloth seats vacuumed to restore softness</li>
+                <li>Leather seats treated with high-grade cleaner for protection</li>
+                <li>Dashboard, mirrors & windshield cleaning for a dust-free dash</li>
+            </ul>
+            <ul class="feature-list space-y-3">
+                <li>LCD Display/speedometer display cleaning for crystal clear visibility</li>
+                <li>Air compressor cleaning for hard-to-reach areas (between seats, cupholders)</li>
+                <li>Removal of all sticky spots from drinks or food</li>
+                <li class="font-bold text-green-300">No additional charge for Pet Hair Removal!</li>
+                <li class="font-bold text-green-300">No additional charge for Smoke Odor Removal!</li>
+                <li>Complimentary air freshener included</li>
+                <li>Removal of bug stains from headlights & front bumper</li>
+                <li>Tire cleaning with tire shine application</li>
+                <li>Microfiber, non-abrasive scrubbing on rims for a glossy look</li>
+                <li>Trunk vacuum and cleaning also included</li>
+            </ul>
+        </div>
+        <p class="text-center text-lg md:text-xl text-gray-300 mt-10">
+            All these premium services are included in our flat rate of $299, regardless of vehicle size (SUVs up to 3 rows included)!
         </p>
     </section>
 
