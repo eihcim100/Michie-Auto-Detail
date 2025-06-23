@@ -2,32 +2,168 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- This is the magic tag that makes your website mobile-friendly -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Michie Auto Detail Appointment Form</title>
-    
-    <!-- I'm using Tailwind CSS to add some simple styling and center the form -->
+    <title>Michie Auto Detailing - Mobile Detailing OKC - $299 Any Vehicle</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
+    <!-- Google Fonts - Inter for clean, modern look -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* A simple style to use the Inter font */
+        /* Custom styles to mimic the dark, premium feel and ensure responsiveness */
         body {
             font-family: 'Inter', sans-serif;
+            background-color: #1a1a1a; /* Dark background */
+            color: #ffffff; /* White text for contrast */
+            line-height: 1.6;
+        }
+        .hero-section {
+            /* Placeholder background image - REPLACE WITH YOUR OWN HIGH-QUALITY IMAGE */
+            background-image: url('https://placehold.co/1920x1080/1a1a1a/ffffff?text=Premium+Auto+Detailing');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            min-height: 80vh; /* Make hero section tall */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+        }
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7); /* Dark overlay for text readability */
+            z-index: 1;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .section-padding {
+            padding: 4rem 1.5rem; /* Consistent padding for sections */
+        }
+        .btn-primary {
+            background-color: #28a745; /* Green for primary call to action */
+            color: white;
+            padding: 1.25rem 2.5rem;
+            border-radius: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .btn-primary:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        .pricing-highlight {
+            font-size: 4rem; /* Larger pricing font */
+            font-weight: 800;
+            color: #28a745; /* Green accent for price */
+            text-shadow: 0 0 10px rgba(40, 167, 69, 0.5); /* Subtle glow */
+        }
+        @media (min-width: 768px) {
+            .pricing-highlight {
+                font-size: 6rem;
+            }
         }
     </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
-    
-    <!-- This div will help center your form on the page -->
-    <div class="w-full max-w-4xl mx-auto p-4">
-        <!-- Your Jotform Script -->
-        <!-- This script will load your appointment form into the page -->
-        <script type="text/javascript" src="https://form.jotform.com/jsform/251546706398164"></script>
-    </div>
+<body class="flex flex-col min-h-screen">
+
+    <!-- Header Section - Mimics the top bar with branding and phone number -->
+    <header class="bg-black py-4 px-6 md:px-12 flex justify-between items-center shadow-lg rounded-b-xl">
+        <div class="flex items-center">
+            <!-- Michie Auto Detailing Logo/Name -->
+            <h1 class="text-2xl md:text-3xl font-extrabold text-white mr-4 tracking-wide">
+                Michie Auto Detailing
+            </h1>
+        </div>
+        <!-- Phone Number - Directly clickable -->
+        <a href="tel:+14052955189" class="text-xl md:text-2xl font-bold text-green-400 hover:text-green-300 transition-colors duration-200 flex items-center">
+            <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
+            </svg>
+            (405) 295-5189
+        </a>
+    </header>
+
+    <!-- Hero Section - High impact visual with primary call to action -->
+    <section class="hero-section rounded-b-xl overflow-hidden">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h2 class="text-5xl md:text-7xl font-extrabold leading-tight mb-6 text-white tracking-tight drop-shadow-lg">
+                Premium Mobile Detailing in OKC
+            </h2>
+            <p class="text-xl md:text-3xl text-gray-200 mb-10 drop-shadow-md">
+                We bring the showroom shine to your doorstep.
+            </p>
+            <a href="tel:+14052955189" class="btn-primary">
+                <svg class="w-7 h-7 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
+                </svg>
+                Call for Instant Service!
+            </a>
+        </div>
+    </section>
+
+    <!-- Pricing Section - Clear and bold -->
+    <section class="section-padding bg-gray-900 text-center rounded-xl mx-4 my-8 shadow-xl">
+        <h3 class="text-4xl md:text-5xl font-bold text-white mb-6">
+            Simple & Transparent Pricing
+        </h3>
+        <p class="pricing-highlight mb-4">
+            $299
+        </p>
+        <p class="text-3xl md:text-4xl font-semibold text-gray-200 mb-4">
+            Any Vehicle, Any Size!
+        </p>
+        <p class="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto">
+            Experience premium mobile detailing with no hidden fees. One flat rate for a perfect finish, delivered right to your location.
+        </p>
+    </section>
+
+    <!-- Service Area Section - Detailed and professional -->
+    <section class="section-padding bg-gray-800 text-center rounded-xl mx-4 my-8 shadow-xl">
+        <h3 class="text-4xl md:text-5xl font-bold text-white mb-6">
+            Serving the Greater OKC Metro
+        </h3>
+        <p class="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+            Michie Auto Detailing proudly offers mobile detailing services throughout the entire Oklahoma City metropolitan area and surrounding major cities. We come to you, wherever you are!
+        </p>
+        <div class="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+            <span class="bg-gray-700 text-white py-3 px-4 rounded-full text-lg font-medium shadow-md">Oklahoma City</span>
+            <span class="bg-gray-700 text-white py-3 px-4 rounded-full text-lg font-medium shadow-md">Norman</span>
+            <span class="bg-gray-700 text-white py-3 px-4 rounded-full text-lg font-medium shadow-md">Edmond</span>
+            <span class="bg-gray-700 text-white py-3 px-4 rounded-full text-lg font-medium shadow-md">Moore</span>
+            <span class="bg-gray-700 text-white py-3 px-4 rounded-full text-lg font-medium shadow-md">Bethany</span>
+            <span class="bg-gray-700 text-white py-3 px-4 rounded-full text-lg font-medium shadow-md">Yukon</span>
+            <span class="bg-gray-700 text-white py-3 px-4 rounded-full text-lg font-medium shadow-md">Mustang</span>
+            <span class="bg-gray-700 text-white py-3 px-4 rounded-full text-lg font-medium shadow-md">Midwest City</span>
+        </div>
+    </section>
+
+    <!-- Footer - Professional and concise -->
+    <footer class="bg-black py-6 mt-auto text-center rounded-t-xl">
+        <p class="text-gray-400 text-sm mb-2">&copy; 2025 Michie Auto Detailing. All rights reserved.</p>
+        <p class="text-gray-400 text-sm">
+            Visit our full website: <a href="https://www.michieauto.com" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:text-blue-400 underline">MichieAuto.com</a>
+        </p>
+    </footer>
 
 </body>
 </html>
