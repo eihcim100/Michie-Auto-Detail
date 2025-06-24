@@ -93,6 +93,45 @@
             left: 0;
             font-weight: bold;
         }
+        /* Styles for the reviews carousel/reel */
+        .reviews-container {
+            display: flex;
+            overflow-x: scroll; /* Enable horizontal scrolling */
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+            scroll-snap-type: x mandatory; /* Snap to individual review cards */
+            padding-bottom: 1rem; /* Space for scrollbar */
+        }
+        .review-card {
+            flex: 0 0 auto; /* Prevent cards from shrinking */
+            width: 85%; /* Make cards take up most of the screen width on mobile */
+            max-width: 400px; /* Max width for larger screens */
+            background-color: #2a2a2a; /* Darker card background */
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-right: 1.5rem; /* Space between cards */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+            scroll-snap-align: start; /* Align cards to the start of the scroll area */
+        }
+        .review-card:last-child {
+            margin-right: 0; /* No margin on the last card */
+        }
+        .stars {
+            color: #ffc107; /* Gold color for stars */
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+        .star-icon {
+            display: inline-block;
+            margin-right: 0.1rem;
+        }
+        /* Hide scrollbar for aesthetic purposes, but keep functionality */
+        .reviews-container::-webkit-scrollbar {
+            display: none;
+        }
+        .reviews-container {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
@@ -182,6 +221,70 @@
         </div>
         <p class="text-center text-lg md:text-xl text-gray-300 mt-10">
             All these premium services are included in our flat rate of $299, regardless of vehicle size (SUVs up to 3 rows included)!
+        </p>
+    </section>
+
+    <!-- Customer Reviews Section -->
+    <section class="section-padding bg-gray-900 rounded-xl mx-4 my-8 shadow-xl">
+        <h3 class="text-4xl md:text-5xl font-bold text-white text-center mb-10">
+            What Our Customers Say
+        </h3>
+        <div class="reviews-container px-4">
+            <!-- Example Review Card 1 - Copy and paste this block for more reviews -->
+            <div class="review-card">
+                <div class="stars">
+                    <span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span>
+                </div>
+                <p class="text-gray-300 mb-4 italic">
+                    "I recently had my car detailed, and I couldn’t be happier! They came right to my house and did an outstanding job. The team was not only professional but also super friendly, making the whole experience really pleasant. Highly recommend their service"
+                </p>
+                <p class="font-semibold text-white">- Long N.</p>
+            </div>
+
+            <!-- Example Review Card 2 -->
+            <div class="review-card">
+                <div class="stars">
+                    <span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span>
+                </div>
+                <p class="text-gray-300 mb-4 italic">
+                    "Good job on my car"
+                </p>
+                <p class="font-semibold text-white">- Susan P.</p>
+            </div>
+
+            <!-- Example Review Card 3 -->
+            <div class="review-card">
+                <div class="stars">
+                    <span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span>
+                </div>
+                <p class="text-gray-300 mb-4 italic">
+                    "In just two hours he was able to clean the car seat stains and an exploded soda with extra work to the windows and tires! Very professional and fast to respond! See the before and after pictures for yourself!"
+                </p>
+                <p class="font-semibold text-white">- Robin H.</p>
+            </div>
+ <div class="review-card">
+                <div class="stars">
+                    <span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span>
+                </div>
+                <p class="text-gray-300 mb-4 italic">
+                    "Great work, quick and friendly. Was willing to travel from OKC to Norman. Give him a call."
+                </p>
+                <p class="font-semibold text-white">- Will M.</p>
+            </div>
+             <div class="review-card">
+                <div class="stars">
+                    <span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span>
+                </div>
+                <p class="text-gray-300 mb-4 italic">
+                    "Andrew came to my door talked me into a well needed detail for my car that hadn’t been cleaned in months. He spent three hours out in the heat and it looks amazing!"
+                </p>
+                <p class="font-semibold text-white">- Amanda E.</p>
+            </div>
+            <!-- Add more review cards here by copying and pasting the "review-card" div -->
+
+        </div>
+        <p class="text-center text-lg md:text-xl text-gray-300 mt-10">
+            Read more of our 5-star reviews on <a href="#" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:text-blue-400 underline">Google Maps!</a>
         </p>
     </section>
 
