@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Michie Auto Detailing - Mobile Detailing OKC - $249 Any Vehicle</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter for clean, modern look -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         /* Custom styles to mimic the dark, premium feel and ensure responsiveness */
@@ -136,16 +138,89 @@
             -ms-overflow-style: none;  /* IE and Edge */
             scrollbar-width: none;  /* Firefox */
         }
+        /* Ensures the iframe is responsive and maintains aspect ratio for video */
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio (height / width = 9 / 16 = 0.5625) */
+            height: 0;
+            overflow: hidden;
+            max-width: 100%;
+            background: #000;
+            border-radius: 0.75rem; /* rounded-xl */
+        }
+        .video-container iframe,
+        .video-container object,
+        .video-container embed {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .btn-call-now {
+            background-color: #ffc107; /* Gold/Yellow for call to action */
+            color: #1a1a1a;
+            padding: 1.25rem 2.5rem;
+            border-radius: 0.75rem;
+            font-size: 1.6rem; /* Slightly larger for emphasis */
+            font-weight: 800; /* Extra bold */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 8px 15px rgba(255, 193, 7, 0.4); /* Glow effect */
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            border: 3px solid #ffeb3b; /* Stronger border */
+            animation: pulse 2s infinite; /* Pulsing animation */
+        }
+        .btn-call-now:hover {
+            background-color: #e0a800;
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 20px rgba(255, 193, 7, 0.6);
+        }
+        .btn-call-now:active {
+            transform: translateY(0);
+            box-shadow: 0 6px 10px rgba(255, 193, 7, 0.3);
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 8px 15px rgba(255, 193, 7, 0.4);
+            }
+            50% {
+                transform: scale(1.03);
+                box-shadow: 0 12px 25px rgba(255, 193, 7, 0.7);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 8px 15px rgba(255, 193, 7, 0.4);
+            }
+        }
+
+        /* Adjust button sizing for smaller screens */
+        @media (max-width: 767px) {
+            .btn-call-now {
+                width: 90%; /* Make buttons wider on small screens */
+                font-size: 1.4rem;
+                padding: 1rem 2rem;
+            }
+        }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
 
+    <!-- Header Section - Mimics the top bar with branding and phone number -->
     <header class="bg-black py-4 px-6 md:px-12 flex justify-between items-center shadow-lg rounded-b-xl">
         <div class="flex items-center">
+            <!-- Michie Auto Detailing Logo/Name -->
             <h1 class="text-2xl md:text-3xl font-extrabold text-white mr-4 tracking-wide">
                 Michie Auto Detailing
             </h1>
         </div>
+        <!-- Phone Number - Directly clickable -->
         <a href="tel:+14052955189" class="text-xl md:text-2xl font-bold text-green-400 hover:text-green-300 transition-colors duration-200 flex items-center">
             <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                 <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
@@ -154,6 +229,7 @@
         </a>
     </header>
 
+    <!-- Hero Section - High impact visual with primary call to action -->
     <section class="hero-section rounded-b-xl overflow-hidden">
         <div class="hero-overlay"></div>
         <div class="hero-content">
@@ -172,6 +248,7 @@
         </div>
     </section>
 
+    <!-- Pricing Section - Clear and bold -->
     <section class="section-padding bg-gray-900 text-center rounded-xl mx-4 my-8 shadow-xl">
         <h3 class="text-4xl md:text-5xl font-bold text-white mb-6">
             Simple & Transparent Pricing
@@ -187,6 +264,31 @@
         </p>
     </section>
 
+    <!-- Check Out Our Latest Work! - Facebook Video Embed Section -->
+    <section class="section-padding bg-gray-800 rounded-xl mx-4 my-8 shadow-xl text-center">
+        <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
+            Check Out Our Latest Work!
+        </h2>
+        <p class="text-lg md:text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+            See the quality and shine we bring to every vehicle.
+        </p>
+
+        <div class="flex justify-center">
+            <div class="video-container w-full max-w-4xl mx-auto">
+                <!-- Facebook embed code for your video -->
+                <iframe src="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fwatch%2F%3Fv%3D2206115369596502&show_text=0"
+                    width="560" height="315" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true"
+                    allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" referrerpolicy="origin-when-cross-origin" allowTransparency="true">
+                </iframe>
+            </div>
+        </div>
+
+        <p class="text-sm text-gray-500 mt-4">
+            (This video is embedded directly from Facebook.)
+        </p>
+    </section>
+
+    <!-- What's Included Section - Detailed list of services -->
     <section class="section-padding bg-gray-800 rounded-xl mx-4 my-8 shadow-xl">
         <h3 class="text-4xl md:text-5xl font-bold text-white text-center mb-10">
             What's Included in Your Detail
@@ -222,11 +324,13 @@
         </p>
     </section>
 
+    <!-- Customer Reviews Section -->
     <section class="section-padding bg-gray-900 rounded-xl mx-4 my-8 shadow-xl">
         <h3 class="text-4xl md:text-5xl font-bold text-white text-center mb-10">
             What Our Customers Say
         </h3>
         <div class="reviews-container px-4">
+            <!-- Example Review Card 1 - Copy and paste this block for more reviews -->
             <div class="review-card">
                 <div class="stars">
                     <span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span>
@@ -237,6 +341,7 @@
                 <p class="font-semibold text-white">- Long N.</p>
             </div>
 
+            <!-- Example Review Card 2 -->
             <div class="review-card">
                 <div class="stars">
                     <span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span>
@@ -247,6 +352,7 @@
                 <p class="font-semibold text-white">- Susan P.</p>
             </div>
 
+            <!-- Example Review Card 3 -->
             <div class="review-card">
                 <div class="stars">
                     <span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span>
@@ -274,12 +380,15 @@
                 </p>
                 <p class="font-semibold text-white">- Amanda E.</p>
             </div>
-            </div>
+            <!-- Add more review cards here by copying and pasting the "review-card" div -->
+
+        </div>
         <p class="text-center text-lg md:text-xl text-gray-300 mt-10">
             Read more of our 5-star reviews on <a href="#" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:text-blue-400 underline">Google Maps!</a>
         </p>
     </section>
 
+    <!-- Service Area Section - Detailed and professional -->
     <section class="section-padding bg-gray-800 text-center rounded-xl mx-4 my-8 shadow-xl">
         <h3 class="text-4xl md:text-5xl font-bold text-white mb-6">
             Serving the Greater OKC Metro
@@ -299,6 +408,31 @@
         </div>
     </section>
 
+    <!-- Call to Action Section - New Section -->
+    <section class="section-padding bg-gradient-to-r from-green-700 to-green-900 text-center rounded-xl mx-4 my-8 shadow-2xl">
+        <h3 class="text-4xl md:text-5xl font-extrabold text-white mb-8 leading-tight">
+            Ready for a Showroom Finish? <br class="hidden sm:inline"> Don't Wait!
+        </h3>
+        <p class="text-xl md:text-2xl text-green-100 mb-10 max-w-3xl mx-auto">
+            Our schedule fills up fast! Lock in your premium mobile detailing appointment today.
+        </p>
+        <div class="flex flex-col md:flex-row justify-center items-center gap-6">
+            <a href="tel:+14052955189" class="btn-call-now">
+                <svg class="w-8 h-8 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
+                </svg>
+                Call Us Now!
+            </a>
+            <a href="tel:+14052955189" class="btn-call-now">
+                <svg class="w-8 h-8 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
+                </svg>
+                Book Your Detail!
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer - Professional and concise -->
     <footer class="bg-black py-6 mt-auto text-center rounded-t-xl">
         <p class="text-gray-400 text-sm mb-2">&copy; 2025 Michie Auto Detailing. All rights reserved.</p>
         <p class="text-gray-400 text-sm">
