@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Michie Auto Detailing - Mobile Detailing OKC - $249 Any Vehicle</title>
+    <title>Michie Auto Detailing - Mobile Detailing OKC - Limited Time Offer!</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts - Inter for clean, modern look -->
@@ -208,6 +208,32 @@
                 padding: 1rem 2rem;
             }
         }
+
+        /* Small call button specific styles */
+        .btn-small-call {
+            background-color: #28a745; /* Green to match main branding */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 1.5rem; /* Space from text above */
+        }
+        .btn-small-call:hover {
+            background-color: #218838;
+            transform: translateY(-1px);
+        }
+        .btn-small-call:active {
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
@@ -254,14 +280,29 @@
             Simple & Transparent Pricing
         </h3>
         <p class="pricing-highlight mb-4">
-            <span class="old-price">$299</span>$249
+            <span id="displayPrice">$299</span>
         </p>
-        <p class="text-3xl md:text-4xl font-semibold text-gray-200 mb-4">
-            Any Vehicle, Any Size!
-        </p>
-        <p class="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto">
+        <p id="offerDescription" class="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto">
             Experience premium mobile detailing with no hidden fees. One flat rate for a perfect finish, delivered right to your location. This price includes SUVs up to 3 rows, pet hair removal, and smoke odor removal.
         </p>
+        <p class="text-3xl md:text-4xl font-bold text-green-400 mt-4 mb-6">
+            NO payment until after the service is completed!
+        </p>
+        <div id="countdownContainer" class="mt-6">
+            <p id="countdownMessage" class="text-2xl md:text-3xl font-bold text-yellow-400 mb-2">
+                Time until offer expires: <span id="countdownTime">05:00</span>
+            </p>
+            <p class="text-xl md:text-2xl text-green-300 font-bold mb-4">
+                Call NOW to unlock your <span class="text-red-400 line-through">$299</span> detail for just <span class="text-yellow-400">$249!</span>
+            </p>
+            <!-- Small Call Button -->
+            <a href="tel:+14052955189" class="btn-small-call">
+                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
+                </svg>
+                Call Now
+            </a>
+        </div>
     </section>
 
     <!-- Check Out Our Latest Work! - Facebook Video Embed Section -->
@@ -320,7 +361,7 @@
             </ul>
         </div>
         <p class="text-center text-lg md:text-xl text-gray-300 mt-10">
-            All these premium services are included in our flat rate of $249, regardless of vehicle size (SUVs up to 3 rows included)!
+            All these premium services are included in our flat rate of <span id="includedPrice">$249</span>, regardless of vehicle size (SUVs up to 3 rows included)!
         </p>
     </section>
 
@@ -408,7 +449,7 @@
         </div>
     </section>
 
-    <!-- Call to Action Section - New Section -->
+    <!-- Call to Action Section -->
     <section class="section-padding bg-gradient-to-r from-green-700 to-green-900 text-center rounded-xl mx-4 my-8 shadow-2xl">
         <h3 class="text-4xl md:text-5xl font-extrabold text-white mb-8 leading-tight">
             Ready for a Showroom Finish? <br class="hidden sm:inline"> Don't Wait!
@@ -425,7 +466,7 @@
             </a>
             <a href="tel:+14052955189" class="btn-call-now">
                 <svg class="w-8 h-8 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
+                    <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 simulators 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
                 </svg>
                 Book Your Detail!
             </a>
@@ -440,5 +481,71 @@
         </p>
     </footer>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const displayPrice = document.getElementById('displayPrice');
+            const offerDescription = document.getElementById('offerDescription');
+            const countdownContainer = document.getElementById('countdownContainer');
+            const countdownTime = document.getElementById('countdownTime');
+            const includedPrice = document.getElementById('includedPrice'); // For "What's Included" section
+
+            const originalPrice = '$299';
+            const discountedPrice = '$249';
+            const offerDuration = 5 * 60; // 5 minutes in seconds
+            let timeLeft = offerDuration;
+            let timerInterval;
+
+            function updateDisplay() {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                countdownTime.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    endOffer();
+                } else {
+                    timeLeft--;
+                }
+            }
+
+            function startOffer() {
+                // Update the main pricing display
+                displayPrice.innerHTML = `<span class="old-price">${originalPrice}</span> ${discountedPrice}`;
+                // Update the description for the special offer
+                offerDescription.innerHTML = `Experience premium mobile detailing with no hidden fees. One flat rate for a perfect finish, delivered right to your location.<br>
+                                            <span class="text-green-300 font-bold">This exclusive offer unlocks the ${discountedPrice} price!</span> This price includes SUVs up to 3 rows, pet hair removal, and smoke odor removal.`;
+                // Show countdown and special offer text
+                countdownContainer.classList.remove('hidden');
+                // Update "What's Included" section price
+                includedPrice.textContent = discountedPrice;
+
+                timerInterval = setInterval(updateDisplay, 1000); // Update every second
+            }
+
+            function endOffer() {
+                // Revert to original price
+                displayPrice.innerHTML = originalPrice;
+                // Revert original description
+                offerDescription.innerHTML = `Experience premium mobile detailing with no hidden fees. One flat rate for a perfect finish, delivered right to your location. This price includes SUVs up to 3 rows, pet hair removal, and smoke odor removal.`;
+                // Hide countdown
+                countdownContainer.classList.add('hidden');
+                // Update "What's Included" section price back to original (or keep it flexible if the $249 remains a "secret" benefit even after timer)
+                includedPrice.textContent = originalPrice;
+
+                // Using a custom modal message box instead of alert()
+                const messageBox = document.createElement('div');
+                messageBox.innerHTML = `
+                    <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #333; color: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.5); z-index: 1000;">
+                        <p style="font-size: 1.2em; margin-bottom: 15px;">Sorry, the special limited-time offer has expired. The price has reverted to $299.</p>
+                        <button onclick="this.parentNode.remove()" style="background-color: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">OK</button>
+                    </div>
+                `;
+                document.body.appendChild(messageBox);
+            }
+
+            // Start the offer when the page loads
+            startOffer();
+        });
+    </script>
 </body>
 </html>
