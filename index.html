@@ -267,12 +267,12 @@
                 Michie Auto Detailing
             </h1>
         </div>
-        <!-- Phone Number - Directly clickable -->
+        <!-- Phone Number - Dynamically replaceable by Google for tracking -->
         <a href="tel:+14052955189" class="text-xl md:text-2xl font-bold text-green-400 hover:text-green-300 transition-colors duration-200 flex items-center">
             <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                 <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
             </svg>
-            (405) 295-5189
+            <span class="goog-inline-block_fallback">(405) 295-5189</span>
         </a>
     </header>
 
@@ -564,20 +564,3 @@
     </script>
 </body>
 </html>
-```
-
-This updated HTML file now includes both the Google tag and the phone snippet, correctly placed within the `<head>` section.
-
-**Key Changes:**
-
-* **Google Tag (`gtag.js`):** Added right after your existing Google Fonts `<link>` tag. This is crucial for collecting general website data and linking ad clicks.
-* **Phone Snippet:** Added immediately after the Google tag. This snippet is what enables Google to dynamically replace your phone numbers on the page with a Google forwarding number, allowing you to track calls made directly from your website when visitors arrive from your Google Ads.
-
-**Next Steps for You:**
-
-1.  **Replace your current `index.html` file** on your web server with this new, updated file.
-2.  **Verify the installation:**
-    * **Crucially, perform a test call:** Using a phone *not associated with your business or Google Ads account*, search for your ad, click the ad to go to your website, and then dial the (405) 295-5189 number you see on the website (either by tapping your clickable button or manually dialing). Make sure the call connects to your answering service and lasts longer than the "call length" you set in Google Ads (e.g., 30 seconds).
-    * **Check Google Ads conversions:** Wait 15-30 minutes, then check your Google Ads account under **Tools & Settings > Measurement > Conversions** for the "Website Call - Michie Auto Detailing" conversion action. You should now see a conversion recorded!
-
-This is a **major step forward** in getting your Google Ads fully optimized and accurately tracking all your phone call lea
