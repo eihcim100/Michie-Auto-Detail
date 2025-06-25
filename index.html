@@ -464,12 +464,6 @@
                 </svg>
                 Call Us Now!
             </a>
-            <a href="tel:+14052955189" class="btn-call-now">
-                <svg class="w-8 h-8 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 simulators 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
-                </svg>
-                Book Your Detail!
-            </a>
         </div>
     </section>
 
@@ -513,7 +507,7 @@
                 displayPrice.innerHTML = `<span class="old-price">${originalPrice}</span> ${discountedPrice}`;
                 // Update the description for the special offer
                 offerDescription.innerHTML = `Experience premium mobile detailing with no hidden fees. One flat rate for a perfect finish, delivered right to your location.<br>
-                                            <span class="text-green-300 font-bold">This exclusive offer unlocks the ${discountedPrice} price!</span> This price includes SUVs up to 3 rows, pet hair removal, and smoke odor removal.`;
+                                            <span class="text-green-300 font-bold">This exclusive offer unlocks the $${discountedPrice} price!</span> This price includes SUVs up to 3 rows, pet hair removal, and smoke odor removal.`;
                 // Show countdown and special offer text
                 countdownContainer.classList.remove('hidden');
                 // Update "What's Included" section price
