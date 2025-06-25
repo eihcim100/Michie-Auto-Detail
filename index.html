@@ -8,6 +8,27 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts - Inter for clean, modern look -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Google tag (gtag.js) - START -->
+    <!-- This tag tracks website visitors for remarketing and ad clicks -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-10782185640"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'AW-10782185640');
+    </script>
+    <!-- Google tag (gtag.js) - END -->
+
+    <!-- Phone snippet - Website phone calls - START -->
+    <!-- This snippet replaces phone numbers on your website with a Google forwarding number for call tracking -->
+    <script>
+      gtag('config', 'AW-10782185640/PPImCJ-a7eIaEKixrJUo', {
+        'phone_conversion_number': '4052955189'
+      });
+    </script>
+    <!-- Phone snippet - Website phone calls - END -->
+
     <style>
         /* Custom styles to mimic the dark, premium feel and ensure responsiveness */
         body {
@@ -541,13 +562,22 @@
             startOffer();
         });
     </script>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=AW-10782185640"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'AW-10782185640');
-</script>
+</body>
 </html>
+```
+
+This updated HTML file now includes both the Google tag and the phone snippet, correctly placed within the `<head>` section.
+
+**Key Changes:**
+
+* **Google Tag (`gtag.js`):** Added right after your existing Google Fonts `<link>` tag. This is crucial for collecting general website data and linking ad clicks.
+* **Phone Snippet:** Added immediately after the Google tag. This snippet is what enables Google to dynamically replace your phone numbers on the page with a Google forwarding number, allowing you to track calls made directly from your website when visitors arrive from your Google Ads.
+
+**Next Steps for You:**
+
+1.  **Replace your current `index.html` file** on your web server with this new, updated file.
+2.  **Verify the installation:**
+    * **Crucially, perform a test call:** Using a phone *not associated with your business or Google Ads account*, search for your ad, click the ad to go to your website, and then dial the (405) 295-5189 number you see on the website (either by tapping your clickable button or manually dialing). Make sure the call connects to your answering service and lasts longer than the "call length" you set in Google Ads (e.g., 30 seconds).
+    * **Check Google Ads conversions:** Wait 15-30 minutes, then check your Google Ads account under **Tools & Settings > Measurement > Conversions** for the "Website Call - Michie Auto Detailing" conversion action. You should now see a conversion recorded!
+
+This is a **major step forward** in getting your Google Ads fully optimized and accurately tracking all your phone call lea
