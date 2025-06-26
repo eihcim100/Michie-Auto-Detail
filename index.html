@@ -27,21 +27,11 @@
       gtag('config', 'AW-10782185640/PPImCJ-a7eIaEKixrJUo', {
         'phone_conversion_number': '(405) 295-5189',
         'phone_conversion_callback': function(formatted_number, mobile_number) {
-          // --- THE FIX (v2) ---
-          // This function now correctly handles updating all call links and the displayed text.
-
-          // 1. Create the correct 'tel:' link. This prevents the browser
-          //    from navigating to a page instead of making a call.
           var newHref = 'tel:' + mobile_number;
-
-          // 2. Find all clickable call links on the page and update their href.
           var callLinks = document.querySelectorAll("a[href^='tel:']");
           callLinks.forEach(function(link) {
             link.href = newHref;
           });
-
-          // 3. Find all elements with the 'g-track-text' class and update
-          //    their visible text to the formatted Google forwarding number.
           var textElements = document.querySelectorAll(".g-track-text");
           textElements.forEach(function(elem) {
             elem.innerText = formatted_number;
@@ -54,9 +44,26 @@
         /* Custom styles to mimic the dark, premium feel and ensure responsiveness */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #1a1a1a; /* Dark background */
-            color: #ffffff; /* White text for contrast */
+            background-color: #1a1a1a;
+            color: #ffffff;
             line-height: 1.6;
+        }
+        /* --- NEW BANNER STYLE --- */
+        .top-banner {
+            background-color: #ffc107; /* Bright yellow background */
+            color: #1a1a1a; /* Dark text for contrast */
+            text-align: center;
+            padding: 0.75rem 1rem;
+            font-weight: 700; /* Bold text */
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            animation: pulse-banner 3s infinite;
+        }
+        @keyframes pulse-banner {
+            0% { background-color: #ffc107; }
+            50% { background-color: #ffd54f; }
+            100% { background-color: #ffc107; }
         }
         .hero-section {
             background-image: url('https://michieauto.com/c6106051-ecc6-4964-9246-4c79215cdb5d~1.jpg');
@@ -262,8 +269,13 @@
 </head>
 <body class="flex flex-col min-h-screen">
 
+    <!-- --- NEW 24/7 BANNER --- -->
+    <div class="top-banner">
+        WE ARE OPEN 24/7 - CALL ANYTIME
+    </div>
+
     <!-- Header Section -->
-    <header class="bg-black py-4 px-6 md:px-12 flex justify-between items-center shadow-lg rounded-b-xl">
+    <header class="bg-black py-4 px-6 md:px-12 flex justify-between items-center shadow-lg">
         <div class="flex items-center">
             <h1 class="text-2xl md:text-3xl font-extrabold text-white mr-4 tracking-wide">
                 Michie Auto Detailing
@@ -271,16 +283,12 @@
         </div>
         <a href="tel:+14052955189" class="text-xl md:text-2xl font-bold text-green-400 hover:text-green-300 transition-colors duration-200 flex items-center">
             <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
-            <!-- 
-              CLASS ADDED: The 'g-track-text' class is added here.
-              The script will find this class and replace its content with the Google forwarding number.
-            -->
             <span class="g-track-text">(405) 295-5189</span>
         </a>
     </header>
 
     <!-- Hero Section -->
-    <section class="hero-section rounded-b-xl overflow-hidden">
+    <section class="hero-section">
         <div class="hero-overlay"></div>
         <div class="hero-content">
             <h2 class="text-5xl md:text-7xl font-extrabold leading-tight mb-6 text-white tracking-tight drop-shadow-lg">
@@ -451,7 +459,7 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-black py-6 mt-auto text-center rounded-t-xl">
+    <footer class="bg-black py-6 mt-auto text-center">
         <p class="text-gray-400 text-sm mb-2">&copy; 2025 Michie Auto Detailing. All rights reserved.</p>
         <p class="text-gray-400 text-sm">
             Visit our full website: <a href="https://www.michieauto.com" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:text-blue-400 underline">MichieAuto.com</a>
