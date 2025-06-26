@@ -5,40 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Michie Auto Detailing - Mobile Detailing OKC - Limited Time Offer!</title>
 
-    <!-- Google tag (gtag.js) - START -->
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter for clean, modern look -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- 
+      Google Tag (gtag.js) & Call Tracking Snippet
+      This is the consolidated and corrected script for Google Ads.
+    -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=AW-10782185640"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
+
+      // General config for your Google Ads account
       gtag('config', 'AW-10782185640');
 
-      // gtag_report_conversion function to track clicks on phone numbers
-      // This function will send the conversion event to Google Ads.
-      // The actual call will be handled by the tel: link in the anchor tag.
-      function gtag_report_conversion() {
-        gtag('event', 'conversion', {
-            'send_to': 'AW-10782185640/PPImCJ-a7eIaEKixrJUo' // Your Website Call conversion ID
-        });
-        // No 'return false;' here, allow the default link action (tel: link) to proceed.
-      }
-    </script>
-    <!-- Google tag (gtag.js) - END -->
-
-    <!-- Phone snippet - Website phone calls - START -->
-    <script>
+      // Phone snippet for website call conversions with a callback
+      // This tells Google to replace instances of your number with a Google Forwarding Number.
+      // The 'phone_conversion_callback' is a robust way to ensure the clickable links are updated.
       gtag('config', 'AW-10782185640/PPImCJ-a7eIaEKixrJUo', {
-        'phone_conversion_number': '4052955189'
+        'phone_conversion_number': '(405) 295-5189',
+        'phone_conversion_callback': function(formatted_number, mobile_number) {
+          // This function runs when Google provides a forwarding number.
+          // It finds all links starting with "tel:" and updates their href
+          // to the trackable Google number.
+          var links = document.querySelectorAll("a[href^='tel:']");
+          links.forEach(function(link) {
+              link.href = mobile_number;
+          });
+        }
       });
-      // The gtag.js script will automatically look for and replace phone numbers
-      // that have the 'goog-inline-block_fallback' class and a 'data-tel' attribute.
     </script>
-    <!-- Phone snippet - Website phone calls - END -->
-
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts - Inter for clean, modern look -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         /* Custom styles to mimic the dark, premium feel and ensure responsiveness */
@@ -270,24 +270,26 @@
 </head>
 <body class="flex flex-col min-h-screen">
 
-    <!-- Header Section - Mimics the top bar with branding and phone number -->
+    <!-- Header Section -->
     <header class="bg-black py-4 px-6 md:px-12 flex justify-between items-center shadow-lg rounded-b-xl">
         <div class="flex items-center">
-            <!-- Michie Auto Detailing Logo/Name -->
             <h1 class="text-2xl md:text-3xl font-extrabold text-white mr-4 tracking-wide">
                 Michie Auto Detailing
             </h1>
         </div>
-        <!-- Phone Number - Dynamically replaceable by Google for tracking -->
-        <a href="tel:+1405295189" class="text-xl md:text-2xl font-bold text-green-400 hover:text-green-300 transition-colors duration-200 flex items-center" onclick="gtag_report_conversion();">
+        <!-- 
+          CORRECTED LINK: The href now points to the correct fallback number.
+          The text will be replaced by Google's script. The link's href will be updated by the callback.
+        -->
+        <a href="tel:+14052955189" class="text-xl md:text-2xl font-bold text-green-400 hover:text-green-300 transition-colors duration-200 flex items-center">
             <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                 <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
             </svg>
-            <span class="goog-inline-block_fallback" data-tel="4052955189">(405) 295-5189</span>
+            <span>(405) 295-5189</span>
         </a>
     </header>
 
-    <!-- Hero Section - High impact visual with primary call to action -->
+    <!-- Hero Section -->
     <section class="hero-section rounded-b-xl overflow-hidden">
         <div class="hero-overlay"></div>
         <div class="hero-content">
@@ -297,16 +299,20 @@
             <p class="text-xl md:text-3xl text-gray-200 mb-10 drop-shadow-md">
                 We bring the showroom shine to your doorstep.
             </p>
-            <a href="tel:+1405295189" class="btn-primary" onclick="gtag_report_conversion();">
+            <!-- 
+              CORRECTED LINK: The href now points to the correct fallback number.
+              The onclick event is removed for simplicity and reliability.
+            -->
+            <a href="tel:+14052955189" class="btn-primary">
                 <svg class="w-7 h-7 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                     <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
                 </svg>
-                <span class="goog-inline-block_fallback" data-tel="4052955189">Call for Instant Service!</span>
+                <span>Call for Instant Service!</span>
             </a>
         </div>
     </section>
 
-    <!-- Pricing Section - Clear and bold -->
+    <!-- Pricing Section -->
     <section class="section-padding bg-gray-900 text-center rounded-xl mx-4 my-8 shadow-xl">
         <h3 class="text-4xl md:text-5xl font-bold text-white mb-6">
             Simple & Transparent Pricing
@@ -327,17 +333,19 @@
             <p class="text-xl md:text-2xl text-green-300 font-bold mb-4">
                 Call NOW to unlock your <span class="text-red-400 line-through">$299</span> detail for just <span class="text-yellow-400">$249!</span>
             </p>
-            <!-- Small Call Button -->
-            <a href="tel:+1405295189" class="btn-small-call" onclick="gtag_report_conversion();">
+            <!-- 
+              CORRECTED LINK: The href now points to the correct fallback number.
+            -->
+            <a href="tel:+14052955189" class="btn-small-call">
                 <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                     <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
                 </svg>
-                <span class="goog-inline-block_fallback" data-tel="4052955189">Call Now</span>
+                <span>Call Now</span>
             </a>
         </div>
     </section>
 
-    <!-- Check Out Our Latest Work! - Facebook Video Embed Section -->
+    <!-- Check Out Our Latest Work! -->
     <section class="section-padding bg-gray-800 rounded-xl mx-4 my-8 shadow-xl text-center">
         <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
             Check Out Our Latest Work!
@@ -348,7 +356,6 @@
 
         <div class="flex justify-center">
             <div class="video-container w-full max-w-4xl mx-auto">
-                <!-- Facebook embed code for your video -->
                 <iframe src="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fwatch%2F%3Fv%3D2206115369596502&show_text=0"
                     width="560" height="315" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true"
                     allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" referrerpolicy="origin-when-cross-origin" allowTransparency="true">
@@ -361,7 +368,7 @@
         </p>
     </section>
 
-    <!-- What's Included Section - Detailed list of services -->
+    <!-- What's Included Section -->
     <section class="section-padding bg-gray-800 rounded-xl mx-4 my-8 shadow-xl">
         <h3 class="text-4xl md:text-5xl font-bold text-white text-center mb-10">
             What's Included in Your Detail
@@ -403,7 +410,7 @@
             What Our Customers Say
         </h3>
         <div class="reviews-container px-4">
-            <!-- Example Review Card 1 - Copy and paste this block for more reviews -->
+            <!-- Review Card 1 -->
             <div class="review-card">
                 <div class="stars">
                     <span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span>
@@ -413,8 +420,7 @@
                 </p>
                 <p class="font-semibold text-white">- Long N.</p>
             </div>
-
-            <!-- Example Review Card 2 -->
+            <!-- Review Card 2 -->
             <div class="review-card">
                 <div class="stars">
                     <span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span>
@@ -424,8 +430,7 @@
                 </p>
                 <p class="font-semibold text-white">- Susan P.</p>
             </div>
-
-            <!-- Example Review Card 3 -->
+            <!-- Review Card 3 -->
             <div class="review-card">
                 <div class="stars">
                     <span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span>
@@ -435,7 +440,8 @@
                 </p>
                 <p class="font-semibold text-white">- Robin H.</p>
             </div>
- <div class="review-card">
+            <!-- Review Card 4 -->
+            <div class="review-card">
                 <div class="stars">
                     <span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span>
                 </div>
@@ -444,7 +450,8 @@
                 </p>
                 <p class="font-semibold text-white">- Will M.</p>
             </div>
-             <div class="review-card">
+            <!-- Review Card 5 -->
+            <div class="review-card">
                 <div class="stars">
                     <span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span>
                 </div>
@@ -453,15 +460,13 @@
                 </p>
                 <p class="font-semibold text-white">- Amanda E.</p>
             </div>
-            <!-- Add more review cards here by copying and pasting the "review-card" div -->
-
         </div>
         <p class="text-center text-lg md:text-xl text-gray-300 mt-10">
             Read more of our 5-star reviews on <a href="#" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:text-blue-400 underline">Google Maps!</a>
         </p>
     </section>
 
-    <!-- Service Area Section - Detailed and professional -->
+    <!-- Service Area Section -->
     <section class="section-padding bg-gray-800 text-center rounded-xl mx-4 my-8 shadow-xl">
         <h3 class="text-4xl md:text-5xl font-bold text-white mb-6">
             Serving the Greater OKC Metro
@@ -490,16 +495,19 @@
             Our schedule fills up fast! Lock in your premium mobile detailing appointment today.
         </p>
         <div class="flex flex-col md:flex-row justify-center items-center gap-6">
-            <a href="tel:+1405295189" class="btn-call-now" onclick="gtag_report_conversion();">
+            <!-- 
+              CORRECTED LINK: The href now points to the correct fallback number.
+            -->
+            <a href="tel:+14052955189" class="btn-call-now">
                 <svg class="w-8 h-8 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                     <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
                 </svg>
-                <span class="goog-inline-block_fallback" data-tel="4052955189">Call Us Now!</span>
+                <span>Call Us Now!</span>
             </a>
         </div>
     </section>
 
-    <!-- Footer - Professional and concise -->
+    <!-- Footer -->
     <footer class="bg-black py-6 mt-auto text-center rounded-t-xl">
         <p class="text-gray-400 text-sm mb-2">&copy; 2025 Michie Auto Detailing. All rights reserved.</p>
         <p class="text-gray-400 text-sm">
@@ -513,7 +521,7 @@
             const offerDescription = document.getElementById('offerDescription');
             const countdownContainer = document.getElementById('countdownContainer');
             const countdownTime = document.getElementById('countdownTime');
-            const includedPrice = document.getElementById('includedPrice'); // For "What's Included" section
+            const includedPrice = document.getElementById('includedPrice'); 
 
             const originalPrice = '$299';
             const discountedPrice = '$249';
@@ -535,27 +543,18 @@
             }
 
             function startOffer() {
-                // Update the main pricing display
                 displayPrice.innerHTML = `<span class="old-price">${originalPrice}</span> ${discountedPrice}`;
-                // Update the description for the special offer
                 offerDescription.innerHTML = `Experience premium mobile detailing with no hidden fees. One flat rate for a perfect finish, delivered right to your location.<br>
                                             <span class="text-green-300 font-bold">This exclusive offer unlocks the ${discountedPrice} price!</span> This price includes SUVs up to 3 rows, pet hair removal, and smoke odor removal.`;
-                // Show countdown and special offer text
                 countdownContainer.classList.remove('hidden');
-                // Update "What's Included" section price
                 includedPrice.textContent = discountedPrice;
-
-                timerInterval = setInterval(updateDisplay, 1000); // Update every second
+                timerInterval = setInterval(updateDisplay, 1000);
             }
 
             function endOffer() {
-                // Revert to original price
                 displayPrice.innerHTML = originalPrice;
-                // Revert original description
                 offerDescription.innerHTML = `Experience premium mobile detailing with no hidden fees. One flat rate for a perfect finish, delivered right to your location. This price includes SUVs up to 3 rows, pet hair removal, and smoke odor removal.`;
-                // Hide countdown
                 countdownContainer.classList.add('hidden');
-                // Update "What's Included" section price back to original (or keep it flexible if the $249 remains a "secret" benefit even after timer)
                 includedPrice.textContent = originalPrice;
 
                 // Using a custom modal message box instead of alert()
