@@ -22,10 +22,9 @@
       gtag('config', 'AW-10782185640/PPImCJ-a7eIaEKixrJUo', {
         'phone_conversion_number': '4052955189'
       });
-      // Removed window.onload wrapper for _googWcmGet.
-      // The `goog-inline-block_fallback` class combined with the gtag config is designed to automatically swap the number.
-      // Explicit _googWcmGet calls are usually for more advanced scenarios or older implementations.
-      // If the number still doesn't swap, a direct call to Google Ads support is recommended for debugging.
+      // The gtag.js script will automatically look for and replace phone numbers
+      // that have the 'goog-inline-block_fallback' class and a 'data-tel' attribute.
+      // No explicit _googWcmGet call is needed here.
     </script>
     <!-- Phone snippet - Website phone calls - END -->
 
@@ -85,7 +84,7 @@
             justify-content: center;
             transition: background-color 0.3s ease, transform 0.2s ease;
             box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
-            text-decoration: none;
+            text-decoration: none; 
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
@@ -195,7 +194,7 @@
             justify-content: center;
             transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
             box-shadow: 0 8px 15px rgba(255, 193, 7, 0.4); /* Glow effect */
-            text-decoration: none;
+            text-decoration: none; 
             text-transform: uppercase;
             letter-spacing: 0.08em;
             border: 3px solid #ffeb3b; /* Stronger border */
@@ -248,7 +247,7 @@
             justify-content: center;
             transition: background-color 0.3s ease, transform 0.2s ease;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            text-decoration: none;
+            text-decoration: none; 
             text-transform: uppercase;
             letter-spacing: 0.05em;
             margin-top: 1.5rem; /* Space from text above */
@@ -291,7 +290,7 @@
             <p class="text-xl md:text-3xl text-gray-200 mb-10 drop-shadow-md">
                 We bring the showroom shine to your doorstep.
             </p>
-            <a href="tel:+14052955189" class="btn-primary">
+            <a class="btn-primary goog-inline-block_fallback" data-tel="4052955189">
                 <svg class="w-7 h-7 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                     <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
                 </svg>
@@ -322,11 +321,11 @@
                 Call NOW to unlock your <span class="text-red-400 line-through">$299</span> detail for just <span class="text-yellow-400">$249!</span>
             </p>
             <!-- Small Call Button -->
-            <a href="tel:+14052955189" class="btn-small-call">
+            <a class="btn-small-call goog-inline-block_fallback" data-tel="4052955189">
                 <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                     <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
                 </svg>
-                <span class="goog-inline-block_fallback" data-tel="4052955189">Call Now</span>
+                Call Now
             </a>
         </div>
     </section>
@@ -484,7 +483,7 @@
             Our schedule fills up fast! Lock in your premium mobile detailing appointment today.
         </p>
         <div class="flex flex-col md:flex-row justify-center items-center gap-6">
-            <a href="tel:+14052955189" class="btn-call-now">
+            <a class="btn-call-now goog-inline-block_fallback" data-tel="4052955189">
                 <svg class="w-8 h-8 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                     <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
                 </svg>
