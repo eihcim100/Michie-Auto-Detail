@@ -15,17 +15,12 @@
 
       // gtag_report_conversion function to track clicks on phone numbers
       // This function will send the conversion event to Google Ads.
-      // It then explicitly initiates the call using the provided number.
-      function gtag_report_conversion(phoneNumber) {
-        var callback = function () {
-          // Once conversion event is sent, initiate the call using the number obtained from the button text
-          window.location.href = 'tel:+' + phoneNumber.replace(/\D/g, ''); // Clean number for dialing
-        };
+      // The actual call will be handled by the tel: link in the anchor tag.
+      function gtag_report_conversion() {
         gtag('event', 'conversion', {
-            'send_to': 'AW-10782185640/PPImCJ-a7eIaEKixrJUo', // Your Website Call conversion ID
-            'event_callback': callback,
-            'phone_number': phoneNumber.replace(/\D/g, '') // Pass the number for Google's internal tracking
+            'send_to': 'AW-10782185640/PPImCJ-a7eIaEKixrJUo' // Your Website Call conversion ID
         });
+        // No 'return false;' here, allow the default link action (tel: link) to proceed.
       }
     </script>
     <!-- Google tag (gtag.js) - END -->
@@ -39,29 +34,6 @@
       // that have the 'goog-inline-block_fallback' class and a 'data-tel' attribute.
     </script>
     <!-- Phone snippet - Website phone calls - END -->
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Get all elements that Google should dynamically swap and track
-            const trackableCallElements = document.querySelectorAll('.goog-inline-block_fallback');
-
-            trackableCallElements.forEach(element => {
-                element.addEventListener('click', (e) => {
-                    e.preventDefault(); // Prevent the default link behavior (if any)
-
-                    // Get the currently displayed number (which should be Google's forwarding number if swapped)
-                    // Use innerText as it contains the dynamically swapped number
-                    const displayedNumber = element.innerText; 
-                    
-                    // If innerText is empty for some reason, fall back to data-tel
-                    const phoneNumberToDial = displayedNumber && displayedNumber.trim() !== '' ? displayedNumber : element.dataset.tel;
-
-                    // Fire the conversion event and then make the call
-                    gtag_report_conversion(phoneNumberToDial);
-                });
-            });
-        });
-    </script>
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
