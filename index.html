@@ -4,12 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Michie Auto Detailing - Mobile Detailing OKC - Limited Time Offer!</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts - Inter for clean, modern look -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Google tag (gtag.js) - START -->
+    <!-- Google tag (gtag.js) - START (Moved to absolute top of head) -->
     <!-- This tag tracks website visitors for remarketing and ad clicks -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=AW-10782185640"></script>
     <script>
@@ -26,8 +22,17 @@
       gtag('config', 'AW-10782185640/PPImCJ-a7eIaEKixrJUo', {
         'phone_conversion_number': '4052955189'
       });
+      // Removed window.onload wrapper for _googWcmGet.
+      // The `goog-inline-block_fallback` class combined with the gtag config is designed to automatically swap the number.
+      // Explicit _googWcmGet calls are usually for more advanced scenarios or older implementations.
+      // If the number still doesn't swap, a direct call to Google Ads support is recommended for debugging.
     </script>
     <!-- Phone snippet - Website phone calls - END -->
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter for clean, modern look -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         /* Custom styles to mimic the dark, premium feel and ensure responsiveness */
@@ -272,7 +277,7 @@
             <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                 <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
             </svg>
-            <span class="goog-inline-block_fallback">(405) 295-5189</span>
+            <span class="goog-inline-block_fallback" data-tel="4052955189">(405) 295-5189</span>
         </a>
     </header>
 
@@ -321,7 +326,7 @@
                 <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                     <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
                 </svg>
-                Call Now
+                <span class="goog-inline-block_fallback" data-tel="4052955189">Call Now</span>
             </a>
         </div>
     </section>
