@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Michie Auto Detailing - Mobile Detailing OKC - Limited Time Offer!</title>
 
-    <!-- Google tag (gtag.js) - START (Moved to absolute top of head) -->
-    <!-- This tag tracks website visitors for remarketing and ad clicks -->
+    <!-- Google tag (gtag.js) - START -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=AW-10782185640"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -14,27 +13,23 @@
       gtag('js', new Date());
       gtag('config', 'AW-10782185640');
 
-      // gtag_report_conversion function to track clicks on phone numbers
-      // This is a standard function provided by Google for tracking phone call conversions from website clicks.
-      // It attempts to use Google's dynamic number if available, otherwise falls back to the provided URL.
-      function gtag_report_conversion(url) {
+      // gtag_report_conversion function for tracking and dialing
+      function gtag_report_conversion(phoneNumber) {
         var callback = function () {
-          if (typeof(url) != 'undefined') {
-            window.location.href = url; // Redirects to tel: link
-          }
+          // Once conversion event is sent, initiate the call
+          window.location.href = 'tel:+' + phoneNumber.replace(/\D/g, ''); // Clean number for dialing
         };
         gtag('event', 'conversion', {
             'send_to': 'AW-10782185640/PPImCJ-a7eIaEKixrJUo', // Your Website Call conversion ID
             'event_callback': callback,
-            'phone_number': '4052955189' // Explicitly pass the phone number to Google for tracking
+            'phone_number': phoneNumber.replace(/\D/g, '') // Pass the number for Google's internal tracking
         });
-        return false; // Prevent default link action to allow callback to fire
+        return false; // Prevent default link action
       }
     </script>
     <!-- Google tag (gtag.js) - END -->
 
     <!-- Phone snippet - Website phone calls - START -->
-    <!-- This snippet replaces phone numbers on your website with a Google forwarding number for call tracking -->
     <script>
       gtag('config', 'AW-10782185640/PPImCJ-a7eIaEKixrJUo', {
         'phone_conversion_number': '4052955189'
@@ -43,6 +38,26 @@
       // that have the 'goog-inline-block_fallback' class and a 'data-tel' attribute.
     </script>
     <!-- Phone snippet - Website phone calls - END -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get all elements that Google should dynamically swap and track
+            const trackableCallElements = document.querySelectorAll('.goog-inline-block_fallback');
+
+            trackableCallElements.forEach(element => {
+                element.addEventListener('click', (e) => {
+                    e.preventDefault(); // Prevent the default link behavior immediately
+
+                    // Get the currently displayed number (which should be Google's forwarding number if swapped)
+                    const displayedNumber = element.innerText || element.dataset.tel; 
+
+                    // Fire the conversion event and then make the call
+                    // This uses the gtag_report_conversion function defined above.
+                    gtag_report_conversion(displayedNumber);
+                });
+            });
+        });
+    </script>
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -288,11 +303,12 @@
             </h1>
         </div>
         <!-- Phone Number - Dynamically replaceable by Google for tracking -->
-        <a href="tel:+1405295189" class="text-xl md:text-2xl font-bold text-green-400 hover:text-green-300 transition-colors duration-200 flex items-center goog-inline-block_fallback" data-tel="405295189">
+        <!-- This <a> tag now has no href, its click is managed by JS to ensure tracking -->
+        <a class="text-xl md:text-2xl font-bold text-green-400 hover:text-green-300 transition-colors duration-200 flex items-center goog-inline-block_fallback" data-tel="4052955189">
             <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                 <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
             </svg>
-            <span class="goog-inline-block_fallback" data-tel="405295189">(405) 295-5189</span>
+            (405) 295-5189
         </a>
     </header>
 
@@ -307,7 +323,8 @@
                 We bring the showroom shine to your doorstep.
             </p>
             <!-- Call Button -->
-            <a href="tel:+1405295189" class="btn-primary goog-inline-block_fallback" data-tel="4052955189">
+            <!-- This <a> tag now has no href, its click is managed by JS to ensure tracking -->
+            <a class="btn-primary goog-inline-block_fallback" data-tel="4052955189">
                 <svg class="w-7 h-7 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                     <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
                 </svg>
@@ -338,7 +355,8 @@
                 Call NOW to unlock your <span class="text-red-400 line-through">$299</span> detail for just <span class="text-yellow-400">$249!</span>
             </p>
             <!-- Small Call Button -->
-            <a href="tel:+1405295189" class="btn-small-call goog-inline-block_fallback" data-tel="4052955189">
+            <!-- This <a> tag now has no href, its click is managed by JS to ensure tracking -->
+            <a class="btn-small-call goog-inline-block_fallback" data-tel="4052955189">
                 <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                     <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
                 </svg>
@@ -500,7 +518,9 @@
             Our schedule fills up fast! Lock in your premium mobile detailing appointment today.
         </p>
         <div class="flex flex-col md:flex-row justify-center items-center gap-6">
-            <a href="tel:+1405295189" class="btn-call-now goog-inline-block_fallback" data-tel="4052955189">
+            <!-- Call Us Now Button -->
+            <!-- This <a> tag now has no href, its click is managed by JS to ensure tracking -->
+            <a class="btn-call-now goog-inline-block_fallback" data-tel="4052955189">
                 <svg class="w-8 h-8 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                     <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
                 </svg>
