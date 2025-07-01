@@ -16,13 +16,37 @@
         body {
             font-family: 'Inter', sans-serif;
             background-color: #121212;
-            color: #e5e7eb; /* A slightly softer white */
+            color: #e5e7eb;
         }
-        .calculator-card {
-            background-color: #1f2937; /* A deep blue-gray */
+        
+        /* --- Video Background Styles --- */
+        #background-video {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -100;
+            object-fit: cover; /* This will cover the entire screen */
+        }
+        .video-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); /* Dark overlay for text readability */
+            z-index: -99;
+        }
+        
+        .card {
+            background-color: rgba(31, 41, 55, 0.9); /* Semi-transparent card background */
             border: 1px solid #374151;
             border-radius: 1rem;
             box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.2), 0 8px 10px -6px rgb(0 0 0 / 0.2);
+            backdrop-filter: blur(10px); /* Frosted glass effect */
         }
         .summary-item {
             background-color: #374151;
@@ -71,19 +95,41 @@
             background-color: #1d4ed8;
             transform: translateY(-2px);
         }
+        .feature-list li {
+            position: relative;
+            padding-left: 2rem;
+            margin-bottom: 0.75rem;
+            font-size: 1.05rem;
+        }
+        .feature-list li::before {
+            content: '\f00c'; /* Font Awesome checkmark */
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: #34d399;
+            position: absolute;
+            left: 0;
+            top: 4px;
+        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
+<body class="min-h-screen p-4 sm:p-6 lg:p-8">
 
-    <div class="w-full max-w-4xl mx-auto">
+    <!-- Video Background -->
+    <div class="video-overlay"></div>
+    <video autoplay muted loop id="background-video">
+        <source src="https://assets.mixkit.co/videos/preview/mixkit-a-sports-car-with-a-chrome-spoiler-45669-large.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <div class="relative z-10 w-full max-w-4xl mx-auto">
         <!-- Header -->
         <header class="text-center mb-8">
             <h1 class="text-4xl md:text-5xl font-extrabold text-white tracking-tight">Level 3 Detail Financing</h1>
-            <p class="mt-3 text-lg text-gray-400 max-w-3xl mx-auto">Get our best package with 0% interest. Just 3 easy payments of $99.</p>
+            <p class="mt-3 text-lg text-gray-300 max-w-3xl mx-auto">Get our best package with 0% interest. Just 3 easy payments of $99.</p>
         </header>
 
         <!-- Calculator Card -->
-        <div class="calculator-card p-6 sm:p-8 lg:p-10">
+        <div class="card p-6 sm:p-8 lg:p-10 mb-10">
             
             <!-- Step 1: Review Plan -->
             <div>
@@ -114,10 +160,50 @@
                     Book Your Detail Now
                  </a>
             </div>
-
         </div>
 
-        <footer class="text-center mt-8">
+        <!-- What's Included Section -->
+        <div class="card p-6 sm:p-8 lg:p-10 mb-10">
+            <h2 class="text-3xl font-bold text-white mb-6 text-center">What Your Level 3 Detail Includes</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                <ul class="feature-list">
+                    <li>External high pressure wash</li>
+                    <li>Tire cleaner & shine</li>
+                    <li>Window cleaning inside and out</li>
+                    <li>Deep vaccuming of seats & carpets</li>
+                    <li>Display, controls & panels wipedown</li>
+                    <li>Surface protectent for dash & controls</li>
+                    <li>Steering wheel and dash deep clean</li>
+                    <li>Shampoo carpets and seats</li>
+                    <li>Premium Leather treatment</li>
+                    <li>Pet hair removal</li>
+                </ul>
+                 <ul class="feature-list">
+                    <li>Odor removal</li>
+                    <li>Door jam cleaning</li>
+                    <li>Rims and tires cleaned and wiped down</li>
+                    <li>Console scrub down</li>
+                    <li>**Mold removal**</li>
+                    <li>FINE TOOTH COMB in-between seats</li>
+                    <li>Glove compartment & trunk cleaning</li>
+                    <li>Hard to reach areas deep shampoo</li>
+                    <li>External bug removal</li>
+                    <li>Protection plan (15-day complimentary clean)</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Final CTA -->
+        <div class="text-center">
+             <h2 class="text-3xl font-bold text-white mb-4">Ready for a Showroom Finish?</h2>
+             <p class="text-gray-400 mb-6">Don't wait. Lock in your financing and schedule your appointment today!</p>
+             <a href="https://form.jotform.com/251615738814159" class="btn-primary inline-block text-lg">
+                Book Now
+             </a>
+        </div>
+
+
+        <footer class="text-center mt-12">
             <a href="#" onclick="history.back(); return false;" class="text-blue-400 hover:text-blue-300 transition">&larr; Go Back to Main Page</a>
         </footer>
     </div>
