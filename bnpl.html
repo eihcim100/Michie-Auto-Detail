@@ -24,18 +24,6 @@
             border-radius: 1rem;
             box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.2), 0 8px 10px -6px rgb(0 0 0 / 0.2);
         }
-        .form-select {
-            background-color: #374151;
-            border-color: #4b5563;
-            color: #ffffff;
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 0.5rem center;
-            background-size: 1.5em 1.5em;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-        }
         .summary-item {
             background-color: #374151;
             padding: 1.5rem;
@@ -86,46 +74,22 @@
 </head>
 <body class="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
 
-    <div class="w-full max-w-5xl mx-auto">
+    <div class="w-full max-w-4xl mx-auto">
         <!-- Header -->
         <header class="text-center mb-8">
-            <h1 class="text-4xl md:text-5xl font-extrabold text-white tracking-tight">Finance Your Detail</h1>
-            <p class="mt-3 text-lg text-gray-400 max-w-3xl mx-auto">0% Interest, Buy Now Pay Later. Get that showroom shine today with a simple payment plan.</p>
+            <h1 class="text-4xl md:text-5xl font-extrabold text-white tracking-tight">Level 3 Detail Financing</h1>
+            <p class="mt-3 text-lg text-gray-400 max-w-3xl mx-auto">Get our best package with 0% interest. Just 3 easy payments of $99.</p>
         </header>
 
         <!-- Calculator Card -->
         <div class="calculator-card p-6 sm:p-8 lg:p-10">
-            <!-- Step 1: Select Package -->
-            <div class="mb-8">
-                <h2 class="text-2xl font-bold text-white mb-4 flex items-center"><i class="fas fa-car text-blue-400 mr-3"></i>Step 1: Choose Your Service</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label for="vehicleType" class="block text-sm font-medium text-gray-300 mb-2">Vehicle Type</label>
-                        <select id="vehicleType" class="form-select w-full p-3 rounded-lg">
-                            <option value="sedan">4 Door Sedan</option>
-                            <option value="suv">SUV / Truck</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="packageLevel" class="block text-sm font-medium text-gray-300 mb-2">Detailing Level</label>
-                        <select id="packageLevel" class="form-select w-full p-3 rounded-lg">
-                            <option value="1">Level 1 Detail</option>
-                            <option value="2">Level 2 Detail</option>
-                            <option value="3">Level 3 Detail</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Divider -->
-            <hr class="border-gray-600 my-8">
-
-            <!-- Step 2: Review Plan -->
+            
+            <!-- Step 1: Review Plan -->
             <div>
-                 <h2 class="text-2xl font-bold text-white mb-6 flex items-center"><i class="fas fa-receipt text-green-400 mr-3"></i>Step 2: Review Your Payment Plan</h2>
+                 <h2 class="text-2xl font-bold text-white mb-6 flex items-center"><i class="fas fa-receipt text-green-400 mr-3"></i>Your Special Financing Plan</h2>
                 
                  <!-- Payment Summary -->
-                 <div id="summary" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                 <div id="summary" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                     <!-- This will be populated by JavaScript -->
                  </div>
 
@@ -141,10 +105,10 @@
             <!-- Divider -->
             <hr class="border-gray-600 my-10">
 
-            <!-- Step 3: Get Started -->
+            <!-- Step 2: Get Started -->
             <div class="text-center">
-                 <h2 class="text-2xl font-bold text-white mb-4 flex items-center justify-center"><i class="fas fa-rocket text-blue-400 mr-3"></i>Step 3: Lock In Your Plan</h2>
-                 <p class="text-gray-400 mb-6">Ready to proceed? Contact us to finalize your financing and book your appointment!</p>
+                 <h2 class="text-2xl font-bold text-white mb-4 flex items-center justify-center"><i class="fas fa-rocket text-blue-400 mr-3"></i>Lock In Your Plan</h2>
+                 <p class="text-gray-400 mb-6">Ready to proceed? Contact us to finalize your financing and book your Level 3 Detail!</p>
                  <a href="tel:+14052955189" class="btn-primary inline-block">
                     Call to Get Started
                  </a>
@@ -160,24 +124,11 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // --- CONFIGURATION ---
-            const DOWN_PAYMENT = 149.00;
-            const NUM_PAYMENTS = 4;
-            const PRICES = {
-                sedan: {
-                    1: 199.00,
-                    2: 249.00,
-                    3: 349.00,
-                },
-                suv: {
-                    1: 249.00,
-                    2: 299.00,
-                    3: 399.00,
-                }
-            };
+            const PAYMENT_AMOUNT = 99.00;
+            const NUM_PAYMENTS = 3;
+            const TOTAL_COST = PAYMENT_AMOUNT * NUM_PAYMENTS;
 
             // --- DOM ELEMENTS ---
-            const vehicleTypeSelect = document.getElementById('vehicleType');
-            const packageLevelSelect = document.getElementById('packageLevel');
             const summaryDiv = document.getElementById('summary');
             const scheduleDiv = document.getElementById('schedule');
 
@@ -186,71 +137,60 @@
                 return `$${amount.toFixed(2)}`;
             }
 
-            function calculateAndDisplay() {
-                const vehicleType = vehicleTypeSelect.value;
-                const packageLevel = packageLevelSelect.value;
-
-                const totalCost = PRICES[vehicleType][packageLevel];
-                const remainingBalance = totalCost - DOWN_PAYMENT;
-                const monthlyPayment = remainingBalance > 0 ? remainingBalance / NUM_PAYMENTS : 0;
-
+            function displayPlan() {
                 // 1. Update the Summary Section
                 summaryDiv.innerHTML = `
                     <div class="summary-item">
                         <span class="block text-sm font-medium text-gray-400 uppercase">Total Cost</span>
-                        <span class="value">${formatCurrency(totalCost)}</span>
+                        <span class="value">${formatCurrency(TOTAL_COST)}</span>
                     </div>
                     <div class="summary-item">
-                        <span class="block text-sm font-medium text-gray-400 uppercase">Down Payment</span>
-                        <span class="value text-yellow-400">${formatCurrency(DOWN_PAYMENT)}</span>
+                        <span class="block text-sm font-medium text-gray-400 uppercase">Payment Today</span>
+                        <span class="value text-yellow-400">${formatCurrency(PAYMENT_AMOUNT)}</span>
                     </div>
                     <div class="summary-item">
-                        <span class="block text-sm font-medium text-gray-400 uppercase">Remaining Balance</span>
-                        <span class="value">${formatCurrency(remainingBalance)}</span>
-                    </div>
-                    <div class="summary-item">
-                        <span class="block text-sm font-medium text-gray-400 uppercase">4 Easy Payments Of</span>
-                        <span class="value">${formatCurrency(monthlyPayment)}</span>
+                        <span class="block text-sm font-medium text-gray-400 uppercase">Remaining Plan</span>
+                        <span class="value">2 x ${formatCurrency(PAYMENT_AMOUNT)}</span>
                     </div>
                 `;
 
                 // 2. Update the Payment Schedule Section
                 let scheduleHtml = '';
-                let currentDate = new Date();
+                const today = new Date();
 
-                if (remainingBalance > 0) {
-                    for (let i = 1; i <= NUM_PAYMENTS; i++) {
-                        currentDate.setDate(currentDate.getDate() + 30); // Add 30 days for next payment
-                        const formattedDate = currentDate.toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
-                        });
+                // Payment 1 (Today)
+                scheduleHtml += `
+                    <div class="payment-schedule-item">
+                        <p class="font-bold text-lg text-white">Payment 1: ${formatCurrency(PAYMENT_AMOUNT)}</p>
+                        <p class="text-sm text-gray-400">Due on: Today (${today.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })})</p>
+                    </div>
+                `;
 
-                        scheduleHtml += `
-                            <div class="payment-schedule-item">
-                                <p class="font-bold text-lg text-white">Payment ${i}: ${formatCurrency(monthlyPayment)}</p>
-                                <p class="text-sm text-gray-400">Due on: ${formattedDate}</p>
-                            </div>
-                        `;
-                    }
-                } else {
-                     scheduleHtml = `
-                        <div class="text-center py-4">
-                            <p class="text-lg text-green-400">The down payment covers the full cost. No further payments needed!</p>
-                        </div>
-                     `;
-                }
+                // Payment 2 (in 2 weeks)
+                const payment2Date = new Date(today);
+                payment2Date.setDate(today.getDate() + 14);
+                scheduleHtml += `
+                    <div class="payment-schedule-item">
+                        <p class="font-bold text-lg text-white">Payment 2: ${formatCurrency(PAYMENT_AMOUNT)}</p>
+                        <p class="text-sm text-gray-400">Due on: ${payment2Date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                    </div>
+                `;
+
+                // Payment 3 (in 4 weeks)
+                const payment3Date = new Date(today);
+                payment3Date.setDate(today.getDate() + 28);
+                scheduleHtml += `
+                    <div class="payment-schedule-item">
+                        <p class="font-bold text-lg text-white">Payment 3: ${formatCurrency(PAYMENT_AMOUNT)}</p>
+                        <p class="text-sm text-gray-400">Due on: ${payment3Date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                    </div>
+                `;
 
                 scheduleDiv.innerHTML = scheduleHtml;
             }
 
-            // --- EVENT LISTENERS ---
-            vehicleTypeSelect.addEventListener('change', calculateAndDisplay);
-            packageLevelSelect.addEventListener('change', calculateAndDisplay);
-
-            // --- INITIAL CALCULATION ---
-            calculateAndDisplay();
+            // --- INITIAL DISPLAY ---
+            displayPlan();
         });
     </script>
 
