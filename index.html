@@ -3,20 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FAQ - Michie Auto Detailing LLC</title>
+    <title>Michie Auto Detailing - Mobile Detailing OKC - Limited Time Offer!</title>
+
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts - Inter for clean, modern look -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Roboto+Mono:wght@700&display=swap" rel="stylesheet">
 
-    <!-- Google Tag (gtag.js) & Call Tracking Snippet -->
+    <!-- 
+      Google Tag (gtag.js) & Call Tracking Snippet
+      This is the consolidated and corrected script for Google Ads.
+    -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=AW-10782185640"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
+
+      // General config for your Google Ads account
       gtag('config', 'AW-10782185640');
 
+      // Phone snippet for website call conversions with a callback
       gtag('config', 'AW-10782185640/PPImCJ-a7eIaEKixrJUo', {
         'phone_conversion_number': '(405) 295-5189',
         'phone_conversion_callback': function(formatted_number, mobile_number) {
@@ -34,204 +41,503 @@
     </script>
 
     <style>
+        /* Custom styles to mimic the dark, premium feel and ensure responsiveness */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #1a1a1a; /* Dark background */
-            color: #ffffff; /* White text for contrast */
+            background-color: #1a1a1a;
+            color: #ffffff;
             line-height: 1.6;
         }
-        .container {
+        .font-mono {
+            font-family: 'Roboto Mono', monospace;
+        }
+        /* --- NEW BANNER STYLE --- */
+        .top-banner {
+            background-color: #ffc107; /* Bright yellow background */
+            color: #1a1a1a; /* Dark text for contrast */
+            text-align: center;
+            padding: 0.75rem 1rem;
+            font-weight: 700; /* Bold text */
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            animation: pulse-banner 3s infinite;
+        }
+        @keyframes pulse-banner {
+            0% { background-color: #ffc107; }
+            50% { background-color: #ffd54f; }
+            100% { background-color: #ffc107; }
+        }
+        .hero-section {
+            background-image: url('https://michieauto.com/c6106051-ecc6-4964-9246-4c79215cdb5d~1.jpg');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            min-height: 60vh; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+        }
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
             max-width: 900px;
+            margin: 0 auto;
         }
-        h1, h2 {
-            color: #ffffff;
+        .section-padding {
+            padding: 4rem 1.5rem;
+        }
+        .btn-primary {
+            background-color: #28a745;
+            color: white;
+            padding: 1.25rem 2.5rem;
+            border-radius: 0.5rem;
+            font-size: 1.5rem;
             font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+            text-decoration: none; 
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
-        a {
-            color: #6ee7b7; /* Greenish-blue for links */
-            text-decoration: none;
+        .btn-primary:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
         }
-        a:hover {
-            text-decoration: underline;
+        .btn-primary:active {
+            transform: translateY(0);
         }
-        .faq-item {
-            background-color: #2a2a2a; /* Darker background for FAQ items */
+        .pricing-highlight {
+            font-size: 5rem;
+            font-weight: 800;
+            color: #28a745;
+            text-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
+        }
+        .old-price {
+            text-decoration: line-through;
+            color: #ff4d4d;
+            margin-right: 1rem;
+            font-size: 0.7em;
+        }
+        @media (min-width: 768px) {
+            .pricing-highlight {
+                font-size: 7rem;
+            }
+        }
+        .feature-list li {
+            position: relative;
+            padding-left: 1.75rem;
+            margin-bottom: 0.75rem;
+        }
+        .feature-list li::before {
+            content: '✓';
+            color: #28a745;
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+        .reviews-container {
+            display: flex;
+            overflow-x: scroll;
+            -webkit-overflow-scrolling: touch;
+            scroll-snap-type: x mandatory;
+            padding-bottom: 1rem;
+        }
+        .review-card {
+            flex: 0 0 auto;
+            width: 85%;
+            max-width: 400px;
+            background-color: #2a2a2a;
             border-radius: 0.75rem;
             padding: 1.5rem;
-            margin-bottom: 1rem;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin-right: 1.5rem;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+            scroll-snap-align: start;
         }
-        .faq-question {
+        .review-card:last-child {
+            margin-right: 0;
+        }
+        .stars {
+            color: #ffc107;
             font-size: 1.25rem;
-            font-weight: 600;
-            color: #ffffff;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            margin-bottom: 0.75rem;
         }
-        .faq-question svg {
-            transition: transform 0.3s ease;
+        .star-icon {
+            display: inline-block;
+            margin-right: 0.1rem;
         }
-        .faq-question[aria-expanded="true"] svg {
-            transform: rotate(180deg);
+        .reviews-container::-webkit-scrollbar {
+            display: none;
         }
-        .faq-answer {
-            max-height: 0;
+        .reviews-container {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
             overflow: hidden;
-            transition: max-height 0.3s ease-out;
-            padding-top: 0;
-            color: #e0e0e0;
+            max-width: 100%;
+            background: #000;
+            border-radius: 0.75rem;
         }
-        .faq-answer.open {
-            max-height: 500px; /* Adjust based on max expected answer height */
-            padding-top: 1rem;
+        .video-container iframe,
+        .video-container object,
+        .video-container embed {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .btn-call-now {
+            background-color: #ffc107;
+            color: #1a1a1a;
+            padding: 1.25rem 2.5rem;
+            border-radius: 0.75rem;
+            font-size: 1.6rem;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 8px 15px rgba(255, 193, 7, 0.4);
+            text-decoration: none; 
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            border: 3px solid #ffeb3b;
+            animation: pulse 2s infinite;
+        }
+        .btn-call-now:hover {
+            background-color: #e0a800;
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 20px rgba(255, 193, 7, 0.6);
+        }
+        .btn-call-now:active {
+            transform: translateY(0);
+            box-shadow: 0 6px 10px rgba(255, 193, 7, 0.3);
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 8px 15px rgba(255, 193, 7, 0.4); }
+            50% { transform: scale(1.03); box-shadow: 0 12px 25px rgba(255, 193, 7, 0.7); }
+            100% { transform: scale(1); box-shadow: 0 8px 15px rgba(255, 193, 7, 0.4); }
+        }
+        @media (max-width: 767px) {
+            .btn-call-now {
+                width: 90%;
+                font-size: 1.4rem;
+                padding: 1rem 2rem;
+            }
+        }
+        .btn-small-call {
+            background-color: #28a745;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 1.5rem;
+        }
+        .btn-small-call:hover {
+            background-color: #218838;
+            transform: translateY(-1px);
+        }
+        .btn-small-call:active {
+            transform: translateY(0);
+        }
+        /* URGENT TIMER ANIMATION */
+        @keyframes urgent-pulse {
+            0%, 100% {
+                transform: scale(1);
+                text-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+            }
+            50% {
+                transform: scale(1.05);
+                text-shadow: 0 0 25px rgba(239, 68, 68, 1);
+            }
+        }
+        .timer-urgent {
+            animation: urgent-pulse 1.5s infinite;
         }
     </style>
 </head>
-<body class="p-4 sm:p-8">
-    <div class="container mx-auto bg-gray-800 p-6 sm:p-10 rounded-xl shadow-lg">
-        <h1 class="text-3xl sm:text-4xl font-bold mb-8 text-center">Frequently Asked Questions</h1>
+<body class="flex flex-col min-h-screen">
 
-        <div class="space-y-4">
-            <!-- FAQ Item 1 -->
-            <div class="faq-item">
-                <div class="faq-question" role="button" aria-expanded="false" aria-controls="faq-answer-1">
-                    <span>What is Michie Auto Detailing?</span>
-                    <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </div>
-                <div id="faq-answer-1" class="faq-answer">
-                    <p>Michie Auto Detailing LLC is a premium mobile auto detailing service based in Oklahoma City, OK. We bring the showroom shine directly to your doorstep, whether you're at home or work. Our focus is on convenience, quality, and transparent pricing.</p>
-                </div>
+    <!-- --- NEW 24/7 BANNER --- -->
+    <div class="top-banner">
+        WE ARE OPEN 24/7 - CALL ANYTIME
+    </div>
+
+    <!-- Header Section -->
+    <header class="bg-black py-4 px-6 md:px-12 flex justify-between items-center shadow-lg">
+        <div class="flex items-center">
+            <h1 class="text-2xl md:text-3xl font-extrabold text-white mr-4 tracking-wide">
+                Michie Auto Detailing
+            </h1>
+        </div>
+        <a href="tel:+14052955189" class="text-xl md:text-2xl font-bold text-green-400 hover:text-green-300 transition-colors duration-200 flex items-center">
+            <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
+            <span class="g-track-text">(405) 295-5189</span>
+        </a>
+    </header>
+
+    <!-- Pricing Section (Moved higher) -->
+    <section class="section-padding bg-gray-900 text-center rounded-xl mx-4 my-8 shadow-xl">
+        <h3 class="text-4xl md:text-5xl font-bold text-white mb-6">
+            Simple & Transparent Pricing
+        </h3>
+        <p class="pricing-highlight mb-4">
+            <span id="displayPrice">$299</span>
+        </p>
+        <p id="offerDescription" class="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto">
+            Experience premium mobile detailing with no hidden fees. One flat rate for a perfect finish, delivered right to your location. This price includes SUVs up to 3 rows, pet hair removal, and smoke odor removal.
+        </p>
+        <p class="text-3xl md:text-4xl font-bold text-green-400 mt-4 mb-6">
+            NO payment until after the service is completed!
+        </p>
+        <div id="countdownContainer" class="mt-6">
+            <p id="countdownMessage" class="text-2xl md:text-3xl font-bold text-yellow-400 mb-4">
+                This Special Offer Expires In:
+            </p>
+            <div class="mb-4">
+                <span id="countdownTime" class="timer-urgent text-6xl md:text-8xl font-mono font-extrabold text-red-500 bg-black inline-block px-6 py-2 rounded-lg shadow-lg">05:00</span>
             </div>
+            <p class="text-xl md:text-2xl text-green-300 font-bold mb-4">
+                Call NOW to unlock your <span class="text-red-400 line-through">$299</span> detail for just <span class="text-yellow-400">$199!</span>
+            </p>
+            <a href="tel:+14052955189" class="btn-small-call">
+                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
+                <span>Call Now & Save!</span>
+            </a>
+        </div>
+    </section>
 
-            <!-- FAQ Item 2 - UPDATED PRICING CLARIFICATION -->
-            <div class="faq-item">
-                <div class="faq-question" role="button" aria-expanded="false" aria-controls="faq-answer-2">
-                    <span>What is your pricing?</span>
-                    <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </div>
-                <div id="faq-answer-2" class="faq-answer">
-                    <p>Our standard premium mobile detail is typically $299, unless otherwise stated on our website or as part of a limited-time offer. For a limited time, you can call us now to unlock a special discount and get your full detail for just <strong>$199!</strong> This flat rate includes SUVs up to 3 rows, pet hair removal, and smoke odor removal. Please note: Vehicles with excessive dirt, grime, or mold may incur additional charges on top of the base detail, which will be discussed upfront.</p>
-                </div>
-            </div>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h2 class="text-5xl md:text-7xl font-extrabold leading-tight mb-6 text-white tracking-tight drop-shadow-lg">
+                Premium Mobile Detailing in OKC
+            </h2>
+            <p class="text-xl md:text-3xl text-gray-200 mb-10 drop-shadow-md">
+                We bring the showroom shine to your doorstep.
+            </p>
+            <a href="tel:+14052955189" class="btn-primary">
+                <svg class="w-7 h-7 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
+                <span>Call for Instant Service!</span>
+            </a>
+        </div>
+    </section>
 
-            <!-- FAQ Item 3 -->
-            <div class="faq-item">
-                <div class="faq-question" role="button" aria-expanded="false" aria-controls="faq-answer-3">
-                    <span>What areas do you serve?</span>
-                    <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </div>
-                <div id="faq-answer-3" class="faq-answer">
-                    <p>We proudly serve the entire greater Oklahoma City metropolitan area, including Oklahoma City, Norman, Edmond, Moore, Bethany, Yukon, Mustang, and Midwest City. If you're in the OKC metro, we come to you!</p>
-                </div>
-            </div>
-
-            <!-- NEW FAQ Item - MOLD REMOVAL -->
-            <div class="faq-item">
-                <div class="faq-question" role="button" aria-expanded="false" aria-controls="faq-answer-10">
-                    <span>Do you include mold removal in your service?</span>
-                    <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </div>
-                <div id="faq-answer-10" class="faq-answer">
-                    <p>Yes, we do! We specialize in comprehensive interior cleaning, including detailing vehicles with mold. Our base detail price for mold removal is $299, which ensures a thorough and effective treatment to restore your vehicle's interior. This price includes SUVs up to 3 rows, pet hair removal, and smoke odor removal.</p>
-                </div>
-            </div>
-
-            <!-- FAQ Item 4 (Original 4) -->
-            <div class="faq-item">
-                <div class="faq-question" role="button" aria-expanded="false" aria-controls="faq-answer-4">
-                    <span>Do you offer pet hair removal?</span>
-                    <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </div>
-                <div id="faq-answer-4" class="faq-answer">
-                    <p>Yes! Pet hair removal is included in our flat rate detail price, unlike many detailers who charge extra. We specialize in comprehensive interior cleaning to address this common issue.</p>
-                </div>
-            </div>
-
-            <!-- FAQ Item 5 - UPDATED WATER/ELECTRICITY -->
-            <div class="faq-item">
-                <div class="faq-question" role="button" aria-expanded="false" aria-controls="faq-answer-5">
-                    <span>Do I need to provide water or electricity?</span>
-                    <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </div>
-                <div id="faq-answer-5" class="faq-answer">
-                    <p>Yes, we do use our client's water hose and electricity outlet. This helps us keep our prices lower than our competitors, providing you with premium service at a great value.</p>
-                </div>
-            </div>
-
-            <!-- NEW FAQ Item - KEYS/DRIVEWAY -->
-            <div class="faq-item">
-                <div class="faq-question" role="button" aria-expanded="false" aria-controls="faq-answer-9">
-                    <span>Do I need to be present or provide keys?</span>
-                    <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </div>
-                <div id="faq-answer-9" class="faq-answer">
-                    <p>As always, you can keep the keys and we do the service in your driveway. We provide all other tools needed to detail your vehicle 100% mobile, making the process completely hassle-free for you.</p>
-                </div>
-            </div>
-
-            <!-- FAQ Item 6 (Original 5) -->
-            <div class="faq-item">
-                <div class="faq-question" role="button" aria-expanded="false" aria-controls="faq-answer-6">
-                    <span>How long does a detail take?</span>
-                    <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </div>
-                <div id="faq-answer-6" class="faq-answer">
-                    <p>The duration of a detail can vary depending on the vehicle's size and condition, but our premium mobile detail typically takes between 2 to 4 hours. We work efficiently to get your car looking its best without compromising on quality.</p>
-                </div>
-            </div>
-
-            <!-- FAQ Item 7 (Original 6) - UPDATED HOURS -->
-            <div class="faq-item">
-                <div class="faq-question" role="button" aria-expanded="false" aria-controls="faq-answer-7">
-                    <span>What are your hours of operation?</span>
-                    <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </div>
-                <div id="faq-answer-7" class="faq-answer">
-                    <p>Our answering service is available 24/7 to take your calls and schedule appointments anytime. Our detailing services are performed 7 days a week, typically during daylight hours.</p>
-                </div>
-            </div>
-
-            <!-- FAQ Item 8 (Original 7) -->
-            <div class="faq-item">
-                <div class="faq-question" role="button" aria-expanded="false" aria-controls="faq-answer-8">
-                    <span>Do you offer any maintenance plans?</span>
-                    <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </div>
-                <div id="faq-answer-8" class="faq-answer">
-                    <p>Yes, we do! Ask us about our exclusive Michie Auto Detailing Protection Plan. It's designed to give you peace of mind and keep your car looking great between major details. Our team can provide more details when you call or during your appointment.</p>
-                </div>
+    <!-- Check Out Our Latest Work! -->
+    <section class="section-padding bg-gray-800 rounded-xl mx-4 my-8 shadow-xl text-center">
+        <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
+            Check Out Our Latest Work!
+        </h2>
+        <p class="text-lg md:text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+            See the quality and shine we bring to every vehicle.
+        </p>
+        <div class="flex justify-center">
+            <div class="video-container w-full max-w-4xl mx-auto">
+                <iframe src="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fwatch%2F%3Fv%3D2206115369596502&show_text=0"
+                    width="560" height="315" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true"
+                    allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" referrerpolicy="origin-when-cross-origin" allowTransparency="true">
+                </iframe>
             </div>
         </div>
+        <p class="text-sm text-gray-500 mt-4">(This video is embedded directly from Facebook.)</p>
+    </section>
 
+    <!-- What's Included Section -->
+    <section class="section-padding bg-gray-800 rounded-xl mx-4 my-8 shadow-xl">
+        <h3 class="text-4xl md:text-5xl font-bold text-white text-center mb-10">
+            What's Included in Your Detail
+        </h3>
+        <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-lg md:text-xl text-gray-200">
+            <ul class="feature-list space-y-3">
+                <li>Full exterior wash with high-quality soap</li>
+                <li>Hand dry with premium microfiber towels</li>
+                <li>Interior door panel cleaning (including controls & speakers)</li>
+                <li>Window cleaning inside & out for crystal clear visibility</li>
+                <li>Full interior vacuum, including mats and carpets</li>
+                <li>Carpet and mat shampooing for deep cleaning</li>
+                <li>Cloth seats get full shampoo & odor removal treatment</li>
+                <li>Cloth seats vacuumed to restore softness</li>
+                <li>Leather seats treated with high-grade cleaner for protection</li>
+                <li>Dashboard, mirrors & windshield cleaning for a dust-free dash</li>
+            </ul>
+            <ul class="feature-list space-y-3">
+                <li>LCD Display/speedometer display cleaning for crystal clear visibility</li>
+                <li>Air compressor cleaning for hard-to-reach areas (between seats, cupholders)</li>
+                <li>Removal of all sticky spots from drinks or food</li>
+                <li class="font-bold text-green-300">No additional charge for Pet Hair Removal!</li>
+                <li class="font-bold text-green-300">No additional charge for Smoke Odor Removal!</li>
+                <li>Complimentary air freshener included</li>
+                <li>Removal of bug stains from headlights & front bumper</li>
+                <li>Tire cleaning with tire shine application</li>
+                <li>Microfiber, non-abrasive scrubbing on rims for a glossy look</li>
+                <li>Trunk vacuum and cleaning also included</li>
+            </ul>
+        </div>
         <p class="text-center text-lg md:text-xl text-gray-300 mt-10">
-            Still have questions? Don't hesitate to call us anytime at <a href="tel:+14052955189" class="text-green-400 hover:text-green-300 underline">(405) 295-5189</a> for instant answers!
+            All these premium services are included in our flat rate of <span id="includedPrice">$199</span>, regardless of vehicle size (SUVs up to 3 rows included)!
         </p>
-    </div>
+    </section>
+
+    <!-- Customer Reviews Section -->
+    <section class="section-padding bg-gray-900 rounded-xl mx-4 my-8 shadow-xl">
+        <h3 class="text-4xl md:text-5xl font-bold text-white text-center mb-10">
+            What Our Customers Say
+        </h3>
+        <div class="reviews-container px-4">
+            <div class="review-card">
+                <div class="stars"><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span></div>
+                <p class="text-gray-300 mb-4 italic">"I recently had my car detailed, and I couldn’t be happier! They came right to my house and did an outstanding job. The team was not only professional but also super friendly, making the whole experience really pleasant. Highly recommend their service"</p>
+                <p class="font-semibold text-white">- Long N.</p>
+            </div>
+            <div class="review-card">
+                <div class="stars"><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span></div>
+                <p class="text-gray-300 mb-4 italic">"Good job on my car"</p>
+                <p class="font-semibold text-white">- Susan P.</p>
+            </div>
+            <div class="review-card">
+                <div class="stars"><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span></div>
+                <p class="text-gray-300 mb-4 italic">"In just two hours he was able to clean the car seat stains and an exploded soda with extra work to the windows and tires! Very professional and fast to respond! See the before and after pictures for yourself!"</p>
+                <p class="font-semibold text-white">- Robin H.</p>
+            </div>
+            <div class="review-card">
+                <div class="stars"><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span></div>
+                <p class="text-gray-300 mb-4 italic">"Great work, quick and friendly. Was willing to travel from OKC to Norman. Give him a call."</p>
+                <p class="font-semibold text-white">- Will M.</p>
+            </div>
+            <div class="review-card">
+                <div class="stars"><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span><span class="star-icon">★</span></div>
+                <p class="text-gray-300 mb-4 italic">"Andrew came to my door talked me into a well needed detail for my car that hadn’t been cleaned in months. He spent three hours out in the heat and it looks amazing!"</p>
+                <p class="font-semibold text-white">- Amanda E.</p>
+            </div>
+        </div>
+        <p class="text-center text-lg md:text-xl text-gray-300 mt-10">Read more of our 5-star reviews on <a href="#" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:text-blue-400 underline">Google Maps!</a></p>
+    </section>
+
+    <!-- Service Area Section -->
+    <section class="section-padding bg-gray-800 text-center rounded-xl mx-4 my-8 shadow-xl">
+        <h3 class="text-4xl md:text-5xl font-bold text-white mb-6">
+            Serving the Greater OKC Metro
+        </h3>
+        <p class="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+            Michie Auto Detailing proudly offers mobile detailing services throughout the entire Oklahoma City metropolitan area and surrounding major cities. We come to you, wherever you are!
+        </p>
+        <div class="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+            <span class="bg-gray-700 text-white py-3 px-4 rounded-full text-lg font-medium shadow-md">Oklahoma City</span>
+            <span class="bg-gray-700 text-white py-3 px-4 rounded-full text-lg font-medium shadow-md">Norman</span>
+            <span class="bg-gray-700 text-white py-3 px-4 rounded-full text-lg font-medium shadow-md">Edmond</span>
+            <span class="bg-gray-700 text-white py-3 px-4 rounded-full text-lg font-medium shadow-md">Moore</span>
+            <span class="bg-gray-700 text-white py-3 px-4 rounded-full text-lg font-medium shadow-md">Bethany</span>
+            <span class="bg-gray-700 text-white py-3 px-4 rounded-full text-lg font-medium shadow-md">Yukon</span>
+            <span class="bg-gray-700 text-white py-3 px-4 rounded-full text-lg font-medium shadow-md">Mustang</span>
+            <span class="bg-gray-700 text-white py-3 px-4 rounded-full text-lg font-medium shadow-md">Midwest City</span>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section class="section-padding bg-gradient-to-r from-green-700 to-green-900 text-center rounded-xl mx-4 my-8 shadow-2xl">
+        <h3 class="text-4xl md:text-5xl font-extrabold text-white mb-8 leading-tight">
+            Ready for a Showroom Finish? <br class="hidden sm:inline"> Don't Wait!
+        </h3>
+        <p class="text-xl md:text-2xl text-green-100 mb-10 max-w-3xl mx-auto">
+            Our schedule fills up fast! Lock in your premium mobile detailing appointment today.
+        </p>
+        <div class="flex flex-col md:flex-row justify-center items-center gap-6">
+            <a href="tel:+14052955189" class="btn-call-now">
+                <svg class="w-8 h-8 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
+                <span>Call Us Now!</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black py-6 mt-auto text-center">
+        <p class="text-gray-400 text-sm mb-2">&copy; 2025 Michie Auto Detailing. All rights reserved.</p>
+        <p class="text-gray-400 text-sm">
+            Visit our full website: <a href="https://www.michieauto.com" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:text-blue-400 underline">MichieAuto.com</a>
+        </p>
+    </footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const faqQuestions = document.querySelectorAll('.faq-question');
+            const displayPrice = document.getElementById('displayPrice');
+            const offerDescription = document.getElementById('offerDescription');
+            const countdownContainer = document.getElementById('countdownContainer');
+            const countdownTime = document.getElementById('countdownTime');
+            const includedPrice = document.getElementById('includedPrice'); 
 
-            faqQuestions.forEach(question => {
-                question.addEventListener('click', () => {
-                    const answer = question.nextElementSibling; // The answer div is the next sibling
-                    const isExpanded = question.getAttribute('aria-expanded') === 'true';
+            const originalPrice = '$299';
+            const discountedPrice = '$199'; // <-- PRICE UPDATED
+            const offerDuration = 5 * 60;
+            let timeLeft = offerDuration;
+            let timerInterval;
 
-                    // Close all other open answers
-                    faqQuestions.forEach(otherQuestion => {
-                        if (otherQuestion !== question && otherQuestion.getAttribute('aria-expanded') === 'true') {
-                            otherQuestion.setAttribute('aria-expanded', 'false');
-                            otherQuestion.nextElementSibling.classList.remove('open');
-                        }
-                    });
+            function updateDisplay() {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                countdownTime.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 
-                    // Toggle current answer
-                    question.setAttribute('aria-expanded', !isExpanded);
-                    answer.classList.toggle('open');
-                });
-            });
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    endOffer();
+                } else {
+                    timeLeft--;
+                }
+            }
+
+            function startOffer() {
+                displayPrice.innerHTML = `<span class="old-price">${originalPrice}</span> ${discountedPrice}`;
+                offerDescription.innerHTML = `Experience premium mobile detailing with no hidden fees. One flat rate for a perfect finish, delivered right to your location.<br>
+                                            <span class="text-green-300 font-bold">This exclusive offer unlocks the ${discountedPrice} price!</span> This price includes SUVs up to 3 rows, pet hair removal, and smoke odor removal.`;
+                countdownContainer.classList.remove('hidden');
+                includedPrice.textContent = discountedPrice;
+                timerInterval = setInterval(updateDisplay, 1000);
+            }
+
+            function endOffer() {
+                displayPrice.innerHTML = originalPrice;
+                offerDescription.innerHTML = `Experience premium mobile detailing with no hidden fees. One flat rate for a perfect finish, delivered right to your location. This price includes SUVs up to 3 rows, pet hair removal, and smoke odor removal.`;
+                countdownContainer.classList.add('hidden');
+                includedPrice.textContent = originalPrice;
+
+                const messageBox = document.createElement('div');
+                messageBox.innerHTML = `
+                    <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #333; color: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.5); z-index: 1000;">
+                        <p style="font-size: 1.2em; margin-bottom: 15px;">Sorry, the special limited-time offer has expired. The price has reverted to ${originalPrice}.</p>
+                        <button onclick="this.parentNode.remove()" style="background-color: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">OK</button>
+                    </div>
+                `;
+                document.body.appendChild(messageBox);
+            }
+            startOffer();
         });
     </script>
 </body>
