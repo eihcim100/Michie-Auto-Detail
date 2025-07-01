@@ -59,8 +59,14 @@
             font-size: 1.25rem;
             padding: 1rem 2.5rem;
         }
-        .btn-primary-new:hover {
+         .btn-primary-new:hover {
             background-color: #218838;
+        }
+        .btn-secondary {
+            background-color: #007bff;
+        }
+        .btn-secondary:hover {
+            background-color: #0056b3;
         }
         .pricing-card {
             background-color: #1e1e1e;
@@ -70,6 +76,40 @@
             display: flex;
             flex-direction: column;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+        .pricing-level {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+        }
+        .pricing-price {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #28a745; /* Green price */
+            margin-bottom: 1.5rem;
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            flex-grow: 1;
+        }
+        .feature-list li {
+            position: relative;
+            padding-left: 1.75rem;
+            margin-bottom: 0.75rem;
+            color: #cbd5e0;
+        }
+        .feature-list li::before {
+            content: '✓';
+            color: #28a745;
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+        .pricing-card .btn {
+            margin-top: 2rem;
         }
         .reviews-container {
             display: flex;
@@ -108,6 +148,7 @@
     </header>
 
     <main>
+        <!-- New BNPL Hero Section -->
         <section class="hero-section-new text-center">
             <div class="max-w-4xl mx-auto">
                 <h2 class="text-4xl md:text-6xl font-extrabold leading-tight mb-4 text-white tracking-tight">
@@ -122,6 +163,7 @@
             </div>
         </section>
 
+        <!-- Existing Pricing Section -->
         <section id="pricing" class="section-padding bg-black">
             <div class="container mx-auto text-center">
                 <h3 class="text-4xl md:text-5xl font-bold text-white mb-4">Our Detailing Packages</h3>
@@ -132,19 +174,145 @@
                     <button id="show-suv" class="px-6 py-2 font-bold text-lg rounded-md text-gray-400">SUV / Truck</button>
                 </div>
 
+                <!-- Sedan Pricing Grid -->
                 <div id="sedan-packages" class="grid md:grid-cols-3 gap-8">
+                    <div class="pricing-card">
+                        <h4 class="pricing-level">Level 1 Detail</h4>
+                        <p class="pricing-price">$199</p>
+                        <ul class="feature-list">
+                            <li>External high pressure wash</li>
+                            <li>Tire cleaner</li>
+                            <li>Window cleaning inside and out</li>
+                            <li>Deep vaccuming</li>
+                            <li>Display controls and panels wipedown</li>
+                            <li>Mirror cleaning</li>
+                            <li>Seat vaccum</li>
+                            <li>Surface protectent for dash & controls</li>
+                            <li>Steering wheel and dash clean</li>
+                        </ul>
+                        <a href="tel:+14052955189" class="btn btn-secondary">Book Now</a>
                     </div>
+                    <div class="pricing-card">
+                        <h4 class="pricing-level">Level 2 Detail</h4>
+                        <p class="pricing-price">$249</p>
+                        <ul class="feature-list">
+                            <li><strong>All items in Level 1, plus:</strong></li>
+                            <li>Shampoo carpets and seats</li>
+                            <li>Premium Leather treatment</li>
+                            <li>Door jam cleaning</li>
+                            <li>Rims and tires cleaned & wiped down</li>
+                            <li>Console scrub down</li>
+                            <li>Pet hair removal</li>
+                            <li>Odor removal</li>
+                        </ul>
+                         <a href="tel:+14052955189" class="btn btn-secondary">Book Now</a>
+                    </div>
+                    <div class="pricing-card">
+                        <h4 class="pricing-level">Level 3 Detail</h4>
+                        <p class="pricing-price">$349</p>
+                        <ul class="feature-list">
+                            <li><strong>All items in Level 2, plus:</strong></li>
+                             <li>Mold removal</li>
+                            <li>FINE TOOTH COMB in-between seats</li>
+                            <li>Glove compartment cleaning</li>
+                            <li>Trunk shampoo and vaccum</li>
+                            <li>Door controls cleaning</li>
+                            <li>Hard to reach areas deep shampoo</li>
+                            <li>External bug removal</li>
+                            <li>Free micrfiber cloth</li>
+                            <li>Protection plan (15-day complimentary clean)</li>
+                        </ul>
+                         <a href="tel:+14052955189" class="btn btn-secondary">Book Now</a>
+                    </div>
+                </div>
+                
+                <!-- SUV/Truck Pricing Grid -->
                 <div id="suv-truck-packages" class="hidden grid md:grid-cols-3 gap-8">
+                    <div class="pricing-card">
+                        <h4 class="pricing-level">Level 1 Detail</h4>
+                        <p class="pricing-price">$249</p>
+                        <ul class="feature-list">
+                            <li>External high pressure wash</li>
+                            <li>Tire cleaner</li>
+                            <li>Window cleaning inside and out</li>
+                            <li>Deep vaccuming</li>
+                            <li>Display controls and panels wipedown</li>
+                            <li>Mirror cleaning</li>
+                            <li>Seat vaccum</li>
+                            <li>Surface protectent for dash & controls</li>
+                            <li>Steering wheel and dash clean</li>
+                        </ul>
+                        <a href="tel:+14052955189" class="btn btn-secondary">Book Now</a>
                     </div>
+                    <div class="pricing-card">
+                        <h4 class="pricing-level">Level 2 Detail</h4>
+                        <p class="pricing-price">$299</p>
+                        <ul class="feature-list">
+                            <li><strong>All items in Level 1, plus:</strong></li>
+                            <li>Shampoo carpets and seats</li>
+                            <li>Premium Leather treatment</li>
+                            <li>Door jam cleaning</li>
+                            <li>Rims and tires cleaned & wiped down</li>
+                            <li>Console scrub down</li>
+                            <li>Pet hair removal</li>
+                            <li>Odor removal</li>
+                        </ul>
+                         <a href="tel:+14052955189" class="btn btn-secondary">Book Now</a>
+                    </div>
+                    <div class="pricing-card">
+                        <h4 class="pricing-level">Level 3 Detail</h4>
+                        <p class="pricing-price">$399</p>
+                        <ul class="feature-list">
+                            <li><strong>All items in Level 2, plus:</strong></li>
+                            <li>Mold removal</li>
+                            <li>FINE TOOTH COMB in-between seats</li>
+                            <li>Glove compartment cleaning</li>
+                            <li>Trunk (for vans/SUVs) shampoo & vaccum</li>
+                            <li>Door controls cleaning</li>
+                            <li>Hard to reach areas deep shampoo</li>
+                            <li>External bug removal</li>
+                            <li>Free micrfiber cloth</li>
+                            <li>Protection plan (15-day complimentary clean)</li>
+                        </ul>
+                         <a href="tel:+14052955189" class="btn btn-secondary">Book Now</a>
+                    </div>
+                </div>
             </div>
         </section>
 
+        <!-- Reviews Section -->
         <section class="section-padding bg-gray-900">
             <h3 class="text-4xl md:text-5xl font-bold text-white text-center mb-10">What Our Customers Say</h3>
             <div class="reviews-container max-w-7xl mx-auto px-4">
-                 </div>
+                 <div class="review-card">
+                    <div class="stars">★★★★★</div>
+                    <p class="text-gray-300 mb-4 italic">"I recently had my car detailed, and I couldn’t be happier! They came right to my house and did an outstanding job. The team was not only professional but also super friendly, making the whole experience really pleasant. Highly recommend their service"</p>
+                    <p class="font-semibold text-white">- Long N.</p>
+                </div>
+                <div class="review-card">
+                    <div class="stars">★★★★★</div>
+                    <p class="text-gray-300 mb-4 italic">"Good job on my car"</p>
+                    <p class="font-semibold text-white">- Susan P.</p>
+                </div>
+                <div class="review-card">
+                    <div class="stars">★★★★★</div>
+                    <p class="text-gray-300 mb-4 italic">"In just two hours he was able to clean the car seat stains and an exploded soda with extra work to the windows and tires! Very professional and fast to respond! See the before and after pictures for yourself!"</p>
+                    <p class="font-semibold text-white">- Robin H.</p>
+                </div>
+                <div class="review-card">
+                    <div class="stars">★★★★★</div>
+                    <p class="text-gray-300 mb-4 italic">"Great work, quick and friendly. Was willing to travel from OKC to Norman. Give him a call."</p>
+                    <p class="font-semibold text-white">- Will M.</p>
+                </div>
+                 <div class="review-card">
+                    <div class="stars">★★★★★</div>
+                    <p class="text-gray-300 mb-4 italic">"Andrew came to my door talked me into a well needed detail for my car that hadn’t been cleaned in months. He spent three hours out in the heat and it looks amazing!"</p>
+                    <p class="font-semibold text-white">- Amanda E.</p>
+                </div>
+            </div>
         </section>
 
+        <!-- FAQ Link Section -->
         <section class="section-padding text-center">
             <h3 class="text-3xl md:text-4xl font-bold text-white mb-4">Have Questions?</h3>
             <p class="text-lg text-gray-400 max-w-2xl mx-auto mb-6">We believe in being transparent. For answers to common questions, please visit our FAQ page.</p>
@@ -161,25 +329,11 @@
     </footer>
 
     <script>
-        // Javascript to toggle pricing packages remains the same
         document.addEventListener('DOMContentLoaded', () => {
             const showSedanBtn = document.getElementById('show-sedan');
             const showSuvBtn = document.getElementById('show-suv');
             const sedanPackages = document.getElementById('sedan-packages');
             const suvTruckPackages = document.getElementById('suv-truck-packages');
-
-            // Populate packages (example content)
-            sedanPackages.innerHTML = `
-                <div class="pricing-card"> ... Level 1 Sedan ... </div>
-                <div class="pricing-card"> ... Level 2 Sedan ... </div>
-                <div class="pricing-card"> ... Level 3 Sedan ... </div>
-            `;
-             suvTruckPackages.innerHTML = `
-                <div class="pricing-card"> ... Level 1 SUV ... </div>
-                <div class="pricing-card"> ... Level 2 SUV ... </div>
-                <div class="pricing-card"> ... Level 3 SUV ... </div>
-            `;
-
 
             showSedanBtn.addEventListener('click', () => {
                 suvTruckPackages.classList.add('hidden');
