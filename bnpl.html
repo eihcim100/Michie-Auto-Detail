@@ -36,16 +36,6 @@
             -moz-appearance: none;
             appearance: none;
         }
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
-        }
-        @media (min-width: 768px) {
-            .summary-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
-        }
         .summary-item {
             background-color: #374151;
             padding: 1.5rem;
@@ -135,7 +125,7 @@
                  <h2 class="text-2xl font-bold text-white mb-6 flex items-center"><i class="fas fa-receipt text-green-400 mr-3"></i>Step 2: Review Your Payment Plan</h2>
                 
                  <!-- Payment Summary -->
-                 <div id="summary" class="summary-grid mb-8">
+                 <div id="summary" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                     <!-- This will be populated by JavaScript -->
                  </div>
 
