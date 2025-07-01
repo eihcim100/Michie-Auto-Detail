@@ -157,17 +157,28 @@
         }
         .review-card {
             flex: 0 0 90%;
+            min-height: 220px; /* Set a min-height for consistency */
             max-width: 450px;
             background-color: #2a2a2a;
             border-radius: 0.75rem;
             padding: 2rem;
             margin-right: 1.5rem;
             scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+        }
+         .review-card p.italic {
+            flex-grow: 1;
         }
         @media (min-width: 768px) {
             .review-card {
                 flex-basis: 400px;
             }
+        }
+        .stars {
+            color: #ffc107;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
         }
     </style>
 </head>
@@ -319,9 +330,69 @@
             <div class="reviews-container max-w-7xl mx-auto px-4">
                 <div class="review-card">
                     <div class="stars">★★★★★</div>
-                    <p class="text-gray-300 mb-4 italic">"I recently had my car detailed, and I couldn’t be happier! They came right to my house and did an outstanding job. The team was not only professional but also super friendly..."</p>
+                    <p class="text-gray-300 mb-4 italic">"I recently had my car detailed, and I couldn’t be happier! They came right to my house and did an outstanding job. The team was not only professional but also super friendly, making the whole experience really pleasant. Highly recommend their service"</p>
                     <p class="font-semibold text-white">- Long N.</p>
                 </div>
                 <div class="review-card">
                     <div class="stars">★★★★★</div>
-                    <p class="text
+                    <p class="text-gray-300 mb-4 italic">"Good job on my car"</p>
+                    <p class="font-semibold text-white">- Susan P.</p>
+                </div>
+                <div class="review-card">
+                    <div class="stars">★★★★★</div>
+                    <p class="text-gray-300 mb-4 italic">"In just two hours he was able to clean the car seat stains and an exploded soda with extra work to the windows and tires! Very professional and fast to respond! See the before and after pictures for yourself!"</p>
+                    <p class="font-semibold text-white">- Robin H.</p>
+                </div>
+                <div class="review-card">
+                    <div class="stars">★★★★★</div>
+                    <p class="text-gray-300 mb-4 italic">"Great work, quick and friendly. Was willing to travel from OKC to Norman. Give him a call."</p>
+                    <p class="font-semibold text-white">- Will M.</p>
+                </div>
+                 <div class="review-card">
+                    <div class="stars">★★★★★</div>
+                    <p class="text-gray-300 mb-4 italic">"Andrew came to my door talked me into a well needed detail for my car that hadn’t been cleaned in months. He spent three hours out in the heat and it looks amazing!"</p>
+                    <p class="font-semibold text-white">- Amanda E.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-padding text-center">
+            <h3 class="text-3xl md:text-4xl font-bold text-white mb-4">Have Questions?</h3>
+            <p class="text-lg text-gray-400 max-w-2xl mx-auto mb-6">We believe in being transparent. For answers to common questions about our services, payments, and preparation, please visit our FAQ page.</p>
+            <a href="https://michieauto.com/faq" target="_blank" rel="noopener noreferrer" class="btn">Visit our FAQ Page</a>
+        </section>
+
+    </main>
+
+    <footer class="bg-black py-8 mt-auto text-center">
+        <p class="text-gray-400 mb-2">&copy; 2025 Michie Auto Detailing. All Rights Reserved.</p>
+        <p class="text-gray-500">
+            Proudly serving the greater Oklahoma City area.
+        </p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const showSedanBtn = document.getElementById('show-sedan');
+            const showSuvBtn = document.getElementById('show-suv');
+            const sedanPackages = document.getElementById('sedan-packages');
+            const suvTruckPackages = document.getElementById('suv-truck-packages');
+
+            showSedanBtn.addEventListener('click', () => {
+                suvTruckPackages.style.display = 'none';
+                sedanPackages.style.display = 'grid';
+                showSuvBtn.classList.remove('active');
+                showSedanBtn.classList.add('active');
+            });
+
+            showSuvBtn.addEventListener('click', () => {
+                sedanPackages.style.display = 'none';
+                suvTruckPackages.style.display = 'grid';
+                showSedanBtn.classList.remove('active');
+                showSuvBtn.classList.add('active');
+            });
+        });
+    </script>
+
+</body>
+</html>
