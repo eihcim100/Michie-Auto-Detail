@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - Michie Auto Detailing LLC</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter for clean, modern look -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Google Tag (gtag.js) & Call Tracking Snippet -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-10782185640"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'AW-10782185640');
+
+      gtag('config', 'AW-10782185640/PPImCJ-a7eIaEKixrJUo', {
+        'phone_conversion_number': '(405) 295-5189',
+        'phone_conversion_callback': function(formatted_number, mobile_number) {
+          var newHref = 'tel:' + mobile_number;
+          var callLinks = document.querySelectorAll("a[href^='tel:']");
+          callLinks.forEach(function(link) {
+            link.href = newHref;
+          });
+          var textElements = document.querySelectorAll(".g-track-text");
+          textElements.forEach(function(elem) {
+            elem.innerText = formatted_number;
+          });
+        }
+      });
+    </script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a1a1a; /* Dark background */
+            color: #ffffff; /* White text for contrast */
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 900px;
+        }
+        h1, h2 {
+            color: #ffffff;
+            font-weight: 700;
+        }
+        a {
+            color: #6ee7b7; /* Greenish-blue for links */
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .faq-item {
+            background-color: #2a2a2a; /* Darker background for FAQ items */
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .faq-question {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #ffffff;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .faq-question svg {
+            transition: transform 0.3s ease;
+        }
+        .faq-question[aria-expanded="true"] svg {
+            transform: rotate(180deg);
+        }
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding-top: 0;
+            color: #e0e0e0;
+        }
+        .faq-answer.open {
+            max-height: 500px; /* Adjust based on max expected answer height */
+            padding-top: 1rem;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8">
+    <div class="container mx-auto bg-gray-800 p-6 sm:p-10 rounded-xl shadow-lg">
+        <h1 class="text-3xl sm:text-4xl font-bold mb-8 text-center">Frequently Asked Questions</h1>
+
+        <div class="space-y-4">
+            <!-- FAQ Item 1 -->
+            <div class="faq-item">
+                <div class="faq-question" role="button" aria-expanded="false" aria-controls="faq-answer-1">
+                    <span>What is Michie Auto Detailing?</span>
+                    <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+                <div id="faq-answer-1" class="faq-answer">
+                    <p>Michie Auto Detailing LLC is a premium mobile auto detailing service based in Oklahoma City, OK. We bring the showroom shine directly to your doorstep, whether you're at home or work. Our focus is on convenience, quality, and transparent pricing.</p>
+                </div>
+            </div>
+
+            <!-- FAQ Item 2 - UPDATED PRICING CLARIFICATION -->
+            <div class="faq-item">
+                <div class="faq-question" role="button" aria-expanded="false" aria-controls="faq-answer-2">
+                    <span>What is your pricing?</span>
+                    <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+                <div id="faq-answer-2" class="faq-answer">
+                    <p>Our standard premium mobile detail is typically $299, unless otherwise stated on our website or as part of a limited-time offer. For a limited time, you can call us now to unlock a special discount and get your full detail for just <strong>$199!</strong> This flat rate includes SUVs up to 3 rows, pet hair removal, and smoke odor removal. Please note: Vehicles with excessive dirt, grime, or mold may incur additional charges on top of the base detail, which will be discussed upfront.</p>
+                </div>
+            </div>
+
+            <!-- FAQ Item 3 -->
+            <div class="faq-item">
+                <div class="faq-question" role="button" aria-expanded="false" aria-controls="faq-answer-3">
+                    <span>What areas do you serve?</span>
+                    <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+                <div id="faq-answer-3" class="faq-answer">
+                    <p>We proudly serve the entire greater Oklahoma City metropolitan area, including Oklahoma City, Norman, Edmond, Moore, Bethany, Yukon, Mustang, and Midwest City. If you're in the OKC metro, we come to you!</p>
+                </div>
+            </div>
+
+            <!-- NEW FAQ Item - MOLD REMOVAL -->
+            <div class="faq-item">
+                <div class="faq-question" role="button" aria-expanded="false" aria-controls="faq-answer-10">
+                    <span>Do you include mold removal in your service?</span>
+                    <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+                <div id="faq-answer-10" class="faq-answer">
+                    <p>Yes, we do! We specialize in comprehensive interior cleaning, including detailing vehicles with mold. Our base detail price for mold removal is $299, which ensures a thorough and effective treatment to restore your vehicle's interior. This price includes SUVs up to 3 rows, pet hair removal, and smoke odor removal.</p>
+                </div>
+            </div>
+
+            <!-- FAQ Item 4 (Original 4) -->
+            <div class="faq-item">
+                <div class="faq-question" role="button" aria-expanded="false" aria-controls="faq-answer-4">
+                    <span>Do you offer pet hair removal?</span>
+                    <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+                <div id="faq-answer-4" class="faq-answer">
+                    <p>Yes! Pet hair removal is included in our flat rate detail price, unlike many detailers who charge extra. We specialize in comprehensive interior cleaning to address this common issue.</p>
+                </div>
+            </div>
+
+            <!-- FAQ Item 5 - UPDATED WATER/ELECTRICITY -->
+            <div class="faq-item">
+                <div class="faq-question" role="button" aria-expanded="false" aria-controls="faq-answer-5">
+                    <span>Do I need to provide water or electricity?</span>
+                    <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+                <div id="faq-answer-5" class="faq-answer">
+                    <p>Yes, we do use our client's water hose and electricity outlet. This helps us keep our prices lower than our competitors, providing you with premium service at a great value.</p>
+                </div>
+            </div>
+
+            <!-- NEW FAQ Item - KEYS/DRIVEWAY -->
+            <div class="faq-item">
+                <div class="faq-question" role="button" aria-expanded="false" aria-controls="faq-answer-9">
+                    <span>Do I need to be present or provide keys?</span>
+                    <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+                <div id="faq-answer-9" class="faq-answer">
+                    <p>As always, you can keep the keys and we do the service in your driveway. We provide all other tools needed to detail your vehicle 100% mobile, making the process completely hassle-free for you.</p>
+                </div>
+            </div>
+
+            <!-- FAQ Item 6 (Original 5) -->
+            <div class="faq-item">
+                <div class="faq-question" role="button" aria-expanded="false" aria-controls="faq-answer-6">
+                    <span>How long does a detail take?</span>
+                    <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+                <div id="faq-answer-6" class="faq-answer">
+                    <p>The duration of a detail can vary depending on the vehicle's size and condition, but our premium mobile detail typically takes between 2 to 4 hours. We work efficiently to get your car looking its best without compromising on quality.</p>
+                </div>
+            </div>
+
+            <!-- FAQ Item 7 (Original 6) - UPDATED HOURS -->
+            <div class="faq-item">
+                <div class="faq-question" role="button" aria-expanded="false" aria-controls="faq-answer-7">
+                    <span>What are your hours of operation?</span>
+                    <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+                <div id="faq-answer-7" class="faq-answer">
+                    <p>Our answering service is available 24/7 to take your calls and schedule appointments anytime. Our detailing services are performed 7 days a week, typically during daylight hours.</p>
+                </div>
+            </div>
+
+            <!-- FAQ Item 8 (Original 7) -->
+            <div class="faq-item">
+                <div class="faq-question" role="button" aria-expanded="false" aria-controls="faq-answer-8">
+                    <span>Do you offer any maintenance plans?</span>
+                    <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+                <div id="faq-answer-8" class="faq-answer">
+                    <p>Yes, we do! Ask us about our exclusive Michie Auto Detailing Protection Plan. It's designed to give you peace of mind and keep your car looking great between major details. Our team can provide more details when you call or during your appointment.</p>
+                </div>
+            </div>
+        </div>
+
+        <p class="text-center text-lg md:text-xl text-gray-300 mt-10">
+            Still have questions? Don't hesitate to call us anytime at <a href="tel:+14052955189" class="text-green-400 hover:text-green-300 underline">(405) 295-5189</a> for instant answers!
+        </p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const faqQuestions = document.querySelectorAll('.faq-question');
+
+            faqQuestions.forEach(question => {
+                question.addEventListener('click', () => {
+                    const answer = question.nextElementSibling; // The answer div is the next sibling
+                    const isExpanded = question.getAttribute('aria-expanded') === 'true';
+
+                    // Close all other open answers
+                    faqQuestions.forEach(otherQuestion => {
+                        if (otherQuestion !== question && otherQuestion.getAttribute('aria-expanded') === 'true') {
+                            otherQuestion.setAttribute('aria-expanded', 'false');
+                            otherQuestion.nextElementSibling.classList.remove('open');
+                        }
+                    });
+
+                    // Toggle current answer
+                    question.setAttribute('aria-expanded', !isExpanded);
+                    answer.classList.toggle('open');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
