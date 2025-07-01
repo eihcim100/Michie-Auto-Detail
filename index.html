@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Michie Auto Detailing - Premium Mobile Detailing in OKC</title>
+    <title>Michie Auto Detailing - 24/7 Mobile Detailing in OKC</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -169,23 +169,21 @@
                 flex-basis: 400px;
             }
         }
-        .stars {
-            color: #ffc107;
-            font-size: 1.25rem;
-            margin-bottom: 1rem;
-        }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
 
-    <header class="bg-black py-4 px-6 md:px-12 flex justify-between items-center shadow-md sticky top-0 z-50">
+    <header class="bg-black py-3 px-6 md:px-12 flex justify-between items-center shadow-md sticky top-0 z-50">
         <h1 class="text-xl md:text-2xl font-extrabold text-white tracking-wide">
             Michie Auto Detailing
         </h1>
-        <a href="tel:+14052955189" class="btn btn-secondary">
-            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
-            (405) 295-5189
-        </a>
+        <div class="text-right">
+            <span class="text-sm font-semibold text-yellow-400 block">AVAILABLE 24/7</span>
+            <a href="tel:+14052955189" class="btn btn-secondary mt-1">
+                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
+                (405) 295-5189
+            </a>
+        </div>
     </header>
 
     <main>
@@ -198,6 +196,7 @@
                     Select your vehicle type below to see our customized detailing packages. We bring the showroom shine to your doorstep.
                 </p>
                 <a href="tel:+14052955189" class="btn btn-secondary text-lg">Get a Free Quote</a>
+                <p class="text-sm text-yellow-400 mt-3 font-semibold">Call Anytime - We're Open 24/7!</p>
             </div>
         </section>
 
@@ -325,59 +324,4 @@
                 </div>
                 <div class="review-card">
                     <div class="stars">★★★★★</div>
-                    <p class="text-gray-300 mb-4 italic">"In just two hours he was able to clean the car seat stains and an exploded soda... Very professional and fast to respond! See the before and after pictures for yourself!"</p>
-                    <p class="font-semibold text-white">- Robin H.</p>
-                </div>
-                <div class="review-card">
-                    <div class="stars">★★★★★</div>
-                    <p class="text-gray-300 mb-4 italic">"Great work, quick and friendly. Was willing to travel from OKC to Norman. Give him a call."</p>
-                    <p class="font-semibold text-white">- Will M.</p>
-                </div>
-                 <div class="review-card">
-                    <div class="stars">★★★★★</div>
-                    <p class="text-gray-300 mb-4 italic">"Andrew came to my door talked me into a well needed detail for my car that hadn’t been cleaned in months. He spent three hours out in the heat and it looks amazing!"</p>
-                    <p class="font-semibold text-white">- Amanda E.</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="section-padding text-center">
-            <h3 class="text-3xl md:text-4xl font-bold text-white mb-4">Have Questions?</h3>
-            <p class="text-lg text-gray-400 max-w-2xl mx-auto mb-6">We believe in being transparent. For answers to common questions about our services, payments, and preparation, please visit our FAQ page.</p>
-            <a href="https://michieauto.com/faq" target="_blank" rel="noopener noreferrer" class="btn">Visit our FAQ Page</a>
-        </section>
-
-    </main>
-
-    <footer class="bg-black py-8 mt-auto text-center">
-        <p class="text-gray-400 mb-2">&copy; 2025 Michie Auto Detailing. All Rights Reserved.</p>
-        <p class="text-gray-500">
-            Proudly serving the greater Oklahoma City area.
-        </p>
-    </footer>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const showSedanBtn = document.getElementById('show-sedan');
-            const showSuvBtn = document.getElementById('show-suv');
-            const sedanPackages = document.getElementById('sedan-packages');
-            const suvTruckPackages = document.getElementById('suv-truck-packages');
-
-            showSedanBtn.addEventListener('click', () => {
-                suvTruckPackages.style.display = 'none';
-                sedanPackages.style.display = 'grid';
-                showSuvBtn.classList.remove('active');
-                showSedanBtn.classList.add('active');
-            });
-
-            showSuvBtn.addEventListener('click', () => {
-                sedanPackages.style.display = 'none';
-                suvTruckPackages.style.display = 'grid';
-                showSedanBtn.classList.remove('active');
-                showSuvBtn.classList.add('active');
-            });
-        });
-    </script>
-
-</body>
-</html>
+                    <p class="text
