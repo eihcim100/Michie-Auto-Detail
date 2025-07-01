@@ -3,394 +3,254 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Michie Auto Detailing - 24/7 Mobile Detailing in OKC</title>
+    <title>Financing Calculator - Michie Auto Detailing</title>
 
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-
-    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-10782185640"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'AW-10782185640');
-      gtag('config', 'AW-10782185640/PPImCJ-a7eIaEKixrJUo', {
-        'phone_conversion_number': '(405) 295-5189'
-      });
-    </script>
+    <!-- Google Fonts - Inter for clean, modern look -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #121212; /* Darker, more premium background */
+            background-color: #121212;
+            color: #e5e7eb; /* A slightly softer white */
+        }
+        .calculator-card {
+            background-color: #1f2937; /* A deep blue-gray */
+            border: 1px solid #374151;
+            border-radius: 1rem;
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.2), 0 8px 10px -6px rgb(0 0 0 / 0.2);
+        }
+        .form-select {
+            background-color: #374151;
+            border-color: #4b5563;
             color: #ffffff;
-            line-height: 1.7;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.5rem center;
+            background-size: 1.5em 1.5em;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
         }
-        .section-padding {
-            padding: 4rem 1.5rem;
+        .summary-item {
+            background-color: #374151;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            text-align: center;
         }
-        .hero-section {
-            background-image: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url('https://michieauto.com/c6106051-ecc6-4964-9246-4c79215cdb5d~1.jpg');
-            background-size: cover;
-            background-position: center;
+        .summary-item .value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #34d399; /* A vibrant green */
         }
-        .btn {
-            background-color: #007bff; /* Professional blue */
+        .payment-schedule-item {
+            border-left: 4px solid #34d399;
+            padding: 1rem 0 1rem 1.5rem;
+            position: relative;
+        }
+        .payment-schedule-item:not(:last-child) {
+            padding-bottom: 2rem;
+        }
+        .payment-schedule-item::before {
+            content: '';
+            position: absolute;
+            left: -0.7rem;
+            top: 1.25rem;
+            width: 1.25rem;
+            height: 1.25rem;
+            background-color: #34d399;
+            border-radius: 50%;
+            border: 4px solid #1f2937;
+        }
+        .btn-primary {
+            background-color: #2563eb;
             color: white;
-            padding: 0.75rem 1.5rem;
+            padding: 1rem 2rem;
             border-radius: 0.5rem;
-            font-size: 1rem;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+            font-size: 1.125rem;
+            font-weight: 700;
             transition: background-color 0.3s ease, transform 0.2s ease;
-            text-decoration: none;
             text-transform: uppercase;
             letter-spacing: 0.05em;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
         }
-        .btn:hover {
-            background-color: #0056b3;
+        .btn-primary:hover {
+            background-color: #1d4ed8;
             transform: translateY(-2px);
-        }
-        .btn-secondary {
-            background-color: #28a745; /* Green for call buttons */
-        }
-        .btn-secondary:hover {
-            background-color: #218838;
-        }
-
-        /* --- New Pricing Section Styles --- */
-        .vehicle-toggle {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 2.5rem;
-            background-color: #2a2a2a;
-            border-radius: 0.5rem;
-            padding: 0.5rem;
-        }
-        .vehicle-toggle button {
-            background-color: transparent;
-            color: #a0aec0;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            font-size: 1.1rem;
-            font-weight: 700;
-            border-radius: 0.375rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .vehicle-toggle button.active {
-            background-color: #007bff;
-            color: #ffffff;
-            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
-        }
-        .pricing-grid {
-            display: none; /* Hidden by default */
-            grid-template-columns: 1fr;
-            gap: 2rem;
-        }
-        @media (min-width: 768px) {
-            .pricing-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-        .pricing-card {
-            background-color: #1e1e1e;
-            border: 1px solid #333;
-            border-radius: 0.75rem;
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .pricing-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 32px rgba(0, 123, 255, 0.2);
-        }
-        .pricing-level {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: #ffffff;
-            margin-bottom: 0.5rem;
-        }
-        .pricing-price {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: #28a745; /* Green price */
-            margin-bottom: 1.5rem;
-        }
-        .feature-list {
-            list-style: none;
-            padding: 0;
-            text-align: left;
-            flex-grow: 1;
-        }
-        .feature-list li {
-            position: relative;
-            padding-left: 1.75rem;
-            margin-bottom: 0.75rem;
-            color: #cbd5e0;
-        }
-        .feature-list li::before {
-            content: '✓';
-            color: #28a745;
-            position: absolute;
-            left: 0;
-            font-weight: bold;
-        }
-        .pricing-card .btn {
-            margin-top: 2rem;
-        }
-
-        /* Review Section styles */
-        .reviews-container {
-            display: flex;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            padding-bottom: 1.5rem;
-            scrollbar-width: none; /* Firefox */
-        }
-        .reviews-container::-webkit-scrollbar {
-            display: none; /* Safari and Chrome */
-        }
-        .review-card {
-            flex: 0 0 90%;
-            min-height: 220px; /* Set a min-height for consistency */
-            max-width: 450px;
-            background-color: #2a2a2a;
-            border-radius: 0.75rem;
-            padding: 2rem;
-            margin-right: 1.5rem;
-            scroll-snap-align: start;
-            display: flex;
-            flex-direction: column;
-        }
-         .review-card p.italic {
-            flex-grow: 1;
-        }
-        @media (min-width: 768px) {
-            .review-card {
-                flex-basis: 400px;
-            }
-        }
-        .stars {
-            color: #ffc107;
-            font-size: 1.25rem;
-            margin-bottom: 1rem;
         }
     </style>
 </head>
-<body class="flex flex-col min-h-screen">
+<body class="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
 
-    <header class="bg-black py-3 px-6 md:px-12 flex justify-between items-center shadow-md sticky top-0 z-50">
-        <h1 class="text-xl md:text-2xl font-extrabold text-white tracking-wide">
-            Michie Auto Detailing
-        </h1>
-        <div class="text-right">
-            <span class="text-sm font-semibold text-yellow-400 block">AVAILABLE 24/7</span>
-            <a href="tel:+14052955189" class="btn btn-secondary mt-1">
-                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
-                (405) 295-5189
-            </a>
+    <div class="w-full max-w-5xl mx-auto">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-white tracking-tight">Finance Your Detail</h1>
+            <p class="mt-3 text-lg text-gray-400 max-w-3xl mx-auto">0% Interest, Buy Now Pay Later. Get that showroom shine today with a simple payment plan.</p>
+        </header>
+
+        <!-- Calculator Card -->
+        <div class="calculator-card p-6 sm:p-8 lg:p-10">
+            <!-- Step 1: Select Package -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-white mb-4 flex items-center"><i class="fas fa-car text-blue-400 mr-3"></i>Step 1: Choose Your Service</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="vehicleType" class="block text-sm font-medium text-gray-300 mb-2">Vehicle Type</label>
+                        <select id="vehicleType" class="form-select w-full p-3 rounded-lg">
+                            <option value="sedan">4 Door Sedan</option>
+                            <option value="suv">SUV / Truck</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="packageLevel" class="block text-sm font-medium text-gray-300 mb-2">Detailing Level</label>
+                        <select id="packageLevel" class="form-select w-full p-3 rounded-lg">
+                            <option value="1">Level 1 Detail</option>
+                            <option value="2">Level 2 Detail</option>
+                            <option value="3">Level 3 Detail</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Divider -->
+            <hr class="border-gray-600 my-8">
+
+            <!-- Step 2: Review Plan -->
+            <div>
+                 <h2 class="text-2xl font-bold text-white mb-6 flex items-center"><i class="fas fa-receipt text-green-400 mr-3"></i>Step 2: Review Your Payment Plan</h2>
+                
+                 <!-- Payment Summary -->
+                 <div id="summary" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    <!-- This will be populated by JavaScript -->
+                 </div>
+
+                 <!-- Payment Schedule -->
+                 <div class="mt-8">
+                    <h3 class="text-xl font-bold text-white mb-4">Your Payment Schedule</h3>
+                    <div id="schedule" class="relative">
+                        <!-- This will be populated by JavaScript -->
+                    </div>
+                 </div>
+            </div>
+            
+            <!-- Divider -->
+            <hr class="border-gray-600 my-10">
+
+            <!-- Step 3: Get Started -->
+            <div class="text-center">
+                 <h2 class="text-2xl font-bold text-white mb-4 flex items-center justify-center"><i class="fas fa-rocket text-blue-400 mr-3"></i>Step 3: Lock In Your Plan</h2>
+                 <p class="text-gray-400 mb-6">Ready to proceed? Contact us to finalize your financing and book your appointment!</p>
+                 <a href="tel:+14052955189" class="btn-primary inline-block">
+                    Call to Get Started
+                 </a>
+            </div>
+
         </div>
-    </header>
 
-    <main>
-        <section class="hero-section section-padding text-center">
-            <div class="max-w-4xl mx-auto">
-                <h2 class="text-4xl md:text-6xl font-extrabold leading-tight mb-4 text-white tracking-tight">
-                    Expert Mobile Detailing For Your Vehicle
-                </h2>
-                <p class="text-lg md:text-xl text-gray-300 mb-8">
-                    Select your vehicle type below to see our customized detailing packages. We bring the showroom shine to your doorstep.
-                </p>
-                <a href="tel:+14052955189" class="btn btn-secondary text-lg">Get a Free Quote</a>
-                <p class="text-sm text-yellow-400 mt-3 font-semibold">Call Anytime - We're Open 24/7!</p>
-            </div>
-        </section>
-
-        <section id="pricing" class="section-padding bg-black">
-            <div class="container mx-auto text-center">
-                <h3 class="text-4xl md:text-5xl font-bold text-white mb-4">Our Detailing Packages</h3>
-                <p class="text-lg text-gray-400 mb-10 max-w-2xl mx-auto">Choose your vehicle type to view tailored pricing. No hidden fees, just premium results.</p>
-
-                <div class="vehicle-toggle">
-                    <button id="show-sedan" class="active">4 Door Sedan</button>
-                    <button id="show-suv">SUV / Truck</button>
-                </div>
-
-                <div id="sedan-packages" class="pricing-grid" style="display: grid;">
-                    <div class="pricing-card">
-                        <h4 class="pricing-level">Level 1 Detail</h4>
-                        <p class="pricing-price">$199</p>
-                        <ul class="feature-list">
-                            <li>External high pressure wash</li>
-                            <li>Tire cleaner</li>
-                            <li>Window cleaning inside and out</li>
-                            <li>Deep vaccuming</li>
-                            <li>Display controls and panels wipedown</li>
-                            <li>Mirror cleaning</li>
-                            <li>Seat vaccum</li>
-                            <li>Surface protectent for the dash and display/controls</li>
-                            <li>Steering wheel and dash clean</li>
-                        </ul>
-                        <a href="tel:+14052955189" class="btn btn-secondary">Book Level 1</a>
-                    </div>
-                    <div class="pricing-card">
-                        <h4 class="pricing-level">Level 2 Detail</h4>
-                        <p class="pricing-price">$249</p>
-                        <ul class="feature-list">
-                            <li><strong>All items in Level 1, plus:</strong></li>
-                            <li>Shampoo carpets and seats</li>
-                            <li>Premium Leather treatment</li>
-                            <li>Door jam cleaning</li>
-                            <li>Rims and tires cleaned and wiped down</li>
-                            <li>console scrub down</li>
-                            <li>Pet hair removal</li>
-                            <li>Odor removal</li>
-                        </ul>
-                         <a href="tel:+14052955189" class="btn btn-secondary">Book Level 2</a>
-                    </div>
-                    <div class="pricing-card">
-                        <h4 class="pricing-level">Level 3 Detail</h4>
-                        <p class="pricing-price">$349</p>
-                        <ul class="feature-list">
-                            <li><strong>All items in Level 2, plus:</strong></li>
-                            <li>FINE TOOTH COMB in between seats cleaning</li>
-                            <li>Glove compartment cleaning</li>
-                            <li>Trunk shampoo and vaccum</li>
-                            <li>Door controls cleaning</li>
-                            <li>Hard to reach areas deep level shampoo</li>
-                            <li>Meticulous cleaning of all frequently touched surfaces</li>
-                            <li>External bug removal</li>
-                            <li>Free micrfiber cloth</li>
-                            <li>Protection plan (complimentary maintenance clean within 15 days)</li>
-                        </ul>
-                         <a href="tel:+14052955189" class="btn btn-secondary">Book Level 3</a>
-                    </div>
-                </div>
-
-                <div id="suv-truck-packages" class="pricing-grid">
-                     <div class="pricing-card">
-                        <h4 class="pricing-level">Level 1 Detail</h4>
-                        <p class="pricing-price">$249</p>
-                        <ul class="feature-list">
-                            <li>External high pressure wash</li>
-                            <li>Tire cleaner</li>
-                            <li>Window cleaning inside and out</li>
-                            <li>Deep vaccuming</li>
-                            <li>Display controls and panels wipedown</li>
-                            <li>Mirror cleaning</li>
-                            <li>Seat vaccum</li>
-                            <li>Surface protectent for the dash and display/controls</li>
-                            <li>Steering wheel and dash clean</li>
-                        </ul>
-                         <a href="tel:+14052955189" class="btn btn-secondary">Book Level 1</a>
-                    </div>
-                    <div class="pricing-card">
-                        <h4 class="pricing-level">Level 2 Detail</h4>
-                        <p class="pricing-price">$299</p>
-                        <ul class="feature-list">
-                            <li><strong>All items in Level 1, plus:</strong></li>
-                            <li>Shampoo carpets and seats</li>
-                            <li>Premium Leather treatment</li>
-                            <li>Door jam cleaning</li>
-                            <li>Rims and tires cleaned and wiped down</li>
-                            <li>console scrub down</li>
-                            <li>Pet hair removal</li>
-                            <li>Odor removal</li>
-                        </ul>
-                        <a href="tel:+14052955189" class="btn btn-secondary">Book Level 2</a>
-                    </div>
-                    <div class="pricing-card">
-                        <h4 class="pricing-level">Level 3 Detail</h4>
-                        <p class="pricing-price">$399</p>
-                        <ul class="feature-list">
-                            <li><strong>All items in Level 2, plus:</strong></li>
-                            <li>FINE TOOTH COMB in between seats cleaning</li>
-                            <li>Glove compartment cleaning</li>
-                            <li>Trunk (for vans/SUVs) shampoo and vaccum</li>
-                            <li>Door controls cleaning</li>
-                            <li>Hard to reach areas deep level shampoo</li>
-                            <li>Meticulous cleaning of all frequently touched surfaces</li>
-                            <li>External bug removal</li>
-                            <li>Free micrfiber cloth</li>
-                            <li>Protection plan (complimentary maintenance clean within 15 days)</li>
-                        </ul>
-                         <a href="tel:+14052955189" class="btn btn-secondary">Book Level 3</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="section-padding bg-gray-900">
-            <h3 class="text-4xl md:text-5xl font-bold text-white text-center mb-10">What Our Customers Say</h3>
-            <div class="reviews-container max-w-7xl mx-auto px-4">
-                <div class="review-card">
-                    <div class="stars">★★★★★</div>
-                    <p class="text-gray-300 mb-4 italic">"I recently had my car detailed, and I couldn’t be happier! They came right to my house and did an outstanding job. The team was not only professional but also super friendly, making the whole experience really pleasant. Highly recommend their service"</p>
-                    <p class="font-semibold text-white">- Long N.</p>
-                </div>
-                <div class="review-card">
-                    <div class="stars">★★★★★</div>
-                    <p class="text-gray-300 mb-4 italic">"Good job on my car"</p>
-                    <p class="font-semibold text-white">- Susan P.</p>
-                </div>
-                <div class="review-card">
-                    <div class="stars">★★★★★</div>
-                    <p class="text-gray-300 mb-4 italic">"In just two hours he was able to clean the car seat stains and an exploded soda with extra work to the windows and tires! Very professional and fast to respond! See the before and after pictures for yourself!"</p>
-                    <p class="font-semibold text-white">- Robin H.</p>
-                </div>
-                <div class="review-card">
-                    <div class="stars">★★★★★</div>
-                    <p class="text-gray-300 mb-4 italic">"Great work, quick and friendly. Was willing to travel from OKC to Norman. Give him a call."</p>
-                    <p class="font-semibold text-white">- Will M.</p>
-                </div>
-                 <div class="review-card">
-                    <div class="stars">★★★★★</div>
-                    <p class="text-gray-300 mb-4 italic">"Andrew came to my door talked me into a well needed detail for my car that hadn’t been cleaned in months. He spent three hours out in the heat and it looks amazing!"</p>
-                    <p class="font-semibold text-white">- Amanda E.</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="section-padding text-center">
-            <h3 class="text-3xl md:text-4xl font-bold text-white mb-4">Have Questions?</h3>
-            <p class="text-lg text-gray-400 max-w-2xl mx-auto mb-6">We believe in being transparent. For answers to common questions about our services, payments, and preparation, please visit our FAQ page.</p>
-            <a href="https://michieauto.com/faq" target="_blank" rel="noopener noreferrer" class="btn">Visit our FAQ Page</a>
-        </section>
-
-    </main>
-
-    <footer class="bg-black py-8 mt-auto text-center">
-        <p class="text-gray-400 mb-2">&copy; 2025 Michie Auto Detailing. All Rights Reserved.</p>
-        <p class="text-gray-500">
-            Proudly serving the greater Oklahoma City area.
-        </p>
-    </footer>
+        <footer class="text-center mt-8">
+            <a href="#" onclick="history.back(); return false;" class="text-blue-400 hover:text-blue-300 transition">&larr; Go Back to Main Page</a>
+        </footer>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const showSedanBtn = document.getElementById('show-sedan');
-            const showSuvBtn = document.getElementById('show-suv');
-            const sedanPackages = document.getElementById('sedan-packages');
-            const suvTruckPackages = document.getElementById('suv-truck-packages');
+            // --- CONFIGURATION ---
+            const DOWN_PAYMENT = 149.00;
+            const NUM_PAYMENTS = 4;
+            const PRICES = {
+                sedan: {
+                    1: 199.00,
+                    2: 249.00,
+                    3: 349.00,
+                },
+                suv: {
+                    1: 249.00,
+                    2: 299.00,
+                    3: 399.00,
+                }
+            };
 
-            showSedanBtn.addEventListener('click', () => {
-                suvTruckPackages.style.display = 'none';
-                sedanPackages.style.display = 'grid';
-                showSuvBtn.classList.remove('active');
-                showSedanBtn.classList.add('active');
-            });
+            // --- DOM ELEMENTS ---
+            const vehicleTypeSelect = document.getElementById('vehicleType');
+            const packageLevelSelect = document.getElementById('packageLevel');
+            const summaryDiv = document.getElementById('summary');
+            const scheduleDiv = document.getElementById('schedule');
 
-            showSuvBtn.addEventListener('click', () => {
-                sedanPackages.style.display = 'none';
-                suvTruckPackages.style.display = 'grid';
-                showSedanBtn.classList.remove('active');
-                showSuvBtn.classList.add('active');
-            });
+            // --- FUNCTIONS ---
+            function formatCurrency(amount) {
+                return `$${amount.toFixed(2)}`;
+            }
+
+            function calculateAndDisplay() {
+                const vehicleType = vehicleTypeSelect.value;
+                const packageLevel = packageLevelSelect.value;
+
+                const totalCost = PRICES[vehicleType][packageLevel];
+                const remainingBalance = totalCost - DOWN_PAYMENT;
+                const monthlyPayment = remainingBalance > 0 ? remainingBalance / NUM_PAYMENTS : 0;
+
+                // 1. Update the Summary Section
+                summaryDiv.innerHTML = `
+                    <div class="summary-item">
+                        <span class="block text-sm font-medium text-gray-400 uppercase">Total Cost</span>
+                        <span class="value">${formatCurrency(totalCost)}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="block text-sm font-medium text-gray-400 uppercase">Down Payment</span>
+                        <span class="value text-yellow-400">${formatCurrency(DOWN_PAYMENT)}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="block text-sm font-medium text-gray-400 uppercase">Remaining Balance</span>
+                        <span class="value">${formatCurrency(remainingBalance)}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="block text-sm font-medium text-gray-400 uppercase">4 Easy Payments Of</span>
+                        <span class="value">${formatCurrency(monthlyPayment)}</span>
+                    </div>
+                `;
+
+                // 2. Update the Payment Schedule Section
+                let scheduleHtml = '';
+                let currentDate = new Date();
+
+                if (remainingBalance > 0) {
+                    for (let i = 1; i <= NUM_PAYMENTS; i++) {
+                        currentDate.setDate(currentDate.getDate() + 30); // Add 30 days for next payment
+                        const formattedDate = currentDate.toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        });
+
+                        scheduleHtml += `
+                            <div class="payment-schedule-item">
+                                <p class="font-bold text-lg text-white">Payment ${i}: ${formatCurrency(monthlyPayment)}</p>
+                                <p class="text-sm text-gray-400">Due on: ${formattedDate}</p>
+                            </div>
+                        `;
+                    }
+                } else {
+                     scheduleHtml = `
+                        <div class="text-center py-4">
+                            <p class="text-lg text-green-400">The down payment covers the full cost. No further payments needed!</p>
+                        </div>
+                     `;
+                }
+
+                scheduleDiv.innerHTML = scheduleHtml;
+            }
+
+            // --- EVENT LISTENERS ---
+            vehicleTypeSelect.addEventListener('change', calculateAndDisplay);
+            packageLevelSelect.addEventListener('change', calculateAndDisplay);
+
+            // --- INITIAL CALCULATION ---
+            calculateAndDisplay();
         });
     </script>
 
