@@ -31,7 +31,6 @@
             background-color: #f8f9fa;
             color: #212529;
             line-height: 1.7;
-            /* Removed padding-bottom to accommodate the new static footer */
         }
         .section-padding {
             padding: 4rem 1.5rem;
@@ -254,10 +253,9 @@
 
     <main class="flex-grow">
         <section class="hero-section section-padding text-center flex items-center justify-center">
-            <!-- === VIDEO REPLACED HERE === -->
-            <video autoplay loop muted playsinline class="hero-video">
-                <source src="https://res.cloudinary.com/dvrljjtdr/video/upload/v1751498935/AQNPpHNFYCMP_D3Y5GB_Wqim_VDK4kshW8ftuv3U1cDNRAdJZ7nJyg9FXzKhh9X7xi2rZzpXdzzx6M5Dr2Dm4Njm_yd27ea.mp4" type="video/mp4">
-                Your browser does not support the video tag.
+            <!-- The video player will now cycle through a playlist -->
+            <video id="hero-video-player" autoplay muted playsinline class="hero-video">
+                <!-- The video source is now managed by the script below -->
             </video>
             <div class="hero-overlay"></div>
             <div class="max-w-4xl mx-auto hero-content">
@@ -346,7 +344,7 @@
                             <li>Hard to reach areas deep level shampoo</li>
                             <li>Meticulous cleaning of all frequently touched surfaces</li>
                             <li>External bug removal</li>
-                            <li>Free micrfiber cloth</li>
+                            <li>Free microfiber cloth</li>
                             <li>Protection plan (complimentary maintenance clean within 15 days)</li>
                         </ul>
                          <a href="tel:+14052955189" class="btn btn-secondary">
@@ -406,7 +404,7 @@
                             <li>Hard to reach areas deep level shampoo</li>
                             <li>Meticulous cleaning of all frequently touched surfaces</li>
                             <li>External bug removal</li>
-                            <li>Free micrfiber cloth</li>
+                            <li>Free microfiber cloth</li>
                             <li>Protection plan (complimentary maintenance clean within 15 days)</li>
                         </ul>
                          <a href="tel:+14052955189" class="btn btn-secondary">
@@ -444,7 +442,6 @@
         </section>
     </main>
 
-    <!-- === NEW FOOTER SECTION ADDED HERE === -->
     <footer class="bg-gray-800 text-white py-12 px-6">
         <div class="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
             <div>
@@ -470,8 +467,6 @@
         </div>
     </footer>
 
-
-    <!-- This is your original fixed "Call Now" bar at the bottom -->
     <div class="sticky-footer py-3 px-6 md:px-12 flex justify-between items-center">
         <p class="text-lg md:text-xl font-bold text-gray-800 hidden sm:block">
             Book Your Appointment Today!
@@ -486,8 +481,8 @@
     </div>
 
     <script>
-        // JavaScript for the vehicle type toggle switch
         document.addEventListener('DOMContentLoaded', function () {
+            // --- Vehicle type toggle switch logic ---
             const sedanBtn = document.getElementById('show-sedan');
             const suvBtn = document.getElementById('show-suv');
             const sedanPackages = document.getElementById('sedan-packages');
@@ -509,9 +504,34 @@
 
             sedanBtn.addEventListener('click', showSedan);
             suvBtn.addEventListener('click', showSuv);
+            showSedan(); // Initially show sedan packages
 
-            // Initially show sedan packages by default
-            showSedan();
+            // --- Hero Video Playlist Logic ---
+            const videoPlayer = document.getElementById('hero-video-player');
+            const videoSources = [
+                'https://res.cloudinary.com/dvrljjtdr/video/upload/v1751498935/AQNPpHNFYCMP_D3Y5GB_Wqim_VDK4kshW8ftuv3U1cDNRAdJZ7nJyg9FXzKhh9X7xi2rZzpXdzzx6M5Dr2Dm4Njm_yd27ea.mp4',
+                'https://res.cloudinary.com/dvrljjtdr/video/upload/v1751500247/VID20240216113828_2_bdzawq.mp4'
+            ];
+            let currentVideoIndex = 0;
+
+            // Function to play the next video
+            function playNextVideo() {
+                currentVideoIndex = (currentVideoIndex + 1) % videoSources.length;
+                videoPlayer.src = videoSources[currentVideoIndex];
+                videoPlayer.load();
+                videoPlayer.play().catch(error => console.error("Video play failed:", error));
+            }
+
+            // Set the initial video source
+            videoPlayer.src = videoSources[currentVideoIndex];
+            
+            // Add event listener for when a video ends
+            videoPlayer.addEventListener('ended', playNextVideo);
+
+            // Initial play attempt
+            videoPlayer.play().catch(error => {
+                console.error("Initial video play failed. This may be due to browser autoplay policies.", error);
+            });
         });
     </script>
 </body>
