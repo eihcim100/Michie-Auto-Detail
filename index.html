@@ -33,14 +33,37 @@
             padding: 4rem 1.5rem;
         }
         .hero-section {
-            /* Increased opacity on the gradient for better text readability */
-            background-image: linear-gradient(rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75)), url('https://michieauto.com/c6106051-ecc6-4964-9246-4c79215cdb5d~1.jpg');
-            background-size: cover;
-            background-position: center;
+            position: relative;
+            overflow: hidden; /* Ensures video doesn't spill out */
+            color: white;
         }
-        /* Add text shadow for better contrast against the hero image */
+        .hero-video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -100;
+            transform: translateX(-50%) translateY(-50%);
+        }
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.75); /* Light overlay for readability */
+            z-index: -50;
+        }
+        .hero-content {
+             position: relative;
+             z-index: 1;
+        }
+        /* Add text shadow for better contrast against the video */
         .hero-section h2, .hero-section p {
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         .btn {
             background-color: #007bff; /* Professional blue */
@@ -157,7 +180,14 @@
 
     <main class="flex-grow">
         <section class="hero-section section-padding text-center">
-            <div class="max-w-4xl mx-auto">
+            <iframe class="hero-video"
+                    src="https://www.youtube.com/embed/4TVz77zWMic?autoplay=1&mute=1&loop=1&playlist=4TVz77zWMic&controls=0&showinfo=0&modestbranding=1&playsinline=1"
+                    frameborder="0"
+                    allow="autoplay; encrypted-media"
+                    allowfullscreen>
+            </iframe>
+            <div class="hero-overlay"></div>
+            <div class="max-w-4xl mx-auto hero-content">
                 <h2 class="text-4xl md:text-6xl font-extrabold leading-tight mb-4 text-gray-900 tracking-tight">
                     Expert Mobile Detailing For Your Vehicle
                 </h2>
