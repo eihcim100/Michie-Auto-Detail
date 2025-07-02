@@ -5,14 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pay in 3 payments - Michie Auto Detailing</title>
 
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts - Inter for clean, modern look -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=AW-10782185640"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -21,7 +17,6 @@
       gtag('config', 'AW-10782185640');
     </script>
 
-    <!-- Phone snippet for Website phone calls -->
     <script>
       gtag('config', 'AW-10782185640/PPImCJ-a7eIaEKixrJUo', {
         'phone_conversion_number': '4052955189'
@@ -130,7 +125,6 @@
 </head>
 <body class="min-h-screen p-4 sm:p-6 lg:p-8">
 
-    <!-- Video Background -->
     <div class="video-overlay"></div>
     <video autoplay muted loop id="background-video">
         <source src="https://assets.mixkit.co/videos/preview/mixkit-a-sports-car-with-a-chrome-spoiler-45669-large.mp4" type="video/mp4">
@@ -138,37 +132,28 @@
     </video>
 
     <div class="relative z-10 w-full max-w-4xl mx-auto">
-        <!-- Header -->
         <header class="text-center mb-8">
             <h1 class="text-4xl md:text-5xl font-extrabold text-white tracking-tight">Level 2 Detail Financing</h1>
             <p class="mt-3 text-lg text-gray-300 max-w-3xl mx-auto">For a limited time, get our most popular package with 0% interest. Just 3 easy payments of $99.</p>
         </header>
 
-        <!-- Calculator Card -->
         <div class="card p-6 sm:p-8 lg:p-10 mb-10">
             
-            <!-- Step 1: Review Plan -->
             <div>
                  <h2 class="text-2xl font-bold text-white mb-6 flex items-center"><i class="fas fa-receipt text-green-400 mr-3"></i>Your Special Financing Plan</h2>
                 
-                 <!-- Payment Summary -->
                  <div id="summary" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                    <!-- This will be populated by JavaScript -->
-                 </div>
+                    </div>
 
-                 <!-- Payment Schedule -->
                  <div class="mt-8">
                     <h3 class="text-xl font-bold text-white mb-4">Your Payment Schedule</h3>
                     <div id="schedule" class="relative">
-                        <!-- This will be populated by JavaScript -->
-                    </div>
+                        </div>
                  </div>
             </div>
             
-            <!-- Divider -->
             <hr class="border-gray-600 my-10">
 
-            <!-- Step 2: Get Started -->
             <div class="text-center">
                  <h2 class="text-2xl font-bold text-white mb-4 flex items-center justify-center"><i class="fas fa-rocket text-blue-400 mr-3"></i>Lock In Your Plan</h2>
                  <p class="text-gray-400 mb-6">Ready to detail? Call us now to lock in your financing and schedule your Level 2 Detail!</p>
@@ -178,7 +163,6 @@
             </div>
         </div>
 
-        <!-- What's Included Section -->
         <div class="card p-6 sm:p-8 lg:p-10 mb-10">
             <h2 class="text-3xl font-bold text-white mb-6 text-center">What Your Level 2 Detail Includes</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
@@ -208,7 +192,9 @@
             </div>
         </div>
         
-        <!-- Final CTA -->
+        <div id="bonus-section" class="card p-6 sm:p-8 lg:p-10 mb-10 text-center">
+            </div>
+
         <div class="text-center">
              <h2 class="text-3xl font-bold text-white mb-4">Ready for a Showroom Finish?</h2>
              <p class="text-gray-400 mb-6">Don't wait. Call today to lock in your financing and schedule your appointment!</p>
@@ -247,6 +233,7 @@
             // --- DOM ELEMENTS ---
             const summaryDiv = document.getElementById('summary');
             const scheduleDiv = document.getElementById('schedule');
+            const bonusDiv = document.getElementById('bonus-section');
 
             // --- FUNCTIONS ---
             function formatCurrency(amount) {
@@ -254,6 +241,8 @@
             }
 
             function displayPlan() {
+                const today = new Date();
+
                 // 1. Update the Summary Section
                 summaryDiv.innerHTML = `
                     <div class="summary-item">
@@ -272,8 +261,7 @@
 
                 // 2. Update the Payment Schedule Section
                 let scheduleHtml = '';
-                const today = new Date();
-
+                
                 // Payment 1 (Today)
                 scheduleHtml += `
                     <div class="payment-schedule-item">
@@ -303,6 +291,22 @@
                 `;
 
                 scheduleDiv.innerHTML = scheduleHtml;
+
+                // 3. Update the Bonus Section
+                const bonusDate = new Date(today);
+                bonusDate.setDate(today.getDate() + 45); // 45 days from today
+                const formattedBonusDate = bonusDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+                bonusDiv.innerHTML = `
+                    <h2 class="text-2xl font-bold text-white mb-4 flex items-center justify-center">
+                        <i class="fas fa-gift text-yellow-400 mr-3"></i>Your Free Bonus Wash
+                    </h2>
+                    <p class="text-lg text-gray-300">As a thank you, you're entitled to a free bonus wash and vacuum after your installments are paid.</p>
+                    <p class="text-2xl font-bold text-green-400 mt-4">
+                        Claim on or after: ${formattedBonusDate}
+                    </p>
+                    <p class="text-sm text-gray-400 mt-2">(45 days after your initial service)</p>
+                `;
             }
 
             // --- INITIAL DISPLAY ---
