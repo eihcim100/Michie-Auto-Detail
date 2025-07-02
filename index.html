@@ -48,13 +48,13 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 100vw;
-            height: 56.25vw; /* 16:9 aspect ratio */
-            min-height: 100vh;
-            min-width: 177.77vh; /* 16:9 aspect ratio */
+            width: auto;
+            height: auto;
+            min-width: 100%;
+            min-height: 100%;
             transform: translate(-50%, -50%);
             z-index: -100;
-            pointer-events: none;
+            object-fit: cover; /* This is key for ensuring the video covers the area without distortion */
         }
         .hero-overlay {
             position: absolute;
@@ -250,13 +250,18 @@
 
     <main class="flex-grow">
         <section class="hero-section section-padding text-center">
-            <!-- The iframe source has been updated to the new video -->
-            <iframe class="hero-video"
-                    src="https://www.youtube.com/embed/TsOqZj5PIbM?autoplay=1&mute=1&loop=1&playlist=TsOqZj5PIbM&controls=0&showinfo=0&modestbranding=1&playsinline=1"
-                    frameborder="0"
-                    allow="autoplay; encrypted-media"
-                    allowfullscreen>
-            </iframe>
+            <!-- 
+              REPLACED YOUTUBE IFRAME WITH HTML5 VIDEO
+              This provides direct control over the video quality.
+              - 'autoplay', 'muted', 'loop' are essential for background video.
+              - 'playsinline' helps it work on iOS.
+              - You should upload a high-quality .mp4 file to your own hosting
+                and replace the 'src' attribute below.
+            -->
+            <video class="hero-video" autoplay muted loop playsinline>
+                <source src="https://videos.pexels.com/video-files/3840243/3840243-hd_1920_1080_25fps.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
             <div class="hero-overlay"></div>
             <div class="max-w-4xl mx-auto hero-content">
                 <h2 class="text-4xl md:text-5xl font-extrabold leading-tight mb-4 text-gray-900 tracking-tight">
