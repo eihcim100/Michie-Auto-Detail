@@ -8,49 +8,34 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Google Ads Call Tracking -->
+    <!-- Google tag (gtag.js) - CORRECTED IMPLEMENTATION -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=AW-10782185640"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
+
       gtag('config', 'AW-10782185640');
+      
       gtag('config', 'AW-10782185640/PPImCJ-a7eIaEKixrJUo', {
         'phone_conversion_number': '(405) 295-5189'
       });
     </script>
 
-    <!-- Function to handle Google Ads call conversion tracking on button clicks -->
-    <script>
-      function gtag_report_conversion(url) {
-        var callback = function () {
-          if (typeof(url) != 'undefined') {
-            window.location = url;
-          }
-        };
-        gtag('event', 'conversion', {
-            'send_to': 'AW-10782185640/PPImCJ-a7eIaEKixrJUo',
-            'event_callback': callback
-        });
-        return false;
-      }
-    </script>
-
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f8f9fa; /* Light theme background */
-            color: #212529; /* Dark text for readability */
+            background-color: #f8f9fa;
+            color: #212529;
             line-height: 1.7;
-            /* Add padding-bottom to the body to prevent the footer from overlapping content */
-            padding-bottom: 100px; /* Adjust this value based on footer height */
+            padding-bottom: 100px;
         }
         .section-padding {
             padding: 4rem 1.5rem;
         }
         .hero-section {
             position: relative;
-            overflow: hidden; /* Ensures video doesn't spill out */
+            overflow: hidden;
             color: white;
         }
         .hero-video {
@@ -59,10 +44,9 @@
             left: 50%;
             width: 100%;
             height: 100%;
-            /* Scale the iframe to zoom in and crop the black bars */
             transform: translate(-50%, -50%) scale(3.2);
             z-index: -100;
-            pointer-events: none; /* Prevents interaction with the background video */
+            pointer-events: none;
         }
         .hero-overlay {
             position: absolute;
@@ -70,19 +54,19 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(255, 255, 255, 0.75); /* Light overlay for readability */
+            background-color: rgba(255, 255, 255, 0.5); 
             z-index: -50;
         }
         .hero-content {
              position: relative;
              z-index: 1;
         }
-        /* Add text shadow for better contrast against the video */
-        .hero-section h2, .hero-section p {
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        /* UPDATED: Shadow only on H2 for better readability on the paragraph */
+        .hero-section h2 {
+            text-shadow: 0 2px 8px rgba(0,0,0,0.7);
         }
         .btn {
-            background-color: #007bff; /* Professional blue */
+            background-color: #007bff;
             color: white;
             padding: 0.75rem 1.5rem;
             border-radius: 0.5rem;
@@ -101,24 +85,22 @@
             transform: translateY(-2px);
         }
         .btn-secondary {
-            background-color: #28a745; /* Green for call buttons */
+            background-color: #28a745;
         }
         .btn-secondary:hover {
             background-color: #218838;
         }
-
-        /* --- Pricing Section Styles --- */
         .vehicle-toggle {
             display: flex;
             justify-content: center;
             margin-bottom: 2.5rem;
-            background-color: #e9ecef; /* Light toggle background */
+            background-color: #e9ecef;
             border-radius: 0.5rem;
             padding: 0.5rem;
         }
         .vehicle-toggle button {
             background-color: transparent;
-            color: #495057; /* Darker text for toggle */
+            color: #495057;
             border: none;
             padding: 0.75rem 1.5rem;
             font-size: 1.1rem;
@@ -133,7 +115,7 @@
             box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
         }
         .pricing-grid {
-            display: none; /* Hidden by default */
+            display: none;
             grid-template-columns: 1fr;
             gap: 2rem;
         }
@@ -143,8 +125,8 @@
             }
         }
         .pricing-card {
-            background-color: #ffffff; /* White card background */
-            border: 1px solid #dee2e6; /* Light border */
+            background-color: #ffffff;
+            border: 1px solid #dee2e6;
             border-radius: 0.75rem;
             padding: 2rem;
             display: flex;
@@ -159,13 +141,13 @@
         .pricing-level {
             font-size: 1.5rem;
             font-weight: 800;
-            color: #212529; /* Dark text */
+            color: #212529;
             margin-bottom: 0.5rem;
         }
         .pricing-price {
             font-size: 2.5rem;
             font-weight: 800;
-            color: #28a745; /* Green price, still looks good */
+            color: #28a745;
             margin-bottom: 1.5rem;
         }
         .feature-list {
@@ -178,7 +160,7 @@
             position: relative;
             padding-left: 1.75rem;
             margin-bottom: 0.75rem;
-            color: #495057; /* Dark grey text for features */
+            color: #495057;
         }
         .feature-list li::before {
             content: '✓';
@@ -190,13 +172,11 @@
         .pricing-card .btn {
             margin-top: 2rem;
         }
-
-        /* --- New "Sexy" Button Styles --- */
         .btn-call-to-action {
             background-image: linear-gradient(to right, #28a745 0%, #218838 51%, #28a745 100%);
             color: white;
             padding: 0.8rem 1.6rem;
-            border-radius: 50px; /* Pill shape */
+            border-radius: 50px;
             font-size: 1.1rem;
             font-weight: 700;
             display: inline-flex;
@@ -208,13 +188,11 @@
             background-size: 200% auto;
             animation: pulse-shadow 2s infinite;
         }
-
         .btn-call-to-action:hover {
-            background-position: right center; /* change the direction of the change here */
+            background-position: right center;
             transform: translateY(-3px);
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
         }
-
         @keyframes pulse-shadow {
             0% {
                 box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
@@ -240,14 +218,15 @@
             </iframe>
             <div class="hero-overlay"></div>
             <div class="max-w-4xl mx-auto hero-content">
-                <h2 class="text-4xl md:text-6xl font-extrabold leading-tight mb-4 text-gray-900 tracking-tight">
-                    Expert Mobile Detailing For Your Vehicle
+                <h2 class="text-4xl md:text-5xl font-extrabold leading-tight mb-4 text-gray-900 tracking-tight">
+                    Detailing Oklahoma City Cars Since 2023 <br>
+                    <span class="text-3xl md:text-4xl font-semibold">Over 175 Cars Detailed</span>
                 </h2>
-                <p class="text-lg md:text-xl text-gray-800 mb-8 font-semibold">
+                <p class="text-lg md:text-xl text-gray-800 mb-8 font-bold">
                     Select your vehicle type below to see our customized detailing packages. We bring the showroom shine to your doorstep.
                 </p>
-                <!-- FIXED: Added onclick for call tracking -->
-                <a href="tel:+14052955189" onclick="return gtag_report_conversion('tel:+14052955189');" class="btn btn-secondary text-lg">Get a Free Quote</a>
+                <!-- All 'tel' links will now be tracked by the main gtag config -->
+                <a href="tel:+14052955189" class="btn btn-secondary text-lg">Get a Free Quote</a>
                 <p class="text-sm text-blue-600 mt-3 font-semibold">Call Anytime - We're Open 24/7!</p>
             </div>
         </section>
@@ -277,8 +256,7 @@
                             <li>Surface protectent for the dash and display/controls</li>
                             <li>Steering wheel and dash clean</li>
                         </ul>
-                        <!-- FIXED: Added onclick for call tracking -->
-                        <a href="tel:+14052955189" onclick="return gtag_report_conversion('tel:+14052955189');" class="btn btn-secondary">Book Level 1</a>
+                        <a href="tel:+14052955189" class="btn btn-secondary">Book Level 1</a>
                     </div>
                     <div class="pricing-card">
                         <h4 class="pricing-level">Level 2 Detail</h4>
@@ -293,8 +271,7 @@
                             <li>Pet hair removal</li>
                             <li>Odor removal</li>
                         </ul>
-                         <!-- FIXED: Added onclick for call tracking -->
-                         <a href="tel:+14052955189" onclick="return gtag_report_conversion('tel:+14052955189');" class="btn btn-secondary">Book Level 2</a>
+                         <a href="tel:+14052955189" class="btn btn-secondary">Book Level 2</a>
                     </div>
                     <div class="pricing-card">
                         <h4 class="pricing-level">Level 3 Detail</h4>
@@ -311,8 +288,7 @@
                             <li>Free micrfiber cloth</li>
                             <li>Protection plan (complimentary maintenance clean within 15 days)</li>
                         </ul>
-                         <!-- FIXED: Added onclick for call tracking -->
-                         <a href="tel:+14052955189" onclick="return gtag_report_conversion('tel:+14052955189');" class="btn btn-secondary">Book Level 3</a>
+                         <a href="tel:+14052955189" class="btn btn-secondary">Book Level 3</a>
                     </div>
                 </div>
 
@@ -331,8 +307,7 @@
                             <li>Surface protectent for the dash and display/controls</li>
                             <li>Steering wheel and dash clean</li>
                         </ul>
-                         <!-- FIXED: Added onclick for call tracking -->
-                         <a href="tel:+14052955189" onclick="return gtag_report_conversion('tel:+14052955189');" class="btn btn-secondary">Book Level 1</a>
+                         <a href="tel:+14052955189" class="btn btn-secondary">Book Level 1</a>
                     </div>
                     <div class="pricing-card">
                         <h4 class="pricing-level">Level 2 Detail</h4>
@@ -347,8 +322,7 @@
                             <li>Pet hair removal</li>
                             <li>Odor removal</li>
                         </ul>
-                        <!-- FIXED: Added onclick for call tracking -->
-                        <a href="tel:+14052955189" onclick="return gtag_report_conversion('tel:+14052955189');" class="btn btn-secondary">Book Level 2</a>
+                        <a href="tel:+14052955189" class="btn btn-secondary">Book Level 2</a>
                     </div>
                     <div class="pricing-card">
                         <h4 class="pricing-level">Level 3 Detail</h4>
@@ -365,8 +339,7 @@
                             <li>Free micrfiber cloth</li>
                             <li>Protection plan (complimentary maintenance clean within 15 days)</li>
                         </ul>
-                         <!-- FIXED: Added onclick for call tracking -->
-                         <a href="tel:+14052955189" onclick="return gtag_report_conversion('tel:+14052955189');" class="btn btn-secondary">Book Level 3</a>
+                         <a href="tel:+14052955189" class="btn btn-secondary">Book Level 3</a>
                     </div>
                 </div>
             </div>
@@ -385,7 +358,7 @@
                     <img src="https://michieauto.com/Screenshot_20250702_135648_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.style.display='none'">
                     <img src="https://michieauto.com/Screenshot_20250702_135557_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.style.display='none'">
                     <img src="https://michieauto.com/Screenshot_20250702_135707_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.style.display='none'">
-                    <img src="https.michieauto.com/Screenshot_20250702_135717_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.style.display='none'">
+                    <img src="https://michieauto.com/Screenshot_20250702_135717_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.style.display='none'">
                     <img src="https://michieauto.com/Screenshot_20250702_135728_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.style.display='none'">
                     <img src="https://michieauto.com/Screenshot_20250702_135753_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.style.display='none'">
                     <img src="https://michieauto.com/Screenshot_20250702_135814_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.style.display='none'">
@@ -402,9 +375,9 @@
         <p class="text-lg md:text-xl font-bold text-gray-800 hidden sm:block">
             Book Your Appointment Today!
         </p>
-        <div class="w-full sm:w-auto flex justify-center sm:justify-end">
-            <!-- This button's tracking is handled by the gtag config since the number is displayed -->
-            <a href="tel:+14052955189" class="btn-call-to-action">
+        <div class="text-right">
+             <span class="text-sm font-semibold text-blue-600 block">AVAILABLE 24/7</span>
+            <a href="tel:+14052955189" class="btn-call-to-action mt-1">
                 <svg class="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
                 Call Now: (405) 295-5189
             </a>
@@ -429,7 +402,7 @@
                 suvBtn.classList.add('active');
                 sedanBtn.classList.remove('active');
                 suvPackages.style.display = 'grid';
-                sedanPackages.style.display = 'none';
+                suvPackages.style.display = 'none';
             }
 
             sedanBtn.addEventListener('click', showSedan);
