@@ -151,33 +151,6 @@
         .pricing-card .btn {
             margin-top: 2rem;
         }
-
-        /* Review Section styles */
-        .reviews-container {
-            display: flex;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            padding-bottom: 1.5rem;
-            scrollbar-width: none; /* Firefox */
-        }
-        .reviews-container::-webkit-scrollbar {
-            display: none; /* Safari and Chrome */
-        }
-        .review-card {
-            flex: 0 0 90%;
-            max-width: 450px;
-            background-color: #ffffff; /* White review cards */
-            border: 1px solid #dee2e6;
-            border-radius: 0.75rem;
-            padding: 2rem;
-            margin-right: 1.5rem;
-            scroll-snap-align: start;
-        }
-        @media (min-width: 768px) {
-            .review-card {
-                flex-basis: 400px;
-            }
-        }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
@@ -311,22 +284,23 @@
         </section>
 
         <section class="section-padding bg-gray-50">
-            <h3 class="text-4xl md:text-5xl font-bold text-gray-900 text-center mb-10">What Our Customers Say</h3>
-            <div class="reviews-container max-w-7xl mx-auto px-4">
-                <div class="review-card">
-                    <div class="stars text-yellow-500">★★★★★</div>
-                    <p class="text-gray-600 mb-4 italic">"I recently had my car detailed, and I couldn’t be happier! They came right to my house and did an outstanding job. The team was not only professional but also super friendly..."</p>
-                    <p class="font-semibold text-gray-800">- Long N.</p>
-                </div>
-                <div class="review-card">
-                    <div class="stars text-yellow-500">★★★★★</div>
-                    <p class="text-gray-600 mb-4 italic">"The attention to detail was incredible. My car looks newer than when I bought it. Highly recommend their Level 3 service for a complete refresh."</p>
-                    <p class="font-semibold text-gray-800">- Jane D.</p>
-                </div>
-                 <div class="review-card">
-                    <div class="stars text-yellow-500">★★★★★</div>
-                    <p class="text-gray-600 mb-4 italic">"24/7 service is a lifesaver! I needed a last-minute detail for a weekend trip and they came through late at night. The quality was top-notch."</p>
-                    <p class="font-semibold text-gray-800">- Mike S.</p>
+            <div class="container mx-auto">
+                <h3 class="text-4xl md:text-5xl font-bold text-gray-900 text-center mb-10">What Our Customers Say</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <img src="https://michieauto.com/Screenshot_20250702_134639_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md">
+                    <img src="https://michieauto.com/Screenshot_20250702_134648_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md">
+                    <img src="https://michieauto.com/Screenshot_20250702_134655_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md">
+                    <img src="https://michieauto.com/Screenshot_20250702_134713_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md">
+                    <img src="https://michieauto.com/Screenshot_20250702_134725_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md">
+                    <img src="https://michieauto.com/Screenshot_20250702_134735_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md">
+                    <img src="https://michieauto.com/Screenshot_20250702_135648_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md">
+                    <img src="https://michieauto.com/Screenshot_20250702_135557_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md">
+                    <img src="https://michieauto.com/Screenshot_20250702_135707_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md">
+                    <img src="https://michieauto.com/Screenshot_20250702_135717_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md">
+                    <img src="https://michieauto.com/Screenshot_20250702_135728_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md">
+                    <img src="https://michieauto.com/Screenshot_20250702_135753_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md">
+                    <img src="https://michieauto.com/Screenshot_20250702_135814_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md">
+                    <img src="https://michieauto.com/Screenshot_20250702_135842_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md">
                 </div>
             </div>
         </section>
