@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>60-Day Protection Plan - Michie Auto Detailing</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+            color: #212529;
+            line-height: 1.7;
+        }
+        .section-padding {
+            padding: 4rem 1.5rem;
+        }
+        .hero-section {
+            background-color: #007bff;
+            color: white;
+            padding: 6rem 1.5rem;
+        }
+        .hero-section h1 {
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background-color: #28a745;
+        }
+        .btn-secondary:hover {
+            background-color: #218838;
+        }
+        .feature-card {
+            background-color: #ffffff;
+            border: 1px solid #dee2e6;
+            border-radius: 0.75rem;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 32px rgba(0, 123, 255, 0.1);
+        }
+        .feature-icon {
+            background-color: #ffffff;
+            border: 1px solid #e8e8e8;
+            color: #007bff;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            flex-shrink: 0;
+        }
+        .feature-icon img, .feature-icon svg {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+        }
+        /* Specific rule to make the truck icon smaller */
+        #truck-icon {
+            width: 45px;
+            height: 45px;
+        }
+        /* Specific rules to make the $0 and shiny car icons larger */
+        #zero-dollar-icon, #shiny-car-icon {
+            width: 65px;  /* Approx 30% larger */
+            height: 65px; /* Approx 30% larger */
+        }
+        .btn-call-to-action {
+            background-image: linear-gradient(to right, #28a745 0%, #218838 51%, #28a745 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-size: 1.25rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease-in-out;
+            background-size: 200% auto;
+        }
+        .btn-call-to-action:hover {
+            background-position: right center;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        .fine-print {
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <main class="flex-grow">
+        <section class="hero-section text-center">
+            <div class="max-w-4xl mx-auto">
+                <h1 class="text-4xl md:text-6xl font-extrabold leading-tight mb-4 tracking-tight">
+                    Keep Your Shine, Guaranteed.
+                </h1>
+                <p class="text-lg md:text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
+                    Introducing the Michie Auto Detail 60-Day Protection Plan. You're covered in the event something unexpected happens! Enjoy total peace of mind knowing your vehicle is protected from dirt, dust, and grime after your service.
+                </p>
+                <a href="https://pay.michieauto.com/protection" target="_blank" class="btn btn-secondary text-lg">
+                    Add 60-Day Protection Now*
+                </a>
+            </div>
+        </section>
+
+        <section id="benefits" class="section-padding bg-gray-50">
+            <div class="container mx-auto">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Complete Coverage for 60 Days</h2>
+                    <p class="text-lg text-gray-600 max-w-3xl mx-auto">When dust and grime stick around due to unexpected events like rain, dust storms, or just normal use, we'll restore your vehicle's showroom shine, hassle-free.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <!-- Feature 1: $0 Out of Pocket -->
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <img id="zero-dollar-icon" src="https://michieauto.com/no-dollar-sign-icon-set-dollar-currency-cost-fee-forbidden-vector-symbol-black-filled-outlined-style-no-dollar-money-cashless-policy-sign_268104-11649.jpg" alt="$0 Cost Icon" onerror="this.onerror=null;this.src='https://placehold.co/65x65/ffffff/000000?text=Icon'">
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">$0 Out-of-Pocket Detail</h3>
+                        <p class="text-gray-600">Redeem one full standard express detail anytime within 60 days for $0. This includes a complete internal and external wash, vacuum, and cleaning to handle any buildup.</p>
+                    </div>
+
+                    <!-- Feature 2: Discounted Services -->
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                             <img id="shiny-car-icon" src="https://michieauto.com/car-wash-icon-modern-vehicle-soap-bubbles-cleanliness-concept-minimalist-featuring-illustrates-care-automotive-services-388729582.jpg" alt="Car Wash Sparkle Icon" onerror="this.onerror=null;this.src='https://placehold.co/65x65/ffffff/000000?text=Icon'">
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Save On Future Cleans</h3>
+                        <p class="text-gray-600">After your first free service, you're covered for up to 5 additional details during your coverage period at the deeply discounted rate of only $99 per service.</p>
+                    </div>
+
+                    <!-- Feature 3: No Fees -->
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <img id="truck-icon" src="https://michieauto.com/75588.png" alt="Transportation Truck Icon" onerror="this.onerror=null;this.src='https://placehold.co/45x45/ffffff/000000?text=Icon'">
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Zero Transportation Fees</h3>
+                        <p class="text-gray-600">We always come to you. No transportation or mobile service fees are charged to service your vehicle for any of your covered claims during the 60-day period.</p>
+                    </div>
+                    
+                    <!-- Feature 4: Easy Claims -->
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Easy, Hassle-Free Claims</h3>
+                        <p class="text-gray-600">Using your benefits is simple. Our fast and easy claims process ensures you can get your vehicle serviced without any headaches or complicated paperwork.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="cta" class="section-padding bg-white">
+            <div class="container mx-auto max-w-4xl text-center">
+                <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">Ready to Protect Your Investment?</h2>
+                <p class="text-lg text-gray-700 mb-10">
+                    It's the perfect way to maintain that "just detailed" look for the next 60 days. Lock in your peace of mind and keep your vehicle looking its absolute best.
+                </p>
+                <a href="https://pay.michieauto.com/protection" target="_blank" class="btn-call-to-action">
+                    <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    Purchase Your Protection Plan*
+                </a>
+            </div>
+        </section>
+
+        <section class="pb-12 pt-4 bg-white">
+            <div class="container mx-auto max-w-5xl text-center fine-print">
+                <p>*The Michie Auto Detail Protection Plan can only be purchased for a vehicle that has received a detail service from us within the last 24 hours. This enrollment period ensures your vehicle is starting with a professional-grade clean. Coverage applies to the same vehicle (matching make, model, and tag number) at the same address where the original detail took place.</p>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-800 text-white py-3 px-6 md:px-12 flex justify-between items-center shadow-lg w-full z-50">
+        <p class="text-lg md:text-xl font-bold hidden sm:block">
+            Questions? We're Here to Help!
+        </p>
+        <div class="text-right">
+             <span class="text-sm font-semibold text-blue-300 block">AVAILABLE 24/7</span>
+            <a href="tel:+14052955189" class="btn-call-to-action mt-1" style="font-size: 1rem; padding: 0.8rem 1.6rem;">
+                <svg class="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
+                Call Now: <span class="call-tracking-number">(405) 295-5189</span>
+            </a>
+        </div>
+    </footer>
+
+</body>
+</html>
