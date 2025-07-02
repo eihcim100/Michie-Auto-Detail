@@ -99,6 +99,7 @@
             background-color: #e9ecef;
             border-radius: 0.5rem;
             padding: 0.5rem;
+            flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
         }
         .vehicle-toggle button {
             background-color: transparent;
@@ -110,8 +111,29 @@
             border-radius: 0.375rem;
             cursor: pointer;
             transition: all 0.3s ease;
+            margin: 0.25rem; /* Add some margin for spacing */
         }
         .vehicle-toggle button.active {
+            background-color: #007bff;
+            color: #ffffff;
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
+        }
+        /* Style for the new BNPL button link */
+        .vehicle-toggle a.bnpl-link-button {
+            text-decoration: none;
+        }
+        .vehicle-toggle a.bnpl-link-button button {
+            background-color: transparent;
+            color: #495057;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .vehicle-toggle a.bnpl-link-button button:hover {
             background-color: #007bff;
             color: #ffffff;
             box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
@@ -255,6 +277,10 @@
                 <div class="vehicle-toggle">
                     <button id="show-sedan" class="active">4 Door Sedan</button>
                     <button id="show-suv">SUV / Truck</button>
+                    <!-- NEW "Buy Now, Pay Later" button -->
+                    <a href="https://michieauto.com/bnpl" target="_blank" class="bnpl-link-button">
+                        <button>Buy Now, Pay Later</button>
+                    </a>
                 </div>
 
                 <!-- Sedan Pricing -->
