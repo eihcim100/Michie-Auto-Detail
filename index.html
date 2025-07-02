@@ -28,432 +28,248 @@
             font-family: 'Inter', sans-serif;
             background-color: #f8f9fa;
             color: #212529;
-            line-height: 1.7;
-            padding-bottom: 120px;
+            line-height: 1.6;
         }
-        .section-padding {
-            padding: 4rem 1.5rem;
-        }
-        .hero-section {
-            position: relative;
-            overflow: hidden;
+        .active {
+            background-color: #1d4ed8;
             color: white;
-            height: 80vh; /* Give the hero section a defined height */
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
-        /* Styling for the background video to ensure it covers the area */
-        .hero-video {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: auto;
-            height: auto;
-            min-width: 100%;
-            min-height: 100%;
-            transform: translate(-50%, -50%);
-            z-index: -100;
-            object-fit: cover; /* This is key for ensuring the video covers the area without distortion */
-        }
-        .hero-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.5); 
-            z-index: -50;
-        }
-        .hero-content {
-             position: relative;
-             z-index: 1;
-        }
-        .hero-section h2 {
-            text-shadow: 0 2px 8px rgba(0,0,0,0.7);
-        }
-        .btn {
-            background-color: #007bff;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            font-size: 1rem;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            text-decoration: none;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        .btn:hover {
-            background-color: #0056b3;
-            transform: translateY(-2px);
-        }
-        .btn-secondary {
-            background-color: #28a745;
-        }
-        .btn-secondary:hover {
-            background-color: #218838;
-        }
-        .vehicle-toggle {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 2.5rem;
-            background-color: #e9ecef;
-            border-radius: 0.5rem;
-            padding: 0.5rem;
-            flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
-        }
-        .vehicle-toggle button {
-            background-color: transparent;
-            color: #495057;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            font-size: 1.1rem;
-            font-weight: 700;
-            border-radius: 0.375rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin: 0.25rem; /* Add some margin for spacing */
-        }
-        .vehicle-toggle button.active {
-            background-color: #007bff;
-            color: #ffffff;
-            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
-        }
-        /* Style for the new BNPL button link */
-        .vehicle-toggle a.bnpl-link-button {
-            text-decoration: none;
-        }
-        .vehicle-toggle a.bnpl-link-button button {
-            background-color: transparent;
-            color: #495057;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            font-size: 1.1rem;
-            font-weight: 700;
-            border-radius: 0.375rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .vehicle-toggle a.bnpl-link-button button:hover {
-            background-color: #007bff;
-            color: #ffffff;
-            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
-        }
-        .pricing-grid {
-            display: none;
-            grid-template-columns: 1fr;
+        .package-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
         }
-        @media (min-width: 768px) {
-            .pricing-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-        .pricing-card {
-            background-color: #ffffff;
-            border: 1px solid #dee2e6;
-            border-radius: 0.75rem;
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .pricing-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 32px rgba(0, 123, 255, 0.15);
-        }
-        .pricing-level {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: #212529;
-            margin-bottom: 0.5rem;
-        }
-        .pricing-price {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: #28a745;
-            margin-bottom: 1.5rem;
-        }
-        .feature-list {
-            list-style: none;
-            padding: 0;
-            text-align: left;
-            flex-grow: 1;
-        }
-        .feature-list li {
-            position: relative;
-            padding-left: 1.75rem;
-            margin-bottom: 0.75rem;
-            color: #495057;
-        }
-        .feature-list li::before {
-            content: '✓';
-            color: #28a745;
-            position: absolute;
-            left: 0;
-            font-weight: bold;
-        }
-        .pricing-card .btn {
-            margin-top: 2rem;
-        }
-        .btn-call-to-action {
-            background-image: linear-gradient(to right, #28a745 0%, #218838 51%, #28a745 100%);
-            color: white;
-            padding: 0.8rem 1.6rem;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease-in-out;
-            background-size: 200% auto;
-            animation: pulse-shadow 2s infinite;
-        }
-        .btn-call-to-action:hover {
-            background-position: right center;
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-        }
-        @keyframes pulse-shadow {
-            0% {
-                box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
-            }
-            50% {
-                box-shadow: 0 4px 25px rgba(40, 167, 69, 0.7);
-            }
-            100% {
-                box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
-            }
-        }
-        /* FIXED: Visually hide the phone number text but keep it for scripts */
-        .visually-hidden {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            margin: -1px;
-            padding: 0;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            border: 0;
+        .call-tracking-number {
+            /* This class is used by Google Ads for call tracking */
         }
     </style>
 </head>
-<body class="flex flex-col min-h-screen">
+<body class="bg-gray-100">
 
-    <main class="flex-grow">
-        <section class="hero-section section-padding text-center">
-            <!-- 
-              REPLACED YOUTUBE IFRAME WITH HTML5 VIDEO
-              This provides direct control over the video quality.
-              - 'autoplay', 'muted', 'loop' are essential for background video.
-              - 'playsinline' helps it work on iOS.
-              - You should upload a high-quality .mp4 file to your own hosting
-                and replace the 'src' attribute below.
-            -->
-            <video class="hero-video" autoplay muted loop playsinline>
-                <source src="https://videos.pexels.com/video-files/3840243/3840243-hd_1920_1080_25fps.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
-            <div class="hero-overlay"></div>
-            <div class="max-w-4xl mx-auto hero-content">
-                <h2 class="text-4xl md:text-5xl font-extrabold leading-tight mb-4 text-gray-900 tracking-tight">
-                    Detailing Oklahoma City Cars Since 2023 <br>
-                    <span class="text-3xl md:text-4xl font-semibold">Over 175 Cars Detailed</span>
-                </h2>
-                <p class="text-lg md:text-xl text-gray-800 mb-8 font-bold">
-                    Select your vehicle type below to see our customized detailing packages. We bring the showroom shine to your doorstep.
-                </p>
-                <div class="flex flex-col items-center space-y-4">
-                    <a href="tel:+14052955189" class="btn btn-secondary text-lg">
-                        <span>Get a Free Quote</span>
-                        <span class="visually-hidden call-tracking-number">(405) 295-5189</span>
-                    </a>
-                    <a href="tel:+14052955189" class="btn text-lg">
-                        <span>Apply for Financing</span>
-                        <span class="visually-hidden call-tracking-number">(405) 295-5189</span>
-                    </a>
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-gray-800">Michie Auto Detailing</a>
+            <nav class="hidden md:flex space-x-8">
+                <a href="#services" class="text-gray-600 hover:text-blue-600">Services</a>
+                <a href="#pricing" class="text-gray-600 hover:text-blue-600">Pricing</a>
+                <a href="#gallery" class="text-gray-600 hover:text-blue-600">Gallery</a>
+                <a href="#contact" class="text-gray-600 hover:text-blue-600">Contact</a>
+            </nav>
+            <a href="tel:+14052955189" class="hidden md:inline-block bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-300">
+                Call Now
+            </a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative h-screen flex items-center justify-center text-center overflow-hidden">
+        <!-- Video Background -->
+        <video autoplay loop muted playsinline class="absolute top-0 left-0 w-full h-full object-cover">
+            <source src="https://res.cloudinary.com/dvrljjtdr/video/upload/v1751498935/AQNPpHNFYCMP_D3Y5GB_Wqim_VDK4kshW8ftuv3U1cDNRAdJZ7nJyg9FXzKhh9X7xi2rZzpXdzzx6M5Dr2Dm4Njm_yd27ea.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        
+        <!-- Overlay -->
+        <div class="absolute top-0 left-0 w-full h-full bg-black opacity-50"></div>
+        
+        <!-- Content -->
+        <div class="relative z-10 p-4">
+            <h1 class="text-4xl md:text-6xl font-extrabold text-white leading-tight mb-4">
+                Oklahoma's Premier Mobile Detailing Service
+            </h1>
+            <p class="text-lg md:text-xl text-gray-200 mb-8">
+                We bring the shine to you, 24/7. Quality detailing at your home or office.
+            </p>
+            <a href="tel:+14052955189" class="bg-blue-600 text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-blue-700 transition duration-300">
+                Book Your Detail Now
+            </a>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-20 bg-white">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-3xl font-bold mb-2">Our Services</h2>
+            <p class="text-gray-600 mb-12">Comprehensive detailing packages to fit your needs.</p>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-gray-50 p-8 rounded-lg shadow-lg">
+                    <h3 class="text-xl font-bold mb-4">Interior Detail</h3>
+                    <p>Thorough vacuuming, steam cleaning, leather conditioning, and protection for all interior surfaces.</p>
                 </div>
-                <p class="text-sm text-blue-600 mt-3 font-semibold">Call Anytime - We're Open 24/7!</p>
-            </div>
-        </section>
-
-        <section id="pricing" class="section-padding bg-gray-100">
-            <div class="container mx-auto text-center">
-                <h3 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Our Detailing Packages</h3>
-                <p class="text-lg text-gray-600 mb-10 max-w-2xl mx-auto">Choose your vehicle type to view tailored pricing. No hidden fees, just premium results.</p>
-
-                <div class="vehicle-toggle">
-                    <button id="show-sedan" class="active">4 Door Sedan</button>
-                    <button id="show-suv">SUV / Truck</button>
-                    <a href="https://michieauto.com/bnpl" target="_blank" class="bnpl-link-button">
-                        <button>Buy Now, Pay Later</button>
-                    </a>
+                <div class="bg-gray-50 p-8 rounded-lg shadow-lg">
+                    <h3 class="text-xl font-bold mb-4">Exterior Detail</h3>
+                    <p>Hand wash, clay bar treatment, paint sealant, and tire dressing for a brilliant, lasting shine.</p>
                 </div>
-
-                <div id="sedan-packages" class="pricing-grid" style="display: grid;">
-                    <div class="pricing-card">
-                        <h4 class="pricing-level">Level 1 Detail</h4>
-                        <p class="pricing-price">$149</p>
-                        <ul class="feature-list">
-                            <li>External high pressure wash</li>
-                            <li>Tire cleaner</li>
-                            <li>Window cleaning inside and out</li>
-                            <li>Deep vaccuming</li>
-                            <li>Display controls and panels wipedown</li>
-                            <li>Mirror cleaning</li>
-                            <li>Seat vaccum</li>
-                            <li>Surface protectent for the dash and display/controls</li>
-                            <li>Steering wheel and dash clean</li>
-                        </ul>
-                        <a href="tel:+14052955189" class="btn btn-secondary">
-                            <span>Book Level 1</span>
-                            <span class="visually-hidden call-tracking-number">(405) 295-5189</span>
-                        </a>
-                    </div>
-                    <div class="pricing-card">
-                        <h4 class="pricing-level">Level 2 Detail</h4>
-                        <p class="pricing-price">$249</p>
-                        <ul class="feature-list">
-                            <li><strong>All items in Level 1, plus:</strong></li>
-                            <li>Shampoo carpets and seats</li>
-                            <li>Premium Leather treatment</li>
-                            <li>Door jam cleaning</li>
-                            <li>Rims and tires cleaned and wiped down</li>
-                            <li>console scrub down</li>
-                            <li>Pet hair removal</li>
-                            <li>Odor removal</li>
-                        </ul>
-                         <a href="tel:+14052955189" class="btn btn-secondary">
-                            <span>Book Level 2</span>
-                            <span class="visually-hidden call-tracking-number">(405) 295-5189</span>
-                        </a>
-                    </div>
-                    <div class="pricing-card">
-                        <h4 class="pricing-level">Level 3 Detail</h4>
-                        <p class="pricing-price">$349</p>
-                        <ul class="feature-list">
-                            <li><strong>All items in Level 2, plus:</strong></li>
-                            <li>FINE TOOTH COMB in between seats cleaning</li>
-                            <li>Glove compartment cleaning</li>
-                            <li>Trunk shampoo and vaccum</li>
-                            <li>Door controls cleaning</li>
-                            <li>Hard to reach areas deep level shampoo</li>
-                            <li>Meticulous cleaning of all frequently touched surfaces</li>
-                            <li>External bug removal</li>
-                            <li>Free micrfiber cloth</li>
-                            <li>Protection plan (complimentary maintenance clean within 15 days)</li>
-                        </ul>
-                         <a href="tel:+14052955189" class="btn btn-secondary">
-                            <span>Book Level 3</span>
-                            <span class="visually-hidden call-tracking-number">(405) 295-5189</span>
-                        </a>
-                    </div>
-                </div>
-
-                <div id="suv-truck-packages" class="pricing-grid">
-                     <div class="pricing-card">
-                        <h4 class="pricing-level">Level 1 Detail</h4>
-                        <p class="pricing-price">$199</p>
-                        <ul class="feature-list">
-                            <li>External high pressure wash</li>
-                            <li>Tire cleaner</li>
-                            <li>Window cleaning inside and out</li>
-                            <li>Deep vaccuming</li>
-                            <li>Display controls and panels wipedown</li>
-                            <li>Mirror cleaning</li>
-                            <li>Seat vaccum</li>
-                            <li>Surface protectent for the dash and display/controls</li>
-                            <li>Steering wheel and dash clean</li>
-                        </ul>
-                         <a href="tel:+14052955189" class="btn btn-secondary">
-                            <span>Book Level 1</span>
-                            <span class="visually-hidden call-tracking-number">(405) 295-5189</span>
-                        </a>
-                    </div>
-                    <div class="pricing-card">
-                        <h4 class="pricing-level">Level 2 Detail</h4>
-                        <p class="pricing-price">$299</p>
-                        <ul class="feature-list">
-                            <li><strong>All items in Level 1, plus:</strong></li>
-                            <li>Shampoo carpets and seats</li>
-                            <li>Premium Leather treatment</li>
-                            <li>Door jam cleaning</li>
-                            <li>Rims and tires cleaned and wiped down</li>
-                            <li>console scrub down</li>
-                            <li>Pet hair removal</li>
-                            <li>Odor removal</li>
-                        </ul>
-                        <a href="tel:+14052955189" class="btn btn-secondary">
-                            <span>Book Level 2</span>
-                            <span class="visually-hidden call-tracking-number">(405) 295-5189</span>
-                        </a>
-                    </div>
-                    <div class="pricing-card">
-                        <h4 class="pricing-level">Level 3 Detail</h4>
-                        <p class="pricing-price">$399</p>
-                        <ul class="feature-list">
-                            <li><strong>All items in Level 2, plus:</strong></li>
-                            <li>FINE TOOTH COMB in between seats cleaning</li>
-                            <li>Glove compartment cleaning</li>
-                            <li>Trunk (for vans/SUVs) shampoo and vaccum</li>
-                            <li>Door controls cleaning</li>
-                            <li>Hard to reach areas deep level shampoo</li>
-                            <li>Meticulous cleaning of all frequently touched surfaces</li>
-                            <li>External bug removal</li>
-                            <li>Free micrfiber cloth</li>
-                            <li>Protection plan (complimentary maintenance clean within 15 days)</li>
-                        </ul>
-                         <a href="tel:+14052955189" class="btn btn-secondary">
-                            <span>Book Level 3</span>
-                            <span class="visually-hidden call-tracking-number">(405) 295-5189</span>
-                        </a>
-                    </div>
+                <div class="bg-gray-50 p-8 rounded-lg shadow-lg">
+                    <h3 class="text-xl font-bold mb-4">Full Detail</h3>
+                    <p>The complete package. Get both interior and exterior services for a vehicle that looks and feels brand new.</p>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <section class="section-padding bg-gray-50">
-            <div class="container mx-auto text-center">
-                <h3 class="text-4xl md:text-5xl font-bold text-gray-900 text-center mb-10">What Our Customers Say</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <img src="https://michieauto.com/Screenshot_20250702_134639_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
-                    <img src="https://michieauto.com/Screenshot_20250702_134648_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
-                    <img src="https://michieauto.com/Screenshot_20250702_134655_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
-                    <img src="https://michieauto.com/Screenshot_20250702_134713_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
-                    <img src="https://michieauto.com/Screenshot_20250702_134725_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
-                    <img src="https://michieauto.com/Screenshot_20250702_134735_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
-                    <img src="https://michieauto.com/Screenshot_20250702_135648_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
-                    <img src="https://michieauto.com/Screenshot_20250702_135557_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
-                    <img src="https://michieauto.com/Screenshot_20250702_135707_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
-                    <img src="https://michieauto.com/Screenshot_20250702_135717_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
-                    <img src="https://michieauto.com/Screenshot_20250702_135728_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
-                    <img src="https://michieauto.com/Screenshot_20250702_135753_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
-                    <img src="https://michieauto.com/Screenshot_20250702_135814_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
-                    <img src="https://michieauto.com/Screenshot_20250702_135842_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
-                </div>
-                <p class="mt-8 text-lg">
-                    Read more of our google reviews <a href="https://maps.app.goo.gl/6vQ1RpysjA3g7gXs6" target="_blank" class="text-blue-600 font-bold hover:underline">here</a>.
-                </p>
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-20">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold text-center mb-12">Pricing Packages</h2>
+            
+            <!-- Vehicle Type Toggle -->
+            <div class="flex justify-center mb-8 bg-gray-200 rounded-lg p-1 max-w-xs mx-auto">
+                <button id="show-sedan" class="w-1/2 py-2 px-4 rounded-md text-sm font-medium focus:outline-none active">Cars / Sedans</button>
+                <button id="show-suv" class="w-1/2 py-2 px-4 rounded-md text-sm font-medium focus:outline-none">SUVs / Trucks</button>
             </div>
-        </section>
-    </main>
 
-    <footer class="bg-white py-3 px-6 md:px-12 flex justify-between items-center shadow-lg fixed bottom-0 w-full z-50 border-t border-gray-200">
-        <p class="text-lg md:text-xl font-bold text-gray-800 hidden sm:block">
-            Book Your Appointment Today!
-        </p>
-        <div class="text-right">
-             <span class="text-sm font-semibold text-blue-600 block">AVAILABLE 24/7</span>
-            <a href="tel:+14052955189" class="btn-call-to-action mt-1">
-                <svg class="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
+            <!-- Sedan Packages -->
+            <div id="sedan-packages" class="package-grid">
+                <!-- Package 1 -->
+                <div class="bg-white p-8 rounded-lg shadow-lg text-center">
+                    <h3 class="text-2xl font-bold mb-4">Basic Detail</h3>
+                    <p class="text-4xl font-extrabold mb-6">$150</p>
+                    <ul class="text-left mb-6 space-y-2">
+                        <li>✓ Exterior Hand Wash</li>
+                        <li>✓ Interior Vacuum</li>
+                        <li>✓ Window Cleaning</li>
+                        <li>✓ Tire Shine</li>
+                    </ul>
+                    <a href="tel:+14052955189" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg w-full block hover:bg-blue-700 transition duration-300">Choose Plan</a>
+                </div>
+                <!-- Package 2 -->
+                <div class="bg-white p-8 rounded-lg shadow-lg text-center border-4 border-blue-600 relative">
+                    <span class="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase absolute -top-4">Most Popular</span>
+                    <h3 class="text-2xl font-bold mb-4">Premium Detail</h3>
+                    <p class="text-4xl font-extrabold mb-6">$250</p>
+                    <ul class="text-left mb-6 space-y-2">
+                        <li>✓ Everything in Basic</li>
+                        <li>✓ Clay Bar & Wax</li>
+                        <li>✓ Deep Interior Clean</li>
+                        <li>✓ Leather Treatment</li>
+                    </ul>
+                    <a href="tel:+14052955189" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg w-full block hover:bg-blue-700 transition duration-300">Choose Plan</a>
+                </div>
+                <!-- Package 3 -->
+                <div class="bg-white p-8 rounded-lg shadow-lg text-center">
+                    <h3 class="text-2xl font-bold mb-4">Elite Detail</h3>
+                    <p class="text-4xl font-extrabold mb-6">$400</p>
+                    <ul class="text-left mb-6 space-y-2">
+                        <li>✓ Everything in Premium</li>
+                        <li>✓ Paint Correction</li>
+                        <li>✓ Ceramic Coating (1-Year)</li>
+                        <li>✓ Engine Bay Cleaning</li>
+                    </ul>
+                    <a href="tel:+14052955189" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg w-full block hover:bg-blue-700 transition duration-300">Choose Plan</a>
+                </div>
+            </div>
+
+            <!-- SUV/Truck Packages -->
+            <div id="suv-truck-packages" class="package-grid" style="display: none;">
+                <!-- Package 1 -->
+                <div class="bg-white p-8 rounded-lg shadow-lg text-center">
+                    <h3 class="text-2xl font-bold mb-4">Basic Detail</h3>
+                    <p class="text-4xl font-extrabold mb-6">$200</p>
+                    <ul class="text-left mb-6 space-y-2">
+                        <li>✓ Exterior Hand Wash</li>
+                        <li>✓ Interior Vacuum</li>
+                        <li>✓ Window Cleaning</li>
+                        <li>✓ Tire Shine</li>
+                    </ul>
+                    <a href="tel:+14052955189" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg w-full block hover:bg-blue-700 transition duration-300">Choose Plan</a>
+                </div>
+                <!-- Package 2 -->
+                <div class="bg-white p-8 rounded-lg shadow-lg text-center border-4 border-blue-600 relative">
+                    <span class="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase absolute -top-4">Most Popular</span>
+                    <h3 class="text-2xl font-bold mb-4">Premium Detail</h3>
+                    <p class="text-4xl font-extrabold mb-6">$350</p>
+                    <ul class="text-left mb-6 space-y-2">
+                        <li>✓ Everything in Basic</li>
+                        <li>✓ Clay Bar & Wax</li>
+                        <li>✓ Deep Interior Clean</li>
+                        <li>✓ Leather Treatment</li>
+                    </ul>
+                    <a href="tel:+14052955189" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg w-full block hover:bg-blue-700 transition duration-300">Choose Plan</a>
+                </div>
+                <!-- Package 3 -->
+                <div class="bg-white p-8 rounded-lg shadow-lg text-center">
+                    <h3 class="text-2xl font-bold mb-4">Elite Detail</h3>
+                    <p class="text-4xl font-extrabold mb-6">$550</p>
+                    <ul class="text-left mb-6 space-y-2">
+                        <li>✓ Everything in Premium</li>
+                        <li>✓ Paint Correction</li>
+                        <li>✓ Ceramic Coating (1-Year)</li>
+                        <li>✓ Engine Bay Cleaning</li>
+                    </ul>
+                    <a href="tel:+14052955189" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg w-full block hover:bg-blue-700 transition duration-300">Choose Plan</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold text-center mb-12">Our Work</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="grid gap-4">
+                    <div>
+                        <img class="h-auto max-w-full rounded-lg" src="https://images.unsplash.com/photo-1616422285623-13ff0162193c?q=80&w=2070&auto=format&fit=crop" alt="Clean car interior">
+                    </div>
+                    <div>
+                        <img class="h-auto max-w-full rounded-lg" src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=2070&auto=format&fit=crop" alt="Shiny yellow sports car">
+                    </div>
+                </div>
+                <div class="grid gap-4">
+                    <div>
+                        <img class="h-auto max-w-full rounded-lg" src="https://images.unsplash.com/photo-1605087133054-521a30441936?q=80&w=1974&auto=format&fit=crop" alt="Car wheel being cleaned">
+                    </div>
+                    <div>
+                        <img class="h-auto max-w-full rounded-lg" src="https://images.unsplash.com/photo-1583121274602-3e2820c69888?q=80&w=2070&auto=format&fit=crop" alt="Red ferrari side view">
+                    </div>
+                </div>
+                <div class="grid gap-4">
+                    <div>
+                        <img class="h-auto max-w-full rounded-lg" src="https://images.unsplash.com/photo-1617105522324-24ce0901e373?q=80&w=2070&auto=format&fit=crop" alt="Black porsche front view">
+                    </div>
+                    <div>
+                        <img class="h-auto max-w-full rounded-lg" src="https://images.unsplash.com/photo-1541443131835-753b7a151259?q=80&w=2070&auto=format&fit=crop" alt="Car dashboard being wiped">
+                    </div>
+                </div>
+                 <div class="grid gap-4">
+                    <div>
+                        <img class="h-auto max-w-full rounded-lg" src="https://images.unsplash.com/photo-1599190165802-efe1aa2db643?q=80&w=1964&auto=format&fit=crop" alt="Close up of a shiny car headlight">
+                    </div>
+                    <div>
+                        <img class="h-auto max-w-full rounded-lg" src="https://images.unsplash.com/photo-1621431238334-cf59b86255a4?q=80&w=1932&auto=format&fit=crop" alt="White car being washed">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-gray-800 text-white">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-3xl font-bold mb-4">Ready for a Showroom Shine?</h2>
+            <p class="text-gray-300 mb-8">Contact us today to schedule your mobile detailing appointment.</p>
+            <a href="tel:+14052955189" class="bg-blue-600 text-white font-bold py-4 px-10 rounded-lg text-xl hover:bg-blue-700 transition duration-300">
+                Call <span class="call-tracking-number">(405) 295-5189</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-6">
+        <div class="container mx-auto px-6 text-center">
+            <p>&copy; 2024 Michie Auto Detailing. All Rights Reserved.</p>
+            <p class="text-sm text-gray-400">Serving Oklahoma City and surrounding areas.</p>
+        </div>
+    </footer>
+
+    <!-- Floating Call Button -->
+    <footer class="md:hidden fixed bottom-0 left-0 right-0 bg-gray-900 z-40 border-t border-gray-700">
+        <div class="container mx-auto px-4 py-3">
+            <a href="tel:+14052955189" class="w-full flex items-center justify-center bg-green-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-600 transition duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
                 Call Now: <span class="call-tracking-number">(405) 295-5189</span>
             </a>
         </div>
@@ -483,10 +299,8 @@
 
             sedanBtn.addEventListener('click', showSedan);
             suvBtn.addEventListener('click', showSuv);
-
-            // Initially show sedan packages by default
-            showSedan();
         });
     </script>
+
 </body>
 </html>
