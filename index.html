@@ -18,10 +18,11 @@
     </script>
     
     <!-- Phone snippet for Website phone call conversions (Call Forwarding) -->
-    <!-- This script tells Google to replace your number with a forwarding number -->
+    <!-- FIXED: This script now looks for a specific CSS class to replace the number -->
     <script>
       gtag('config', 'AW-10782185640/PPImCJ-a7eIaEKixrJUo', {
-        'phone_conversion_number': '4052955189'
+        'phone_conversion_number': '4052955189',
+        'phone_conversion_css_class': 'call-tracking-number'
       });
     </script>
 
@@ -31,7 +32,7 @@
             background-color: #f8f9fa;
             color: #212529;
             line-height: 1.7;
-            padding-bottom: 100px; /* Footer spacing */
+            padding-bottom: 120px; /* Increased footer spacing */
         }
         .section-padding {
             padding: 4rem 1.5rem;
@@ -75,12 +76,14 @@
             font-size: 1rem;
             font-weight: 600;
             display: inline-flex;
+            flex-direction: column; /* Allow for text stacking */
             align-items: center;
             justify-content: center;
             transition: background-color 0.3s ease, transform 0.2s ease;
             text-decoration: none;
             text-transform: uppercase;
             letter-spacing: 0.05em;
+            line-height: 1.2; /* Adjust line height for stacked text */
         }
         .btn:hover {
             background-color: #0056b3;
@@ -206,6 +209,14 @@
                 box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
             }
         }
+        /* Style for the phone number text inside buttons */
+        .btn .phone-number {
+            font-size: 0.8rem;
+            font-weight: 400;
+            text-transform: none;
+            letter-spacing: normal;
+            margin-top: 0.25rem;
+        }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
@@ -227,8 +238,11 @@
                 <p class="text-lg md:text-xl text-gray-800 mb-8 font-bold">
                     Select your vehicle type below to see our customized detailing packages. We bring the showroom shine to your doorstep.
                 </p>
-                <!-- FIXED: Removed onclick handler to allow for call forwarding -->
-                <a href="tel:+14052955189" class="btn btn-secondary text-lg">Get a Free Quote</a>
+                <!-- FIXED: Added visible phone number with tracking class -->
+                <a href="tel:+14052955189" class="btn btn-secondary text-lg">
+                    <span>Get a Free Quote</span>
+                    <span class="phone-number call-tracking-number">(405) 295-5189</span>
+                </a>
                 <p class="text-sm text-blue-600 mt-3 font-semibold">Call Anytime - We're Open 24/7!</p>
             </div>
         </section>
@@ -259,8 +273,11 @@
                             <li>Surface protectent for the dash and display/controls</li>
                             <li>Steering wheel and dash clean</li>
                         </ul>
-                        <!-- FIXED: Removed onclick handler -->
-                        <a href="tel:+14052955189" class="btn btn-secondary">Book Level 1</a>
+                        <!-- FIXED: Added visible phone number with tracking class -->
+                        <a href="tel:+14052955189" class="btn btn-secondary">
+                            <span>Book Level 1</span>
+                            <span class="phone-number call-tracking-number">(405) 295-5189</span>
+                        </a>
                     </div>
                     <div class="pricing-card">
                         <h4 class="pricing-level">Level 2 Detail</h4>
@@ -275,8 +292,11 @@
                             <li>Pet hair removal</li>
                             <li>Odor removal</li>
                         </ul>
-                         <!-- FIXED: Removed onclick handler -->
-                         <a href="tel:+14052955189" class="btn btn-secondary">Book Level 2</a>
+                         <!-- FIXED: Added visible phone number with tracking class -->
+                         <a href="tel:+14052955189" class="btn btn-secondary">
+                            <span>Book Level 2</span>
+                            <span class="phone-number call-tracking-number">(405) 295-5189</span>
+                        </a>
                     </div>
                     <div class="pricing-card">
                         <h4 class="pricing-level">Level 3 Detail</h4>
@@ -293,8 +313,11 @@
                             <li>Free micrfiber cloth</li>
                             <li>Protection plan (complimentary maintenance clean within 15 days)</li>
                         </ul>
-                         <!-- FIXED: Removed onclick handler -->
-                         <a href="tel:+14052955189" class="btn btn-secondary">Book Level 3</a>
+                         <!-- FIXED: Added visible phone number with tracking class -->
+                         <a href="tel:+14052955189" class="btn btn-secondary">
+                            <span>Book Level 3</span>
+                            <span class="phone-number call-tracking-number">(405) 295-5189</span>
+                        </a>
                     </div>
                 </div>
 
@@ -314,8 +337,11 @@
                             <li>Surface protectent for the dash and display/controls</li>
                             <li>Steering wheel and dash clean</li>
                         </ul>
-                         <!-- FIXED: Removed onclick handler -->
-                         <a href="tel:+14052955189" class="btn btn-secondary">Book Level 1</a>
+                         <!-- FIXED: Added visible phone number with tracking class -->
+                         <a href="tel:+14052955189" class="btn btn-secondary">
+                            <span>Book Level 1</span>
+                            <span class="phone-number call-tracking-number">(405) 295-5189</span>
+                        </a>
                     </div>
                     <div class="pricing-card">
                         <h4 class="pricing-level">Level 2 Detail</h4>
@@ -330,8 +356,11 @@
                             <li>Pet hair removal</li>
                             <li>Odor removal</li>
                         </ul>
-                        <!-- FIXED: Removed onclick handler -->
-                        <a href="tel:+14052955189" class="btn btn-secondary">Book Level 2</a>
+                        <!-- FIXED: Added visible phone number with tracking class -->
+                        <a href="tel:+14052955189" class="btn btn-secondary">
+                            <span>Book Level 2</span>
+                            <span class="phone-number call-tracking-number">(405) 295-5189</span>
+                        </a>
                     </div>
                     <div class="pricing-card">
                         <h4 class="pricing-level">Level 3 Detail</h4>
@@ -348,8 +377,11 @@
                             <li>Free micrfiber cloth</li>
                             <li>Protection plan (complimentary maintenance clean within 15 days)</li>
                         </ul>
-                         <!-- FIXED: Removed onclick handler -->
-                         <a href="tel:+14052955189" class="btn btn-secondary">Book Level 3</a>
+                         <!-- FIXED: Added visible phone number with tracking class -->
+                         <a href="tel:+14052955189" class="btn btn-secondary">
+                            <span>Book Level 3</span>
+                            <span class="phone-number call-tracking-number">(405) 295-5189</span>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -387,10 +419,9 @@
         </p>
         <div class="text-right">
              <span class="text-sm font-semibold text-blue-600 block">AVAILABLE 24/7</span>
-            <!-- FIXED: Removed onclick handler -->
             <a href="tel:+14052955189" class="btn-call-to-action mt-1">
                 <svg class="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
-                Call Now: (405) 295-5189
+                Call Now: <span class="call-tracking-number">(405) 295-5189</span>
             </a>
         </div>
     </footer>
