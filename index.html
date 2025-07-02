@@ -18,7 +18,6 @@
     </script>
     
     <!-- Phone snippet for Website phone call conversions (Call Forwarding) -->
-    <!-- FIXED: This script now looks for a specific CSS class to replace the number -->
     <script>
       gtag('config', 'AW-10782185640/PPImCJ-a7eIaEKixrJUo', {
         'phone_conversion_number': '4052955189',
@@ -32,7 +31,7 @@
             background-color: #f8f9fa;
             color: #212529;
             line-height: 1.7;
-            padding-bottom: 120px; /* Increased footer spacing */
+            padding-bottom: 120px;
         }
         .section-padding {
             padding: 4rem 1.5rem;
@@ -76,14 +75,12 @@
             font-size: 1rem;
             font-weight: 600;
             display: inline-flex;
-            flex-direction: column; /* Allow for text stacking */
             align-items: center;
             justify-content: center;
             transition: background-color 0.3s ease, transform 0.2s ease;
             text-decoration: none;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            line-height: 1.2; /* Adjust line height for stacked text */
         }
         .btn:hover {
             background-color: #0056b3;
@@ -209,13 +206,16 @@
                 box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
             }
         }
-        /* Style for the phone number text inside buttons */
-        .btn .phone-number {
-            font-size: 0.8rem;
-            font-weight: 400;
-            text-transform: none;
-            letter-spacing: normal;
-            margin-top: 0.25rem;
+        /* FIXED: Visually hide the phone number text but keep it for scripts */
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            margin: -1px;
+            padding: 0;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
         }
     </style>
 </head>
@@ -238,10 +238,10 @@
                 <p class="text-lg md:text-xl text-gray-800 mb-8 font-bold">
                     Select your vehicle type below to see our customized detailing packages. We bring the showroom shine to your doorstep.
                 </p>
-                <!-- FIXED: Added visible phone number with tracking class -->
+                <!-- FIXED: Phone number is now visually hidden -->
                 <a href="tel:+14052955189" class="btn btn-secondary text-lg">
                     <span>Get a Free Quote</span>
-                    <span class="phone-number call-tracking-number">(405) 295-5189</span>
+                    <span class="visually-hidden call-tracking-number">(405) 295-5189</span>
                 </a>
                 <p class="text-sm text-blue-600 mt-3 font-semibold">Call Anytime - We're Open 24/7!</p>
             </div>
@@ -273,10 +273,10 @@
                             <li>Surface protectent for the dash and display/controls</li>
                             <li>Steering wheel and dash clean</li>
                         </ul>
-                        <!-- FIXED: Added visible phone number with tracking class -->
+                        <!-- FIXED: Phone number is now visually hidden -->
                         <a href="tel:+14052955189" class="btn btn-secondary">
                             <span>Book Level 1</span>
-                            <span class="phone-number call-tracking-number">(405) 295-5189</span>
+                            <span class="visually-hidden call-tracking-number">(405) 295-5189</span>
                         </a>
                     </div>
                     <div class="pricing-card">
@@ -292,10 +292,10 @@
                             <li>Pet hair removal</li>
                             <li>Odor removal</li>
                         </ul>
-                         <!-- FIXED: Added visible phone number with tracking class -->
+                         <!-- FIXED: Phone number is now visually hidden -->
                          <a href="tel:+14052955189" class="btn btn-secondary">
                             <span>Book Level 2</span>
-                            <span class="phone-number call-tracking-number">(405) 295-5189</span>
+                            <span class="visually-hidden call-tracking-number">(405) 295-5189</span>
                         </a>
                     </div>
                     <div class="pricing-card">
@@ -313,10 +313,10 @@
                             <li>Free micrfiber cloth</li>
                             <li>Protection plan (complimentary maintenance clean within 15 days)</li>
                         </ul>
-                         <!-- FIXED: Added visible phone number with tracking class -->
+                         <!-- FIXED: Phone number is now visually hidden -->
                          <a href="tel:+14052955189" class="btn btn-secondary">
                             <span>Book Level 3</span>
-                            <span class="phone-number call-tracking-number">(405) 295-5189</span>
+                            <span class="visually-hidden call-tracking-number">(405) 295-5189</span>
                         </a>
                     </div>
                 </div>
@@ -337,10 +337,10 @@
                             <li>Surface protectent for the dash and display/controls</li>
                             <li>Steering wheel and dash clean</li>
                         </ul>
-                         <!-- FIXED: Added visible phone number with tracking class -->
+                         <!-- FIXED: Phone number is now visually hidden -->
                          <a href="tel:+14052955189" class="btn btn-secondary">
                             <span>Book Level 1</span>
-                            <span class="phone-number call-tracking-number">(405) 295-5189</span>
+                            <span class="visually-hidden call-tracking-number">(405) 295-5189</span>
                         </a>
                     </div>
                     <div class="pricing-card">
@@ -356,10 +356,10 @@
                             <li>Pet hair removal</li>
                             <li>Odor removal</li>
                         </ul>
-                        <!-- FIXED: Added visible phone number with tracking class -->
+                        <!-- FIXED: Phone number is now visually hidden -->
                         <a href="tel:+14052955189" class="btn btn-secondary">
                             <span>Book Level 2</span>
-                            <span class="phone-number call-tracking-number">(405) 295-5189</span>
+                            <span class="visually-hidden call-tracking-number">(405) 295-5189</span>
                         </a>
                     </div>
                     <div class="pricing-card">
@@ -377,10 +377,10 @@
                             <li>Free micrfiber cloth</li>
                             <li>Protection plan (complimentary maintenance clean within 15 days)</li>
                         </ul>
-                         <!-- FIXED: Added visible phone number with tracking class -->
+                         <!-- FIXED: Phone number is now visually hidden -->
                          <a href="tel:+14052955189" class="btn btn-secondary">
                             <span>Book Level 3</span>
-                            <span class="phone-number call-tracking-number">(405) 295-5189</span>
+                            <span class="visually-hidden call-tracking-number">(405) 295-5189</span>
                         </a>
                     </div>
                 </div>
