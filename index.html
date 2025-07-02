@@ -26,15 +26,21 @@
             background-color: #f8f9fa; /* Light theme background */
             color: #212529; /* Dark text for readability */
             line-height: 1.7;
+            /* Add padding-bottom to the body to prevent the footer from overlapping content */
+            padding-bottom: 100px; /* Adjust this value based on footer height */
         }
         .section-padding {
             padding: 4rem 1.5rem;
         }
         .hero-section {
-            /* Lightened gradient for the hero image */
-            background-image: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)), url('https://michieauto.com/c6106051-ecc6-4964-9246-4c79215cdb5d~1.jpg');
+            /* Increased opacity on the gradient for better text readability */
+            background-image: linear-gradient(rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75)), url('https://michieauto.com/c6106051-ecc6-4964-9246-4c79215cdb5d~1.jpg');
             background-size: cover;
             background-position: center;
+        }
+        /* Add text shadow for better contrast against the hero image */
+        .hero-section h2, .hero-section p {
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         .btn {
             background-color: #007bff; /* Professional blue */
@@ -172,10 +178,6 @@
                 flex-basis: 400px;
             }
         }
-        /* Add padding-bottom to the body to prevent the footer from overlapping content */
-        body {
-            padding-bottom: 100px; /* Adjust this value based on footer height */
-        }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
@@ -186,7 +188,7 @@
                 <h2 class="text-4xl md:text-6xl font-extrabold leading-tight mb-4 text-gray-900 tracking-tight">
                     Expert Mobile Detailing For Your Vehicle
                 </h2>
-                <p class="text-lg md:text-xl text-gray-700 mb-8">
+                <p class="text-lg md:text-xl text-gray-800 mb-8">
                     Select your vehicle type below to see our customized detailing packages. We bring the showroom shine to your doorstep.
                 </p>
                 <a href="tel:+14052955189" class="btn btn-secondary text-lg">Get a Free Quote</a>
