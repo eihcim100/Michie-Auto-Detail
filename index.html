@@ -8,18 +8,29 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Google tag (gtag.js) - CORRECTED IMPLEMENTATION -->
+    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=AW-10782185640"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
       gtag('config', 'AW-10782185640');
-      
-      gtag('config', 'AW-10782185640/PPImCJ-a7eIaEKixrJUo', {
-        'phone_conversion_number': '(405) 295-5189'
-      });
+    </script>
+    
+    <!-- Event snippet for Website call conversion -->
+    <script>
+      function gtag_report_conversion(url) {
+        var callback = function () {
+          if (typeof(url) != 'undefined') {
+            window.location = url;
+          }
+        };
+        gtag('event', 'conversion', {
+            'send_to': 'AW-10782185640/PPImCJ-a7eIaEKixrJUo',
+            'event_callback': callback
+        });
+        return false;
+      }
     </script>
 
     <style>
@@ -61,7 +72,6 @@
              position: relative;
              z-index: 1;
         }
-        /* UPDATED: Shadow only on H2 for better readability on the paragraph */
         .hero-section h2 {
             text-shadow: 0 2px 8px rgba(0,0,0,0.7);
         }
@@ -225,8 +235,8 @@
                 <p class="text-lg md:text-xl text-gray-800 mb-8 font-bold">
                     Select your vehicle type below to see our customized detailing packages. We bring the showroom shine to your doorstep.
                 </p>
-                <!-- All 'tel' links will now be tracked by the main gtag config -->
-                <a href="tel:+14052955189" class="btn btn-secondary text-lg">Get a Free Quote</a>
+                <!-- URGENT FIX: Changed href to "#" and added onclick handler for tracking -->
+                <a href="#" onclick="return gtag_report_conversion('tel:+14052955189');" class="btn btn-secondary text-lg">Get a Free Quote</a>
                 <p class="text-sm text-blue-600 mt-3 font-semibold">Call Anytime - We're Open 24/7!</p>
             </div>
         </section>
@@ -256,7 +266,8 @@
                             <li>Surface protectent for the dash and display/controls</li>
                             <li>Steering wheel and dash clean</li>
                         </ul>
-                        <a href="tel:+14052955189" class="btn btn-secondary">Book Level 1</a>
+                        <!-- URGENT FIX: Changed href to "#" and added onclick handler for tracking -->
+                        <a href="#" onclick="return gtag_report_conversion('tel:+14052955189');" class="btn btn-secondary">Book Level 1</a>
                     </div>
                     <div class="pricing-card">
                         <h4 class="pricing-level">Level 2 Detail</h4>
@@ -271,7 +282,8 @@
                             <li>Pet hair removal</li>
                             <li>Odor removal</li>
                         </ul>
-                         <a href="tel:+14052955189" class="btn btn-secondary">Book Level 2</a>
+                         <!-- URGENT FIX: Changed href to "#" and added onclick handler for tracking -->
+                         <a href="#" onclick="return gtag_report_conversion('tel:+14052955189');" class="btn btn-secondary">Book Level 2</a>
                     </div>
                     <div class="pricing-card">
                         <h4 class="pricing-level">Level 3 Detail</h4>
@@ -288,7 +300,8 @@
                             <li>Free micrfiber cloth</li>
                             <li>Protection plan (complimentary maintenance clean within 15 days)</li>
                         </ul>
-                         <a href="tel:+14052955189" class="btn btn-secondary">Book Level 3</a>
+                         <!-- URGENT FIX: Changed href to "#" and added onclick handler for tracking -->
+                         <a href="#" onclick="return gtag_report_conversion('tel:+14052955189');" class="btn btn-secondary">Book Level 3</a>
                     </div>
                 </div>
 
@@ -307,7 +320,8 @@
                             <li>Surface protectent for the dash and display/controls</li>
                             <li>Steering wheel and dash clean</li>
                         </ul>
-                         <a href="tel:+14052955189" class="btn btn-secondary">Book Level 1</a>
+                         <!-- URGENT FIX: Changed href to "#" and added onclick handler for tracking -->
+                         <a href="#" onclick="return gtag_report_conversion('tel:+14052955189');" class="btn btn-secondary">Book Level 1</a>
                     </div>
                     <div class="pricing-card">
                         <h4 class="pricing-level">Level 2 Detail</h4>
@@ -322,7 +336,8 @@
                             <li>Pet hair removal</li>
                             <li>Odor removal</li>
                         </ul>
-                        <a href="tel:+14052955189" class="btn btn-secondary">Book Level 2</a>
+                        <!-- URGENT FIX: Changed href to "#" and added onclick handler for tracking -->
+                        <a href="#" onclick="return gtag_report_conversion('tel:+14052955189');" class="btn btn-secondary">Book Level 2</a>
                     </div>
                     <div class="pricing-card">
                         <h4 class="pricing-level">Level 3 Detail</h4>
@@ -339,7 +354,8 @@
                             <li>Free micrfiber cloth</li>
                             <li>Protection plan (complimentary maintenance clean within 15 days)</li>
                         </ul>
-                         <a href="tel:+14052955189" class="btn btn-secondary">Book Level 3</a>
+                         <!-- URGENT FIX: Changed href to "#" and added onclick handler for tracking -->
+                         <a href="#" onclick="return gtag_report_conversion('tel:+14052955189');" class="btn btn-secondary">Book Level 3</a>
                     </div>
                 </div>
             </div>
@@ -377,6 +393,7 @@
         </p>
         <div class="text-right">
              <span class="text-sm font-semibold text-blue-600 block">AVAILABLE 24/7</span>
+            <!-- This button works with the automatic number replacement -->
             <a href="tel:+14052955189" class="btn-call-to-action mt-1">
                 <svg class="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
                 Call Now: (405) 295-5189
