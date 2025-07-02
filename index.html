@@ -38,14 +38,21 @@
             position: relative;
             overflow: hidden;
             color: white;
+            height: 80vh; /* Give the hero section a defined height */
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
+        /* Styling for the background video to ensure it covers the area */
         .hero-video {
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 100%;
-            height: 100%;
-            transform: translate(-50%, -50%) scale(3.2);
+            width: 100vw;
+            height: 56.25vw; /* 16:9 aspect ratio */
+            min-height: 100vh;
+            min-width: 177.77vh; /* 16:9 aspect ratio */
+            transform: translate(-50%, -50%);
             z-index: -100;
             pointer-events: none;
         }
@@ -243,8 +250,9 @@
 
     <main class="flex-grow">
         <section class="hero-section section-padding text-center">
+            <!-- The iframe source has been updated to the new video -->
             <iframe class="hero-video"
-                    src="http://www.youtube.com/watch?v=hzVS5Rb8qF06"
+                    src="https://www.youtube.com/embed/TsOqZj5PIbM?autoplay=1&mute=1&loop=1&playlist=TsOqZj5PIbM&controls=0&showinfo=0&modestbranding=1&playsinline=1"
                     frameborder="0"
                     allow="autoplay; encrypted-media"
                     allowfullscreen>
@@ -398,7 +406,7 @@
                             <li>Free micrfiber cloth</li>
                             <li>Protection plan (complimentary maintenance clean within 15 days)</li>
                         </ul>
-                         <a href="tel:+1.4052955189" class="btn btn-secondary">
+                         <a href="tel:+14052955189" class="btn btn-secondary">
                             <span>Book Level 3</span>
                             <span class="visually-hidden call-tracking-number">(405) 295-5189</span>
                         </a>
@@ -412,17 +420,17 @@
                 <h3 class="text-4xl md:text-5xl font-bold text-gray-900 text-center mb-10">What Our Customers Say</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                     <img src="https://michieauto.com/Screenshot_20250702_134639_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
-                    <img src="https://michieauto.com/Screenshot_20250702_134648_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co.com/600x400/cccccc/ffffff?text=Review+Not+Found'">
+                    <img src="https://michieauto.com/Screenshot_20250702_134648_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
                     <img src="https://michieauto.com/Screenshot_20250702_134655_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
                     <img src="https://michieauto.com/Screenshot_20250702_134713_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
-                    <img src="https://michieauto.com/Screenshot_20250702_134725_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https.placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
+                    <img src="https://michieauto.com/Screenshot_20250702_134725_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
                     <img src="https://michieauto.com/Screenshot_20250702_134735_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
-                    <img src="https://michieauto.com/Screenshot_20250702_135648_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https.placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
+                    <img src="https://michieauto.com/Screenshot_20250702_135648_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
                     <img src="https://michieauto.com/Screenshot_20250702_135557_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
-                    <img src="https://michieauto.com/Screenshot_20250702_135707_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https.placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
+                    <img src="https://michieauto.com/Screenshot_20250702_135707_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
                     <img src="https://michieauto.com/Screenshot_20250702_135717_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
-                    <img src="https://michieauto.com/Screenshot_20250702_135728_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https.placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
-                    <img src="https://michieauto.com/Screenshot_20250702_135753_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='httpss://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
+                    <img src="https://michieauto.com/Screenshot_20250702_135728_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
+                    <img src="https://michieauto.com/Screenshot_20250702_135753_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
                     <img src="https://michieauto.com/Screenshot_20250702_135814_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
                     <img src="https://michieauto.com/Screenshot_20250702_135842_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
                 </div>
@@ -440,4 +448,40 @@
         <div class="text-right">
              <span class="text-sm font-semibold text-blue-600 block">AVAILABLE 24/7</span>
             <a href="tel:+14052955189" class="btn-call-to-action mt-1">
-                <svg class="w-6 h-6 mr-3" fill="currentColor" viewBox
+                <svg class="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
+                Call Now: <span class="call-tracking-number">(405) 295-5189</span>
+            </a>
+        </div>
+    </footer>
+
+    <script>
+        // JavaScript for the vehicle type toggle switch
+        document.addEventListener('DOMContentLoaded', function () {
+            const sedanBtn = document.getElementById('show-sedan');
+            const suvBtn = document.getElementById('show-suv');
+            const sedanPackages = document.getElementById('sedan-packages');
+            const suvPackages = document.getElementById('suv-truck-packages');
+
+            function showSedan() {
+                sedanBtn.classList.add('active');
+                suvBtn.classList.remove('active');
+                sedanPackages.style.display = 'grid';
+                suvPackages.style.display = 'none';
+            }
+
+            function showSuv() {
+                suvBtn.classList.add('active');
+                sedanBtn.classList.remove('active');
+                suvPackages.style.display = 'grid';
+                sedanPackages.style.display = 'none';
+            }
+
+            sedanBtn.addEventListener('click', showSedan);
+            suvBtn.addEventListener('click', showSuv);
+
+            // Initially show sedan packages by default
+            showSedan();
+        });
+    </script>
+</body>
+</html>
