@@ -251,12 +251,9 @@
 </head>
 <body class="flex flex-col min-h-screen">
 
-    <main class="flex-grow">
+    <main class="flex-grow pb-24"> <!-- Added padding-bottom to prevent content from being hidden by the sticky footer -->
         <section class="hero-section section-padding text-center flex items-center justify-center">
-            <!-- The video player will now cycle through a playlist -->
-            <video id="hero-video-player" autoplay muted playsinline class="hero-video">
-                <!-- The video source is now managed by the script below -->
-            </video>
+            <video id="hero-video-player" autoplay muted playsinline class="hero-video"></video>
             <div class="hero-overlay"></div>
             <div class="max-w-4xl mx-auto hero-content">
                 <h2 class="text-4xl md:text-5xl font-extrabold leading-tight mb-4 text-gray-900 tracking-tight">
@@ -280,7 +277,6 @@
             </div>
         </section>
 
-        <!-- The rest of your page content remains unchanged -->
         <section id="pricing" class="section-padding bg-gray-100">
             <div class="container mx-auto text-center">
                 <h3 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Our Detailing Packages</h3>
@@ -440,32 +436,32 @@
                 </p>
             </div>
         </section>
-    </main>
 
-    <footer class="bg-gray-800 text-white py-12 px-6">
-        <div class="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
-            <div>
-                <h4 class="font-bold text-lg mb-3">Michie Auto</h4>
-                <p class="text-gray-400">OKC's Premier 24/7 Mobile Detailing Service.</p>
+        <footer class="bg-gray-800 text-white py-12 px-6">
+            <div class="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+                <div>
+                    <h4 class="font-bold text-lg mb-3">Michie Auto</h4>
+                    <p class="text-gray-400">OKC's Premier 24/7 Mobile Detailing Service.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg mb-3">Site Links</h4>
+                    <nav class="flex flex-col space-y-2">
+                        <a href="https://michieauto.com/protection" class="text-gray-400 hover:text-white transition-colors">Protection Plan</a>
+                        <a href="https://michieauto.com/bnpl" class="text-gray-400 hover:text-white transition-colors">$99 Down Financing</a>
+                        <a href="https://michieauto.com/faq" class="text-gray-400 hover:text-white transition-colors">FAQ</a>
+                    </nav>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg mb-3">Contact Us</h4>
+                    <p class="text-gray-400">Open 24/7</p>
+                    <a href="tel:+14052955189" class="text-white hover:text-blue-400 call-tracking-number">(405) 295-5189</a>
+                </div>
             </div>
-            <div>
-                <h4 class="font-bold text-lg mb-3">Site Links</h4>
-                <nav class="flex flex-col space-y-2">
-                    <a href="https://michieauto.com/protection" class="text-gray-400 hover:text-white transition-colors">Protection Plan</a>
-                    <a href="https://michieauto.com/bnpl" class="text-gray-400 hover:text-white transition-colors">$99 Down Financing</a>
-                    <a href="https://michieauto.com/faq" class="text-gray-400 hover:text-white transition-colors">FAQ</a>
-                </nav>
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center">
+                <p class="text-gray-500 text-sm">&copy; 2025 Michie Auto. All Rights Reserved.</p>
             </div>
-            <div>
-                <h4 class="font-bold text-lg mb-3">Contact Us</h4>
-                <p class="text-gray-400">Open 24/7</p>
-                <a href="tel:+14052955189" class="text-white hover:text-blue-400 call-tracking-number">(405) 295-5189</a>
-            </div>
-        </div>
-        <div class="border-t border-gray-700 mt-8 pt-6 text-center">
-            <p class="text-gray-500 text-sm">&copy; 2025 Michie Auto. All Rights Reserved.</p>
-        </div>
-    </footer>
+        </footer>
+    </main>
 
     <div class="sticky-footer py-3 px-6 md:px-12 flex justify-between items-center">
         <p class="text-lg md:text-xl font-bold text-gray-800 hidden sm:block">
@@ -473,9 +469,11 @@
         </p>
         <div class="text-right">
              <span class="text-sm font-semibold text-blue-600 block">AVAILABLE 24/7</span>
+            <!-- === STICKY BUTTON TEXT UPDATED HERE === -->
             <a href="tel:+14052955189" class="btn-call-to-action mt-1">
                 <svg class="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
-                Call Now: <span class="call-tracking-number">(405) 295-5189</span>
+                <span>Call Now</span>
+                <span class="call-tracking-number visually-hidden">(405) 295-5189</span>
             </a>
         </div>
     </div>
@@ -509,12 +507,11 @@
             // --- Hero Video Playlist Logic ---
             const videoPlayer = document.getElementById('hero-video-player');
             const videoSources = [
-                'https://res.cloudinary.com/dvrljjtdr/video/upload/v1751498935/AQNPpHNFYCMP_D3Y5GB_Wqim_VDK4kshW8ftuv3U1cDNRAdJZ7nJyg9FXzKhh9X7xi2rZzpXdzzx6M5Dr2Dm4Njm_yd27ea.mp4',
-                'https://res.cloudinary.com/dvrljjtdr/video/upload/v1751500247/VID20240216113828_2_bdzawq.mp4'
+                'https://res.cloudinary.com/dvrljjtdr/video/upload/v1751500247/VID20240216113828_2_bdzawq.mp4',
+                'https://res.cloudinary.com/dvrljjtdr/video/upload/v1751498935/AQNPpHNFYCMP_D3Y5GB_Wqim_VDK4kshW8ftuv3U1cDNRAdJZ7nJyg9FXzKhh9X7xi2rZzpXdzzx6M5Dr2Dm4Njm_yd27ea.mp4'
             ];
             let currentVideoIndex = 0;
 
-            // Function to play the next video
             function playNextVideo() {
                 currentVideoIndex = (currentVideoIndex + 1) % videoSources.length;
                 videoPlayer.src = videoSources[currentVideoIndex];
@@ -522,13 +519,8 @@
                 videoPlayer.play().catch(error => console.error("Video play failed:", error));
             }
 
-            // Set the initial video source
             videoPlayer.src = videoSources[currentVideoIndex];
-            
-            // Add event listener for when a video ends
             videoPlayer.addEventListener('ended', playNextVideo);
-
-            // Initial play attempt
             videoPlayer.play().catch(error => {
                 console.error("Initial video play failed. This may be due to browser autoplay policies.", error);
             });
