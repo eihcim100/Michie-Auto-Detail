@@ -247,6 +247,54 @@
             z-index: 50;
             border-top: 1px solid #e5e7eb;
         }
+        /* --- SLIDESHOW STYLES --- */
+        .slideshow-container {
+            position: relative;
+            max-width: 900px; /* Max width of the slideshow */
+            margin: auto;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            border-radius: 0.75rem;
+            overflow: hidden;
+        }
+        .slideshow-slide {
+            display: none;
+            animation: fade 0.5s ease-in-out;
+        }
+        .slideshow-slide.active {
+            display: block;
+        }
+        .slideshow-slide img {
+            width: 100%;
+            height: auto;
+            max-height: 70vh;
+            object-fit: cover;
+            vertical-align: middle;
+        }
+        .slide-dots {
+            text-align: center;
+            padding: 15px 0;
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
+        }
+        .slide-dot {
+            cursor: pointer;
+            height: 15px;
+            width: 15px;
+            margin: 0 4px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(0,0,0,0.2);
+            border-radius: 50%;
+            display: inline-block;
+            transition: background-color 0.3s ease;
+        }
+        .slide-dot.active {
+            background-color: #ffffff;
+        }
+        @keyframes fade {
+            from {opacity: .4} 
+            to {opacity: 1}
+        }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
@@ -412,6 +460,22 @@
             </div>
         </section>
 
+        <!-- === GALLERY SECTION (ARROWS REMOVED) === -->
+        <section id="gallery" class="section-padding bg-white">
+            <div class="container mx-auto text-center">
+                <h3 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">See Us In Action</h3>
+                <p class="text-lg text-gray-600 mb-10 max-w-2xl mx-auto">A glimpse into the quality and care we put into every vehicle.</p>
+                
+                <div id="slideshow-container" class="slideshow-container">
+                    <!-- Slides will be inserted here by JS -->
+                    <div class="slide-dots">
+                        <!-- Dots will be inserted here by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- === END GALLERY SECTION === -->
+
         <section class="section-padding bg-gray-50">
             <div class="container mx-auto text-center">
                 <h3 class="text-4xl md:text-5xl font-bold text-gray-900 text-center mb-10">What Our Customers Say</h3>
@@ -463,7 +527,6 @@
         </footer>
     </main>
 
-    <!-- === STICKY FOOTER LAYOUT UPDATED HERE === -->
     <div class="sticky-footer py-3 px-6 flex justify-center sm:justify-between items-center">
         <p class="text-lg md:text-xl font-bold text-gray-800 hidden sm:block">
             Book Your Appointment Today!
@@ -524,6 +587,85 @@
             videoPlayer.play().catch(error => {
                 console.error("Initial video play failed. This may be due to browser autoplay policies.", error);
             });
+
+            // --- Image Slideshow Logic ---
+            const slideshowContainer = document.getElementById('slideshow-container');
+            if (slideshowContainer) {
+                const dotsContainer = slideshowContainer.querySelector('.slide-dots');
+                
+                const rawImageUrls = [
+                    "https://res.cloudinary.com/dvrljjtdr/image/upload/v1751503250/IMG_20250702_124111_h4edvd.jpg",
+                    "https://res.cloudinary.com/dvrljjtdr/image/upload/v1751502419/IMG_20250702_124112_uzh5mb.jpg",
+                    "https://res.cloudinary.com/dvrljjtdr/image/upload/v1751502419/IMG_20250702_124047_mmybkw.jpg",
+                    "https://res.cloudinary.com/dvrljjtdr/image/upload/v1751502419/IMG_20250702_124114_ipxukb.jpg",
+                    "https://res.cloudinary.com/dvrljjtdr/image/upload/v1751502419/IMG_20250702_124041_wx8lxm.jpg",
+                    "https://res.cloudinary.com/dvrljjtdr/image/upload/v1751502419/IMG_20250702_124113_iaxqy2.jpg",
+                    "https://res.cloudinary.com/dvrljjtdr/image/upload/v1751502418/IMG_20250625_212110_dl8kmw.jpg",
+                    "https://res.cloudinary.com/dvrljjtdr/image/upload/v1751502418/IMG_20250628_212442_bufzvi.jpg",
+                    "https://res.cloudinary.com/dvrljjtdr/image/upload/v1751502417/IMG_20250623_181445_ahzilp.jpg",
+                    "https://res.cloudinary.com/dvrljjtdr/image/upload/v1751502417/IMG_20250609_184650_x3jvb7.jpg",
+                    "https://res.cloudinary.com/dvrljjtdr/image/upload/v1751503533/IMG20240620125543_g6liln.jpg",
+                    "https://res.cloudinary.com/dvrljjtdr/image/upload/v1751503533/IMG20240620125542_h6bk3v.jpg",
+                    "https://res.cloudinary.com/dvrljjtdr/image/upload/v1751503533/IMG20240216141851_saetec.jpg",
+                    "https://res.cloudinary.com/dvrljjtdr/image/upload/v1751503532/IMG20240216141941_qjd0oq.jpg",
+                    "https://res.cloudinary.com/dvrljjtdr/image/upload/v1751503531/IMG_20250702_124055_rln57h.jpg"
+                ];
+                const imageUrls = [...new Set(rawImageUrls)]; // Remove duplicates
+                let currentSlide = 0;
+                let slideInterval;
+
+                // Create slides and dots
+                imageUrls.forEach((url, i) => {
+                    // Slide
+                    const slideDiv = document.createElement('div');
+                    slideDiv.className = 'slideshow-slide';
+                    const img = document.createElement('img');
+                    img.src = url;
+                    img.alt = `Detailing work photo ${i + 1}`;
+                    img.loading = 'lazy'; // Lazy load images for performance
+                    img.onerror = function() { this.onerror=null; this.src='https://placehold.co/1000x700/cccccc/ffffff?text=Image+Not+Found'; };
+                    slideDiv.appendChild(img);
+                    slideshowContainer.insertBefore(slideDiv, dotsContainer);
+
+                    // Dot
+                    const dot = document.createElement('span');
+                    dot.className = 'slide-dot';
+                    dot.addEventListener('click', () => {
+                        setSlide(i);
+                        resetInterval();
+                    });
+                    dotsContainer.appendChild(dot);
+                });
+
+                const slides = slideshowContainer.querySelectorAll('.slideshow-slide');
+                const dots = slideshowContainer.querySelectorAll('.slide-dot');
+
+                function setSlide(n) {
+                    slides.forEach(s => s.classList.remove('active'));
+                    dots.forEach(d => d.classList.remove('active'));
+                    
+                    currentSlide = (n + slides.length) % slides.length;
+                    
+                    if (slides[currentSlide]) slides[currentSlide].classList.add('active');
+                    if (dots[currentSlide]) dots[currentSlide].classList.add('active');
+                }
+
+                function changeSlide(n) {
+                    setSlide(currentSlide + n);
+                }
+
+                function startInterval() {
+                    slideInterval = setInterval(() => changeSlide(1), 5000); // Change slide every 5 seconds
+                }
+
+                function resetInterval() {
+                    clearInterval(slideInterval);
+                    startInterval();
+                }
+
+                setSlide(0);
+                startInterval();
+            }
         });
     </script>
 </body>
