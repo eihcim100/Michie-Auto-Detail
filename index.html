@@ -3,412 +3,670 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contractor Job Portal</title>
+    <title>Michie Auto Detailing - 24/7 Mobile Detailing in OKC</title>
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Google Ads gtag -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-10782185640"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'AW-10782185640');
+    </script>
+    
+    <!-- Phone call conversion tracking -->
+    <script>
+      gtag('config', 'AW-10782185640/PPImCJ-a7eIaEKixrJUo', {
+        'phone_conversion_number': '4052955189',
+        'phone_conversion_css_class': 'call-tracking-number'
+      });
+    </script>
+
     <style>
         body {
             font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+            color: #212529;
+            line-height: 1.7;
         }
-        /* Custom style for address formatting to ensure line breaks are applied */
-        .address-display {
-            white-space: pre-wrap; /* Preserves whitespace and allows line breaks */
+        .section-padding {
+            padding: 4rem 1.5rem;
         }
-        /* Style for the no jobs message */
-        #no-jobs-message {
-            font-size: 1.5rem; /* text-2xl */
-            color: #9ca3af; /* A lighter gray for background text */
+        .hero-section {
+            position: relative;
+            overflow: hidden;
+            color: white;
+            height: 70vh; /* Set a height for the hero section */
+        }
+        .hero-video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            transform: translate(-50%, -50%);
+            object-fit: cover; /* This ensures the video covers the area without white space */
+            z-index: -100;
+            pointer-events: none;
+        }
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.5); 
+            z-index: -50;
+        }
+        .hero-content {
+             position: relative;
+             z-index: 1;
+        }
+        .hero-section h2 {
+            text-shadow: 0 2px 8px rgba(0,0,0,0.7);
+        }
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background-color: #28a745;
+        }
+        .btn-secondary:hover {
+            background-color: #218838;
+        }
+        .vehicle-toggle {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2.5rem;
+            background-color: #e9ecef;
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+        }
+        .vehicle-toggle button {
+            background-color: transparent;
+            color: #495057;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0.25rem; /* Add some margin for spacing */
+        }
+        .vehicle-toggle button.active {
+            background-color: #007bff;
+            color: #ffffff;
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
+        }
+        .vehicle-toggle a.bnpl-link-button {
+            text-decoration: none;
+        }
+        .vehicle-toggle a.bnpl-link-button button {
+            background-color: transparent;
+            color: #495057;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .vehicle-toggle a.bnpl-link-button button:hover {
+            background-color: #007bff;
+            color: #ffffff;
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
+        }
+        .pricing-grid {
+            display: none;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+        @media (min-width: 768px) {
+            .pricing-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        .pricing-card {
+            background-color: #ffffff;
+            border: 1px solid #dee2e6;
+            border-radius: 0.75rem;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 32px rgba(0, 123, 255, 0.15);
+        }
+        .pricing-level {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #212529;
+            margin-bottom: 0.5rem;
+        }
+        .pricing-price {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #28a745;
+            margin-bottom: 1.5rem;
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            flex-grow: 1;
+        }
+        .feature-list li {
+            position: relative;
+            padding-left: 1.75rem;
+            margin-bottom: 0.75rem;
+            color: #495057;
+        }
+        .feature-list li::before {
+            content: '✓';
+            color: #28a745;
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+        .pricing-card .btn {
             margin-top: 2rem;
+        }
+        .btn-call-to-action {
+            background-image: linear-gradient(to right, #28a745 0%, #218838 51%, #28a745 100%);
+            color: white;
+            padding: 0.8rem 1.6rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease-in-out;
+            background-size: 200% auto;
+            animation: pulse-shadow 2s infinite;
+        }
+        .btn-call-to-action:hover {
+            background-position: right center;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        @keyframes pulse-shadow {
+            0% {
+                box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+            }
+            50% {
+                box-shadow: 0 4px 25px rgba(40, 167, 69, 0.7);
+            }
+            100% {
+                box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+            }
+        }
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            margin: -1px;
+            padding: 0;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+        .sticky-footer {
+            background-color: #ffffff;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            z-index: 50;
+            border-top: 1px solid #e5e7eb;
+        }
+        /* --- SLIDESHOW STYLES --- */
+        .slideshow-container {
+            position: relative;
+            max-width: 900px; /* Max width of the slideshow */
+            margin: auto;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            border-radius: 0.75rem;
+            overflow: hidden;
+        }
+        .slideshow-slide {
+            display: none;
+            animation: fade 0.5s ease-in-out;
+        }
+        .slideshow-slide.active {
+            display: block;
+        }
+        .slideshow-slide img {
+            width: 100%;
+            height: auto;
+            max-height: 70vh;
+            object-fit: cover;
+            vertical-align: middle;
+        }
+        .slide-dots {
             text-align: center;
+            padding: 15px 0;
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
+        }
+        .slide-dot {
+            cursor: pointer;
+            height: 15px;
+            width: 15px;
+            margin: 0 4px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(0,0,0,0.2);
+            border-radius: 50%;
+            display: inline-block;
+            transition: background-color 0.3s ease;
+        }
+        .slide-dot.active {
+            background-color: #ffffff;
+        }
+        @keyframes fade {
+            from {opacity: .4} 
+            to {opacity: 1}
         }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
-    <div id="app" class="bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl">
-        <div id="login-section">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Contractor Login</h2>
-            <div class="mb-4">
-                <label for="username" class="block text-gray-700 text-sm font-bold mb-2">Username (Email):</label>
-                <input type="email" id="username" class="shadow appearance-none border rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-            </div>
-            <div class="mb-6">
-                <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Password:</label>
-                <input type="password" id="password" class="shadow appearance-none border rounded-lg w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline">
-            </div>
-            <button id="login-button" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline w-full transition duration-300 ease-in-out">Login</button>
-            <p id="login-message" class="text-red-500 text-xs italic mt-4 text-center"></p>
-            <button id="show-create-account-button" class="mt-4 text-blue-500 hover:text-blue-700 text-sm w-full text-center hidden">Create New Account</button>
-        </div>
+<body class="flex flex-col min-h-screen">
 
-        <div id="create-account-section" class="hidden">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Create New Account</h2>
-            <div class="mb-4">
-                <label for="new-username" class="block text-gray-700 text-sm font-bold mb-2">Username (Email):</label>
-                <input type="email" id="new-username" class="shadow appearance-none border rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-            </div>
-            <div class="mb-6">
-                <label for="new-password" class="block text-gray-700 text-sm font-bold mb-2">Password:</label>
-                <input type="password" id="new-password" class="shadow appearance-none border rounded-lg w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline">
-            </div>
-            <button id="create-account-button" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline w-full transition duration-300 ease-in-out">Create Account</button>
-            <p id="create-account-message" class="text-red-500 text-xs italic mt-4 text-center"></p>
-            <button id="show-login-button" class="mt-4 text-blue-500 hover:text-blue-700 text-sm w-full text-center">Back to Login</button>
-        </div>
-
-        <div id="jobs-section" class="hidden">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold text-gray-800">Available Jobs</h2>
-                <button id="logout-button" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline transition duration-300 ease-in-out">Logout</button>
-            </div>
-            <!-- Yellow Caution Banner -->
-            <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6 rounded-lg" role="alert">
-                <p class="font-bold">NOTE: Do not clock in on flat rate jobs</p>
-            </div>
-            <p id="no-jobs-message" class="text-gray-600 text-center hidden">No jobs available at the moment.</p>
-            <div id="jobs-list" class="space-y-4">
+    <main class="flex-grow pb-24"> <!-- Added padding-bottom to prevent content from being hidden by the sticky footer -->
+        <section class="hero-section section-padding text-center flex items-center justify-center">
+            <video id="hero-video-player" autoplay muted playsinline class="hero-video"></video>
+            <div class="hero-overlay"></div>
+            <div class="max-w-4xl mx-auto hero-content">
+                <h2 class="text-4xl md:text-5xl font-extrabold leading-tight mb-4 text-gray-900 tracking-tight">
+                    Detailing Oklahoma City Cars Since 2023 <br>
+                    <span class="text-3xl md:text-4xl font-semibold">Over 175 Cars Detailed</span>
+                </h2>
+                <p class="text-lg md:text-xl text-gray-800 mb-8 font-bold">
+                    Select your vehicle type below to see our customized detailing packages. We bring the showroom shine to your doorstep.
+                </p>
+                <div class="flex flex-col items-center space-y-4">
+                    <a href="tel:+14052955189" class="btn btn-secondary text-lg">
+                        <span>Get a Free Quote</span>
+                        <span class="visually-hidden call-tracking-number">(405) 295-5189</span>
+                    </a>
+                    <a href="tel:+14052955189" class="btn text-lg">
+                        <span>Apply for Financing</span>
+                        <span class="visually-hidden call-tracking-number">(405) 295-5189</span>
+                    </a>
                 </div>
+                <p class="text-sm text-blue-600 mt-3 font-semibold">Call Anytime - We're Open 24/7!</p>
+            </div>
+        </section>
+
+        <section id="pricing" class="section-padding bg-gray-100">
+            <div class="container mx-auto text-center">
+                <h3 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Our Detailing Packages</h3>
+                <p class="text-lg text-gray-600 mb-10 max-w-2xl mx-auto">Choose your vehicle type to view tailored pricing. No hidden fees, just premium results.</p>
+
+                <div class="vehicle-toggle">
+                    <button id="show-sedan" class="active">4 Door Sedan</button>
+                    <button id="show-suv">SUV / Truck</button>
+                    <a href="https://michieauto.com/bnpl" target="_blank" class="bnpl-link-button">
+                        <button>Buy Now, Pay Later</button>
+                    </a>
+                </div>
+
+                <div id="sedan-packages" class="pricing-grid" style="display: grid;">
+                    <div class="pricing-card">
+                        <h4 class="pricing-level">Level 1 Detail</h4>
+                        <p class="pricing-price">$149</p>
+                        <ul class="feature-list">
+                            <li>External high pressure wash</li>
+                            <li>Tire cleaner</li>
+                            <li>Window cleaning inside and out</li>
+                            <li>Deep vaccuming</li>
+                            <li>Display controls and panels wipedown</li>
+                            <li>Mirror cleaning</li>
+                            <li>Seat vaccum</li>
+                            <li>Surface protectent for the dash and display/controls</li>
+                            <li>Steering wheel and dash clean</li>
+                        </ul>
+                        <a href="tel:+14052955189" class="btn btn-secondary">
+                            <span>Book Level 1</span>
+                            <span class="visually-hidden call-tracking-number">(405) 295-5189</span>
+                        </a>
+                    </div>
+                    <div class="pricing-card">
+                        <h4 class="pricing-level">Level 2 Detail</h4>
+                        <p class="pricing-price">$249</p>
+                        <ul class="feature-list">
+                            <li><strong>All items in Level 1, plus:</strong></li>
+                            <li>Shampoo carpets and seats</li>
+                            <li>Premium Leather treatment</li>
+                            <li>Door jam cleaning</li>
+                            <li>Rims and tires cleaned and wiped down</li>
+                            <li>console scrub down</li>
+                            <li>Pet hair removal</li>
+                            <li>Odor removal</li>
+                        </ul>
+                         <a href="tel:+14052955189" class="btn btn-secondary">
+                            <span>Book Level 2</span>
+                            <span class="visually-hidden call-tracking-number">(405) 295-5189</span>
+                        </a>
+                    </div>
+                    <div class="pricing-card">
+                        <h4 class="pricing-level">Level 3 Detail</h4>
+                        <p class="pricing-price">$349</p>
+                        <ul class="feature-list">
+                            <li><strong>All items in Level 2, plus:</strong></li>
+                            <li>FINE TOOTH COMB in between seats cleaning</li>
+                            <li>Glove compartment cleaning</li>
+                            <li>Trunk shampoo and vaccum</li>
+                            <li>Door controls cleaning</li>
+                            <li>Hard to reach areas deep level shampoo</li>
+                            <li>Meticulous cleaning of all frequently touched surfaces</li>
+                            <li>External bug removal</li>
+                            <li>Free microfiber cloth</li>
+                            <li>Protection plan (complimentary maintenance clean within 15 days)</li>
+                        </ul>
+                         <a href="tel:+14052955189" class="btn btn-secondary">
+                            <span>Book Level 3</span>
+                            <span class="visually-hidden call-tracking-number">(405) 295-5189</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="suv-truck-packages" class="pricing-grid">
+                     <div class="pricing-card">
+                        <h4 class="pricing-level">Level 1 Detail</h4>
+                        <p class="pricing-price">$199</p>
+                        <ul class="feature-list">
+                            <li>External high pressure wash</li>
+                            <li>Tire cleaner</li>
+                            <li>Window cleaning inside and out</li>
+                            <li>Deep vaccuming</li>
+                            <li>Display controls and panels wipedown</li>
+                            <li>Mirror cleaning</li>
+                            <li>Seat vaccum</li>
+                            <li>Surface protectent for the dash and display/controls</li>
+                            <li>Steering wheel and dash clean</li>
+                        </ul>
+                         <a href="tel:+14052955189" class="btn btn-secondary">
+                            <span>Book Level 1</span>
+                            <span class="visually-hidden call-tracking-number">(405) 295-5189</span>
+                        </a>
+                    </div>
+                    <div class="pricing-card">
+                        <h4 class="pricing-level">Level 2 Detail</h4>
+                        <p class="pricing-price">$299</p>
+                        <ul class="feature-list">
+                            <li><strong>All items in Level 1, plus:</strong></li>
+                            <li>Shampoo carpets and seats</li>
+                            <li>Premium Leather treatment</li>
+                            <li>Door jam cleaning</li>
+                            <li>Rims and tires cleaned and wiped down</li>
+                            <li>console scrub down</li>
+                            <li>Pet hair removal</li>
+                            <li>Odor removal</li>
+                        </ul>
+                        <a href="tel:+14052955189" class="btn btn-secondary">
+                            <span>Book Level 2</span>
+                            <span class="visually-hidden call-tracking-number">(405) 295-5189</span>
+                        </a>
+                    </div>
+                    <div class="pricing-card">
+                        <h4 class="pricing-level">Level 3 Detail</h4>
+                        <p class="pricing-price">$399</p>
+                        <ul class="feature-list">
+                            <li><strong>All items in Level 2, plus:</strong></li>
+                            <li>FINE TOOTH COMB in between seats cleaning</li>
+                            <li>Glove compartment cleaning</li>
+                            <li>Trunk (for vans/SUVs) shampoo and vaccum</li>
+                            <li>Door controls cleaning</li>
+                            <li>Hard to reach areas deep level shampoo</li>
+                            <li>Meticulous cleaning of all frequently touched surfaces</li>
+                            <li>External bug removal</li>
+                            <li>Free microfiber cloth</li>
+                            <li>Protection plan (complimentary maintenance clean within 15 days)</li>
+                        </ul>
+                         <a href="tel:+14052955189" class="btn btn-secondary">
+                            <span>Book Level 3</span>
+                            <span class="visually-hidden call-tracking-number">(405) 295-5189</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- === GALLERY SECTION (ARROWS REMOVED) === -->
+        <section id="gallery" class="section-padding bg-white">
+            <div class="container mx-auto text-center">
+                <h3 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">See Us In Action</h3>
+                <p class="text-lg text-gray-600 mb-10 max-w-2xl mx-auto">A glimpse into the quality and care we put into every vehicle.</p>
+                
+                <div id="slideshow-container" class="slideshow-container">
+                    <!-- Slides will be inserted here by JS -->
+                    <div class="slide-dots">
+                        <!-- Dots will be inserted here by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- === END GALLERY SECTION === -->
+
+        <section class="section-padding bg-gray-50">
+            <div class="container mx-auto text-center">
+                <h3 class="text-4xl md:text-5xl font-bold text-gray-900 text-center mb-10">What Our Customers Say</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <img src="https://michieauto.com/Screenshot_20250702_134639_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
+                    <img src="https://michieauto.com/Screenshot_20250702_134648_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
+                    <img src="https://michieauto.com/Screenshot_20250702_134655_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
+                    <img src="https://michieauto.com/Screenshot_20250702_134713_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
+                    <img src="https://michieauto.com/Screenshot_20250702_134725_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
+                    <img src="https://michieauto.com/Screenshot_20250702_134735_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
+                    <img src="https://michieauto.com/Screenshot_20250702_135648_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
+                    <img src="https://michieauto.com/Screenshot_20250702_135557_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
+                    <img src="https://michieauto.com/Screenshot_20250702_135707_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
+                    <img src="https://michieauto.com/Screenshot_20250702_135717_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
+                    <img src="https://michieauto.com/Screenshot_20250702_135728_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
+                    <img src="https://michieauto.com/Screenshot_20250702_135753_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
+                    <img src="https://michieauto.com/Screenshot_20250702_135814_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
+                    <img src="https://michieauto.com/Screenshot_20250702_135842_Maps.jpg" alt="Customer review screenshot" class="w-full h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Review+Not+Found'">
+                </div>
+                <p class="mt-8 text-lg">
+                    Read more of our google reviews <a href="https://maps.app.goo.gl/6vQ1RpysjA3g7gXs6" target="_blank" class="text-blue-600 font-bold hover:underline">here</a>.
+                </p>
+            </div>
+        </section>
+
+        <footer class="bg-gray-800 text-white py-12 px-6">
+            <div class="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+                <div>
+                    <h4 class="font-bold text-lg mb-3">Michie Auto</h4>
+                    <p class="text-gray-400">OKC's Premier 24/7 Mobile Detailing Service.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg mb-3">Site Links</h4>
+                    <nav class="flex flex-col space-y-2">
+                        <a href="https://michieauto.com/protection" class="text-gray-400 hover:text-white transition-colors">Protection Plan</a>
+                        <a href="https://michieauto.com/bnpl" class="text-gray-400 hover:text-white transition-colors">$99 Down Financing</a>
+                        <a href="https://michieauto.com/faq" class="text-gray-400 hover:text-white transition-colors">FAQ</a>
+                    </nav>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg mb-3">Contact Us</h4>
+                    <p class="text-gray-400">Open 24/7</p>
+                    <a href="tel:+14052955189" class="text-white hover:text-blue-400 call-tracking-number">(405) 295-5189</a>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center">
+                <p class="text-gray-500 text-sm">&copy; 2025 Michie Auto. All Rights Reserved.</p>
+            </div>
+        </footer>
+    </main>
+
+    <div class="sticky-footer py-3 px-6 flex justify-center sm:justify-between items-center">
+        <p class="text-lg md:text-xl font-bold text-gray-800 hidden sm:block">
+            Book Your Appointment Today!
+        </p>
+        <div class="flex flex-col items-center">
+             <span class="text-sm font-semibold text-blue-600 block">AVAILABLE 24/7</span>
+            <a href="tel:+14052955189" class="btn-call-to-action mt-1">
+                <svg class="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
+                <span>Call Now to Book</span>
+                <span class="call-tracking-number visually-hidden">(405) 295-5189</span>
+            </a>
         </div>
     </div>
 
     <script>
-        const API_BASE_URL = 'https://michie-detailing-backend.onrender.com';
-        const APP_FRONTEND_URL = 'https://jobs.michieauto.com';
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- Vehicle type toggle switch logic ---
+            const sedanBtn = document.getElementById('show-sedan');
+            const suvBtn = document.getElementById('show-suv');
+            const sedanPackages = document.getElementById('sedan-packages');
+            const suvPackages = document.getElementById('suv-truck-packages');
 
-        const loginSection = document.getElementById('login-section');
-        const createAccountSection = document.getElementById('create-account-section');
-        const jobsSection = document.getElementById('jobs-section');
-
-        const usernameInput = document.getElementById('username');
-        const passwordInput = document.getElementById('password');
-        const loginButton = document.getElementById('login-button');
-        const loginMessage = document.getElementById('login-message');
-        const showCreateAccountButton = document.getElementById('show-create-account-button');
-
-        const newUsernameInput = document.getElementById('new-username');
-        const newPasswordInput = document.getElementById('new-password');
-        const createAccountButton = document.getElementById('create-account-button');
-        const createAccountMessage = document.getElementById('create-account-message');
-        const showLoginButton = document.getElementById('show-login-button');
-
-        const logoutButton = document.getElementById('logout-button');
-        const jobsList = document.getElementById('jobs-list');
-        const noJobsMessage = document.getElementById('no-jobs-message');
-
-        let authToken = localStorage.getItem('authToken');
-
-        function updateUI() {
-            if (authToken) {
-                loginSection.classList.add('hidden');
-                createAccountSection.classList.add('hidden');
-                jobsSection.classList.remove('hidden');
-                fetchJobs();
-            } else {
-                loginSection.classList.remove('hidden');
-                createAccountSection.classList.add('hidden');
-                jobsSection.classList.add('hidden');
-                jobsList.innerHTML = '';
-                noJobsMessage.classList.add('hidden');
-            }
-        }
-
-        loginButton.addEventListener('click', async () => {
-            const username = usernameInput.value;
-            const password = passwordInput.value;
-
-            try {
-                const response = await fetch(`${API_BASE_URL}/login`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ username, password }),
-                });
-
-                const data = await response.json();
-                if (response.ok) {
-                    authToken = data.token;
-                    localStorage.setItem('authToken', authToken);
-                    localStorage.setItem('contractorEmail', username); 
-                    loginMessage.textContent = '';
-                    updateUI();
-                } else {
-                    loginMessage.textContent = data.message || 'Login failed. Please check your credentials.';
-                }
-            } catch (error) {
-                console.error('Login error:', error);
-                loginMessage.textContent = 'An error occurred during login.';
-            }
-        });
-
-        logoutButton.addEventListener('click', () => {
-            authToken = null;
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('contractorEmail');
-            updateUI();
-        });
-
-        showCreateAccountButton.addEventListener('click', () => {
-            loginSection.classList.add('hidden');
-            createAccountSection.classList.remove('hidden');
-            loginMessage.textContent = '';
-        });
-
-        createAccountButton.addEventListener('click', async () => {
-            const newUsername = newUsernameInput.value;
-            const newPassword = newPasswordInput.value;
-
-            if (!newUsername || !newPassword) {
-                createAccountMessage.textContent = 'Please enter both email and password.';
-                return;
+            function showSedan() {
+                sedanBtn.classList.add('active');
+                suvBtn.classList.remove('active');
+                sedanPackages.style.display = 'grid';
+                suvPackages.style.display = 'none';
             }
 
-            try {
-                const response = await fetch(`${API_BASE_URL}/register`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ username: newUsername, password: newPassword }),
-                });
-
-                const data = await response.json();
-                if (response.ok) {
-                    createAccountMessage.textContent = data.message || 'Account created successfully! You can now log in.';
-                    setTimeout(() => {
-                        showLoginButton.click();
-                        usernameInput.value = newUsername;
-                        passwordInput.value = '';
-                    }, 2000);
-                } else {
-                    createAccountMessage.textContent = data.message || 'Account creation failed.';
-                }
-            } catch (error) {
-                console.error('Create account error:', error);
-                createAccountMessage.textContent = 'An error occurred during account creation.';
-            }
-        });
-
-        showLoginButton.addEventListener('click', () => {
-            createAccountSection.classList.add('hidden');
-            loginSection.classList.remove('hidden');
-            createAccountMessage.textContent = '';
-        });
-
-        function formatAppointmentDate(dateString) {
-            if (!dateString || dateString === "N/A") return "N/A";
-            try {
-                const [year, month, day] = dateString.split('-');
-                return `${month}-${day}-${year}`;
-            } catch (e) {
-                console.error("Error formatting date:", dateString, e);
-                return dateString;
-            }
-        }
-
-        function formatAppointmentTime(timeString) {
-            if (!timeString || timeString === "N/A") return "N/A";
-            try {
-                const [hours, minutes] = timeString.split(':');
-                let hour = parseInt(hours, 10);
-                const ampm = hour >= 12 ? 'PM' : 'AM';
-                hour = hour % 12;
-                hour = hour ? hour : 12;
-                return `${hour}:${minutes} ${ampm}`;
-            } catch (e) {
-                console.error("Error formatting time:", timeString, e);
-                return timeString;
-            }
-        }
-
-        function formatCustomerAddress(addressString) {
-            if (!addressString || addressString === "N/A") return "N/A";
-            return addressString.replace(/, /g, ',<br>').replace(/ /g, '&nbsp;');
-        }
-
-        async function fetchJobs() {
-            if (!authToken) {
-                console.log('Not authenticated. Cannot fetch jobs.');
-                return;
+            function showSuv() {
+                suvBtn.classList.add('active');
+                sedanBtn.classList.remove('active');
+                suvPackages.style.display = 'grid';
+                sedanPackages.style.display = 'none';
             }
 
-            try {
-                const response = await fetch(`${API_BASE_URL}/jobs`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${authToken}`,
-                        'Content-Type': 'application/json',
-                    },
-                });
+            sedanBtn.addEventListener('click', showSedan);
+            suvBtn.addEventListener('click', showSuv);
+            showSedan(); // Initially show sedan packages
 
-                const data = await response.json();
-                if (response.ok) {
-                    renderJobs(data);
-                } else {
-                    jobsList.innerHTML = '';
-                    noJobsMessage.textContent = data.message || 'Error fetching jobs.';
-                    noJobsMessage.classList.remove('hidden');
-                }
-            } catch (error) {
-                console.error('Fetch jobs error:', error);
-                jobsList.innerHTML = '';
-                noJobsMessage.textContent = 'An error occurred while fetching jobs.';
-                noJobsMessage.classList.remove('hidden');
+            // --- Hero Video Playlist Logic ---
+            const videoPlayer = document.getElementById('hero-video-player');
+            const videoSources = [
+                'https://res.cloudinary.com/dvrljjtdr/video/upload/v1751500247/VID20240216113828_2_bdzawq.mp4',
+                'https://res.cloudinary.com/dvrljjtdr/video/upload/v1751498935/AQNPpHNFYCMP_D3Y5GB_Wqim_VDK4kshW8ftuv3U1cDNRAdJZ7nJyg9FXzKhh9X7xi2rZzpXdzzx6M5Dr2Dm4Njm_yd27ea.mp4'
+            ];
+            let currentVideoIndex = 0;
+
+            function playNextVideo() {
+                currentVideoIndex = (currentVideoIndex + 1) % videoSources.length;
+                videoPlayer.src = videoSources[currentVideoIndex];
+                videoPlayer.load();
+                videoPlayer.play().catch(error => console.error("Video play failed:", error));
             }
-        }
 
-        function renderJobs(jobs) {
-            jobsList.innerHTML = '';
-            let renderedJobCount = 0;
-            const contractorEmail = localStorage.getItem('contractorEmail');
+            videoPlayer.src = videoSources[currentVideoIndex];
+            videoPlayer.addEventListener('ended', playNextVideo);
+            videoPlayer.play().catch(error => {
+                console.error("Initial video play failed. This may be due to browser autoplay policies.", error);
+            });
 
-            jobs.forEach(job => {
-                let showJob = false;
-                if (job.status === 'pending') {
-                    showJob = true;
-                } else if (job.status === 'accepted') {
-                    if (job.contractor_id_field === contractorEmail) {
-                        showJob = true;
-                    }
-                }
+            // --- Image Slideshow Logic ---
+            const slideshowContainer = document.getElementById('slideshow-container');
+            if (slideshowContainer) {
+                const dotsContainer = slideshowContainer.querySelector('.slide-dots');
                 
-                if (showJob) {
-                    const jobCard = document.createElement('div');
-                    jobCard.className = 'bg-gray-50 p-6 rounded-lg shadow-md border border-gray-200';
+                const rawImageUrls = [
+                    "https://res.cloudinary.com/dvrljjtdr/image/upload/v1751503250/IMG_20250702_124111_h4edvd.jpg",
+                    "https://res.cloudinary.com/dvrljjtdr/image/upload/v1751502419/IMG_20250702_124112_uzh5mb.jpg",
+                    "https://res.cloudinary.com/dvrljjtdr/image/upload/v1751502419/IMG_20250702_124047_mmybkw.jpg",
+                    "https://res.cloudinary.com/dvrljjtdr/image/upload/v1751502419/IMG_20250702_124114_ipxukb.jpg",
+                    "https://res.cloudinary.com/dvrljjtdr/image/upload/v1751502419/IMG_20250702_124041_wx8lxm.jpg",
+                    "https://res.cloudinary.com/dvrljjtdr/image/upload/v1751502419/IMG_20250702_124113_iaxqy2.jpg",
+                    "https://res.cloudinary.com/dvrljjtdr/image/upload/v1751502418/IMG_20250625_212110_dl8kmw.jpg",
+                    "https://res.cloudinary.com/dvrljjtdr/image/upload/v1751502418/IMG_20250628_212442_bufzvi.jpg",
+                    "https://res.cloudinary.com/dvrljjtdr/image/upload/v1751502417/IMG_20250623_181445_ahzilp.jpg",
+                    "https://res.cloudinary.com/dvrljjtdr/image/upload/v1751502417/IMG_20250609_184650_x3jvb7.jpg",
+                    "https://res.cloudinary.com/dvrljjtdr/image/upload/v1751503533/IMG20240620125543_g6liln.jpg",
+                    "https://res.cloudinary.com/dvrljjtdr/image/upload/v1751503533/IMG20240620125542_h6bk3v.jpg",
+                    "https://res.cloudinary.com/dvrljjtdr/image/upload/v1751503533/IMG20240216141851_saetec.jpg",
+                    "https://res.cloudinary.com/dvrljjtdr/image/upload/v1751503532/IMG20240216141941_qjd0oq.jpg",
+                    "https://res.cloudinary.com/dvrljjtdr/image/upload/v1751503531/IMG_20250702_124055_rln57h.jpg"
+                ];
+                const imageUrls = [...new Set(rawImageUrls)]; // Remove duplicates
+                let currentSlide = 0;
+                let slideInterval;
 
-                    let jobDescriptionHTML = '';
-                    let mainTitle = '';
+                // Create slides and dots
+                imageUrls.forEach((url, i) => {
+                    // Slide
+                    const slideDiv = document.createElement('div');
+                    slideDiv.className = 'slideshow-slide';
+                    const img = document.createElement('img');
+                    img.src = url;
+                    img.alt = `Detailing work photo ${i + 1}`;
+                    img.loading = 'lazy'; // Lazy load images for performance
+                    img.onerror = function() { this.onerror=null; this.src='https://placehold.co/1000x700/cccccc/ffffff?text=Image+Not+Found'; };
+                    slideDiv.appendChild(img);
+                    slideshowContainer.insertBefore(slideDiv, dotsContainer);
 
-                    if (job.year && job.year !== "N/A") {
-                        mainTitle += job.year + ' ';
-                    }
-                    if (job.make && job.make !== "N/A") {
-                        mainTitle += job.make + ' ';
-                    }
-                    if (job.model && job.model !== "N/A") {
-                        mainTitle += job.model;
-                    }
-
-                    if (mainTitle.trim() === "") {
-                        mainTitle = "Untitled Job";
-                    }
-
-                    jobDescriptionHTML += `<h3 class="text-xl font-semibold text-gray-800 mb-4">${mainTitle.trim()}</h3>`;
-
-                    if (job.zip_code && job.zip_code !== "N/A") {
-                        jobDescriptionHTML += `<p class="text-gray-600 mb-2"><strong>Zip Code:</strong> ${job.zip_code}</p>`;
-                    }
-                    if (job.appointment_date && job.appointment_date !== "N/A") {
-                        jobDescriptionHTML += `<p class="text-gray-600 mb-2"><strong>Appointment Date:</strong> ${formatAppointmentDate(job.appointment_date)}</p>`;
-                    }
-                    if (job.appointment_time && job.appointment_time !== "N/A") {
-                        jobDescriptionHTML += `<p class="text-gray-600 mb-4"><strong>Appointment Time:</strong> ${formatAppointmentTime(job.appointment_time)}</p>`;
-                    }
-
-                    if (job.estimated_time && job.estimated_time !== "N/A") {
-                        jobDescriptionHTML += `<p class="text-gray-600 mb-4"><strong>Estimated Time:</strong> ${job.estimated_time}</p>`;
-                    }
-                    
-                    if (job.pay && job.pay !== "N/A") {
-                        let payDisplay = job.pay;
-                        if (job.pay.toLowerCase() === "hourly + tips") {
-                            payDisplay = "$50 Flat Rate + Tips";
-                        }
-                        jobDescriptionHTML += `<p class="text-gray-700 font-medium mb-4"><strong>Pay:</strong> ${payDisplay}</p>`;
-                    }
-
-                    // Green box for bonus opportunities
-                    jobDescriptionHTML += `
-                        <div class="bg-green-50 text-green-800 p-4 rounded-lg border border-green-200 my-4">
-                            <p class="font-bold mb-2">Bonus Opportunities</p>
-                            <p class="mb-1"><strong>Protection Plan:</strong> $15 Commission per plan sold.</p>
-                            <p><strong>Google Review:</strong> $5 Bonus for a photo review with message.</p>
-                        </div>
-                    `;
-                    
-                    jobDescriptionHTML += `<p class="text-gray-700 font-medium mb-4"><strong>Status:</strong> <span class="${job.status === 'accepted' ? 'text-green-600' : job.status === 'declined' ? 'text-red-600' : 'text-yellow-600'} capitalize">${job.status}</span></p>`;
-
-
-                    if (job.status === 'accepted') {
-                        let customerDetails = '';
-                        if (job.customer_name && job.customer_name !== "N/A") {
-                            customerDetails += `<p class="text-gray-600 mb-2"><strong>Customer Name:</strong> ${job.customer_name}</p>`;
-                        }
-                        if (job.customer_phone && job.customer_phone !== "N/A") {
-                            customerDetails += `<p class="text-gray-600 mb-2"><strong>Customer Phone:</strong> ${job.customer_phone}</p>`;
-                        }
-                        if (job.customer_address && job.customer_address !== "N/A") {
-                            customerDetails += `<p class="text-gray-600"><strong>Customer Address:</strong> <span class="address-display">${formatCustomerAddress(job.customer_address)}</span></p>`;
-                        }
-
-                        if (customerDetails) {
-                            jobDescriptionHTML += `
-                                <div class="mt-4 border-t pt-4 border-gray-200">
-                                    <h4 class="text-lg font-semibold text-gray-700 mb-2">Customer Details:</h4>
-                                    ${customerDetails}
-                                </div>
-                            `;
-                        }
-                    } else {
-                        jobDescriptionHTML += `
-                            <div class="flex space-x-2 mt-4">
-                                <button data-job-id="${job.id}" class="accept-button bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline transition duration-300 ease-in-out w-1/2">Accept</button>
-                                <button data-job-id="${job.id}" class="decline-button bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline transition duration-300 ease-in-out w-1/2">Decline</button>
-                            </div>
-                        `;
-                    }
-
-                    jobCard.innerHTML = jobDescriptionHTML;
-                    jobsList.appendChild(jobCard);
-                    renderedJobCount++;
-                }
-            });
-
-            if (renderedJobCount === 0) {
-                noJobsMessage.textContent = "No jobs available at the moment.";
-                noJobsMessage.classList.remove('hidden');
-            } else {
-                noJobsMessage.classList.add('hidden');
-            }
-
-            document.querySelectorAll('.accept-button').forEach(button => {
-                button.addEventListener('click', (event) => handleJobAction(event.target.dataset.jobId, 'accept'));
-            });
-            document.querySelectorAll('.decline-button').forEach(button => {
-                button.addEventListener('click', (event) => handleJobAction(event.target.dataset.jobId, 'decline'));
-            });
-        }
-
-        async function handleJobAction(jobId, actionType) {
-            if (!authToken) {
-                console.log('Not authenticated. Cannot proceed with job action.');
-                alert('You must be logged in to perform this action.');
-                return;
-            }
-
-            try {
-                const response = await fetch(`${API_BASE_URL}/jobs/${jobId}/${actionType}`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${authToken}`,
-                        'Content-Type': 'application/json',
-                    },
+                    // Dot
+                    const dot = document.createElement('span');
+                    dot.className = 'slide-dot';
+                    dot.addEventListener('click', () => {
+                        setSlide(i);
+                        resetInterval();
+                    });
+                    dotsContainer.appendChild(dot);
                 });
 
-                const data = await response.json();
-                if (response.ok) {
-                    console.log(`Job ${jobId} ${actionType}ed successfully. Status: ${data.message}`);
-                    fetchJobs();
-                } else {
-                    alert(data.message || `Failed to ${actionType} job.`);
-                    console.error(`Failed to ${actionType} job:`, data.message);
-                }
-            } catch (error) {
-                console.error(`Error during ${actionType} job:`, error);
-                alert(`An error occurred while trying to ${actionType} the job.`);
-            }
-        }
+                const slides = slideshowContainer.querySelectorAll('.slideshow-slide');
+                const dots = slideshowContainer.querySelectorAll('.slide-dot');
 
-        document.addEventListener('DOMContentLoaded', updateUI);
+                function setSlide(n) {
+                    slides.forEach(s => s.classList.remove('active'));
+                    dots.forEach(d => d.classList.remove('active'));
+                    
+                    currentSlide = (n + slides.length) % slides.length;
+                    
+                    if (slides[currentSlide]) slides[currentSlide].classList.add('active');
+                    if (dots[currentSlide]) dots[currentSlide].classList.add('active');
+                }
+
+                function changeSlide(n) {
+                    setSlide(currentSlide + n);
+                }
+
+                function startInterval() {
+                    slideInterval = setInterval(() => changeSlide(1), 5000); // Change slide every 5 seconds
+                }
+
+                function resetInterval() {
+                    clearInterval(slideInterval);
+                    startInterval();
+                }
+
+                setSlide(0);
+                startInterval();
+            }
+        });
     </script>
 </body>
 </html>
