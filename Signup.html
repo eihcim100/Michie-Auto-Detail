@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Your Michie Auto Detailing Account</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .form-section {
+            transition: opacity 0.5s ease-in-out;
+        }
+        .hidden-section {
+            display: none;
+        }
+        .password-requirement {
+            transition: color 0.3s;
+        }
+        .valid {
+            color: #16a34a; /* green-600 */
+        }
+        .invalid {
+            color: #dc2626; /* red-600 */
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto max-w-2xl p-4 sm:p-8 my-10">
+        <div class="bg-white p-8 rounded-2xl shadow-lg">
+            <header class="text-center mb-8">
+                <h1 class="text-3xl sm:text-4xl font-bold text-gray-800">Create Your Account</h1>
+                <p class="text-gray-600 mt-2">Get started with premium auto detailing services.</p>
+            </header>
+
+            <form id="signup-form" class="space-y-6">
+                <!-- Step 1: Account Info -->
+                <div id="step-1" class="form-section">
+                    <h2 class="text-2xl font-semibold text-gray-700 mb-4 border-b pb-2">Account Information</h2>
+                    <div class="grid grid-cols-1 gap-y-4">
+                        <input type="text" id="full-name" placeholder="Full Name" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <input type="text" id="address" placeholder="Address Where Detail is Taking Place" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <input type="tel" id="phone" placeholder="Phone Number" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <input type="email" id="email" placeholder="Email Address" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <div>
+                            <input type="password" id="password" placeholder="Password" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <div id="password-reqs" class="text-sm text-gray-500 mt-2 space-y-1">
+                                <p id="req-length" class="password-requirement invalid">At least 6 characters</p>
+                                <p id="req-capital" class="password-requirement invalid">At least 1 capital letter</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Vehicle Info -->
+                <div id="step-2" class="form-section">
+                    <h2 class="text-2xl font-semibold text-gray-700 mb-4 border-b pb-2">Primary Vehicle</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <input type="text" id="year1" placeholder="Year" required class="px-4 py-2 border rounded-lg">
+                        <input type="text" id="make1" placeholder="Make" required class="px-4 py-2 border rounded-lg">
+                        <input type="text" id="model1" placeholder="Model" required class="px-4 py-2 border rounded-lg">
+                    </div>
+
+                    <div class="mt-6">
+                        <label for="add-second-vehicle" class="flex items-center space-x-2 cursor-pointer">
+                            <input type="checkbox" id="add-second-vehicle" class="rounded">
+                            <span>Add a second vehicle (Optional)</span>
+                        </label>
+                    </div>
+
+                    <div id="second-vehicle-fields" class="hidden-section mt-4 space-y-4">
+                        <h3 class="text-xl font-semibold text-gray-600">Second Vehicle</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <input type="text" id="year2" placeholder="Year" class="px-4 py-2 border rounded-lg">
+                            <input type="text" id="make2" placeholder="Make" class="px-4 py-2 border rounded-lg">
+                            <input type="text" id="model2" placeholder="Model" class="px-4 py-2 border rounded-lg">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Verification -->
+                <div id="step-3" class="form-section">
+                    <h2 class="text-2xl font-semibold text-gray-700 mb-4 border-b pb-2">Verification</h2>
+                     <input type="text" id="zip-code" placeholder="Enter Your Zip Code for Verification" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                
+                <!-- Submission -->
+                <div id="submission-area">
+                    <button type="submit" id="submit-button" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 disabled:bg-gray-400">Create Account</button>
+                    <p id="form-message" class="text-center mt-4"></p>
+                </div>
+            </form>
+            <p class="text-center text-sm text-gray-500 mt-6">
+                Already have an account? <a href="customer_portal.html" class="text-blue-600 hover:underline">Log in here</a>.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // IMPORTANT: Replace this with the URL of your new customer backend on Render.com
+        const API_BASE_URL = 'https://your-new-customer-backend.onrender.com';
+
+        const signupForm = document.getElementById('signup-form');
+        const passwordInput = document.getElementById('password');
+        const reqLength = document.getElementById('req-length');
+        const reqCapital = document.getElementById('req-capital');
+        const addSecondVehicleCheckbox = document.getElementById('add-second-vehicle');
+        const secondVehicleFields = document.getElementById('second-vehicle-fields');
+        const submitButton = document.getElementById('submit-button');
+        const formMessage = document.getElementById('form-message');
+
+        // --- Password Validation ---
+        function validatePassword() {
+            const value = passwordInput.value;
+            const hasLength = value.length >= 6;
+            const hasCapital = /[A-Z]/.test(value);
+
+            reqLength.classList.toggle('valid', hasLength);
+            reqLength.classList.toggle('invalid', !hasLength);
+            
+            reqCapital.classList.toggle('valid', hasCapital);
+            reqCapital.classList.toggle('invalid', !hasCapital);
+
+            return hasLength && hasCapital;
+        }
+        passwordInput.addEventListener('input', validatePassword);
+
+        // --- Toggle Second Vehicle ---
+        addSecondVehicleCheckbox.addEventListener('change', () => {
+            secondVehicleFields.classList.toggle('hidden-section');
+        });
+
+        // --- Form Submission ---
+        signupForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!validatePassword()) {
+                formMessage.textContent = 'Please ensure your password meets the requirements.';
+                formMessage.className = 'text-center mt-4 text-red-600';
+                return;
+            }
+            
+            submitButton.disabled = true;
+            submitButton.textContent = 'Creating Account...';
+            formMessage.textContent = '';
+
+            const vehicle2 = addSecondVehicleCheckbox.checked ? {
+                year: document.getElementById('year2').value,
+                make: document.getElementById('make2').value,
+                model: document.getElementById('model2').value,
+            } : null;
+
+            const formData = {
+                full_name: document.getElementById('full-name').value,
+                address: document.getElementById('address').value,
+                phone: document.getElementById('phone').value,
+                email: document.getElementById('email').value,
+                password: passwordInput.value,
+                zip_code: document.getElementById('zip-code').value,
+                vehicle1: {
+                    year: document.getElementById('year1').value,
+                    make: document.getElementById('make1').value,
+                    model: document.getElementById('model1').value,
+                },
+                vehicle2: vehicle2
+            };
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/customer/full_signup`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    formMessage.textContent = 'Account created successfully! You will be redirected to the login page.';
+                    formMessage.className = 'text-center mt-4 text-green-600';
+                    setTimeout(() => {
+                        window.location.href = 'customer_portal.html'; // Redirect to your login page
+                    }, 3000);
+                } else {
+                    formMessage.textContent = data.message || 'An error occurred during signup.';
+                    formMessage.className = 'text-center mt-4 text-red-600';
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Create Account';
+                }
+            } catch (error) {
+                console.error('Signup error:', error);
+                formMessage.textContent = 'A network error occurred. Please try again.';
+                formMessage.className = 'text-center mt-4 text-red-600';
+                submitButton.disabled = false;
+                submitButton.textContent = 'Create Account';
+            }
+        });
+    </script>
+</body>
+</html>
