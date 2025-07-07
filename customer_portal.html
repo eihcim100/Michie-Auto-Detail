@@ -129,6 +129,7 @@
     <script>
         let editAddressAutocomplete;
 
+        // PATCH: Make the initPortal function globally accessible by attaching it to the window object.
         window.initPortal = function() {
             initializeApp();
             const editAddressInput = document.getElementById('edit-address-input');
@@ -144,7 +145,6 @@
         function initializeApp() {
             const API_BASE_URL = 'https://michie-detailing-admin.onrender.com';
             
-            // --- Get all DOM elements ---
             const authSection = document.getElementById('auth-section');
             const dashboardSection = document.getElementById('dashboard-section');
             const loginButton = document.getElementById('login-button');
@@ -164,9 +164,8 @@
             const showFinanceBtn = document.getElementById('show-finance-btn');
             const financeSection = document.getElementById('finance-section');
 
-            let customerData = {}; // Store customer data globally
+            let customerData = {}; 
 
-            // --- Main Functions ---
             function updateUI() {
                 const token = localStorage.getItem('customerToken');
                 if (token) {
@@ -213,7 +212,6 @@
                 updateUI();
             }
 
-            // --- Event Listeners ---
             loginButton.addEventListener('click', async () => {
                 const email = document.getElementById('login-email').value;
                 const password = document.getElementById('login-password').value;
@@ -246,7 +244,6 @@
                 financeSection.style.display = financeSection.style.display === 'block' ? 'none' : 'block';
             });
 
-            // Form submission listeners
             editPrimaryVehicleForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const token = localStorage.getItem('customerToken');
@@ -304,7 +301,6 @@
                 } catch (error) { console.error('Update address error:', error); }
             });
 
-            // Initial call
             updateUI();
         }
     </script>
