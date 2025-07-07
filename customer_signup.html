@@ -55,12 +55,6 @@
                     <div class="grid grid-cols-1 gap-y-4">
                         <input type="text" id="full-name" placeholder="Full Name" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="name">
                         
-                        <!-- 
-                          ==================================================================
-                          THE FIX: USING THE NEW PlaceAutocompleteElement
-                          We now request specific fields to ensure we get the zip code.
-                          ==================================================================
-                        -->
                         <gmp-place-autocomplete
                             id="address-autocomplete"
                             placeholder="Service Address"
@@ -139,24 +133,20 @@
             const zipCodeInput = document.getElementById('zip-code');
             
             // --- New Place Autocomplete Logic ---
-            // This is the key fix: Wait until the Google Maps web component is fully defined
-            // before trying to attach an event listener to it. This prevents a race condition.
             customElements.whenDefined('gmp-place-autocomplete').then(() => {
                 const autocompleteElement = document.getElementById('address-autocomplete');
                 
                 autocompleteElement.addEventListener('gmp-placeselect', (event) => {
                     const place = event.place;
                     if (!place) {
-                        addressInput.value = ''; // Clear our hidden input if no place is selected
+                        addressInput.value = ''; 
                         return;
                     }
 
-                    // Store the full address in our hidden input for submission
                     if (place.formattedAddress) {
                         addressInput.value = place.formattedAddress;
                     }
 
-                    // IMPROVEMENT: Automatically populate the zip code field
                     const zipCodeComponent = place.addressComponents?.find(c => c.types.includes('postal_code'));
                     if (zipCodeComponent) {
                         zipCodeInput.value = zipCodeComponent.longText;
@@ -188,15 +178,29 @@
             signupForm.addEventListener('submit', async (e) => {
                 e.preventDefault(); 
                 
+                // ==================================================================
+                // THE FIX: This is the new, more robust logic.
+                // It checks the visible text in the autocomplete box as a fallback,
+                // preventing the race condition where the form submits before the
+                // Google event can update the hidden address field.
+                // ==================================================================
+                const autocompleteElement = document.getElementById('address-autocomplete');
+                if (autocompleteElement.shadowRoot) {
+                    const visibleInput = autocompleteElement.shadowRoot.querySelector('input');
+                    if (visibleInput && visibleInput.value && !addressInput.value) {
+                        addressInput.value = visibleInput.value;
+                    }
+                }
+
                 if (!validatePassword()) {
                     formMessage.textContent = 'Please ensure your password meets all requirements.';
                     formMessage.className = 'text-center mt-4 text-red-600 font-semibold';
                     return;
                 }
                 
-                // Check if an address has been selected from the dropdown
+                // Now, we check the hidden input value, which has been reliably populated.
                 if (!addressInput.value) {
-                    formMessage.textContent = 'Please select a valid address from the suggestions.';
+                    formMessage.textContent = 'Please enter and select a valid service address.';
                     formMessage.className = 'text-center mt-4 text-red-600 font-semibold';
                     return;
                 }
