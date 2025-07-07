@@ -7,9 +7,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- ==================================================================
-         UPDATED GOOGLE SCRIPT - LOADS THE NEW PLACES ELEMENT LIBRARY
+         SIMPLIFIED GOOGLE SCRIPT - LOADS THE NEW PLACES ELEMENT LIBRARY
     ================================================================== -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAksMo2srFUskoBWk-gIPf-DWYhateR_5Q&libraries=places.element&v=beta" async></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_API_KEY&libraries=places.element&v=beta" async></script>
 
     <style>
         body { font-family: 'Inter', sans-serif; }
@@ -20,25 +20,18 @@
         .pac-container { z-index: 1000; }
 
         /* ==================================================================
-                                THE FINAL FIX
-            This robust CSS ensures the Google component's input field is
-            always visible and styled correctly, preventing it from disappearing.
+                            THE DEFINITIVE FIX
+            This simplified CSS directly styles the Google input field
+            to ensure it is visible and matches the other form fields.
         ================================================================== */
         gmp-place-autocomplete > input {
-            display: block !important;
-            width: 100% !important;
-            border: 1px solid #d1d5db !important;
-            border-radius: 0.5rem !important;
-            padding: 0.5rem 1rem !important;
-            font-size: 1rem !important;
-            line-height: 1.5rem !important;
-            box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
-        }
-        gmp-place-autocomplete > input:focus {
-            outline: 2px solid transparent !important;
-            outline-offset: 2px !important;
-            border-color: #3b82f6 !important;
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5) !important;
+            display: block;
+            width: 100%;
+            border: 1px solid #d1d5db; /* gray-300 */
+            border-radius: 0.5rem;   /* rounded-lg */
+            padding: 0.5rem 1rem;      /* py-2 px-4 */
+            font-size: 1rem;
+            line-height: 1.5rem;
         }
     </style>
 </head>
@@ -59,8 +52,7 @@
                         
                         <!-- Google's Modern Autocomplete Element -->
                         <div>
-                            <label for="address-autocomplete" class="sr-only">Address</label>
-                            <gmp-place-autocomplete id="address-autocomplete" placeholder="Address Where Detail is Taking Place" autocomplete="street-address"></gmp-place-autocomplete>
+                            <gmp-place-autocomplete id="address-autocomplete" placeholder="Address Where Detail is Taking Place"></gmp-place-autocomplete>
                             <input type="hidden" id="address" name="address" required>
                         </div>
                         
@@ -136,7 +128,7 @@
             
             autocompleteComponent.addEventListener('gmp-placechange', () => {
                 const place = autocompleteComponent.place;
-                if (place) {
+                if (place && place.formattedAddress) {
                     hiddenAddressInput.value = place.formattedAddress;
                 }
             });
@@ -165,6 +157,7 @@
                     return;
                 }
                 
+                // Handle case where user types an address but doesn't select a suggestion
                 if (!hiddenAddressInput.value) {
                     const visibleInput = autocompleteComponent.input;
                     if (visibleInput && visibleInput.value) {
