@@ -9,8 +9,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- The new Places API requires its own library. loading=async is best practice. -->
     <!-- Libraries changed to 'places' only, as we are using Autocomplete directly -->
-    <!-- Added a 'callback' parameter to ensure initMap is called only when the API is fully loaded -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk&libraries=places&callback=initMap&loading=async"></script>
+    <!-- Added 'v=beta' to explicitly request the new Places API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk&libraries=places&callback=initMap&loading=async&v=beta"></script>
 
     <style>
         body { font-family: 'Inter', sans-serif; }
