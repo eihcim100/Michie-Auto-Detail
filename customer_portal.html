@@ -120,6 +120,7 @@
                 });
                 
                 if (!response.ok) {
+                    console.error('Failed to fetch customer data:', response.status, await response.text()); // Log error
                     logout(); // If token is invalid or expired
                     return;
                 }
@@ -143,17 +144,32 @@
             if (!vehicles || vehicles.length === 0) {
                 vehiclesList.innerHTML = '<p class="text-gray-500">No vehicles on file.</p>';
             } else {
-                vehicles.forEach(v => {
-                    const vehicleDiv = document.createElement('div');
-                    vehicleDiv.className = 'p-3 bg-gray-100 rounded-md';
-                    vehicleDiv.textContent = `${v.year} ${v.make} ${v.model}`;
-                    vehiclesList.appendChild(vehicleDiv);
+                // Combine primary and secondary vehicles for display and selection
+                const allVehicles = [];
+                if (vehicles.primary_vehicle) {
+                    allVehicles.push({ ...vehicles.primary_vehicle, type: 'Primary' });
+                }
+                if (vehicles.secondary_vehicle) {
+                    allVehicles.push({ ...vehicles.secondary_vehicle, type: 'Secondary' });
+                }
 
-                    const vehicleOption = document.createElement('option');
-                    vehicleOption.value = v.id;
-                    vehicleOption.textContent = `${v.year} ${v.make} ${v.model}`;
-                    bookingVehicleSelect.appendChild(vehicleOption);
-                });
+                if (allVehicles.length === 0) {
+                    vehiclesList.innerHTML = '<p class="text-gray-500">No vehicles on file.</p>';
+                } else {
+                    allVehicles.forEach(v => {
+                        const vehicleDiv = document.createElement('div');
+                        vehicleDiv.className = 'p-3 bg-gray-100 rounded-md';
+                        vehicleDiv.textContent = `${v.year} ${v.make} ${v.model} (${v.type})`; // Show type
+                        vehiclesList.appendChild(vehicleDiv);
+
+                        const vehicleOption = document.createElement('option');
+                        // Use a unique ID that combines vehicle type and its actual ID if needed for backend booking
+                        // For simplicity, let's assume v.id is unique across both primary/secondary for now
+                        vehicleOption.value = v.id; 
+                        vehicleOption.textContent = `${v.year} ${v.make} ${v.model} (${v.type})`;
+                        bookingVehicleSelect.appendChild(vehicleOption);
+                    });
+                }
             }
         }
 
@@ -182,21 +198,29 @@
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
 
+            loginMessage.textContent = ''; // Clear previous messages
+            loginMessage.className = 'text-red-500 text-center mt-2'; // Reset class
+
             try {
                 const response = await fetch(`${API_BASE_URL}/customer/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })
                 });
+
+                // Log the full response for debugging
                 const data = await response.json();
+                console.log('Login API Response:', data); 
+
                 if (response.ok) {
                     localStorage.setItem('customerToken', data.token);
                     updateUI();
                 } else {
-                    loginMessage.textContent = data.message;
+                    loginMessage.textContent = data.message || 'An error occurred during login.';
                 }
             } catch (error) {
-                loginMessage.textContent = 'An error occurred during login.';
+                console.error('Login Fetch Error:', error); // Log the fetch error
+                loginMessage.textContent = 'A network error occurred during login. Please try again.';
             }
         });
 
@@ -244,3 +268,5 @@
     </script>
 </body>
 </html>
+
+}
