@@ -38,6 +38,16 @@
             outline: 2px solid transparent;
             outline-offset: 2px;
         }
+
+        /*
+          ==================================================================
+          THE FIX: This CSS rule targets the icon "part" within the
+          Google component and hides it.
+          ==================================================================
+        */
+        gmp-place-autocomplete::part(icon) {
+            display: none;
+        }
     </style>
 </head>
 <body class="bg-gray-100">
@@ -178,12 +188,6 @@
             signupForm.addEventListener('submit', async (e) => {
                 e.preventDefault(); 
                 
-                // ==================================================================
-                // THE FIX: This is the new, more robust logic.
-                // It checks the visible text in the autocomplete box as a fallback,
-                // preventing the race condition where the form submits before the
-                // Google event can update the hidden address field.
-                // ==================================================================
                 const autocompleteElement = document.getElementById('address-autocomplete');
                 if (autocompleteElement.shadowRoot) {
                     const visibleInput = autocompleteElement.shadowRoot.querySelector('input');
@@ -198,7 +202,6 @@
                     return;
                 }
                 
-                // Now, we check the hidden input value, which has been reliably populated.
                 if (!addressInput.value) {
                     formMessage.textContent = 'Please enter and select a valid service address.';
                     formMessage.className = 'text-center mt-4 text-red-600 font-semibold';
