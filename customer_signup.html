@@ -70,6 +70,9 @@
                             <button type="button" id="change-address-btn" class="text-sm text-blue-600 hover:underline font-semibold flex-shrink-0">Change</button>
                         </div>
 
+                        <!-- NEW: Hidden input field to store the validated address -->
+                        <input type="hidden" id="address-input-field" name="address">
+
                         <!-- New Address Confirmation Checkbox -->
                         <div class="mt-4">
                             <label for="confirm-address-checkbox" class="flex items-center space-x-2 cursor-pointer text-gray-600">
@@ -148,6 +151,8 @@
             const selectedAddressContainer = document.getElementById('selected-address-container');
             const selectedAddressText = document.getElementById('selected-address-text');
             const changeAddressBtn = document.getElementById('change-address-btn');
+            // NEW: Reference to the hidden address input field
+            const addressInputField = document.getElementById('address-input-field');
             
             // --- New Place Autocomplete Logic ---
             customElements.whenDefined('gmp-place-autocomplete').then(() => {
@@ -159,7 +164,8 @@
 
                     if (!placePrediction) {
                         selectedAddressText.textContent = ''; 
-                        console.log('No place prediction, clearing selectedAddressText.'); // Added log
+                        addressInputField.value = ''; // NEW: Clear hidden input
+                        console.log('No place prediction, clearing selectedAddressText and addressInputField.'); // Added log
                         return;
                     }
 
@@ -173,13 +179,18 @@
 
                         if (!place ||!place.formattedAddress) {
                             selectedAddressText.textContent = ''; 
-                            console.log('Fetched Place object is invalid or missing formattedAddress, clearing selectedAddressText.');
+                            addressInputField.value = ''; // NEW: Clear hidden input
+                            console.log('Fetched Place object is invalid or missing formattedAddress, clearing selectedAddressText and addressInputField.');
                             return;
                         }
 
                         // 1. Store the data in the VISIBLE text element
                         selectedAddressText.textContent = place.formattedAddress;
                         console.log('selectedAddressText set to:', selectedAddressText.textContent);
+
+                        // NEW: Store the formatted address in the hidden input field
+                        addressInputField.value = place.formattedAddress;
+                        console.log('address-input-field value set to:', addressInputField.value);
 
                         // Extract zip code from addressComponents [7, 8]
                         const zipCodeComponent = place.addressComponents?.find(c => c.types.includes('postal_code'));
@@ -201,6 +212,7 @@
                         formMessage.textContent = 'Failed to confirm address. Please try selecting again.';
                         formMessage.className = 'text-center mt-4 text-red-600 font-semibold';
                         selectedAddressText.textContent = ''; // Clear on error
+                        addressInputField.value = ''; // NEW: Clear hidden input on error
                         addressSearchContainer.classList.remove('hidden'); // Show search again
                         selectedAddressContainer.classList.add('hidden');
                         selectedAddressContainer.classList.remove('flex');
@@ -212,6 +224,7 @@
             changeAddressBtn.addEventListener('click', () => {
                 // 1. Clear the stored visual data
                 selectedAddressText.textContent = '';
+                addressInputField.value = ''; // NEW: Clear hidden input when changing address
                 const autocompleteElement = document.getElementById('address-autocomplete');
                 if (autocompleteElement.shadowRoot) {
                     autocompleteElement.shadowRoot.querySelector('input').value = '';
@@ -253,7 +266,8 @@
                     return;
                 }
                 
-                let finalAddress = selectedAddressText.textContent;
+                // Get the final address from the hidden input field
+                let finalAddress = addressInputField.value;
 
                 // ==================================================================
                 // NEW LOGIC: Bypass address validation if checkbox is checked
@@ -285,7 +299,7 @@
 
                 const formData = {
                     full_name: document.getElementById('full-name').value,
-                    address: finalAddress, // Use the text content directly (could be empty if checkbox checked)
+                    address: finalAddress, // Use the value from the hidden input field
                     phone: document.getElementById('phone').value,
                     email: document.getElementById('email').value,
                     password: passwordInput.value,
