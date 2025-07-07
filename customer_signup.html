@@ -74,13 +74,6 @@
                             <button type="button" id="change-address-btn" class="text-sm text-blue-600 hover:underline font-semibold flex-shrink-0">Change</button>
                         </div>
 
-                        <!-- 
-                          ==================================================================
-                          THE FIX: The "required" attribute has been removed. The browser
-                          will no longer block form submission because of this hidden element.
-                          Our JavaScript validation will handle it correctly.
-                          ==================================================================
-                        -->
                         <input type="checkbox" id="address-confirmed-flag" class="hidden">
 
                         <input type="tel" id="phone" placeholder="Phone Number" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="tel">
@@ -166,6 +159,10 @@
                     if (!place || !place.formattedAddress) {
                         selectedAddressText.textContent = ''; 
                         addressConfirmedFlag.checked = false; // Un-flag if invalid
+                        // Ensure the autocomplete input is re-enabled if selection is invalid
+                        if (autocompleteElement.shadowRoot) {
+                            autocompleteElement.shadowRoot.querySelector('input').disabled = false;
+                        }
                         return;
                     }
 
@@ -180,7 +177,12 @@
                     // 2. Set our reliable confirmation flag to true
                     addressConfirmedFlag.checked = true;
 
-                    // 3. Update the UI 
+                    // 3. Disable the autocomplete input to lock the selection
+                    if (autocompleteElement.shadowRoot) {
+                        autocompleteElement.shadowRoot.querySelector('input').disabled = true;
+                    }
+
+                    // 4. Update the UI 
                     addressSearchContainer.classList.add('hidden');
                     selectedAddressContainer.classList.remove('hidden');
                     selectedAddressContainer.classList.add('flex');
@@ -195,9 +197,11 @@
                 const autocompleteElement = document.getElementById('address-autocomplete');
                 if (autocompleteElement.shadowRoot) {
                     autocompleteElement.shadowRoot.querySelector('input').value = '';
+                    // 2. Re-enable the autocomplete input
+                    autocompleteElement.shadowRoot.querySelector('input').disabled = false;
                 }
 
-                // 2. Update the UI to show the search box again
+                // 3. Update the UI to show the search box again
                 selectedAddressContainer.classList.add('hidden');
                 selectedAddressContainer.classList.remove('flex');
                 addressSearchContainer.classList.remove('hidden');
