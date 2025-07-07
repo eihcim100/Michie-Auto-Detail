@@ -9,6 +9,7 @@
     <style> 
         body { font-family: 'Inter', sans-serif; } 
         .pac-container { z-index: 1050 !important; }
+        .form-section { display: none; } /* Hide edit forms by default */
     </style>
 </head>
 <body class="bg-gray-50">
@@ -18,17 +19,15 @@
             <h1 class="text-4xl font-bold text-gray-800">Customer Portal</h1>
         </header>
 
+        <!-- Auth Section remains the same -->
         <div id="auth-section" class="bg-white p-8 rounded-xl shadow-md">
-            <div id="login-form">
+             <div id="login-form">
                 <h2 class="text-2xl font-bold text-center mb-6 text-gray-700">Login to Your Account</h2>
                 <div class="space-y-4">
-                    <input type="email" id="login-email" placeholder="Email Address" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <input type="password" id="login-password" placeholder="Password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <button id="login-button" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300">Login</button>
+                    <input type="email" id="login-email" placeholder="Email Address" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                    <input type="password" id="login-password" placeholder="Password" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                    <button id="login-button" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg">Login</button>
                 </div>
-                <p class="text-center mt-4">
-                    Don't have an account? <a href="customer_signup.html" class="text-blue-600 hover:underline">Sign up here</a>.
-                </p>
                 <p id="login-message" class="text-red-500 text-center mt-2"></p>
             </div>
         </div>
@@ -39,24 +38,30 @@
                  <button id="logout-button" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg">Logout</button>
             </div>
 
+            <!-- Booking Section with Interactive Fields -->
             <div class="bg-white p-8 rounded-xl shadow-md">
                 <h3 class="text-2xl font-bold text-gray-700 mb-4">Book a New Detail</h3>
-                 <form id="booking-form" class="space-y-4">
+                <form id="booking-form" class="space-y-6">
+                    <!-- Vehicle Section -->
                     <div>
-                        <label for="booking-vehicle" class="block text-sm font-medium text-gray-700 mb-1">Select a Vehicle</label>
-                        <select id="booking-vehicle" required class="w-full px-4 py-2 border rounded-lg bg-white"></select>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Vehicle</label>
+                        <div id="vehicle-display-container" class="p-3 bg-gray-100 rounded-md flex justify-between items-center">
+                            <span id="primary-vehicle-display"></span>
+                            <button type="button" id="manage-vehicle-btn" class="text-sm text-blue-600 hover:underline">Edit / Add</button>
+                        </div>
                     </div>
                     
+                    <!-- Address Section -->
                     <div>
-                        <label for="address-select" class="block text-sm font-medium text-gray-700 mb-1">Service Address</label>
-                        <select id="address-select" class="w-full px-4 py-2 border rounded-lg bg-white"></select>
-                    </div>
-                    <div id="new-address-section" class="hidden">
-                         <label for="new-address-input" class="block text-sm font-medium text-gray-700 mb-1">Search for new address</label>
-                         <input type="text" id="new-address-input" placeholder="Start typing a new address..." class="w-full px-4 py-2 border rounded-lg">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Service Address</label>
+                         <div id="address-display-container" class="p-3 bg-gray-100 rounded-md flex justify-between items-center">
+                            <span id="primary-address-display"></span>
+                            <button type="button" id="edit-address-btn" class="text-sm text-blue-600 hover:underline">Edit</button>
+                        </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Appointment Date/Time -->
+                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label for="booking-date" class="block text-sm font-medium text-gray-700 mb-1">Date</label>
                             <input type="date" id="booking-date" required class="w-full px-4 py-2 border rounded-lg">
@@ -66,109 +71,108 @@
                             <input type="time" id="booking-time" required class="w-full px-4 py-2 border rounded-lg">
                         </div>
                     </div>
-                    <button type="submit" id="book-appointment-button" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg">Book Appointment</button>
+                    <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg">Book Appointment</button>
                     <p id="booking-message" class="text-center mt-2"></p>
+                    
+                    <!-- Button to show financing -->
+                    <div class="text-center pt-4">
+                        <button type="button" id="show-finance-btn" class="text-sm text-blue-600 hover:underline">Need financing? Click here</button>
+                    </div>
                 </form>
             </div>
+
+            <!-- Vehicle Management Modal/Section -->
+            <div id="vehicle-management-section" class="form-section bg-white p-8 rounded-xl shadow-md">
+                <h3 class="text-xl font-bold text-gray-700 mb-4">Manage Vehicles</h3>
+                <!-- Edit Primary Vehicle Form -->
+                <form id="edit-primary-vehicle-form" class="space-y-3 p-4 border rounded-lg mb-4">
+                    <h4 class="font-semibold">Edit Primary Vehicle</h4>
+                    <input type="hidden" id="edit-vehicle-id">
+                    <input type="text" id="edit-vehicle-year" placeholder="Year" required class="w-full px-3 py-2 border rounded-lg">
+                    <input type="text" id="edit-vehicle-make" placeholder="Make" required class="w-full px-3 py-2 border rounded-lg">
+                    <input type="text" id="edit-vehicle-model" placeholder="Model" required class="w-full px-3 py-2 border rounded-lg">
+                    <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg">Save Primary Vehicle</button>
+                </form>
+                <!-- Add Secondary Vehicle Form -->
+                <form id="add-secondary-vehicle-form" class="space-y-3 p-4 border rounded-lg">
+                    <h4 class="font-semibold">Add a Second Vehicle</h4>
+                    <input type="text" id="add-vehicle-year" placeholder="Year" required class="w-full px-3 py-2 border rounded-lg">
+                    <input type="text" id="add-vehicle-make" placeholder="Make" required class="w-full px-3 py-2 border rounded-lg">
+                    <input type="text" id="add-vehicle-model" placeholder="Model" required class="w-full px-3 py-2 border rounded-lg">
+                    <button type="submit" class="w-full bg-green-600 text-white py-2 px-4 rounded-lg">Add Second Vehicle</button>
+                </form>
+                 <p id="vehicle-message" class="text-center mt-2"></p>
+            </div>
+
+            <!-- Address Edit Section -->
+            <div id="address-edit-section" class="form-section bg-white p-8 rounded-xl shadow-md">
+                 <h3 class="text-xl font-bold text-gray-700 mb-4">Update Address</h3>
+                 <form id="edit-address-form" class="space-y-3">
+                    <input type="text" id="edit-address-input" placeholder="Search for new address..." required class="w-full px-3 py-2 border rounded-lg">
+                    <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg">Save New Address</button>
+                 </form>
+                 <p id="address-message" class="text-center mt-2"></p>
+            </div>
             
-            <div id="finance-section" class="bg-white p-8 rounded-xl shadow-md border-t-4 border-blue-500">
+            <!-- Finance Section (hidden by default) -->
+            <div id="finance-section" class="form-section bg-white p-8 rounded-xl shadow-md border-t-4 border-blue-500">
                 <h3 class="text-2xl font-bold text-gray-700 mb-2">Finance Your Detail</h3>
                 <p class="text-gray-600 mb-4">Pay in 3 easy installments of $99, due every 14 days.</p>
-                
-                <div id="payment-schedule" class="space-y-2 bg-gray-100 p-4 rounded-lg mb-6">
-                </div>
-
-                 <form id="finance-booking-form" class="space-y-4">
-                    <div>
-                        <label for="finance-booking-vehicle" class="block text-sm font-medium text-gray-700 mb-1">Select a Vehicle</label>
-                        <select id="finance-booking-vehicle" required class="w-full px-4 py-2 border rounded-lg bg-white"></select>
-                    </div>
-                    
-                    <div>
-                        <label for="finance-address-select" class="block text-sm font-medium text-gray-700 mb-1">Service Address</label>
-                        <select id="finance-address-select" class="w-full px-4 py-2 border rounded-lg bg-white"></select>
-                    </div>
-                    <div id="finance-new-address-section" class="hidden">
-                         <label for="finance-new-address-input" class="block text-sm font-medium text-gray-700 mb-1">Search for new address</label>
-                         <input type="text" id="finance-new-address-input" placeholder="Start typing a new address..." class="w-full px-4 py-2 border rounded-lg">
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label for="finance-booking-date" class="block text-sm font-medium text-gray-700 mb-1">Requested Appointment Date</label>
-                            <input type="date" id="finance-booking-date" required class="w-full px-4 py-2 border rounded-lg">
-                        </div>
-                        <div>
-                            <label for="finance-booking-time" class="block text-sm font-medium text-gray-700 mb-1">Time</label>
-                            <input type="time" id="finance-booking-time" required class="w-full px-4 py-2 border rounded-lg">
-                        </div>
-                    </div>
-                    <button type="submit" id="finance-book-appointment-button" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg">Book with Financing</button>
-                    <p id="finance-booking-message" class="text-center mt-2"></p>
-                </form>
+                <div id="payment-schedule" class="space-y-2 bg-gray-100 p-4 rounded-lg mb-6"></div>
+                <!-- Finance booking form can be added here if needed -->
             </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div class="bg-white p-8 rounded-xl shadow-md">
-                    <h3 class="text-2xl font-bold text-gray-700 mb-4">My Vehicles</h3>
-                    <div id="vehicles-list" class="space-y-3"></div>
-                </div>
-                <div class="bg-white p-8 rounded-xl shadow-md">
-                    <h3 class="text-2xl font-bold text-gray-700 mb-4">Appointment History</h3>
-                    <div id="appointments-list" class="space-y-4"></div>
-                </div>
-            </div>
+            
         </div>
     </div>
-    
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk&libraries=places&callback=initPortal" async defer></script>
     <script>
-        const API_BASE_URL = 'https://michie-detailing-admin.onrender.com';
-        let autocomplete, financeAutocomplete;
+        let editAddressAutocomplete;
 
-        // This function is now explicitly global and will be called by the Google Maps script
         window.initPortal = function() {
-            console.log("Google Maps script loaded. Initializing portal...");
             initializeApp();
-
-            const newAddressInput = document.getElementById('new-address-input');
-            const financeNewAddressInput = document.getElementById('finance-new-address-input');
-            
-            if (newAddressInput) {
-                autocomplete = new google.maps.places.Autocomplete(newAddressInput, { componentRestrictions: { country: "us" }, fields: ["formatted_address"], types: ["address"] });
-            }
-            if(financeNewAddressInput) {
-                financeAutocomplete = new google.maps.places.Autocomplete(financeNewAddressInput, { componentRestrictions: { country: "us" }, fields: ["formatted_address"], types: ["address"] });
+            const editAddressInput = document.getElementById('edit-address-input');
+            if (window.google && editAddressInput) {
+                editAddressAutocomplete = new google.maps.places.Autocomplete(editAddressInput, {
+                    componentRestrictions: { country: "us" },
+                    fields: ["formatted_address"],
+                    types: ["address"],
+                });
             }
         }
-        
+
         function initializeApp() {
+            const API_BASE_URL = 'https://michie-detailing-admin.onrender.com';
+            
+            // --- Get all DOM elements ---
             const authSection = document.getElementById('auth-section');
             const dashboardSection = document.getElementById('dashboard-section');
             const loginButton = document.getElementById('login-button');
-            const loginMessage = document.getElementById('login-message');
-            const customerNameSpan = document.getElementById('customer-name');
             const logoutButton = document.getElementById('logout-button');
-            const vehiclesList = document.getElementById('vehicles-list');
-            const appointmentsList = document.getElementById('appointments-list');
-            const bookingForm = document.getElementById('booking-form');
-            const bookingMessage = document.getElementById('booking-message');
-            const addressSelect = document.getElementById('address-select');
-            const newAddressSection = document.getElementById('new-address-section');
-            const paymentScheduleDiv = document.getElementById('payment-schedule');
-            const financeBookingForm = document.getElementById('finance-booking-form');
-            const financeBookingMessage = document.getElementById('finance-booking-message');
-            const financeAddressSelect = document.getElementById('finance-address-select');
-            const financeNewAddressSection = document.getElementById('finance-new-address-section');
+            const customerNameSpan = document.getElementById('customer-name');
+            const primaryVehicleDisplay = document.getElementById('primary-vehicle-display');
+            const primaryAddressDisplay = document.getElementById('primary-address-display');
+            const manageVehicleBtn = document.getElementById('manage-vehicle-btn');
+            const editAddressBtn = document.getElementById('edit-address-btn');
+            const vehicleManagementSection = document.getElementById('vehicle-management-section');
+            const addressEditSection = document.getElementById('address-edit-section');
+            const editPrimaryVehicleForm = document.getElementById('edit-primary-vehicle-form');
+            const addSecondaryVehicleForm = document.getElementById('add-secondary-vehicle-form');
+            const editAddressForm = document.getElementById('edit-address-form');
+            const vehicleMessage = document.getElementById('vehicle-message');
+            const addressMessage = document.getElementById('address-message');
+            const showFinanceBtn = document.getElementById('show-finance-btn');
+            const financeSection = document.getElementById('finance-section');
 
+            let customerData = {}; // Store customer data globally
+
+            // --- Main Functions ---
             function updateUI() {
-                const customerToken = localStorage.getItem('customerToken');
-                const customerFullName = localStorage.getItem('customerFullName');
-                if (customerToken && customerFullName) {
+                const token = localStorage.getItem('customerToken');
+                if (token) {
                     authSection.style.display = 'none';
                     dashboardSection.style.display = 'block';
-                    customerNameSpan.textContent = customerFullName;
-                    fetchCustomerData(customerToken);
-                    calculateAndDisplayPaymentSchedule();
+                    fetchCustomerData(token);
                 } else {
                     authSection.style.display = 'block';
                     dashboardSection.style.display = 'none';
@@ -181,89 +185,38 @@
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
                     if (!response.ok) { logout(); return; }
-                    const data = await response.json();
-                    localStorage.setItem('customerFullName', data.full_name);
-                    renderVehicles(data.vehicles);
-                    renderAddressOptions(data.address);
-                    renderAppointments(data.appointments);
-                } catch (error) { console.error('Error fetching customer data:', error); }
+                    customerData = await response.json();
+                    localStorage.setItem('customerFullName', customerData.full_name);
+                    renderDashboard();
+                } catch (error) { console.error('Error fetching data:', error); }
             }
 
-            function renderVehicles(vehicles) {
-                const bookingVehicleSelect = document.getElementById('booking-vehicle');
-                const financeBookingVehicleSelect = document.getElementById('finance-booking-vehicle');
-                vehiclesList.innerHTML = '';
-                bookingVehicleSelect.innerHTML = '<option value="">-- Select a Vehicle --</option>';
-                financeBookingVehicleSelect.innerHTML = '<option value="">-- Select a Vehicle --</option>';
+            function renderDashboard() {
+                customerNameSpan.textContent = customerData.full_name;
+                primaryAddressDisplay.textContent = customerData.address || 'No address on file.';
 
-                if (!vehicles || vehicles.length === 0) {
-                    vehiclesList.innerHTML = '<p class="text-gray-500">No vehicles on file.</p>';
+                const primaryVehicle = customerData.vehicles.find(v => v.is_primary);
+                if (primaryVehicle) {
+                    primaryVehicleDisplay.textContent = `${primaryVehicle.year} ${primaryVehicle.make} ${primaryVehicle.model}`;
+                    document.getElementById('edit-vehicle-id').value = primaryVehicle.id;
+                    document.getElementById('edit-vehicle-year').value = primaryVehicle.year;
+                    document.getElementById('edit-vehicle-make').value = primaryVehicle.make;
+                    document.getElementById('edit-vehicle-model').value = primaryVehicle.model;
                 } else {
-                    vehicles.forEach(v => {
-                        const vehicleType = v.is_primary ? 'Primary' : 'Secondary';
-                        const vehicleText = `${v.year} ${v.make} ${v.model} (${vehicleType})`;
-                        const vehicleDiv = document.createElement('div');
-                        vehicleDiv.className = 'p-3 bg-gray-100 rounded-md';
-                        vehicleDiv.textContent = vehicleText;
-                        vehiclesList.appendChild(vehicleDiv);
-                        const vehicleOption = document.createElement('option');
-                        vehicleOption.value = v.id; 
-                        vehicleOption.textContent = vehicleText;
-                        bookingVehicleSelect.appendChild(vehicleOption.cloneNode(true));
-                        financeBookingVehicleSelect.appendChild(vehicleOption.cloneNode(true));
-                    });
+                    primaryVehicleDisplay.textContent = 'No primary vehicle set.';
                 }
             }
 
-            function renderAddressOptions(primaryAddress) {
-                const selects = [document.getElementById('address-select'), document.getElementById('finance-address-select')];
-                selects.forEach(select => {
-                    select.innerHTML = '';
-                    if (primaryAddress) {
-                        const primaryOption = document.createElement('option');
-                        primaryOption.value = primaryAddress;
-                        primaryOption.textContent = primaryAddress;
-                        primaryOption.selected = true;
-                        select.appendChild(primaryOption);
-                    }
-                    const newAddressOption = document.createElement('option');
-                    newAddressOption.value = 'add_new';
-                    newAddressOption.textContent = 'Add a new address...';
-                    select.appendChild(newAddressOption);
-                });
-            }
-
-            function renderAppointments(appointments) {
-                appointmentsList.innerHTML = '';
-                if (!appointments || appointments.length === 0) {
-                    appointmentsList.innerHTML = '<p class="text-gray-500">No past appointments.</p>';
-                }
-            }
-
-            function calculateAndDisplayPaymentSchedule() {
-                paymentScheduleDiv.innerHTML = '';
-                const today = new Date();
-                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-                for (let i = 0; i < 3; i++) {
-                    const paymentDate = new Date();
-                    paymentDate.setDate(today.getDate() + (i * 14));
-                    const p = document.createElement('p');
-                    p.className = 'text-gray-800';
-                    p.innerHTML = `<span class="font-semibold">Payment ${i + 1}:</span> $99.00 due on <span class="font-medium">${paymentDate.toLocaleDateString('en-US', options)}</span>`;
-                    paymentScheduleDiv.appendChild(p);
-                }
-            }
-            
             function logout() {
                 localStorage.removeItem('customerToken');
                 localStorage.removeItem('customerFullName');
                 updateUI();
             }
 
+            // --- Event Listeners ---
             loginButton.addEventListener('click', async () => {
                 const email = document.getElementById('login-email').value;
                 const password = document.getElementById('login-password').value;
-                loginMessage.textContent = '';
                 try {
                     const response = await fetch(`${API_BASE_URL}/customer/login`, {
                         method: 'POST',
@@ -276,78 +229,84 @@
                         localStorage.setItem('customerFullName', data.full_name);
                         updateUI();
                     } else {
-                        loginMessage.textContent = data.message || 'An error occurred.';
+                        document.getElementById('login-message').textContent = data.message || 'Login failed.';
                     }
-                } catch (error) { loginMessage.textContent = 'A network error occurred.'; }
+                } catch (error) { console.error('Login error:', error); }
             });
 
-            addressSelect.addEventListener('change', (e) => {
-                newAddressSection.style.display = e.target.value === 'add_new' ? 'block' : 'none';
+            logoutButton.addEventListener('click', logout);
+            
+            manageVehicleBtn.addEventListener('click', () => {
+                vehicleManagementSection.style.display = vehicleManagementSection.style.display === 'block' ? 'none' : 'block';
             });
-            financeAddressSelect.addEventListener('change', (e) => {
-                financeNewAddressSection.style.display = e.target.value === 'add_new' ? 'block' : 'none';
+            editAddressBtn.addEventListener('click', () => {
+                addressEditSection.style.display = addressEditSection.style.display === 'block' ? 'none' : 'block';
+            });
+            showFinanceBtn.addEventListener('click', () => {
+                financeSection.style.display = financeSection.style.display === 'block' ? 'none' : 'block';
             });
 
-            financeBookingForm.addEventListener('submit', async (e) => {
+            // Form submission listeners
+            editPrimaryVehicleForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const customerToken = localStorage.getItem('customerToken');
-                if (!customerToken) return;
-
-                let finalAddress = financeAddressSelect.value;
-                if (finalAddress === 'add_new') {
-                    finalAddress = document.getElementById('finance-new-address-input').value;
-                    if (!finalAddress) {
-                        financeBookingMessage.textContent = 'Please enter a new address.';
-                        financeBookingMessage.className = 'text-center mt-2 text-red-600';
-                        return;
-                    }
-                }
-
-                financeBookingMessage.textContent = 'Booking...';
-                financeBookingMessage.className = 'text-center mt-2 text-blue-600';
-
-                const today = new Date();
-                const installment_1_date = new Date(today).toISOString().split('T')[0];
-                const installment_2_date = new Date(new Date().setDate(today.getDate() + 14)).toISOString().split('T')[0];
-                const installment_3_date = new Date(new Date().setDate(today.getDate() + 28)).toISOString().split('T')[0];
-
+                const token = localStorage.getItem('customerToken');
+                const vehicleId = document.getElementById('edit-vehicle-id').value;
                 const payload = {
-                    vehicle_id: document.getElementById('finance-booking-vehicle').value,
-                    address: finalAddress,
-                    date: document.getElementById('finance-booking-date').value,
-                    time: document.getElementById('finance-booking-time').value,
-                    installment_1_date, installment_2_date, installment_3_date,
+                    year: document.getElementById('edit-vehicle-year').value,
+                    make: document.getElementById('edit-vehicle-make').value,
+                    model: document.getElementById('edit-vehicle-model').value,
                 };
-
                 try {
-                    const response = await fetch(`${API_BASE_URL}/customer/book_financed_appointment`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${customerToken}` },
+                    const response = await fetch(`${API_BASE_URL}/customer/vehicle/${vehicleId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                         body: JSON.stringify(payload)
                     });
-                    const data = await response.json();
-                    if (response.ok) {
-                        financeBookingMessage.textContent = 'Financed appointment booked successfully!';
-                        financeBookingMessage.className = 'text-center mt-2 text-green-600';
-                        financeBookingForm.reset();
-                    } else {
-                        financeBookingMessage.textContent = data.message || 'Booking failed.';
-                        financeBookingMessage.className = 'text-center mt-2 text-red-600';
-                    }
-                } catch (error) {
-                    financeBookingMessage.textContent = 'A network error occurred.';
-                    financeBookingMessage.className = 'text-center mt-2 text-red-600';
-                }
+                    vehicleMessage.textContent = response.ok ? 'Primary vehicle updated!' : 'Update failed.';
+                    if (response.ok) fetchCustomerData(token);
+                } catch (error) { console.error('Update vehicle error:', error); }
             });
             
-            logoutButton.addEventListener('click', logout);
+            addSecondaryVehicleForm.addEventListener('submit', async (e) => {
+                 e.preventDefault();
+                const token = localStorage.getItem('customerToken');
+                const payload = {
+                    year: document.getElementById('add-vehicle-year').value,
+                    make: document.getElementById('add-vehicle-make').value,
+                    model: document.getElementById('add-vehicle-model').value,
+                };
+                 try {
+                    const response = await fetch(`${API_BASE_URL}/customer/vehicle`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                        body: JSON.stringify(payload)
+                    });
+                    vehicleMessage.textContent = response.ok ? 'Second vehicle added!' : 'Failed to add vehicle.';
+                    if (response.ok) {
+                        addSecondaryVehicleForm.reset();
+                        fetchCustomerData(token);
+                    }
+                } catch (error) { console.error('Add vehicle error:', error); }
+            });
 
-            // Initial call to setup the UI based on localStorage
+            editAddressForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const token = localStorage.getItem('customerToken');
+                const newAddress = document.getElementById('edit-address-input').value;
+                 try {
+                    const response = await fetch(`${API_BASE_URL}/customer/address`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                        body: JSON.stringify({ address: newAddress })
+                    });
+                    addressMessage.textContent = response.ok ? 'Address updated!' : 'Update failed.';
+                    if (response.ok) fetchCustomerData(token);
+                } catch (error) { console.error('Update address error:', error); }
+            });
+
+            // Initial call
             updateUI();
         }
     </script>
-    
-    <!-- The Google Maps script is now loaded at the very end of the body -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk&libraries=places&callback=initPortal" async defer></script>
 </body>
 </html>
