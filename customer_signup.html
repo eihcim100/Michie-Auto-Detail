@@ -29,21 +29,15 @@
         .message-box.error {
             @apply bg-red-100 text-red-700;
         }
-        /* Styling for Google Autocomplete dropdown */
-        .pac-container {
-            font-family: 'Inter', sans-serif;
-            z-index: 1000; /* Ensure it's above other elements */
-        }
-        .pac-item {
-            padding: 10px;
-            cursor: pointer;
-            border-bottom: 1px solid #eee;
-        }
-        .pac-item:hover {
-            background-color: #f0f0f0;
-        }
-        .pac-item-query {
-            font-weight: bold;
+        /* The Autocomplete Element handles its own styling for the dropdown,
+           but these might be useful for general input styling or fallbacks. */
+        gmp-places-autocomplete {
+            width: 100%; /* Ensure the web component takes full width */
+            --gmp-places-autocomplete-border-radius: 0.375rem; /* Tailwind's rounded-md */
+            --gmp-places-autocomplete-border-color: #D1D5DB; /* Tailwind's gray-300 */
+            --gmp-places-autocomplete-focus-ring-color: #3B82F6; /* Tailwind's blue-500 */
+            --gmp-places-autocomplete-focus-ring-width: 2px;
+            --gmp-places-autocomplete-padding: 0.5rem 1rem; /* Tailwind's py-2 px-4 */
         }
     </style>
 </head>
@@ -66,7 +60,11 @@
             </div>
             <div>
                 <label for="address" class="block text-gray-700 text-sm font-semibold mb-2">Service Address</label>
-                <input type="text" id="address" name="address" class="form-input" placeholder="Start typing your address..." required>
+                <!-- The actual input field that the Autocomplete Element will enhance -->
+                <input type="text" id="address" name="address" class="form-input" required>
+                <!-- The new Autocomplete Element, linked to the input by its ID -->
+                <gmp-places-autocomplete for-input="address" country="us" types="address"></gmp-places-autocomplete>
+
                 <input type="hidden" id="streetNumber" name="streetNumber">
                 <input type="hidden" id="streetName" name="streetName">
                 <input type="hidden" id="city" name="city">
@@ -89,74 +87,76 @@
         <div id="messageBox" class="message-box hidden"></div>
     </div>
 
-    <!-- Google Maps Places API (New) -->
+    <!-- Google Maps Places API (New) - Load the 'places' library -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk&libraries=places&callback=initMap" async defer></script>
 
     <script>
         // Backend API URL - IMPORTANT: Replace with your actual deployed backend URL
         const BACKEND_API_URL = "http://127.0.0.1:5001"; // Or your deployed Render URL: https://michie-detailing-admin.onrender.com
 
-        let autocomplete;
-        let addressComponents = {}; // To store parsed address details
+        let addressComponents = {}; // To store parsed address details from the selected place
 
         /**
-         * Initializes the Google Maps Places Autocomplete for the address input.
+         * Initializes the Google Maps Places Autocomplete Element.
+         * This function is called once the Google Maps API script has loaded.
          */
         function initMap() {
-            const addressInput = document.getElementById("address");
-            autocomplete = new google.maps.places.Autocomplete(addressInput, {
-                componentRestrictions: { country: ["us"] }, // Restrict to United States
-                fields: ["address_components", "geometry", "name"],
-                types: ["address"], // Restrict to address predictions
-            });
+            // Select the Autocomplete Element web component
+            const autocompleteElement = document.querySelector("gmp-places-autocomplete");
 
-            autocomplete.addListener("place_changed", fillInAddress);
+            // Add an event listener for the 'gmp-placeselect' event,
+            // which fires when a user selects a place from the suggestions.
+            autocompleteElement.addEventListener("gmp-placeselect", (event) => {
+                // The selected place details are available in event.detail.place
+                fillInAddress(event.detail.place);
+            });
         }
 
         /**
-         * Fills in the address components when a place is selected from the autocomplete.
+         * Extracts and stores the address components from the selected place object.
+         * Updates hidden input fields and the visible address input.
+         * @param {object} place - The place object returned by the Autocomplete Element.
          */
-        function fillInAddress() {
-            const place = autocomplete.getPlace();
-            addressComponents = {}; // Reset components
+        function fillInAddress(place) {
+            addressComponents = {}; // Reset components for a new selection
 
-            if (!place.address_components) {
+            // Check if address components are available in the place object
+            // The new API uses 'addressComponents' (camelCase) instead of 'address_components'
+            if (!place.addressComponents) {
                 document.getElementById("address-validation-message").classList.remove("hidden");
                 return;
             }
 
             document.getElementById("address-validation-message").classList.add("hidden");
 
-            // Get each component of the address from the place details,
-            // and then fill-in the corresponding field on the form.
-            // place.address_components are google.maps.GeocoderAddressComponent objects
-            // which are made up of an array of property types rather than a single string.
-            for (const component of place.address_components) {
-                const componentType = component.types[0];
+            // Iterate through the address components provided by the Google Place object
+            for (const component of place.addressComponents) {
+                const componentType = component.types[0]; // Get the primary type of the component
 
+                // Map Google's component types to our desired address fields
                 switch (componentType) {
                     case "street_number":
-                        addressComponents.streetNumber = component.long_name;
+                        addressComponents.streetNumber = component.longText; // Full text for street number
                         break;
                     case "route":
-                        addressComponents.streetName = component.long_name;
+                        addressComponents.streetName = component.longText; // Full text for street name
                         break;
                     case "locality":
-                        addressComponents.city = component.long_name;
+                        addressComponents.city = component.longText; // Full text for city
                         break;
                     case "administrative_area_level_1":
-                        addressComponents.state = component.short_name;
+                        addressComponents.state = component.shortText; // Abbreviated text for state (e.g., "CA")
                         break;
                     case "postal_code":
-                        addressComponents.zipCode = component.long_name;
+                        addressComponents.zipCode = component.longText; // Full text for zip code
                         break;
                     case "country":
-                        addressComponents.country = component.short_name;
+                        addressComponents.country = component.shortText; // Abbreviated text for country (e.g., "US")
                         break;
                 }
             }
 
-            // Update hidden fields with parsed address components
+            // Update the values of the hidden input fields with the parsed components
             document.getElementById("streetNumber").value = addressComponents.streetNumber || '';
             document.getElementById("streetName").value = addressComponents.streetName || '';
             document.getElementById("city").value = addressComponents.city || '';
@@ -164,33 +164,37 @@
             document.getElementById("zipCode").value = addressComponents.zipCode || '';
             document.getElementById("country").value = addressComponents.country || '';
 
-            // Set the full address in the visible input
-            document.getElementById("address").value = place.name;
+            // The Autocomplete Element automatically updates the visible input field
+            // with the formatted address. We also explicitly set it here for clarity
+            // and to ensure our form data is consistent.
+            document.getElementById("address").value = place.formattedAddress || '';
         }
 
         /**
-         * Displays a message in the message box.
-         * @param {string} message - The message to display.
-         * @param {string} type - The type of message ('success' or 'error').
+         * Displays a message in a dedicated message box on the page.
+         * @param {string} message - The text message to display.
+         * @param {string} type - The type of message ('success' or 'error') to apply styling.
          */
         function showMessage(message, type) {
             const messageBox = document.getElementById("messageBox");
             messageBox.textContent = message;
-            messageBox.classList.remove("hidden", "success", "error");
-            messageBox.classList.add(type);
+            messageBox.classList.remove("hidden", "success", "error"); // Clear previous states
+            messageBox.classList.add(type); // Add the new type for styling
         }
 
+        // Event listener for the form submission
         document.getElementById("signupForm").addEventListener("submit", async function(event) {
-            event.preventDefault();
+            event.preventDefault(); // Prevent the default form submission behavior
 
+            // Get values from form inputs
             const fullName = document.getElementById("fullName").value.trim();
             const email = document.getElementById("email").value.trim();
             const phone = document.getElementById("phone").value.trim();
-            const address = document.getElementById("address").value.trim();
+            const address = document.getElementById("address").value.trim(); // This will contain the formatted address from the Autocomplete Element
             const password = document.getElementById("password").value;
             const confirmPassword = document.getElementById("confirmPassword").value;
 
-            // Basic client-side validation
+            // Client-side validation checks
             if (!fullName || !email || !phone || !address || !password || !confirmPassword) {
                 showMessage("Please fill in all fields.", "error");
                 return;
@@ -206,7 +210,8 @@
                 return;
             }
 
-            // Validate if an address was selected from Google Places Autocomplete
+            // Validate if a valid address was selected using the Autocomplete Element
+            // We check if the `addressComponents` object was populated by `fillInAddress`
             if (!addressComponents.streetNumber || !addressComponents.streetName || !addressComponents.city || !addressComponents.state || !addressComponents.zipCode) {
                 document.getElementById("address-validation-message").classList.remove("hidden");
                 showMessage("Please select a valid address from the suggestions.", "error");
@@ -215,10 +220,16 @@
                 document.getElementById("address-validation-message").classList.add("hidden");
             }
 
-            // Construct the full address string to send to the backend
-            const fullAddress = `${addressComponents.streetNumber} ${addressComponents.streetName}, ${addressComponents.city}, ${addressComponents.state} ${addressComponents.zipCode}, ${addressComponents.country || ''}`.trim();
+            // Construct the full address string to send to the backend.
+            // This ensures a consistent format regardless of how Google's `formattedAddress` might vary.
+            const fullAddress = `${addressComponents.streetNumber || ''} ${addressComponents.streetName || ''}, ${addressComponents.city || ''}, ${addressComponents.state || ''} ${addressComponents.zipCode || ''}, ${addressComponents.country || ''}`
+                                .trim()
+                                .replace(/,(\s*,)+/g, ',') // Replace multiple commas with a single one
+                                .replace(/^,|,$/g, '') // Remove leading/trailing commas
+                                .replace(/\s+,/g, ','); // Remove space before a comma
 
             try {
+                // Send the signup data to your backend API
                 const response = await fetch(`${BACKEND_API_URL}/customer/signup`, {
                     method: "POST",
                     headers: {
@@ -228,23 +239,23 @@
                         full_name: fullName,
                         email: email,
                         phone: phone,
-                        address: fullAddress, // Send the validated, formatted address
+                        address: fullAddress, // Send the validated and formatted address
                         password: password,
                     }),
                 });
 
-                const data = await response.json();
+                const data = await response.json(); // Parse the JSON response from the backend
 
                 if (response.ok) {
-                    showMessage(data.message, "success");
-                    document.getElementById("signupForm").reset(); // Clear form on success
-                    addressComponents = {}; // Clear address components
+                    showMessage(data.message, "success"); // Show success message
+                    document.getElementById("signupForm").reset(); // Clear the form fields
+                    addressComponents = {}; // Reset stored address components
                 } else {
-                    showMessage(data.message || "An error occurred during signup.", "error");
+                    showMessage(data.message || "An error occurred during signup.", "error"); // Show error message
                 }
             } catch (error) {
                 console.error("Error during signup:", error);
-                showMessage("Network error. Please try again later.", "error");
+                showMessage("Network error. Please try again later.", "error"); // Handle network errors
             }
         });
     </script>
