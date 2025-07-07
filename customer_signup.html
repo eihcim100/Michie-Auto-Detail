@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Your Michie Auto Detailing Account</title>
+    <!-- For production, it's better to install Tailwind CSS via npm -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- The new Places API requires its own library. loading=async is best practice. -->
     <script type="module" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk&libraries=places,core&loading=async"></script>
 
     <style>
@@ -55,25 +57,27 @@
                     <div class="grid grid-cols-1 gap-y-4">
                         <input type="text" id="full-name" placeholder="Full Name" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="name">
                         
-                        <div id="address-search-container">
+                        <div id="address-input-section">
+                            <!-- Google Places Autocomplete Search Tool -->
                             <gmp-place-autocomplete
                                 id="address-autocomplete"
-                                placeholder="Service Address"
+                                placeholder="Search Service Address"
                                 country="us"
                                 class="w-full"
                                 requested-fields="formattedAddress,addressComponents,geometry,name">
                             </gmp-place-autocomplete>
+                            <!-- Hidden input to store the raw typed address -->
+                            <input type="hidden" id="service-address-raw">
+
+                            <!-- Visible static field for selected address -->
+                            <input type="text" id="static-address-display" readonly placeholder="Selected Address will appear here"
+                                class="mt-2 w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-700 cursor-not-allowed">
+                            
+                            <!-- Button to clear selected address and allow re-selection -->
+                            <button type="button" id="clear-address-btn" class="text-sm text-blue-600 hover:underline font-semibold mt-2">Clear Selected Address</button>
                         </div>
 
-                        <div id="selected-address-container" class="hidden items-center justify-between p-3 bg-gray-100 rounded-lg">
-                            <p id="selected-address-text" class="text-gray-800 pr-4"></p>
-                            <button type="button" id="change-address-btn" class="text-sm text-blue-600 hover:underline font-semibold flex-shrink-0">Change</button>
-                        </div>
-
-                        <!-- NEW: Hidden input field to store the validated address -->
-                        <input type="hidden" id="address-input-field" name="address">
-
-                        <!-- New Address Confirmation Checkbox -->
+                        <!-- Address Confirmation Checkbox -->
                         <div class="mt-4">
                             <label for="confirm-address-checkbox" class="flex items-center space-x-2 cursor-pointer text-gray-600">
                                 <input type="checkbox" id="confirm-address-checkbox" class="rounded h-4 w-4 text-blue-600 focus:ring-blue-500">
@@ -143,97 +147,111 @@
             const submitButton = document.getElementById('submit-button');
             const formMessage = document.getElementById('form-message');
             const zipCodeInput = document.getElementById('zip-code');
-            // New checkbox reference
             const confirmAddressCheckbox = document.getElementById('confirm-address-checkbox');
 
             // --- Address Handling Elements ---
-            const addressSearchContainer = document.getElementById('address-search-container');
-            const selectedAddressContainer = document.getElementById('selected-address-container');
-            const selectedAddressText = document.getElementById('selected-address-text');
-            const changeAddressBtn = document.getElementById('change-address-btn');
-            // NEW: Reference to the hidden address input field
-            const addressInputField = document.getElementById('address-input-field');
+            const addressAutocompleteElement = document.getElementById('address-autocomplete'); 
+            const serviceAddressRawInput = document.getElementById('service-address-raw'); // Our hidden input for raw text
+            const staticAddressDisplay = document.getElementById('static-address-display'); // Our new visible static display
+            const clearAddressBtn = document.getElementById('clear-address-btn'); // New clear button
             
             // --- New Place Autocomplete Logic ---
             customElements.whenDefined('gmp-place-autocomplete').then(() => {
-                const autocompleteElement = document.getElementById('address-autocomplete');
-                
-                autocompleteElement.addEventListener('gmp-placeselect', async (event) => { // Made async
-                    const placePrediction = event.placePrediction; // Get the prediction object [1]
-                    console.log('Place prediction selected:', placePrediction); // Debug log
+                let internalAutocompleteInput = null;
+                // Use a MutationObserver to wait for the internal input to be available in shadow DOM
+                const observer = new MutationObserver((mutations, obs) => {
+                    if (addressAutocompleteElement.shadowRoot) {
+                        internalAutocompleteInput = addressAutocompleteElement.shadowRoot.querySelector('input');
+                        if (internalAutocompleteInput) {
+                            // Attach input event listener to the actual input field to capture raw text
+                            internalAutocompleteInput.addEventListener('input', () => {
+                                serviceAddressRawInput.value = internalAutocompleteInput.value;
+                                // Clear static display if user starts typing again after a selection
+                                if (staticAddressDisplay.value && internalAutocompleteInput.value !== staticAddressDisplay.value) {
+                                    staticAddressDisplay.value = '';
+                                    confirmAddressCheckbox.checked = false; // Uncheck if address is being re-typed
+                                }
+                                console.log('Raw address input updated:', serviceAddressRawInput.value);
+                            });
+                            obs.disconnect(); // Disconnect observer once the input is found and listener attached
+                        }
+                    }
+                });
+                observer.observe(addressAutocompleteElement, { childList: true, subtree: true });
+
+
+                addressAutocompleteElement.addEventListener('gmp-placeselect', async (event) => { 
+                    const placePrediction = event.placePrediction; 
+                    console.log('Place prediction selected:', placePrediction); 
 
                     if (!placePrediction) {
-                        selectedAddressText.textContent = ''; 
-                        addressInputField.value = ''; // NEW: Clear hidden input
-                        console.log('No place prediction, clearing selectedAddressText and addressInputField.'); // Added log
+                        staticAddressDisplay.value = ''; 
+                        serviceAddressRawInput.value = ''; 
+                        confirmAddressCheckbox.checked = false;
+                        console.log('No place prediction, clearing address fields and unchecking confirmation.'); 
                         return;
                     }
 
-                    // Fetch full place details using the Place ID from the prediction [1]
                     try {
-                        const place = placePrediction.toPlace(); // Convert prediction to Place object [1]
-                        // Request specific fields using FieldMasks for cost optimization and accuracy [2, 3, 4, 1, 5, 6]
-                        // Ensure 'addressComponents' is requested for zip code extraction
+                        const place = placePrediction.toPlace(); 
                         await place.fetchFields({ fields: ['formattedAddress', 'addressComponents', 'geometry'] }); 
-                        console.log('Full Place details fetched:', place); // Debug log
+                        console.log('Full Place details fetched:', place); 
 
                         if (!place ||!place.formattedAddress) {
-                            selectedAddressText.textContent = ''; 
-                            addressInputField.value = ''; // NEW: Clear hidden input
-                            console.log('Fetched Place object is invalid or missing formattedAddress, clearing selectedAddressText and addressInputField.');
+                            staticAddressDisplay.value = ''; 
+                            serviceAddressRawInput.value = ''; 
+                            confirmAddressCheckbox.checked = false;
+                            console.log('Fetched Place object is invalid or missing formattedAddress, clearing fields.');
                             return;
                         }
 
-                        // 1. Store the data in the VISIBLE text element
-                        selectedAddressText.textContent = place.formattedAddress;
-                        console.log('selectedAddressText set to:', selectedAddressText.textContent);
+                        // Populate the static display and our raw input with the formatted address
+                        staticAddressDisplay.value = place.formattedAddress;
+                        serviceAddressRawInput.value = place.formattedAddress; 
+                        confirmAddressCheckbox.checked = true; // Automatically check the box on selection
+                        console.log('Static address display and raw input set to (from place select):', staticAddressDisplay.value);
 
-                        // NEW: Store the formatted address in the hidden input field
-                        addressInputField.value = place.formattedAddress;
-                        console.log('address-input-field value set to:', addressInputField.value);
-
-                        // Extract zip code from addressComponents [7, 8]
                         const zipCodeComponent = place.addressComponents?.find(c => c.types.includes('postal_code'));
                         if (zipCodeComponent) {
                             zipCodeInput.value = zipCodeComponent.longText;
                             console.log('Zip code set to:', zipCodeInput.value);
                         } else {
-                            zipCodeInput.value = ''; // Clear if no zip code found
+                            zipCodeInput.value = ''; 
                             console.log('No zip code found in address components.');
                         }
 
-                        // 2. Update the UI 
-                        addressSearchContainer.classList.add('hidden');
-                        selectedAddressContainer.classList.remove('hidden');
-                        selectedAddressContainer.classList.add('flex');
+                        // Keep the autocomplete input populated with the selected address for consistency
+                        if (internalAutocompleteInput) {
+                            internalAutocompleteInput.value = place.formattedAddress;
+                        }
 
                     } catch (error) {
                         console.error('Error fetching place details:', error);
                         formMessage.textContent = 'Failed to confirm address. Please try selecting again.';
                         formMessage.className = 'text-center mt-4 text-red-600 font-semibold';
-                        selectedAddressText.textContent = ''; // Clear on error
-                        addressInputField.value = ''; // NEW: Clear hidden input on error
-                        addressSearchContainer.classList.remove('hidden'); // Show search again
-                        selectedAddressContainer.classList.add('hidden');
-                        selectedAddressContainer.classList.remove('flex');
+                        staticAddressDisplay.value = ''; 
+                        serviceAddressRawInput.value = ''; 
+                        confirmAddressCheckbox.checked = false;
                     }
                 });
             });
 
-            // --- Logic for the "Change" button ---
-            changeAddressBtn.addEventListener('click', () => {
-                // 1. Clear the stored visual data
-                selectedAddressText.textContent = '';
-                addressInputField.value = ''; // NEW: Clear hidden input when changing address
-                const autocompleteElement = document.getElementById('address-autocomplete');
-                if (autocompleteElement.shadowRoot) {
-                    autocompleteElement.shadowRoot.querySelector('input').value = '';
-                }
+            // --- Logic for the "Clear Selected Address" button ---
+            clearAddressBtn.addEventListener('click', () => {
+                staticAddressDisplay.value = ''; // Clear the visible static display
+                serviceAddressRawInput.value = ''; // Clear our hidden input
+                zipCodeInput.value = ''; // Clear zip code
+                confirmAddressCheckbox.checked = false; // Uncheck the confirmation box
 
-                // 2. Update the UI to show the search box again
-                selectedAddressContainer.classList.add('hidden');
-                selectedAddressContainer.classList.remove('flex');
-                addressSearchContainer.classList.remove('hidden');
+                // Clear the actual input element of gmp-place-autocomplete
+                if (addressAutocompleteElement.shadowRoot) {
+                    const internalInput = addressAutocompleteElement.shadowRoot.querySelector('input');
+                    if (internalInput) {
+                        internalInput.value = ''; 
+                        internalInput.focus(); // Put focus back to allow new typing
+                    }
+                }
+                console.log('Address fields cleared.');
             });
 
             // --- Password Validation ---
@@ -266,25 +284,28 @@
                     return;
                 }
                 
-                // Get the final address from the hidden input field
-                let finalAddress = addressInputField.value;
+                let finalAddress = ''; 
 
-                // ==================================================================
-                // NEW LOGIC: Bypass address validation if checkbox is checked
-                // ==================================================================
-                if (!confirmAddressCheckbox.checked) {
-                    console.log('Address confirmation checkbox NOT checked. Proceeding with standard address validation.');
+                // Determine the final address to send based on confirmation checkbox
+                if (confirmAddressCheckbox.checked) {
+                    // If confirmed, use the value from our raw input (which captures typed or selected)
+                    finalAddress = serviceAddressRawInput.value;
+                    console.log('Submitting with confirmed address (from raw input):', finalAddress);
+                } else {
+                    // If not confirmed, we require a selected address in the static display
+                    finalAddress = staticAddressDisplay.value;
                     if (!finalAddress) {
-                        formMessage.textContent = 'Please select a valid service address or check the confirmation box.';
+                        formMessage.textContent = 'Please select a valid service address from the suggestions or check the confirmation box.';
                         formMessage.className = 'text-center mt-4 text-red-600 font-semibold';
                         return;
                     }
-                } else {
-                    console.log('Address confirmation checkbox IS checked. Bypassing address validation.');
-                    // If checkbox is checked, and finalAddress is empty, we still allow submission.
-                    // We can optionally set it to a placeholder or empty string if it's truly blank.
-                    // For now, it will just use whatever is in selectedAddressText.textContent (which might be empty).
-                    // If the user wants to force an empty address, they'd leave it blank and check the box.
+                    console.log('Submitting with selected address (from static display):', finalAddress);
+                }
+
+                if (!finalAddress) {
+                    formMessage.textContent = 'Service address is required. Please type and confirm, or select from suggestions.';
+                    formMessage.className = 'text-center mt-4 text-red-600 font-semibold';
+                    return;
                 }
 
                 submitButton.disabled = true;
@@ -299,7 +320,7 @@
 
                 const formData = {
                     full_name: document.getElementById('full-name').value,
-                    address: finalAddress, // Use the value from the hidden input field
+                    address: finalAddress, 
                     phone: document.getElementById('phone').value,
                     email: document.getElementById('email').value,
                     password: passwordInput.value,
