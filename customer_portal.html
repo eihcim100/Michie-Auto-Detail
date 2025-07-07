@@ -6,22 +6,16 @@
     <title>Michie Auto Detailing - Customer Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-    </style>
+    <style> body { font-family: 'Inter', sans-serif; } </style>
 </head>
 <body class="bg-gray-50">
 
-    <div class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-xl">
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-3xl">
         <header class="text-center mb-8">
             <h1 class="text-4xl font-bold text-gray-800">Customer Portal</h1>
-            <p class="text-gray-600">Manage your vehicles and book appointments with ease.</p>
         </header>
 
-        <!-- Login Section -->
-        <div id="auth-section" class="bg-white p-8 rounded-xl shadow-md mb-8">
+        <div id="auth-section" class="bg-white p-8 rounded-xl shadow-md">
             <div id="login-form">
                 <h2 class="text-2xl font-bold text-center mb-6 text-gray-700">Login to Your Account</h2>
                 <div class="space-y-4">
@@ -36,43 +30,71 @@
             </div>
         </div>
 
-        <!-- Customer Dashboard (Hidden by default) -->
-        <div id="dashboard-section" class="hidden">
-            <div class="flex justify-between items-center mb-6">
+        <div id="dashboard-section" class="hidden space-y-8">
+            <div class="flex justify-between items-center">
                  <h2 class="text-3xl font-bold text-gray-800">Welcome, <span id="customer-name"></span>!</h2>
-                 <button id="logout-button" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300">Logout</button>
+                 <button id="logout-button" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg">Logout</button>
             </div>
 
-            <!-- My Vehicles -->
-            <div class="bg-white p-8 rounded-xl shadow-md mb-8">
-                <h3 class="text-2xl font-bold text-gray-700 mb-4">My Vehicles</h3>
-                <div id="vehicles-list" class="space-y-3">
-                    <!-- Vehicles will be dynamically inserted here -->
+            <div class="bg-white p-8 rounded-xl shadow-md">
+                <h3 class="text-2xl font-bold text-gray-700 mb-4">Book a New Detail</h3>
+                 <form id="booking-form" class="space-y-4">
+                    <div>
+                        <label for="booking-vehicle" class="block text-sm font-medium text-gray-700 mb-1">Select a Vehicle</label>
+                        <select id="booking-vehicle" required class="w-full px-4 py-2 border rounded-lg bg-white"></select>
+                    </div>
+                    <div>
+                        <label for="booking-address" class="block text-sm font-medium text-gray-700 mb-1">Service Address</label>
+                        <input type="text" id="booking-address" required placeholder="123 Main St, City, State, Zip" class="w-full px-4 py-2 border rounded-lg">
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="booking-date" class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                            <input type="date" id="booking-date" required class="w-full px-4 py-2 border rounded-lg">
+                        </div>
+                        <div>
+                            <label for="booking-time" class="block text-sm font-medium text-gray-700 mb-1">Time</label>
+                            <input type="time" id="booking-time" required class="w-full px-4 py-2 border rounded-lg">
+                        </div>
+                    </div>
+                    <button type="submit" id="book-appointment-button" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg">Book Appointment</button>
+                    <p id="booking-message" class="text-center mt-2"></p>
+                </form>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="bg-white p-8 rounded-xl shadow-md">
+                    <h3 class="text-2xl font-bold text-gray-700 mb-4">My Vehicles</h3>
+                    <div id="vehicles-list" class="space-y-3"></div>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-md">
+                    <h3 class="text-2xl font-bold text-gray-700 mb-4">Appointment History</h3>
+                    <div id="appointments-list" class="space-y-4"></div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // ==================================================================
-        //                  API URL IS NOW LIVE
-        // ==================================================================
         const API_BASE_URL = 'https://michie-detailing-admin.onrender.com';
 
         // Page Sections
         const authSection = document.getElementById('auth-section');
         const dashboardSection = document.getElementById('dashboard-section');
-        
-        // Buttons
+
+        // Login
         const loginButton = document.getElementById('login-button');
-        const logoutButton = document.getElementById('logout-button');
-
-        // Message Elements
         const loginMessage = document.getElementById('login-message');
-
-        // Dashboard Elements
+        
+        // Dashboard
         const customerNameSpan = document.getElementById('customer-name');
+        const logoutButton = document.getElementById('logout-button');
         const vehiclesList = document.getElementById('vehicles-list');
+        const appointmentsList = document.getElementById('appointments-list');
+
+        // Booking Form
+        const bookingForm = document.getElementById('booking-form');
+        const bookingMessage = document.getElementById('booking-message');
 
         let customerToken = localStorage.getItem('customerToken');
 
@@ -80,12 +102,12 @@
         function updateUI() {
             customerToken = localStorage.getItem('customerToken');
             if (customerToken) {
-                authSection.classList.add('hidden');
-                dashboardSection.classList.remove('hidden');
+                authSection.style.display = 'none';
+                dashboardSection.style.display = 'block';
                 fetchCustomerData();
             } else {
-                authSection.classList.remove('hidden');
-                dashboardSection.classList.add('hidden');
+                authSection.style.display = 'block';
+                dashboardSection.style.display = 'none';
             }
         }
 
@@ -96,29 +118,56 @@
                 const response = await fetch(`${API_BASE_URL}/customer/data`, {
                     headers: { 'Authorization': `Bearer ${customerToken}` }
                 });
-                const data = await response.json();
-
-                if (response.ok) {
-                    customerNameSpan.textContent = data.full_name;
-                    renderVehicles(data.vehicles);
-                } else {
-                    logout();
+                
+                if (!response.ok) {
+                    logout(); // If token is invalid or expired
+                    return;
                 }
+
+                const data = await response.json();
+                
+                customerNameSpan.textContent = data.full_name;
+                document.getElementById('booking-address').value = data.address || '';
+                renderVehicles(data.vehicles);
+                renderAppointments(data.appointments);
+
             } catch (error) {
                 console.error('Error fetching customer data:', error);
             }
         }
 
         function renderVehicles(vehicles) {
+            const bookingVehicleSelect = document.getElementById('booking-vehicle');
             vehiclesList.innerHTML = '';
-            if (vehicles.length === 0) {
-                vehiclesList.innerHTML = '<p class="text-gray-500">You have not added any vehicles yet.</p>';
+            bookingVehicleSelect.innerHTML = '<option value="">-- Select a Vehicle --</option>';
+            if (!vehicles || vehicles.length === 0) {
+                vehiclesList.innerHTML = '<p class="text-gray-500">No vehicles on file.</p>';
             } else {
                 vehicles.forEach(v => {
                     const vehicleDiv = document.createElement('div');
                     vehicleDiv.className = 'p-3 bg-gray-100 rounded-md';
                     vehicleDiv.textContent = `${v.year} ${v.make} ${v.model}`;
                     vehiclesList.appendChild(vehicleDiv);
+
+                    const vehicleOption = document.createElement('option');
+                    vehicleOption.value = v.id;
+                    vehicleOption.textContent = `${v.year} ${v.make} ${v.model}`;
+                    bookingVehicleSelect.appendChild(vehicleOption);
+                });
+            }
+        }
+
+        function renderAppointments(appointments) {
+            appointmentsList.innerHTML = '';
+            if (!appointments || appointments.length === 0) {
+                appointmentsList.innerHTML = '<p class="text-gray-500">No past appointments.</p>';
+            } else {
+                appointments.forEach(a => {
+                    const el = document.createElement('div');
+                    el.className = 'p-3 bg-gray-100 rounded-md';
+                    const date = new Date(a.date + 'T00:00:00').toLocaleDateString(); // Adjust for timezone
+                    el.innerHTML = `<p class="font-semibold">${a.vehicle}</p><p>${date} - <span class="capitalize font-medium">${a.status}</span></p>`;
+                    appointmentsList.appendChild(el);
                 });
             }
         }
@@ -150,10 +199,47 @@
                 loginMessage.textContent = 'An error occurred during login.';
             }
         });
+
+        bookingForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            bookingMessage.textContent = 'Booking...';
+            bookingMessage.className = 'text-center mt-2 text-blue-600';
+
+            const payload = {
+                vehicle_id: document.getElementById('booking-vehicle').value,
+                address: document.getElementById('booking-address').value,
+                date: document.getElementById('booking-date').value,
+                time: document.getElementById('booking-time').value,
+            };
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/customer/book_appointment`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${customerToken}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    bookingMessage.textContent = 'Appointment Booked!';
+                    bookingMessage.className = 'text-center mt-2 text-green-600';
+                    bookingForm.reset();
+                    fetchCustomerData(); // Refresh data to show new appointment
+                } else {
+                    bookingMessage.textContent = data.message || 'Booking failed.';
+                    bookingMessage.className = 'text-center mt-2 text-red-600';
+                }
+            } catch (error) {
+                bookingMessage.textContent = 'A network error occurred.';
+                bookingMessage.className = 'text-center mt-2 text-red-600';
+            }
+        });
         
         logoutButton.addEventListener('click', logout);
 
-        // Initial Load
+        // --- Initial Load ---
         document.addEventListener('DOMContentLoaded', updateUI);
     </script>
 </body>
