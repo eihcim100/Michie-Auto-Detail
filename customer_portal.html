@@ -87,6 +87,15 @@
                 <div id="financing-booking-section" class="form-section mt-6 pt-6 border-t">
                     <h4 class="text-xl font-bold text-gray-700 mb-2">Book with Financing</h4>
                     <p class="text-gray-600 mb-4">Pay in 3 easy installments: $99 today, and $99 every 14 days for 2 remaining installments.</p>
+                    
+                    <!-- Payment Schedule Display -->
+                    <div id="payment-schedule" class="bg-gray-100 p-4 rounded-lg mb-4">
+                        <h5 class="font-semibold text-gray-700 mb-2">Your Payment Plan:</h5>
+                        <div class="space-y-2" id="installments-list">
+                            <!-- Installment details will be dynamically inserted here -->
+                        </div>
+                    </div>
+
                     <form id="financing-booking-form" class="space-y-4">
                          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
@@ -167,6 +176,7 @@
                 viewPastAppointmentsBtn: document.getElementById('view-past-appointments-btn'),
                 pastAppointmentsSection: document.getElementById('past-appointments-section'),
                 pastAppointmentsList: document.getElementById('past-appointments-list'),
+                installmentsList: document.getElementById('installments-list'), // New element for payment schedule
             };
 
             let customerData = {}; 
@@ -199,6 +209,7 @@
                 renderVehicleManagementForms();
                 renderUpcomingAppointment();
                 renderPastAppointments();
+                renderPaymentSchedule(); // Call the new function to render payment schedule
             }
 
             function renderVehicleDropdown() {
@@ -307,6 +318,45 @@
                     elements.pastAppointmentsList.textContent = 'No past appointments found.';
                 }
             }
+
+            // New function to render the payment schedule
+            function renderPaymentSchedule() {
+                elements.installmentsList.innerHTML = ''; // Clear previous entries
+                const today = new Date();
+                const formatter = new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+                // Payment 1: Today
+                const payment1Date = new Date(today);
+                const payment1Div = document.createElement('div');
+                payment1Div.className = 'flex justify-between items-center bg-white p-3 rounded-md shadow-sm';
+                payment1Div.innerHTML = `
+                    <span class="font-medium text-gray-800">Payment 1: $99</span>
+                    <span class="text-gray-600">${formatter.format(payment1Date)} (Today)</span>
+                `;
+                elements.installmentsList.appendChild(payment1Div);
+
+                // Payment 2: 14 days from today
+                const payment2Date = new Date(today);
+                payment2Date.setDate(today.getDate() + 14);
+                const payment2Div = document.createElement('div');
+                payment2Div.className = 'flex justify-between items-center bg-white p-3 rounded-md shadow-sm';
+                payment2Div.innerHTML = `
+                    <span class="font-medium text-gray-800">Payment 2: $99</span>
+                    <span class="text-gray-600">${formatter.format(payment2Date)}</span>
+                `;
+                elements.installmentsList.appendChild(payment2Div);
+
+                // Payment 3: 28 days from today
+                const payment3Date = new Date(today);
+                payment3Date.setDate(today.getDate() + 28);
+                const payment3Div = document.createElement('div');
+                payment3Div.className = 'flex justify-between items-center bg-white p-3 rounded-md shadow-sm';
+                payment3Div.innerHTML = `
+                    <span class="font-medium text-gray-800">Payment 3: $99</span>
+                    <span class="text-gray-600">${formatter.format(payment3Date)}</span>
+                `;
+                elements.installmentsList.appendChild(payment3Div);
+            }
             
             function logout() {
                 localStorage.removeItem('customerToken');
@@ -343,7 +393,15 @@
             elements.logoutButton.addEventListener('click', logout);
             elements.manageVehicleBtn.addEventListener('click', () => { elements.vehicleManagementSection.style.display = 'block'; });
             elements.editAddressBtn.addEventListener('click', () => { elements.addressEditSection.style.display = 'block'; });
-            elements.showFinanceBtn.addEventListener('click', () => { elements.financingBookingSection.style.display = elements.financingBookingSection.style.display === 'block' ? 'none' : 'block'; });
+            
+            // Toggle financing section visibility and re-render schedule
+            elements.showFinanceBtn.addEventListener('click', () => { 
+                elements.financingBookingSection.style.display = elements.financingBookingSection.style.display === 'block' ? 'none' : 'block'; 
+                if (elements.financingBookingSection.style.display === 'block') {
+                    renderPaymentSchedule(); // Re-render when shown
+                }
+            });
+
             elements.viewPastAppointmentsBtn.addEventListener('click', () => { elements.pastAppointmentsSection.style.display = elements.pastAppointmentsSection.style.display === 'block' ? 'none' : 'block'; });
 
             async function handleBooking(e, endpoint, messageEl) {
