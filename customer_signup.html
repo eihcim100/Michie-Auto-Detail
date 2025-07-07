@@ -7,9 +7,7 @@
     <!-- For production, it's better to install Tailwind CSS via npm -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- The new Places API requires its own library. loading=async is best practice. -->
-    <!-- Libraries changed to 'places' only, as we are using Autocomplete directly -->
-    <!-- Added 'v=beta' to explicitly request the new Places API -->
+    <!-- Google Maps API: Now includes 'places' for Autocomplete and 'v=beta' for new Places API features -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk&libraries=places&callback=initMap&loading=async&v=beta"></script>
 
     <style>
@@ -62,15 +60,15 @@
                             <input type="text" id="address-line1" placeholder="Address Line 1" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="address-line1">
                             <p class="text-sm text-gray-500 mt-1 pl-1">Start typing and select from suggestions.</p>
                         </div>
-                        <input type="text" id="address-line2" placeholder="Address Line 2 (Optional)" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="address-line2">
+                        <input type="text" id="address-line2" placeholder="Address Line 2 (Apt, Suite, etc. - Optional)" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="address-line2">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <input type="text" id="city" placeholder="City" required class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="address-level2">
                             <input type="text" id="state" placeholder="State (e.g., CA)" required class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="address-level1">
                         </div>
                         <input type="text" id="zip-code" placeholder="Zip Code" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="postal-code">
 
-                        <!-- Hidden flag to confirm Google validation -->
-                        <input type="checkbox" id="address-confirmed-flag" class="hidden">
+                        <!-- Hidden flag to confirm Google Autocomplete selection -->
+                        <input type="checkbox" id="address-selected-via-autocomplete" class="hidden">
 
                         <input type="tel" id="phone" placeholder="Phone Number" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="tel">
                         <input type="email" id="email" placeholder="Email Address" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="email">
@@ -123,30 +121,26 @@
     <script>
         // Define initMap globally as it's the callback for the Google Maps API script
         function initMap() {
-            console.log("initMap called. Google Maps API and Places library should be available.");
-            // --- Address Handling Elements ---
+            console.log("Google Maps API script (with Places library) loaded.");
+            
             const addressLine1Input = document.getElementById('address-line1');
-            const addressLine2Input = document.getElementById('address-line2');
             const cityInput = document.getElementById('city');
             const stateInput = document.getElementById('state');
             const zipCodeInput = document.getElementById('zip-code');
-            const addressConfirmedFlag = document.getElementById('address-confirmed-flag');
+            const addressSelectedViaAutocomplete = document.getElementById('address-selected-via-autocomplete');
 
             // --- Google Places Autocomplete Initialization ---
-            let autocomplete;
-            // Create the autocomplete object, restricting the search to geographical location types.
-            autocomplete = new google.maps.places.Autocomplete(addressLine1Input, {
+            const autocomplete = new google.maps.places.Autocomplete(addressLine1Input, {
                 types: ['address'],
                 componentRestrictions: { 'country': ['us'] } // Restrict to US addresses
             });
 
-            // When the user selects an address from the dropdown, populate the address fields.
             autocomplete.addListener('place_changed', () => {
                 const place = autocomplete.getPlace();
 
                 if (!place.address_components) {
                     console.error('No address components found for the selected place.');
-                    addressConfirmedFlag.checked = false;
+                    addressSelectedViaAutocomplete.checked = false;
                     return;
                 }
 
@@ -155,13 +149,11 @@
                 cityInput.value = '';
                 stateInput.value = '';
                 zipCodeInput.value = '';
-                addressConfirmedFlag.checked = false;
+                addressSelectedViaAutocomplete.checked = false; // Reset before setting
 
                 let streetNumber = '';
                 let streetName = '';
 
-                // Get each component of the address from the place details,
-                // and then fill the corresponding field in the form.
                 for (const component of place.address_components) {
                     const componentType = component.types[0];
 
@@ -187,18 +179,16 @@
 
                 // Set the flag to true if we successfully populated the fields
                 if (addressLine1Input.value && cityInput.value && stateInput.value && zipCodeInput.value) {
-                    addressConfirmedFlag.checked = true;
+                    addressSelectedViaAutocomplete.checked = true;
                 } else {
-                    // If any required field is missing, consider it not fully validated
-                    addressConfirmedFlag.checked = false;
                     document.getElementById('form-message').textContent = 'Please select a more specific address from the dropdown.';
                     document.getElementById('form-message').className = 'text-center mt-4 text-red-600 font-semibold';
                 }
             });
 
-            // Clear the address-confirmed-flag if the user manually changes addressLine1 after selection
+            // Clear the address-selected-via-autocomplete flag if the user manually changes addressLine1 after selection
             addressLine1Input.addEventListener('input', () => {
-                addressConfirmedFlag.checked = false;
+                addressSelectedViaAutocomplete.checked = false;
             });
         }
 
@@ -213,14 +203,13 @@
             const submitButton = document.getElementById('submit-button');
             const formMessage = document.getElementById('form-message');
             
-            // --- Address Handling Elements (re-declared for local scope, or accessed globally if needed) ---
+            // --- Address Handling Elements ---
             const addressLine1Input = document.getElementById('address-line1');
             const addressLine2Input = document.getElementById('address-line2');
             const cityInput = document.getElementById('city');
             const stateInput = document.getElementById('state');
             const zipCodeInput = document.getElementById('zip-code');
-            const addressConfirmedFlag = document.getElementById('address-confirmed-flag');
-
+            const addressSelectedViaAutocomplete = document.getElementById('address-selected-via-autocomplete'); // Get the flag
 
             // --- Password Validation ---
             function validatePassword() {
@@ -242,6 +231,72 @@
                 secondVehicleFields.classList.toggle('hidden-section');
             });
 
+            // --- Address Validation Function (for submission) ---
+            async function validateAddressWithGoogle(addressComponents) {
+                const API_KEY = "AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk"; // Your Google API Key
+                const API_ENDPOINT = `https://addressvalidation.googleapis.com/v1:validateAddress?key=${API_KEY}`;
+
+                const requestBody = {
+                    address: {
+                        regionCode: "US", // Assuming US addresses
+                        locality: addressComponents.city,
+                        administrativeArea: addressComponents.state,
+                        postalCode: addressComponents.zipCode,
+                        addressLines: [
+                            addressComponents.addressLine1,
+                            ...(addressComponents.addressLine2 ? [addressComponents.addressLine2] : [])
+                        ]
+                    },
+                    // Optional: enable verdict and granular validation
+                    // enableUspsCass: true 
+                };
+
+                try {
+                    const response = await fetch(API_ENDPOINT, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(requestBody)
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        console.error('Address Validation API Error:', errorData);
+                        // Check for specific API errors, e.g., API not enabled
+                        if (errorData.error && errorData.error.message.includes("API not enabled")) {
+                            throw new Error("Address Validation API is not enabled for your Google Cloud project. Please enable it.");
+                        }
+                        throw new Error(errorData.error?.message || 'Failed to validate address with Google API.');
+                    }
+
+                    const data = await response.json();
+                    console.log('Address Validation API Response:', data);
+
+                    // Process the validation response
+                    const verdict = data.result?.verdict;
+                    const address = data.result?.address;
+
+                    // A valid address typically has a verdict indicating completeness and deliverability
+                    const isValid = verdict?.validationGranularity === 'PREMISE' || 
+                                    verdict?.validationGranularity === 'SUBPREMISE' ||
+                                    (verdict?.geocodeGranularity === 'ROOFTOP' && !verdict?.hasUnconfirmedComponentInfo);
+                                    // You might add more checks here like deliverability, etc.
+
+                    let formattedAddress = '';
+                    if (address && address.formattedAddress) {
+                        formattedAddress = address.formattedAddress;
+                    } else if (addressComponents.addressLine1 && addressComponents.city && addressComponents.state && addressComponents.zipCode) {
+                        // Fallback to manually constructing if formattedAddress is not provided by API but components are there
+                        formattedAddress = `${addressComponents.addressLine1}${addressComponents.addressLine2 ? ', ' + addressComponents.addressLine2 : ''}, ${addressComponents.city}, ${addressComponents.state} ${addressComponents.zipCode}`;
+                    }
+
+                    return { isValid, formattedAddress, error: null };
+
+                } catch (error) {
+                    console.error('Network or API call error during address validation:', error);
+                    return { isValid: false, formattedAddress: '', error: error.message || 'Error during address validation.' };
+                }
+            }
+
             // --- Form Submission ---
             signupForm.addEventListener('submit', async (e) => {
                 e.preventDefault(); 
@@ -252,31 +307,46 @@
                     return;
                 }
                 
-                // Frontend validation for new address fields
+                // Frontend validation for basic required address fields
                 if (!addressLine1Input.value || !cityInput.value || !stateInput.value || !zipCodeInput.value) {
                     formMessage.textContent = 'Please fill in all required address fields.';
                     formMessage.className = 'text-center mt-4 text-red-600 font-semibold';
                     return;
                 }
 
-                // Check if the address was selected via Google Autocomplete
-                if (!addressConfirmedFlag.checked) {
-                    formMessage.textContent = 'Please select your address from the Google suggestions for validation.';
+                // New check: Ensure the address was selected via Google Autocomplete
+                if (!addressSelectedViaAutocomplete.checked) {
+                    formMessage.textContent = 'Please select your address from the Google suggestions to ensure accuracy.';
                     formMessage.className = 'text-center mt-4 text-red-600 font-semibold';
                     return;
                 }
 
 
                 submitButton.disabled = true;
-                submitButton.textContent = 'Creating Account...';
+                submitButton.textContent = 'Validating Address...';
                 formMessage.textContent = '';
 
-                // Construct the full address string from individual fields
-                let fullAddress = addressLine1Input.value;
-                if (addressLine2Input.value) {
-                    fullAddress += ', ' + addressLine2Input.value;
+                // Prepare address components for validation
+                const addressToValidate = {
+                    addressLine1: addressLine1Input.value,
+                    addressLine2: addressLine2Input.value,
+                    city: cityInput.value,
+                    state: stateInput.value,
+                    zipCode: zipCodeInput.value
+                };
+
+                // Perform address validation using Google API
+                const validationResult = await validateAddressWithGoogle(addressToValidate);
+
+                if (!validationResult.isValid) {
+                    formMessage.textContent = validationResult.error || 'The entered address could not be validated. Please check and try again.';
+                    formMessage.className = 'text-center mt-4 text-red-600 font-semibold';
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Create Account';
+                    return;
                 }
-                fullAddress += ', ' + cityInput.value + ', ' + stateInput.value + ' ' + zipCodeInput.value;
+
+                submitButton.textContent = 'Creating Account...'; // Change text after successful address validation
 
                 const vehicle2 = addSecondVehicleCheckbox.checked ? {
                     year: document.getElementById('year2').value,
@@ -286,7 +356,7 @@
 
                 const formData = {
                     full_name: document.getElementById('full-name').value,
-                    address: fullAddress, // Send the bundled address string
+                    address: validationResult.formattedAddress, // Use the validated and formatted address
                     phone: document.getElementById('phone').value,
                     email: document.getElementById('email').value,
                     password: passwordInput.value,
