@@ -1,4 +1,3 @@
-*WELCOME TO MICHIE AUTO JULY 6TH 2025*
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -59,10 +58,7 @@
                     <div class="grid grid-cols-1 gap-y-4">
                         <input type="text" id="full-name" placeholder="Full Name" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="name">
                         
-                        <!-- ==================================================================
-                          THE NEW "OUTSIDE-THE-BOX" SOLUTION
-                        ================================================================== -->
-                        <!-- Step 1: The Autocomplete search box (initially visible) -->
+                        <!-- The Address UI Container -->
                         <div id="address-search-container">
                             <gmp-place-autocomplete
                                 id="address-autocomplete"
@@ -73,14 +69,10 @@
                             </gmp-place-autocomplete>
                         </div>
 
-                        <!-- Step 2: The container for the selected address (initially hidden) -->
                         <div id="selected-address-container" class="hidden items-center justify-between p-3 bg-gray-100 rounded-lg">
-                            <p id="selected-address-text" class="text-gray-800"></p>
-                            <button type="button" id="change-address-btn" class="text-sm text-blue-600 hover:underline font-semibold">Change</button>
+                            <p id="selected-address-text" class="text-gray-800 pr-4"></p>
+                            <button type="button" id="change-address-btn" class="text-sm text-blue-600 hover:underline font-semibold flex-shrink-0">Change</button>
                         </div>
-
-                        <!-- This hidden input still stores the final value for submission -->
-                        <input type="hidden" id="address" name="address">
 
                         <input type="tel" id="phone" placeholder="Phone Number" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="tel">
                         <input type="email" id="email" placeholder="Email Address" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="email">
@@ -146,7 +138,6 @@
             const secondVehicleFields = document.getElementById('second-vehicle-fields');
             const submitButton = document.getElementById('submit-button');
             const formMessage = document.getElementById('form-message');
-            const addressInput = document.getElementById('address'); // The hidden input
             const zipCodeInput = document.getElementById('zip-code');
 
             // --- Address Handling Elements ---
@@ -161,23 +152,21 @@
                 
                 autocompleteElement.addEventListener('gmp-placeselect', (event) => {
                     const place = event.place;
-                    if (!place) {
-                        addressInput.value = ''; 
+                    console.log('Place selected:', place); // For debugging
+                    if (!place || !place.formattedAddress) {
+                        selectedAddressText.textContent = ''; 
                         return;
                     }
 
-                    // 1. Store the data reliably
-                    if (place.formattedAddress) {
-                        addressInput.value = place.formattedAddress;
-                        selectedAddressText.textContent = place.formattedAddress;
-                    }
+                    // 1. Store the data in the VISIBLE text element
+                    selectedAddressText.textContent = place.formattedAddress;
 
                     const zipCodeComponent = place.addressComponents?.find(c => c.types.includes('postal_code'));
                     if (zipCodeComponent) {
                         zipCodeInput.value = zipCodeComponent.longText;
                     }
 
-                    // 2. Update the UI to show the selected address
+                    // 2. Update the UI 
                     addressSearchContainer.classList.add('hidden');
                     selectedAddressContainer.classList.remove('hidden');
                     selectedAddressContainer.classList.add('flex');
@@ -186,8 +175,8 @@
 
             // --- Logic for the "Change" button ---
             changeAddressBtn.addEventListener('click', () => {
-                // 1. Clear the stored data
-                addressInput.value = '';
+                // 1. Clear the stored visual data
+                selectedAddressText.textContent = '';
                 const autocompleteElement = document.getElementById('address-autocomplete');
                 if (autocompleteElement.shadowRoot) {
                     autocompleteElement.shadowRoot.querySelector('input').value = '';
@@ -229,8 +218,14 @@
                     return;
                 }
                 
-                // The check is now much simpler and more reliable
-                if (!addressInput.value) {
+                // ==================================================================
+                // THE FINAL FIX: We check the VISIBLE text content, not a hidden input.
+                // This is a much more reliable way to validate.
+                // ==================================================================
+                const finalAddress = selectedAddressText.textContent;
+                console.log('Submitting with address:', finalAddress); // For debugging
+
+                if (!finalAddress) {
                     formMessage.textContent = 'Please select a valid service address.';
                     formMessage.className = 'text-center mt-4 text-red-600 font-semibold';
                     return;
@@ -248,7 +243,7 @@
 
                 const formData = {
                     full_name: document.getElementById('full-name').value,
-                    address: addressInput.value, // Use value from the hidden input
+                    address: finalAddress, // Use the text content directly
                     phone: document.getElementById('phone').value,
                     email: document.getElementById('email').value,
                     password: passwordInput.value,
