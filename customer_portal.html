@@ -10,6 +10,16 @@
         body { font-family: 'Inter', sans-serif; } 
         .pac-container { z-index: 1050 !important; }
         .form-section, .feature-section { display: none; } /* Hide sections by default */
+        /* Custom styles for time buttons */
+        .time-button {
+            @apply px-4 py-2 rounded-lg border border-gray-300 text-gray-700 font-medium cursor-pointer transition-colors duration-200;
+        }
+        .time-button.selected {
+            @apply bg-blue-600 text-white border-blue-600;
+        }
+        .time-button.disabled {
+            @apply bg-gray-200 text-gray-400 cursor-not-allowed;
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -75,8 +85,11 @@
                             <input type="date" id="booking-date" required class="w-full px-4 py-2 border rounded-lg">
                         </div>
                         <div>
-                            <label for="booking-time" class="block text-sm font-medium text-gray-700 mb-1">Time</label>
-                            <input type="time" id="booking-time" required class="w-full px-4 py-2 border rounded-lg">
+                            <label for="booking-time-buttons" class="block text-sm font-medium text-gray-700 mb-1">Time</label>
+                            <div id="booking-time-buttons" class="grid grid-cols-3 gap-2">
+                                <!-- Time buttons will be dynamically inserted here -->
+                            </div>
+                            <input type="hidden" id="selected-booking-time" name="booking-time" required>
                         </div>
                     </div>
                     <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg">Book Appointment</button>
@@ -105,8 +118,11 @@
                                 <input type="date" id="financing-booking-date" required class="w-full px-4 py-2 border rounded-lg">
                             </div>
                             <div>
-                                <label for="financing-booking-time" class="block text-sm font-medium text-gray-700 mb-1">Time</label>
-                                <input type="time" id="financing-booking-time" required class="w-full px-4 py-2 border rounded-lg">
+                                <label for="financing-time-buttons" class="block text-sm font-medium text-gray-700 mb-1">Time</label>
+                                <div id="financing-time-buttons" class="grid grid-cols-3 gap-2">
+                                    <!-- Time buttons will be dynamically inserted here -->
+                                </div>
+                                <input type="hidden" id="selected-financing-time" name="financing-booking-time" required>
                             </div>
                         </div>
                         <button type="submit" class="w-full bg-blue-800 hover:bg-blue-900 text-white font-bold py-3 px-4 rounded-lg">Book with Financing</button>
@@ -169,8 +185,8 @@
                 bookingMessage: document.getElementById('booking-message'),
                 bookingForm: document.getElementById('booking-form'),
                 editAddressForm: document.getElementById('edit-address-form'),
-                upcomingAppointmentsSection: document.getElementById('upcoming-appointments-section'), // Changed ID
-                upcomingAppointmentsList: document.getElementById('upcoming-appointments-list'), // New element
+                upcomingAppointmentsSection: document.getElementById('upcoming-appointments-section'),
+                upcomingAppointmentsList: document.getElementById('upcoming-appointments-list'),
                 showFinanceBtn: document.getElementById('show-finance-btn'),
                 financingBookingSection: document.getElementById('financing-booking-section'),
                 financingBookingForm: document.getElementById('financing-booking-form'),
@@ -178,10 +194,17 @@
                 viewPastAppointmentsBtn: document.getElementById('view-past-appointments-btn'),
                 pastAppointmentsSection: document.getElementById('past-appointments-section'),
                 pastAppointmentsList: document.getElementById('past-appointments-list'),
-                installmentsList: document.getElementById('installments-list'), 
+                installmentsList: document.getElementById('installments-list'),
+                bookingDateInput: document.getElementById('booking-date'), // Added
+                financingBookingDateInput: document.getElementById('financing-booking-date'), // Added
+                bookingTimeButtonsContainer: document.getElementById('booking-time-buttons'), // Added
+                financingTimeButtonsContainer: document.getElementById('financing-time-buttons'), // Added
+                selectedBookingTimeInput: document.getElementById('selected-booking-time'), // Added
+                selectedFinancingTimeInput: document.getElementById('selected-financing-time'), // Added
             };
 
             let customerData = {}; 
+            const availableTimes = ['09:00', '11:00', '12:00', '14:00', '16:00', '17:00', '18:00'];
 
             function updateUI() {
                 const token = localStorage.getItem('customerToken');
@@ -193,6 +216,13 @@
                     elements.authSection.style.display = 'block';
                     elements.dashboardSection.style.display = 'none';
                 }
+                // Set default date to today and render time buttons
+                const today = new Date();
+                const todayFormatted = today.toISOString().split('T')[0];
+                elements.bookingDateInput.value = todayFormatted;
+                elements.financingBookingDateInput.value = todayFormatted;
+                renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, elements.bookingDateInput.value);
+                renderTimeButtons(elements.financingTimeButtonsContainer, elements.selectedFinancingTimeInput, elements.financingBookingDateInput.value);
             }
 
             async function fetchCustomerData(token) {
@@ -209,7 +239,7 @@
                 elements.primaryAddressDisplay.textContent = customerData.address || 'No address on file.';
                 renderVehicleDropdown();
                 renderVehicleManagementForms();
-                renderUpcomingAppointments(); // Changed function name
+                renderUpcomingAppointments();
                 renderPastAppointments();
                 renderPaymentSchedule(); 
             }
@@ -291,7 +321,6 @@
                 }
             }
 
-            // Renamed and updated to show all upcoming appointments
             function renderUpcomingAppointments() {
                 elements.upcomingAppointmentsList.innerHTML = ''; // Clear previous entries
                 if (customerData.upcoming_appointments && customerData.upcoming_appointments.length > 0) {
@@ -382,6 +411,60 @@
                 return { ok: response.ok, data: await response.json() };
             }
 
+            // --- Time Button Logic ---
+            function renderTimeButtons(container, hiddenInput, selectedDate) {
+                container.innerHTML = ''; // Clear existing buttons
+                const now = new Date();
+                const selectedDateTime = new Date(selectedDate);
+                const isToday = selectedDateTime.toDateString() === now.toDateString();
+
+                availableTimes.forEach(time => {
+                    const button = document.createElement('button');
+                    button.type = 'button';
+                    button.classList.add('time-button');
+                    button.textContent = formatTimeDisplay(time);
+                    button.dataset.time = time;
+
+                    let isDisabled = false;
+                    if (isToday) {
+                        const [hours, minutes] = time.split(':').map(Number);
+                        const appointmentTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
+                        // Calculate current time in CST
+                        const nowCST = new Date(now.toLocaleString('en-US', { timeZone: 'America/Chicago' }));
+                        const appointmentTimeCST = new Date(appointmentTime.toLocaleString('en-US', { timeZone: 'America/Chicago' }));
+                        
+                        // Disable if less than 2 hours from now in CST
+                        if ((appointmentTimeCST.getTime() - nowCST.getTime()) < (2 * 60 * 60 * 1000)) {
+                            isDisabled = true;
+                        }
+                    }
+
+                    if (isDisabled) {
+                        button.classList.add('disabled');
+                        button.disabled = true;
+                    } else {
+                        button.addEventListener('click', () => {
+                            // Deselect all other buttons in the same container
+                            Array.from(container.children).forEach(btn => btn.classList.remove('selected'));
+                            // Select the clicked button
+                            button.classList.add('selected');
+                            // Update the hidden input value
+                            hiddenInput.value = time;
+                        });
+                    }
+                    container.appendChild(button);
+                });
+                // Clear selected time when date changes
+                hiddenInput.value = '';
+            }
+
+            function formatTimeDisplay(time24hr) {
+                const [hours, minutes] = time24hr.split(':').map(Number);
+                const date = new Date();
+                date.setHours(hours, minutes);
+                return date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+            }
+
             // --- All Event Listeners ---
             elements.loginButton.addEventListener('click', async () => {
                 const { ok, data } = await apiCall('/customer/login', 'POST', {
@@ -408,24 +491,44 @@
 
             elements.viewPastAppointmentsBtn.addEventListener('click', () => { elements.pastAppointmentsSection.style.display = elements.pastAppointmentsSection.style.display === 'block' ? 'none' : 'block'; });
 
-            async function handleBooking(e, endpoint, messageEl) {
+            // Event listeners for date input changes to re-render time buttons
+            elements.bookingDateInput.addEventListener('change', (e) => {
+                renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, e.target.value);
+            });
+            elements.financingBookingDateInput.addEventListener('change', (e) => {
+                renderTimeButtons(elements.financingTimeButtonsContainer, elements.selectedFinancingTimeInput, e.target.value);
+            });
+
+
+            async function handleBooking(e, endpoint, messageEl, selectedTimeInputId) {
                 e.preventDefault();
                 const form = e.target;
+                const selectedTime = document.getElementById(selectedTimeInputId).value;
+
+                if (!selectedTime) {
+                    messageEl.textContent = 'Please select an appointment time.';
+                    messageEl.style.color = 'red';
+                    return;
+                }
+
                 const payload = {
                     vehicle_id: document.getElementById('vehicle-select').value,
                     date: form.querySelector('input[type="date"]').value,
-                    time: form.querySelector('input[type="time"]').value,
+                    time: selectedTime,
                 };
                 const { ok, data } = await apiCall(endpoint, 'POST', payload);
                 messageEl.textContent = data.message;
                 messageEl.style.color = ok ? 'green' : 'red';
                 if (ok) {
                     form.reset();
+                    // Reset time buttons and hidden input after successful booking
+                    renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, elements.bookingDateInput.value);
+                    renderTimeButtons(elements.financingTimeButtonsContainer, elements.selectedFinancingTimeInput, elements.financingBookingDateInput.value);
                     fetchCustomerData(localStorage.getItem('customerToken'));
                 }
             }
-            elements.bookingForm.addEventListener('submit', (e) => handleBooking(e, '/customer/appointment', elements.bookingMessage));
-            elements.financingBookingForm.addEventListener('submit', (e) => handleBooking(e, '/customer/appointment/financing', elements.financingBookingMessage));
+            elements.bookingForm.addEventListener('submit', (e) => handleBooking(e, '/customer/appointment', elements.bookingMessage, 'selected-booking-time'));
+            elements.financingBookingForm.addEventListener('submit', (e) => handleBooking(e, '/customer/appointment/financing', elements.financingBookingMessage, 'selected-financing-time'));
 
             async function handleVehicleUpdate(e, type) {
                 e.preventDefault();
