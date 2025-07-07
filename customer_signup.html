@@ -9,7 +9,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- The new Places API requires its own library. loading=async is best practice. -->
     <!-- Libraries changed to 'places' only, as we are using Autocomplete directly -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk&libraries=places&loading=async"></script>
+    <!-- Added a 'callback' parameter to ensure initMap is called only when the API is fully loaded -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk&libraries=places&callback=initMap&loading=async"></script>
 
     <style>
         body { font-family: 'Inter', sans-serif; }
@@ -120,6 +121,86 @@
     </div>
 
     <script>
+        // Define initMap globally as it's the callback for the Google Maps API script
+        function initMap() {
+            // --- Address Handling Elements ---
+            const addressLine1Input = document.getElementById('address-line1');
+            const addressLine2Input = document.getElementById('address-line2');
+            const cityInput = document.getElementById('city');
+            const stateInput = document.getElementById('state');
+            const zipCodeInput = document.getElementById('zip-code');
+            const addressConfirmedFlag = document.getElementById('address-confirmed-flag');
+
+            // --- Google Places Autocomplete Initialization ---
+            let autocomplete;
+            // Create the autocomplete object, restricting the search to geographical location types.
+            autocomplete = new google.maps.places.Autocomplete(addressLine1Input, {
+                types: ['address'],
+                componentRestrictions: { 'country': ['us'] } // Restrict to US addresses
+            });
+
+            // When the user selects an address from the dropdown, populate the address fields.
+            autocomplete.addListener('place_changed', () => {
+                const place = autocomplete.getPlace();
+
+                if (!place.address_components) {
+                    console.error('No address components found for the selected place.');
+                    addressConfirmedFlag.checked = false;
+                    return;
+                }
+
+                // Reset fields
+                addressLine1Input.value = '';
+                cityInput.value = '';
+                stateInput.value = '';
+                zipCodeInput.value = '';
+                addressConfirmedFlag.checked = false;
+
+                let streetNumber = '';
+                let streetName = '';
+
+                // Get each component of the address from the place details,
+                // and then fill the corresponding field in the form.
+                for (const component of place.address_components) {
+                    const componentType = component.types[0];
+
+                    switch (componentType) {
+                        case 'street_number':
+                            streetNumber = component.long_name;
+                            break;
+                        case 'route':
+                            streetName = component.long_name;
+                            break;
+                        case 'locality':
+                            cityInput.value = component.long_name;
+                            break;
+                        case 'administrative_area_level_1':
+                            stateInput.value = component.short_name; // Use short_name (e.g., CA)
+                            break;
+                        case 'postal_code':
+                            zipCodeInput.value = component.long_name;
+                            break;
+                    }
+                }
+                addressLine1Input.value = streetNumber + ' ' + streetName;
+
+                // Set the flag to true if we successfully populated the fields
+                if (addressLine1Input.value && cityInput.value && stateInput.value && zipCodeInput.value) {
+                    addressConfirmedFlag.checked = true;
+                } else {
+                    // If any required field is missing, consider it not fully validated
+                    addressConfirmedFlag.checked = false;
+                    document.getElementById('form-message').textContent = 'Please select a more specific address from the dropdown.';
+                    document.getElementById('form-message').className = 'text-center mt-4 text-red-600 font-semibold';
+                }
+            });
+
+            // Clear the address-confirmed-flag if the user manually changes addressLine1 after selection
+            addressLine1Input.addEventListener('input', () => {
+                addressConfirmedFlag.checked = false;
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             // --- Form Elements ---
             const signupForm = document.getElementById('signup-form');
@@ -131,7 +212,7 @@
             const submitButton = document.getElementById('submit-button');
             const formMessage = document.getElementById('form-message');
             
-            // --- Address Handling Elements ---
+            // --- Address Handling Elements (re-declared for local scope, or accessed globally if needed) ---
             const addressLine1Input = document.getElementById('address-line1');
             const addressLine2Input = document.getElementById('address-line2');
             const cityInput = document.getElementById('city');
@@ -139,84 +220,6 @@
             const zipCodeInput = document.getElementById('zip-code');
             const addressConfirmedFlag = document.getElementById('address-confirmed-flag');
 
-            // --- Google Places Autocomplete Initialization ---
-            let autocomplete;
-            function initAutocomplete() {
-                // Create the autocomplete object, restricting the search to geographical location types.
-                autocomplete = new google.maps.places.Autocomplete(addressLine1Input, {
-                    types: ['address'],
-                    componentRestrictions: { 'country': ['us'] } // Restrict to US addresses
-                });
-
-                // When the user selects an address from the dropdown, populate the address fields.
-                autocomplete.addListener('place_changed', () => {
-                    const place = autocomplete.getPlace();
-
-                    if (!place.address_components) {
-                        console.error('No address components found for the selected place.');
-                        addressConfirmedFlag.checked = false;
-                        return;
-                    }
-
-                    // Reset fields
-                    addressLine1Input.value = '';
-                    cityInput.value = '';
-                    stateInput.value = '';
-                    zipCodeInput.value = '';
-                    addressConfirmedFlag.checked = false;
-
-                    let streetNumber = '';
-                    let streetName = '';
-
-                    // Get each component of the address from the place details,
-                    // and then fill the corresponding field in the form.
-                    for (const component of place.address_components) {
-                        const componentType = component.types[0];
-
-                        switch (componentType) {
-                            case 'street_number':
-                                streetNumber = component.long_name;
-                                break;
-                            case 'route':
-                                streetName = component.long_name;
-                                break;
-                            case 'locality':
-                                cityInput.value = component.long_name;
-                                break;
-                            case 'administrative_area_level_1':
-                                stateInput.value = component.short_name; // Use short_name (e.g., CA)
-                                break;
-                            case 'postal_code':
-                                zipCodeInput.value = component.long_name;
-                                break;
-                        }
-                    }
-                    addressLine1Input.value = streetNumber + ' ' + streetName;
-
-                    // Set the flag to true if we successfully populated the fields
-                    if (addressLine1Input.value && cityInput.value && stateInput.value && zipCodeInput.value) {
-                        addressConfirmedFlag.checked = true;
-                    } else {
-                        // If any required field is missing, consider it not fully validated
-                        addressConfirmedFlag.checked = false;
-                        formMessage.textContent = 'Please select a more specific address from the dropdown.';
-                        formMessage.className = 'text-center mt-4 text-red-600 font-semibold';
-                    }
-                });
-
-                // Clear the address-confirmed-flag if the user manually changes addressLine1 after selection
-                addressLine1Input.addEventListener('input', () => {
-                    addressConfirmedFlag.checked = false;
-                });
-            }
-
-            // Ensure Google Maps API is loaded before initializing Autocomplete
-            if (typeof google !== 'undefined' && typeof google.maps !== 'undefined' && typeof google.maps.places !== 'undefined') {
-                initAutocomplete();
-            } else {
-                // Fallback if API not loaded, though 'loading=async' should handle it
-                window.addEventListener('load', initAutocomplete);
-            }
 
             // --- Password Validation ---
             function validatePassword() {
