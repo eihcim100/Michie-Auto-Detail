@@ -1,3 +1,4 @@
+Test666
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -189,27 +190,8 @@
                     selectedAddressContainer.classList.add('flex');
                 });
 
-                // Add an event listener to the internal input of gmp-place-autocomplete
-                // to uncheck the flag if the user manually types after selection
-                if (autocompleteElement.shadowRoot) {
-                    const internalInput = autocompleteElement.shadowRoot.querySelector('input');
-                    if (internalInput) {
-                        internalInput.addEventListener('input', () => {
-                            // Only uncheck if the input is currently disabled (meaning an address was selected)
-                            // and the user is now typing to change it.
-                            if (internalInput.disabled) {
-                                addressConfirmedFlag.checked = false;
-                                // Re-enable the input so they can type a new address
-                                internalInput.disabled = false;
-                                // Also, reset the UI to show the search box again
-                                selectedAddressContainer.classList.add('hidden');
-                                selectedAddressContainer.classList.remove('flex');
-                                addressSearchContainer.classList.remove('hidden');
-                                selectedAddressText.textContent = ''; // Clear displayed text
-                            }
-                        });
-                    }
-                }
+                // Removed the 'input' event listener on internalInput to prevent unintended unchecking.
+                // The 'Change' button is now the explicit way to reset the address and flag.
             });
 
             // --- Logic for the "Change" button ---
