@@ -6,7 +6,11 @@
     <title>Michie Auto Detailing - Customer Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style> body { font-family: 'Inter', sans-serif; } </style>
+    <style> 
+        body { font-family: 'Inter', sans-serif; } 
+        /* Ensure Google Autocomplete dropdown appears above other elements */
+        .pac-container { z-index: 1050 !important; }
+    </style>
 </head>
 <body class="bg-gray-50">
 
@@ -43,10 +47,20 @@
                         <label for="booking-vehicle" class="block text-sm font-medium text-gray-700 mb-1">Select a Vehicle</label>
                         <select id="booking-vehicle" required class="w-full px-4 py-2 border rounded-lg bg-white"></select>
                     </div>
+                    
+                    <!-- UPDATED: Address Section -->
                     <div>
-                        <label for="booking-address" class="block text-sm font-medium text-gray-700 mb-1">Service Address</label>
-                        <input type="text" id="booking-address" required placeholder="123 Main St, City, State, Zip" class="w-full px-4 py-2 border rounded-lg">
+                        <label for="address-select" class="block text-sm font-medium text-gray-700 mb-1">Service Address</label>
+                        <select id="address-select" class="w-full px-4 py-2 border rounded-lg bg-white">
+                            <!-- Options will be populated by JavaScript -->
+                        </select>
                     </div>
+                    <div id="new-address-section" class="hidden">
+                         <label for="new-address-input" class="block text-sm font-medium text-gray-700 mb-1">Search for new address</label>
+                         <input type="text" id="new-address-input" placeholder="Start typing a new address..." class="w-full px-4 py-2 border rounded-lg">
+                    </div>
+
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label for="booking-date" class="block text-sm font-medium text-gray-700 mb-1">Date</label>
@@ -75,165 +89,219 @@
         </div>
     </div>
 
+    <!-- Google Maps script with callback -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk&libraries=places&callback=initPortal" async defer></script>
+
     <script>
         const API_BASE_URL = 'https://michie-detailing-admin.onrender.com';
+        let autocomplete;
 
-        // Page Sections
-        const authSection = document.getElementById('auth-section');
-        const dashboardSection = document.getElementById('dashboard-section');
+        // This function will be called by the Google Maps script
+        function initPortal() {
+            // Initialize the main application logic
+            initializeApp();
 
-        // Login
-        const loginButton = document.getElementById('login-button');
-        const loginMessage = document.getElementById('login-message');
-        
-        // Dashboard
-        const customerNameSpan = document.getElementById('customer-name');
-        const logoutButton = document.getElementById('logout-button');
-        const vehiclesList = document.getElementById('vehicles-list');
-        const appointmentsList = document.getElementById('appointments-list');
-
-        // Booking Form
-        const bookingForm = document.getElementById('booking-form');
-        const bookingMessage = document.getElementById('booking-message');
-
-        // --- Core Functions ---
-        function updateUI() {
-            const customerToken = localStorage.getItem('customerToken');
-            const customerFullName = localStorage.getItem('customerFullName');
-
-            if (customerToken && customerFullName) {
-                authSection.style.display = 'none';
-                dashboardSection.style.display = 'block';
-                customerNameSpan.textContent = customerFullName; // Immediately set name from storage
-                fetchCustomerData(customerToken);
-            } else {
-                authSection.style.display = 'block';
-                dashboardSection.style.display = 'none';
+            // Setup Google Places Autocomplete for the new address input
+            const newAddressInput = document.getElementById('new-address-input');
+            if (newAddressInput) {
+                autocomplete = new google.maps.places.Autocomplete(newAddressInput, {
+                    componentRestrictions: { country: "us" },
+                    fields: ["formatted_address"],
+                    types: ["address"],
+                });
             }
         }
+        
+        function initializeApp() {
+            // Page Sections
+            const authSection = document.getElementById('auth-section');
+            const dashboardSection = document.getElementById('dashboard-section');
 
-        async function fetchCustomerData(token) {
-            try {
-                const response = await fetch(`${API_BASE_URL}/customer/data`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
+            // Login
+            const loginButton = document.getElementById('login-button');
+            const loginMessage = document.getElementById('login-message');
+            
+            // Dashboard
+            const customerNameSpan = document.getElementById('customer-name');
+            const logoutButton = document.getElementById('logout-button');
+            const vehiclesList = document.getElementById('vehicles-list');
+            const appointmentsList = document.getElementById('appointments-list');
+
+            // Booking Form
+            const bookingForm = document.getElementById('booking-form');
+            const bookingMessage = document.getElementById('booking-message');
+            const addressSelect = document.getElementById('address-select');
+            const newAddressSection = document.getElementById('new-address-section');
+
+            // --- Core Functions ---
+            function updateUI() {
+                const customerToken = localStorage.getItem('customerToken');
+                const customerFullName = localStorage.getItem('customerFullName');
+
+                if (customerToken && customerFullName) {
+                    authSection.style.display = 'none';
+                    dashboardSection.style.display = 'block';
+                    customerNameSpan.textContent = customerFullName;
+                    fetchCustomerData(customerToken);
+                } else {
+                    authSection.style.display = 'block';
+                    dashboardSection.style.display = 'none';
+                }
+            }
+
+            async function fetchCustomerData(token) {
+                try {
+                    const response = await fetch(`${API_BASE_URL}/customer/data`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    
+                    if (!response.ok) {
+                        console.error('Failed to fetch customer data:', response.status, await response.text());
+                        logout();
+                        return;
+                    }
+
+                    const data = await response.json();
+                    
+                    customerNameSpan.textContent = data.full_name;
+                    localStorage.setItem('customerFullName', data.full_name);
+                    
+                    renderVehicles(data.vehicles);
+                    renderAddressOptions(data.address);
+                    renderAppointments(data.appointments);
+
+                } catch (error) {
+                    console.error('Error fetching customer data:', error);
+                }
+            }
+
+            function renderVehicles(vehicles) {
+                const bookingVehicleSelect = document.getElementById('booking-vehicle');
+                vehiclesList.innerHTML = '';
+                bookingVehicleSelect.innerHTML = '<option value="">-- Select a Vehicle --</option>';
+
+                if (!vehicles || vehicles.length === 0) {
+                    vehiclesList.innerHTML = '<p class="text-gray-500">No vehicles on file.</p>';
+                } else {
+                    vehicles.forEach(v => {
+                        const vehicleType = v.is_primary ? 'Primary' : 'Secondary';
+                        const vehicleText = `${v.year} ${v.make} ${v.model} (${vehicleType})`;
+
+                        const vehicleDiv = document.createElement('div');
+                        vehicleDiv.className = 'p-3 bg-gray-100 rounded-md';
+                        vehicleDiv.textContent = vehicleText;
+                        vehiclesList.appendChild(vehicleDiv);
+
+                        const vehicleOption = document.createElement('option');
+                        vehicleOption.value = v.id; 
+                        vehicleOption.textContent = vehicleText;
+                        bookingVehicleSelect.appendChild(vehicleOption);
+                    });
+                }
+            }
+
+            function renderAddressOptions(primaryAddress) {
+                addressSelect.innerHTML = ''; // Clear existing options
                 
-                if (!response.ok) {
-                    console.error('Failed to fetch customer data:', response.status, await response.text());
-                    logout(); // If token is invalid or expired
-                    return;
+                if (primaryAddress) {
+                    const primaryOption = document.createElement('option');
+                    primaryOption.value = primaryAddress;
+                    primaryOption.textContent = primaryAddress;
+                    primaryOption.selected = true;
+                    addressSelect.appendChild(primaryOption);
                 }
 
-                const data = await response.json();
-                
-                // Name is already set, but we can refresh it just in case
-                customerNameSpan.textContent = data.full_name;
-                localStorage.setItem('customerFullName', data.full_name); // Update storage
-                
-                document.getElementById('booking-address').value = data.address || '';
-                renderVehicles(data.vehicles);
-                renderAppointments(data.appointments);
-
-            } catch (error) {
-                console.error('Error fetching customer data:', error);
+                const newAddressOption = document.createElement('option');
+                newAddressOption.value = 'add_new';
+                newAddressOption.textContent = 'Add a new address...';
+                addressSelect.appendChild(newAddressOption);
             }
-        }
 
-        function renderVehicles(vehicles) {
-            const bookingVehicleSelect = document.getElementById('booking-vehicle');
-            vehiclesList.innerHTML = '';
-            bookingVehicleSelect.innerHTML = '<option value="">-- Select a Vehicle --</option>';
-
-            if (!vehicles || vehicles.length === 0) {
-                vehiclesList.innerHTML = '<p class="text-gray-500">No vehicles on file.</p>';
-            } else {
-                vehicles.forEach(v => {
-                    const vehicleType = v.is_primary ? 'Primary' : 'Secondary';
-                    const vehicleText = `${v.year} ${v.make} ${v.model} (${vehicleType})`;
-
-                    // Populate the "My Vehicles" list
-                    const vehicleDiv = document.createElement('div');
-                    vehicleDiv.className = 'p-3 bg-gray-100 rounded-md';
-                    vehicleDiv.textContent = vehicleText;
-                    vehiclesList.appendChild(vehicleDiv);
-
-                    // Populate the "Select a Vehicle" dropdown
-                    const vehicleOption = document.createElement('option');
-                    vehicleOption.value = v.id; 
-                    vehicleOption.textContent = vehicleText;
-                    bookingVehicleSelect.appendChild(vehicleOption);
-                });
+            function renderAppointments(appointments) {
+                appointmentsList.innerHTML = '';
+                if (!appointments || appointments.length === 0) {
+                    appointmentsList.innerHTML = '<p class="text-gray-500">No past appointments.</p>';
+                } else {
+                    // Placeholder for future appointment rendering
+                }
             }
-        }
-
-        function renderAppointments(appointments) {
-            appointmentsList.innerHTML = '';
-            if (!appointments || appointments.length === 0) {
-                appointmentsList.innerHTML = '<p class="text-gray-500">No past appointments.</p>';
-            } else {
-                // Placeholder for future appointment rendering
+            
+            function logout() {
+                localStorage.removeItem('customerToken');
+                localStorage.removeItem('customerFullName');
+                updateUI();
             }
-        }
-        
-        function logout() {
-            localStorage.removeItem('customerToken');
-            localStorage.removeItem('customerFullName');
+
+            // --- Event Listeners ---
+            loginButton.addEventListener('click', async () => {
+                const email = document.getElementById('login-email').value;
+                const password = document.getElementById('login-password').value;
+                loginMessage.textContent = '';
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/customer/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, password })
+                    });
+
+                    const data = await response.json();
+                    if (response.ok) {
+                        localStorage.setItem('customerToken', data.token);
+                        localStorage.setItem('customerFullName', data.full_name);
+                        updateUI();
+                    } else {
+                        loginMessage.textContent = data.message || 'An error occurred during login.';
+                    }
+                } catch (error) {
+                    console.error('Login Fetch Error:', error);
+                    loginMessage.textContent = 'A network error occurred during login. Please try again.';
+                }
+            });
+
+            addressSelect.addEventListener('change', (e) => {
+                if (e.target.value === 'add_new') {
+                    newAddressSection.style.display = 'block';
+                } else {
+                    newAddressSection.style.display = 'none';
+                }
+            });
+
+            bookingForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const customerToken = localStorage.getItem('customerToken');
+                if (!customerToken) return;
+
+                let finalAddress = addressSelect.value;
+                if (finalAddress === 'add_new') {
+                    finalAddress = document.getElementById('new-address-input').value;
+                    if (!finalAddress) {
+                        bookingMessage.textContent = 'Please enter a new address or select your primary address.';
+                        bookingMessage.className = 'text-center mt-2 text-red-600';
+                        return;
+                    }
+                }
+
+                bookingMessage.textContent = 'Booking...';
+                bookingMessage.className = 'text-center mt-2 text-blue-600';
+
+                const payload = {
+                    vehicle_id: document.getElementById('booking-vehicle').value,
+                    address: finalAddress,
+                    date: document.getElementById('booking-date').value,
+                    time: document.getElementById('booking-time').value,
+                };
+
+                console.log("Booking payload:", payload);
+                bookingMessage.textContent = 'Booking functionality not yet implemented.';
+                bookingMessage.className = 'text-center mt-2 text-yellow-600';
+            });
+            
+            logoutButton.addEventListener('click', logout);
+
+            // --- Initial Load ---
             updateUI();
         }
-
-        // --- Event Listeners ---
-        loginButton.addEventListener('click', async () => {
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-            loginMessage.textContent = '';
-
-            try {
-                const response = await fetch(`${API_BASE_URL}/customer/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
-                });
-
-                const data = await response.json();
-                if (response.ok) {
-                    // Store both the token and the full name in localStorage
-                    localStorage.setItem('customerToken', data.token);
-                    localStorage.setItem('customerFullName', data.full_name);
-                    updateUI();
-                } else {
-                    loginMessage.textContent = data.message || 'An error occurred during login.';
-                }
-            } catch (error) {
-                console.error('Login Fetch Error:', error);
-                loginMessage.textContent = 'A network error occurred during login. Please try again.';
-            }
-        });
-
-        bookingForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const customerToken = localStorage.getItem('customerToken');
-            if (!customerToken) return;
-
-            bookingMessage.textContent = 'Booking...';
-            bookingMessage.className = 'text-center mt-2 text-blue-600';
-
-            const payload = {
-                vehicle_id: document.getElementById('booking-vehicle').value,
-                address: document.getElementById('booking-address').value,
-                date: document.getElementById('booking-date').value,
-                time: document.getElementById('booking-time').value,
-            };
-
-            // This is a placeholder for the booking API call
-            console.log("Booking payload:", payload);
-            bookingMessage.textContent = 'Booking functionality not yet implemented.';
-            bookingMessage.className = 'text-center mt-2 text-yellow-600';
-        });
-        
-        logoutButton.addEventListener('click', logout);
-
-        // --- Initial Load ---
-        document.addEventListener('DOMContentLoaded', updateUI);
     </script>
 </body>
 </html>
