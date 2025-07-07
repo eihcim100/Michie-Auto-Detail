@@ -1,263 +1,295 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Michie Auto Detailing - Sign Up</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Create Your Michie Auto Detailing Account</title>
+    <!-- For production, it's better to install Tailwind CSS via npm -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- The new Places API requires its own library. loading=async is best practice. -->
+    <script type="module" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk&libraries=places,core&loading=async"></script>
+
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f0f2f5;
+        body { font-family: 'Inter', sans-serif; }
+        .hidden-section, .hidden { display: none !important; } /* Use !important to ensure it stays hidden */
+        .password-requirement { transition: color 0.3s; }
+        .valid { color: #16a34a; /* Green */ }
+        .invalid { color: #dc2626; /* Red */ }
+        
+        /* Styling for the new Place Autocomplete Element */
+        gmp-place-autocomplete {
+            width: 100%;
         }
-        .container {
-            max-width: 500px;
+        gmp-place-autocomplete input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #d1d5db !important; 
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            box-shadow: none;
         }
-        .form-input {
-            @apply w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500;
+        gmp-place-autocomplete input:focus {
+            --tw-ring-color: #3b82f6;
+            --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+            --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+            box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+            border-color: #3b82f6;
+            outline: 2px solid transparent;
+            outline-offset: 2px;
         }
-        .btn-primary {
-            @apply w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300;
-        }
-        .message-box {
-            @apply p-3 mt-4 rounded-md text-sm;
-        }
-        .message-box.success {
-            @apply bg-green-100 text-green-700;
-        }
-        .message-box.error {
-            @apply bg-red-100 text-red-700;
-        }
-        /* The Autocomplete Element handles its own styling for the dropdown,
-           but these might be useful for general input styling or fallbacks. */
-        gmp-places-autocomplete {
-            width: 100%; /* Ensure the web component takes full width */
-            --gmp-places-autocomplete-border-radius: 0.375rem; /* Tailwind's rounded-md */
-            --gmp-places-autocomplete-border-color: #D1D5DB; /* Tailwind's gray-300 */
-            --gmp-places-autocomplete-focus-ring-color: #3B82F6; /* Tailwind's blue-500 */
-            --gmp-places-autocomplete-focus-ring-width: 2px;
-            --gmp-places-autocomplete-padding: 0.5rem 1rem; /* Tailwind's py-2 px-4 */
+        gmp-place-autocomplete::part(icon) {
+            display: none;
         }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen">
-    <div class="container bg-white p-8 rounded-lg shadow-lg">
-        <h2 class="text-3xl font-bold text-center text-gray-800 mb-6">Sign Up for Michie Auto Detailing</h2>
+<body class="bg-gray-100">
+    <div class="container mx-auto max-w-2xl p-4 sm:p-8 my-10">
+        <div class="bg-white p-8 rounded-2xl shadow-lg">
+            <header class="text-center mb-8">
+                <h1 class="text-3xl sm:text-4xl font-bold text-gray-800">Create Your Account</h1>
+                <p class="text-gray-600 mt-2">Get started with premium auto detailing services.</p>
+            </header>
 
-        <form id="signupForm" class="space-y-4">
-            <div>
-                <label for="fullName" class="block text-gray-700 text-sm font-semibold mb-2">Full Name</label>
-                <input type="text" id="fullName" name="fullName" class="form-input" required>
-            </div>
-            <div>
-                <label for="email" class="block text-gray-700 text-sm font-semibold mb-2">Email</label>
-                <input type="email" id="email" name="email" class="form-input" required>
-            </div>
-            <div>
-                <label for="phone" class="block text-gray-700 text-sm font-semibold mb-2">Phone Number</label>
-                <input type="tel" id="phone" name="phone" class="form-input" required>
-            </div>
-            <div>
-                <label for="address" class="block text-gray-700 text-sm font-semibold mb-2">Service Address</label>
-                <!-- The actual input field that the Autocomplete Element will enhance -->
-                <input type="text" id="address" name="address" class="form-input" required>
-                <!-- The new Autocomplete Element, linked to the input by its ID -->
-                <gmp-places-autocomplete for-input="address" country="us" types="address"></gmp-places-autocomplete>
+            <form id="signup-form" class="space-y-6">
+                <!-- Account Info -->
+                <div>
+                    <h2 class="text-2xl font-semibold text-gray-700 mb-4 border-b pb-2">Account Information</h2>
+                    <div class="grid grid-cols-1 gap-y-4">
+                        <input type="text" id="full-name" placeholder="Full Name" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="name">
+                        
+                        <!-- The Address UI Container -->
+                        <div id="address-search-container">
+                            <gmp-place-autocomplete
+                                id="address-autocomplete"
+                                placeholder="Service Address"
+                                country="us"
+                                class="w-full"
+                                requested-fields="addressComponents,formattedAddress,geometry,name">
+                            </gmp-place-autocomplete>
+                        </div>
 
-                <input type="hidden" id="streetNumber" name="streetNumber">
-                <input type="hidden" id="streetName" name="streetName">
-                <input type="hidden" id="city" name="city">
-                <input type="hidden" id="state" name="state">
-                <input type="hidden" id="zipCode" name="zipCode">
-                <input type="hidden" id="country" name="country">
-                <div id="address-validation-message" class="text-sm text-red-600 mt-1 hidden">Please select a valid address from the suggestions.</div>
-            </div>
-            <div>
-                <label for="password" class="block text-gray-700 text-sm font-semibold mb-2">Password</label>
-                <input type="password" id="password" name="password" class="form-input" required minlength="6">
-            </div>
-            <div>
-                <label for="confirmPassword" class="block text-gray-700 text-sm font-semibold mb-2">Confirm Password</label>
-                <input type="password" id="confirmPassword" name="confirmPassword" class="form-input" required minlength="6">
-            </div>
-            <button type="submit" class="btn-primary">Sign Up</button>
-        </form>
+                        <div id="selected-address-container" class="hidden items-center justify-between p-3 bg-gray-100 rounded-lg">
+                            <p id="selected-address-text" class="text-gray-800 pr-4"></p>
+                            <button type="button" id="change-address-btn" class="text-sm text-blue-600 hover:underline font-semibold flex-shrink-0">Change</button>
+                        </div>
 
-        <div id="messageBox" class="message-box hidden"></div>
+                        <input type="tel" id="phone" placeholder="Phone Number" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="tel">
+                        <input type="email" id="email" placeholder="Email Address" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="email">
+                        <div>
+                            <input type="password" id="password" placeholder="Password" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="new-password">
+                            <div id="password-reqs" class="text-sm text-gray-500 mt-2 space-y-1 pl-1">
+                                <p id="req-length" class="password-requirement invalid">At least 6 characters</p>
+                                <p id="req-capital" class="password-requirement invalid">At least 1 capital letter</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vehicle Info -->
+                <div>
+                    <h2 class="text-2xl font-semibold text-gray-700 mb-4 border-b pb-2">Primary Vehicle</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <input type="text" id="year1" placeholder="Year" required class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <input type="text" id="make1" placeholder="Make" required class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <input type="text" id="model1" placeholder="Model" required class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div class="mt-6">
+                        <label for="add-second-vehicle" class="flex items-center space-x-2 cursor-pointer text-gray-600">
+                            <input type="checkbox" id="add-second-vehicle" class="rounded h-4 w-4 text-blue-600 focus:ring-blue-500">
+                            <span>Add a second vehicle (Optional)</span>
+                        </label>
+                    </div>
+                    <div id="second-vehicle-fields" class="hidden-section mt-4 space-y-4">
+                        <h3 class="text-xl font-semibold text-gray-600">Second Vehicle</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <input type="text" id="year2" placeholder="Year" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <input type="text" id="make2" placeholder="Make" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <input type="text" id="model2" placeholder="Model" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Verification -->
+                <div>
+                    <h2 class="text-2xl font-semibold text-gray-700 mb-4 border-b pb-2">Verification</h2>
+                     <input type="text" id="zip-code" placeholder="Enter Your Zip Code for Verification" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="postal-code">
+                </div>
+                
+                <!-- Submission -->
+                <div>
+                    <button type="submit" id="submit-button" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-300 disabled:bg-gray-400">Create Account</button>
+                    <p id="form-message" class="text-center mt-4"></p>
+                </div>
+            </form>
+            <p class="text-center text-sm text-gray-500 mt-6">
+                Already have an account? <a href="customer_portal.html" class="text-blue-600 hover:underline">Log in here</a>.
+            </p>
+        </div>
     </div>
 
-    <!-- Google Maps Places API (New) - Load the 'places' library -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk&libraries=places&callback=initMap" async defer></script>
-
     <script>
-        // Backend API URL - IMPORTANT: Replace with your actual deployed backend URL
-        const BACKEND_API_URL = "http://127.0.0.1:5001"; // Or your deployed Render URL: https://michie-detailing-admin.onrender.com
+        document.addEventListener('DOMContentLoaded', () => {
+            const signupForm = document.getElementById('signup-form');
+            const passwordInput = document.getElementById('password');
+            const reqLength = document.getElementById('req-length');
+            const reqCapital = document.getElementById('req-capital');
+            const addSecondVehicleCheckbox = document.getElementById('add-second-vehicle');
+            const secondVehicleFields = document.getElementById('second-vehicle-fields');
+            const submitButton = document.getElementById('submit-button');
+            const formMessage = document.getElementById('form-message');
+            const zipCodeInput = document.getElementById('zip-code');
 
-        let addressComponents = {}; // To store parsed address details from the selected place
+            // --- Address Handling Elements ---
+            const addressSearchContainer = document.getElementById('address-search-container');
+            const selectedAddressContainer = document.getElementById('selected-address-container');
+            const selectedAddressText = document.getElementById('selected-address-text');
+            const changeAddressBtn = document.getElementById('change-address-btn');
+            
+            // --- New Place Autocomplete Logic ---
+            customElements.whenDefined('gmp-place-autocomplete').then(() => {
+                const autocompleteElement = document.getElementById('address-autocomplete');
+                
+                autocompleteElement.addEventListener('gmp-placeselect', (event) => {
+                    const place = event.place;
+                    console.log('Place selected:', place); // For debugging
+                    if (!place || !place.formattedAddress) {
+                        selectedAddressText.textContent = ''; 
+                        return;
+                    }
 
-        /**
-         * Initializes the Google Maps Places Autocomplete Element.
-         * This function is called once the Google Maps API script has loaded.
-         */
-        function initMap() {
-            // Select the Autocomplete Element web component
-            const autocompleteElement = document.querySelector("gmp-places-autocomplete");
+                    // 1. Store the data in the VISIBLE text element
+                    selectedAddressText.textContent = place.formattedAddress;
 
-            // Add an event listener for the 'gmp-placeselect' event,
-            // which fires when a user selects a place from the suggestions.
-            autocompleteElement.addEventListener("gmp-placeselect", (event) => {
-                // The selected place details are available in event.detail.place
-                fillInAddress(event.detail.place);
-            });
-        }
+                    const zipCodeComponent = place.addressComponents?.find(c => c.types.includes('postal_code'));
+                    if (zipCodeComponent) {
+                        zipCodeInput.value = zipCodeComponent.longText;
+                    }
 
-        /**
-         * Extracts and stores the address components from the selected place object.
-         * Updates hidden input fields and the visible address input.
-         * @param {object} place - The place object returned by the Autocomplete Element.
-         */
-        function fillInAddress(place) {
-            addressComponents = {}; // Reset components for a new selection
-
-            // Check if address components are available in the place object
-            // The new API uses 'addressComponents' (camelCase) instead of 'address_components'
-            if (!place.addressComponents) {
-                document.getElementById("address-validation-message").classList.remove("hidden");
-                return;
-            }
-
-            document.getElementById("address-validation-message").classList.add("hidden");
-
-            // Iterate through the address components provided by the Google Place object
-            for (const component of place.addressComponents) {
-                const componentType = component.types[0]; // Get the primary type of the component
-
-                // Map Google's component types to our desired address fields
-                switch (componentType) {
-                    case "street_number":
-                        addressComponents.streetNumber = component.longText; // Full text for street number
-                        break;
-                    case "route":
-                        addressComponents.streetName = component.longText; // Full text for street name
-                        break;
-                    case "locality":
-                        addressComponents.city = component.longText; // Full text for city
-                        break;
-                    case "administrative_area_level_1":
-                        addressComponents.state = component.shortText; // Abbreviated text for state (e.g., "CA")
-                        break;
-                    case "postal_code":
-                        addressComponents.zipCode = component.longText; // Full text for zip code
-                        break;
-                    case "country":
-                        addressComponents.country = component.shortText; // Abbreviated text for country (e.g., "US")
-                        break;
-                }
-            }
-
-            // Update the values of the hidden input fields with the parsed components
-            document.getElementById("streetNumber").value = addressComponents.streetNumber || '';
-            document.getElementById("streetName").value = addressComponents.streetName || '';
-            document.getElementById("city").value = addressComponents.city || '';
-            document.getElementById("state").value = addressComponents.state || '';
-            document.getElementById("zipCode").value = addressComponents.zipCode || '';
-            document.getElementById("country").value = addressComponents.country || '';
-
-            // The Autocomplete Element automatically updates the visible input field
-            // with the formatted address. We also explicitly set it here for clarity
-            // and to ensure our form data is consistent.
-            document.getElementById("address").value = place.formattedAddress || '';
-        }
-
-        /**
-         * Displays a message in a dedicated message box on the page.
-         * @param {string} message - The text message to display.
-         * @param {string} type - The type of message ('success' or 'error') to apply styling.
-         */
-        function showMessage(message, type) {
-            const messageBox = document.getElementById("messageBox");
-            messageBox.textContent = message;
-            messageBox.classList.remove("hidden", "success", "error"); // Clear previous states
-            messageBox.classList.add(type); // Add the new type for styling
-        }
-
-        // Event listener for the form submission
-        document.getElementById("signupForm").addEventListener("submit", async function(event) {
-            event.preventDefault(); // Prevent the default form submission behavior
-
-            // Get values from form inputs
-            const fullName = document.getElementById("fullName").value.trim();
-            const email = document.getElementById("email").value.trim();
-            const phone = document.getElementById("phone").value.trim();
-            const address = document.getElementById("address").value.trim(); // This will contain the formatted address from the Autocomplete Element
-            const password = document.getElementById("password").value;
-            const confirmPassword = document.getElementById("confirmPassword").value;
-
-            // Client-side validation checks
-            if (!fullName || !email || !phone || !address || !password || !confirmPassword) {
-                showMessage("Please fill in all fields.", "error");
-                return;
-            }
-
-            if (password.length < 6) {
-                showMessage("Password must be at least 6 characters long.", "error");
-                return;
-            }
-
-            if (password !== confirmPassword) {
-                showMessage("Passwords do not match.", "error");
-                return;
-            }
-
-            // Validate if a valid address was selected using the Autocomplete Element
-            // We check if the `addressComponents` object was populated by `fillInAddress`
-            if (!addressComponents.streetNumber || !addressComponents.streetName || !addressComponents.city || !addressComponents.state || !addressComponents.zipCode) {
-                document.getElementById("address-validation-message").classList.remove("hidden");
-                showMessage("Please select a valid address from the suggestions.", "error");
-                return;
-            } else {
-                document.getElementById("address-validation-message").classList.add("hidden");
-            }
-
-            // Construct the full address string to send to the backend.
-            // This ensures a consistent format regardless of how Google's `formattedAddress` might vary.
-            const fullAddress = `${addressComponents.streetNumber || ''} ${addressComponents.streetName || ''}, ${addressComponents.city || ''}, ${addressComponents.state || ''} ${addressComponents.zipCode || ''}, ${addressComponents.country || ''}`
-                                .trim()
-                                .replace(/,(\s*,)+/g, ',') // Replace multiple commas with a single one
-                                .replace(/^,|,$/g, '') // Remove leading/trailing commas
-                                .replace(/\s+,/g, ','); // Remove space before a comma
-
-            try {
-                // Send the signup data to your backend API
-                const response = await fetch(`${BACKEND_API_URL}/customer/signup`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        full_name: fullName,
-                        email: email,
-                        phone: phone,
-                        address: fullAddress, // Send the validated and formatted address
-                        password: password,
-                    }),
+                    // 2. Update the UI 
+                    addressSearchContainer.classList.add('hidden');
+                    selectedAddressContainer.classList.remove('hidden');
+                    selectedAddressContainer.classList.add('flex');
                 });
+            });
 
-                const data = await response.json(); // Parse the JSON response from the backend
-
-                if (response.ok) {
-                    showMessage(data.message, "success"); // Show success message
-                    document.getElementById("signupForm").reset(); // Clear the form fields
-                    addressComponents = {}; // Reset stored address components
-                } else {
-                    showMessage(data.message || "An error occurred during signup.", "error"); // Show error message
+            // --- Logic for the "Change" button ---
+            changeAddressBtn.addEventListener('click', () => {
+                // 1. Clear the stored visual data
+                selectedAddressText.textContent = '';
+                const autocompleteElement = document.getElementById('address-autocomplete');
+                if (autocompleteElement.shadowRoot) {
+                    autocompleteElement.shadowRoot.querySelector('input').value = '';
                 }
-            } catch (error) {
-                console.error("Error during signup:", error);
-                showMessage("Network error. Please try again later.", "error"); // Handle network errors
+
+                // 2. Update the UI to show the search box again
+                selectedAddressContainer.classList.add('hidden');
+                selectedAddressContainer.classList.remove('flex');
+                addressSearchContainer.classList.remove('hidden');
+            });
+
+            // --- Password Validation ---
+            function validatePassword() {
+                const value = passwordInput.value;
+                const hasLength = value.length >= 6;
+                const hasCapital = /[A-Z]/.test(value);
+
+                reqLength.classList.toggle('valid', hasLength);
+                reqLength.classList.toggle('invalid', !hasLength);
+                reqCapital.classList.toggle('valid', hasCapital);
+                reqCapital.classList.toggle('invalid', !hasCapital);
+                
+                return hasLength && hasCapital;
             }
+            passwordInput.addEventListener('input', validatePassword);
+
+            // --- Toggle Second Vehicle ---
+            addSecondVehicleCheckbox.addEventListener('change', () => {
+                secondVehicleFields.classList.toggle('hidden-section');
+            });
+
+            // --- Form Submission ---
+            signupForm.addEventListener('submit', async (e) => {
+                e.preventDefault(); 
+                
+                if (!validatePassword()) {
+                    formMessage.textContent = 'Please ensure your password meets all requirements.';
+                    formMessage.className = 'text-center mt-4 text-red-600 font-semibold';
+                    return;
+                }
+                
+                // ==================================================================
+                // THE FINAL FIX: We check the VISIBLE text content, not a hidden input.
+                // This is a much more reliable way to validate.
+                // ==================================================================
+                const finalAddress = selectedAddressText.textContent;
+                console.log('Submitting with address:', finalAddress); // For debugging
+
+                if (!finalAddress) {
+                    formMessage.textContent = 'Please select a valid service address.';
+                    formMessage.className = 'text-center mt-4 text-red-600 font-semibold';
+                    return;
+                }
+
+                submitButton.disabled = true;
+                submitButton.textContent = 'Creating Account...';
+                formMessage.textContent = '';
+
+                const vehicle2 = addSecondVehicleCheckbox.checked ? {
+                    year: document.getElementById('year2').value,
+                    make: document.getElementById('make2').value,
+                    model: document.getElementById('model2').value,
+                } : null;
+
+                const formData = {
+                    full_name: document.getElementById('full-name').value,
+                    address: finalAddress, // Use the text content directly
+                    phone: document.getElementById('phone').value,
+                    email: document.getElementById('email').value,
+                    password: passwordInput.value,
+                    zip_code: zipCodeInput.value,
+                    vehicle1: {
+                        year: document.getElementById('year1').value,
+                        make: document.getElementById('make1').value,
+                        model: document.getElementById('model1').value,
+                    },
+                    vehicle2: vehicle2
+                };
+
+                const API_BASE_URL = 'https://michie-detailing-admin.onrender.com';
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/customer/full_signup`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(formData)
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        formMessage.textContent = 'Account created successfully! Redirecting...';
+                        formMessage.className = 'text-center mt-4 text-green-600 font-semibold';
+                        setTimeout(() => { 
+                            window.location.href = 'customer_portal.html'; 
+                        }, 3000);
+                    } else {
+                        formMessage.textContent = data.message || 'An error occurred. Please check your information.';
+                        formMessage.className = 'text-center mt-4 text-red-600 font-semibold';
+                        submitButton.disabled = false;
+                        submitButton.textContent = 'Create Account';
+                    }
+                } catch (error) {
+                    console.error('Submission Error:', error);
+                    formMessage.textContent = 'A network error occurred. Please try again later.';
+                    formMessage.className = 'text-center mt-4 text-red-600 font-semibold';
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Create Account';
+                }
+            });
         });
     </script>
+    
 </body>
 </html>
