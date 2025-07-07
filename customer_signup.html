@@ -58,17 +58,23 @@
                     <div class="grid grid-cols-1 gap-y-4">
                         <input type="text" id="full-name" placeholder="Full Name" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="name">
                         
-                        <!-- The Address UI Container -->
-                        <div id="address-search-container">
-                            <gmp-place-autocomplete
-                                id="address-autocomplete"
-                                placeholder="Service Address"
-                                country="us"
-                                class="w-full"
-                                requested-fields="addressComponents,formattedAddress,geometry,name">
-                            </gmp-place-autocomplete>
+                        <!-- ==================================================================
+                          THE NEW BULLETPROOF SOLUTION
+                        ================================================================== -->
+                        <!-- Step 1: Search and Confirm (initially visible) -->
+                        <div id="address-search-container" class="flex items-center space-x-2">
+                            <div class="flex-grow">
+                                <gmp-place-autocomplete
+                                    id="address-autocomplete"
+                                    placeholder="Service Address"
+                                    country="us"
+                                    requested-fields="addressComponents,formattedAddress,geometry,name">
+                                </gmp-place-autocomplete>
+                            </div>
+                            <button type="button" id="confirm-address-btn" disabled class="px-4 py-2 bg-gray-300 text-white font-semibold rounded-lg cursor-not-allowed">Confirm</button>
                         </div>
 
+                        <!-- Step 2: Confirmed Address Display (initially hidden) -->
                         <div id="selected-address-container" class="hidden items-center justify-between p-3 bg-gray-100 rounded-lg">
                             <p id="selected-address-text" class="text-gray-800 pr-4"></p>
                             <button type="button" id="change-address-btn" class="text-sm text-blue-600 hover:underline font-semibold flex-shrink-0">Change</button>
@@ -130,6 +136,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // --- Form Elements ---
             const signupForm = document.getElementById('signup-form');
             const passwordInput = document.getElementById('password');
             const reqLength = document.getElementById('req-length');
@@ -142,50 +149,71 @@
 
             // --- Address Handling Elements ---
             const addressSearchContainer = document.getElementById('address-search-container');
+            const confirmAddressBtn = document.getElementById('confirm-address-btn');
             const selectedAddressContainer = document.getElementById('selected-address-container');
             const selectedAddressText = document.getElementById('selected-address-text');
             const changeAddressBtn = document.getElementById('change-address-btn');
             
-            // --- New Place Autocomplete Logic ---
+            // --- State Variables for Address ---
+            let tempSelectedPlace = null;
+            let confirmedAddress = null;
+
+            // --- Logic for when a place is selected from the dropdown ---
             customElements.whenDefined('gmp-place-autocomplete').then(() => {
                 const autocompleteElement = document.getElementById('address-autocomplete');
                 
                 autocompleteElement.addEventListener('gmp-placeselect', (event) => {
                     const place = event.place;
-                    console.log('Place selected:', place); // For debugging
-                    if (!place || !place.formattedAddress) {
-                        selectedAddressText.textContent = ''; 
-                        return;
+                    if (place && place.formattedAddress) {
+                        tempSelectedPlace = place; // Store the selection temporarily
+                        confirmAddressBtn.disabled = false; // Enable the confirm button
+                        confirmAddressBtn.classList.remove('bg-gray-300', 'cursor-not-allowed');
+                        confirmAddressBtn.classList.add('bg-blue-600', 'hover:bg-blue-700', 'cursor-pointer');
+                    } else {
+                        tempSelectedPlace = null;
+                        confirmAddressBtn.disabled = true;
+                        confirmAddressBtn.classList.add('bg-gray-300', 'cursor-not-allowed');
+                        confirmAddressBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700', 'cursor-pointer');
                     }
-
-                    // 1. Store the data in the VISIBLE text element
-                    selectedAddressText.textContent = place.formattedAddress;
-
-                    const zipCodeComponent = place.addressComponents?.find(c => c.types.includes('postal_code'));
-                    if (zipCodeComponent) {
-                        zipCodeInput.value = zipCodeComponent.longText;
-                    }
-
-                    // 2. Update the UI 
-                    addressSearchContainer.classList.add('hidden');
-                    selectedAddressContainer.classList.remove('hidden');
-                    selectedAddressContainer.classList.add('flex');
                 });
+            });
+
+            // --- Logic for the "Confirm Address" button ---
+            confirmAddressBtn.addEventListener('click', () => {
+                if (!tempSelectedPlace) return;
+
+                // 1. Lock in the address
+                confirmedAddress = tempSelectedPlace.formattedAddress;
+                selectedAddressText.textContent = confirmedAddress;
+
+                const zipCodeComponent = tempSelectedPlace.addressComponents?.find(c => c.types.includes('postal_code'));
+                if (zipCodeComponent) {
+                    zipCodeInput.value = zipCodeComponent.longText;
+                }
+
+                // 2. Update the UI
+                addressSearchContainer.classList.add('hidden');
+                selectedAddressContainer.classList.remove('hidden');
+                selectedAddressContainer.classList.add('flex');
             });
 
             // --- Logic for the "Change" button ---
             changeAddressBtn.addEventListener('click', () => {
-                // 1. Clear the stored visual data
-                selectedAddressText.textContent = '';
+                // 1. Clear the data
+                confirmedAddress = null;
+                tempSelectedPlace = null;
                 const autocompleteElement = document.getElementById('address-autocomplete');
                 if (autocompleteElement.shadowRoot) {
                     autocompleteElement.shadowRoot.querySelector('input').value = '';
                 }
 
-                // 2. Update the UI to show the search box again
+                // 2. Reset the UI
                 selectedAddressContainer.classList.add('hidden');
                 selectedAddressContainer.classList.remove('flex');
                 addressSearchContainer.classList.remove('hidden');
+                confirmAddressBtn.disabled = true;
+                confirmAddressBtn.classList.add('bg-gray-300', 'cursor-not-allowed');
+                confirmAddressBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700', 'cursor-pointer');
             });
 
             // --- Password Validation ---
@@ -218,15 +246,9 @@
                     return;
                 }
                 
-                // ==================================================================
-                // THE FINAL FIX: We check the VISIBLE text content, not a hidden input.
-                // This is a much more reliable way to validate.
-                // ==================================================================
-                const finalAddress = selectedAddressText.textContent;
-                console.log('Submitting with address:', finalAddress); // For debugging
-
-                if (!finalAddress) {
-                    formMessage.textContent = 'Please select a valid service address.';
+                // The check is now against our reliable state variable
+                if (!confirmedAddress) {
+                    formMessage.textContent = 'Please select and confirm a valid service address.';
                     formMessage.className = 'text-center mt-4 text-red-600 font-semibold';
                     return;
                 }
@@ -243,7 +265,7 @@
 
                 const formData = {
                     full_name: document.getElementById('full-name').value,
-                    address: finalAddress, // Use the text content directly
+                    address: confirmedAddress, // Use the confirmed address
                     phone: document.getElementById('phone').value,
                     email: document.getElementById('email').value,
                     password: passwordInput.value,
