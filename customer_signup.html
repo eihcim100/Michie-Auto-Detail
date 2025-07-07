@@ -1,4 +1,4 @@
-*For testing purposes only*
+*WELCOME TO MICHIE AUTO JULY 6TH 2025*
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,7 +13,7 @@
 
     <style>
         body { font-family: 'Inter', sans-serif; }
-        .hidden-section { display: none; }
+        .hidden-section, .hidden { display: none !important; } /* Use !important to ensure it stays hidden */
         .password-requirement { transition: color 0.3s; }
         .valid { color: #16a34a; /* Green */ }
         .invalid { color: #dc2626; /* Red */ }
@@ -22,13 +22,13 @@
         gmp-place-autocomplete {
             width: 100%;
         }
-        /* You can style the input inside the web component */
         gmp-place-autocomplete input {
             width: 100%;
             padding: 0.75rem 1rem;
-            border: 1px solid #d1d5db;
+            border: 1px solid #d1d5db !important; 
             border-radius: 0.5rem;
             font-size: 1rem;
+            box-shadow: none;
         }
         gmp-place-autocomplete input:focus {
             --tw-ring-color: #3b82f6;
@@ -39,13 +39,6 @@
             outline: 2px solid transparent;
             outline-offset: 2px;
         }
-
-        /*
-          ==================================================================
-          THE FIX: This CSS rule targets the icon "part" within the
-          Google component and hides it.
-          ==================================================================
-        */
         gmp-place-autocomplete::part(icon) {
             display: none;
         }
@@ -66,14 +59,27 @@
                     <div class="grid grid-cols-1 gap-y-4">
                         <input type="text" id="full-name" placeholder="Full Name" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="name">
                         
-                        <gmp-place-autocomplete
-                            id="address-autocomplete"
-                            placeholder="Service Address"
-                            country="us"
-                            class="w-full"
-                            requested-fields="addressComponents,formattedAddress,geometry,name">
-                        </gmp-place-autocomplete>
-                        <!-- Hidden input to store the final address value for form submission -->
+                        <!-- ==================================================================
+                          THE NEW "OUTSIDE-THE-BOX" SOLUTION
+                        ================================================================== -->
+                        <!-- Step 1: The Autocomplete search box (initially visible) -->
+                        <div id="address-search-container">
+                            <gmp-place-autocomplete
+                                id="address-autocomplete"
+                                placeholder="Service Address"
+                                country="us"
+                                class="w-full"
+                                requested-fields="addressComponents,formattedAddress,geometry,name">
+                            </gmp-place-autocomplete>
+                        </div>
+
+                        <!-- Step 2: The container for the selected address (initially hidden) -->
+                        <div id="selected-address-container" class="hidden items-center justify-between p-3 bg-gray-100 rounded-lg">
+                            <p id="selected-address-text" class="text-gray-800"></p>
+                            <button type="button" id="change-address-btn" class="text-sm text-blue-600 hover:underline font-semibold">Change</button>
+                        </div>
+
+                        <!-- This hidden input still stores the final value for submission -->
                         <input type="hidden" id="address" name="address">
 
                         <input type="tel" id="phone" placeholder="Phone Number" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="tel">
@@ -142,6 +148,12 @@
             const formMessage = document.getElementById('form-message');
             const addressInput = document.getElementById('address'); // The hidden input
             const zipCodeInput = document.getElementById('zip-code');
+
+            // --- Address Handling Elements ---
+            const addressSearchContainer = document.getElementById('address-search-container');
+            const selectedAddressContainer = document.getElementById('selected-address-container');
+            const selectedAddressText = document.getElementById('selected-address-text');
+            const changeAddressBtn = document.getElementById('change-address-btn');
             
             // --- New Place Autocomplete Logic ---
             customElements.whenDefined('gmp-place-autocomplete').then(() => {
@@ -154,15 +166,37 @@
                         return;
                     }
 
+                    // 1. Store the data reliably
                     if (place.formattedAddress) {
                         addressInput.value = place.formattedAddress;
+                        selectedAddressText.textContent = place.formattedAddress;
                     }
 
                     const zipCodeComponent = place.addressComponents?.find(c => c.types.includes('postal_code'));
                     if (zipCodeComponent) {
                         zipCodeInput.value = zipCodeComponent.longText;
                     }
+
+                    // 2. Update the UI to show the selected address
+                    addressSearchContainer.classList.add('hidden');
+                    selectedAddressContainer.classList.remove('hidden');
+                    selectedAddressContainer.classList.add('flex');
                 });
+            });
+
+            // --- Logic for the "Change" button ---
+            changeAddressBtn.addEventListener('click', () => {
+                // 1. Clear the stored data
+                addressInput.value = '';
+                const autocompleteElement = document.getElementById('address-autocomplete');
+                if (autocompleteElement.shadowRoot) {
+                    autocompleteElement.shadowRoot.querySelector('input').value = '';
+                }
+
+                // 2. Update the UI to show the search box again
+                selectedAddressContainer.classList.add('hidden');
+                selectedAddressContainer.classList.remove('flex');
+                addressSearchContainer.classList.remove('hidden');
             });
 
             // --- Password Validation ---
@@ -189,22 +223,15 @@
             signupForm.addEventListener('submit', async (e) => {
                 e.preventDefault(); 
                 
-                const autocompleteElement = document.getElementById('address-autocomplete');
-                if (autocompleteElement.shadowRoot) {
-                    const visibleInput = autocompleteElement.shadowRoot.querySelector('input');
-                    if (visibleInput && visibleInput.value && !addressInput.value) {
-                        addressInput.value = visibleInput.value;
-                    }
-                }
-
                 if (!validatePassword()) {
                     formMessage.textContent = 'Please ensure your password meets all requirements.';
                     formMessage.className = 'text-center mt-4 text-red-600 font-semibold';
                     return;
                 }
                 
+                // The check is now much simpler and more reliable
                 if (!addressInput.value) {
-                    formMessage.textContent = 'Please enter and select a valid service address.';
+                    formMessage.textContent = 'Please select a valid service address.';
                     formMessage.className = 'text-center mt-4 text-red-600 font-semibold';
                     return;
                 }
