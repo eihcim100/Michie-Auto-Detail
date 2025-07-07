@@ -6,10 +6,7 @@
     <title>Create Your Michie Auto Detailing Account</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- ==================================================================
-         THIS SCRIPT LOADS THE MODERN "PLACES API (NEW)"
-    ================================================================== -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAksMo2srFUskoBWk-gIPf-DWYhateR_5Q&libraries=places.element&v=beta" async></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_API_KEY&libraries=places.element&v=beta" async></script>
 
     <style>
         body { font-family: 'Inter', sans-serif; }
@@ -18,6 +15,12 @@
         .valid { color: #16a34a; }
         .invalid { color: #dc2626; }
         .pac-container { z-index: 1000; }
+
+        /* ==================================================================
+                            ADDRESS STYLING REMOVED
+            The CSS targeting the Google address field has been removed
+            to test if it is the cause of the visibility issue.
+        ================================================================== */
     </style>
 </head>
 <body class="bg-gray-100">
@@ -107,31 +110,6 @@
             const autocompleteComponent = document.getElementById('address-autocomplete');
             const hiddenAddressInput = document.getElementById('address');
             
-            // ==================================================================
-            //                  THE DEFINITIVE VISIBILITY FIX
-            // This waits for the Google component to be ready, then injects
-            // a style block into it to ensure the input field is visible.
-            // ==================================================================
-            customElements.whenDefined('gmp-place-autocomplete').then(() => {
-                const style = document.createElement('style');
-                style.textContent = `
-                    :host {
-                        display: block !important;
-                    }
-                    input {
-                        display: block !important;
-                        width: 100% !important;
-                        border: 1px solid #d1d5db !important;
-                        border-radius: 0.5rem !important;
-                        padding: 0.5rem 1rem !important;
-                        font-size: 1rem !important;
-                        line-height: 1.5rem !important;
-                        box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
-                    }
-                `;
-                autocompleteComponent.shadowRoot.appendChild(style);
-            });
-
             autocompleteComponent.addEventListener('gmp-placechange', () => {
                 const place = autocompleteComponent.place;
                 if (place && place.formattedAddress) {
