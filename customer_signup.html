@@ -151,29 +151,30 @@
 
             // --- Address Handling Elements ---
             const addressAutocompleteElement = document.getElementById('address-autocomplete'); 
-            const serviceAddressRawInput = document.getElementById('service-address-raw'); // Our hidden input for raw text
-            const staticAddressDisplay = document.getElementById('static-address-display'); // Our new visible static display
-            const clearAddressBtn = document.getElementById('clear-address-btn'); // New clear button
+            const serviceAddressRawInput = document.getElementById('service-address-raw'); 
+            const staticAddressDisplay = document.getElementById('static-address-display'); 
+            const clearAddressBtn = document.getElementById('clear-address-btn'); 
             
             // --- New Place Autocomplete Logic ---
             customElements.whenDefined('gmp-place-autocomplete').then(() => {
                 let internalAutocompleteInput = null;
-                // Use a MutationObserver to wait for the internal input to be available in shadow DOM
                 const observer = new MutationObserver((mutations, obs) => {
                     if (addressAutocompleteElement.shadowRoot) {
                         internalAutocompleteInput = addressAutocompleteElement.shadowRoot.querySelector('input');
                         if (internalAutocompleteInput) {
+                            console.log('Internal autocomplete input found.');
                             // Attach input event listener to the actual input field to capture raw text
                             internalAutocompleteInput.addEventListener('input', () => {
                                 serviceAddressRawInput.value = internalAutocompleteInput.value;
-                                // Clear static display if user starts typing again after a selection
+                                console.log('Raw address input updated:', serviceAddressRawInput.value);
+                                // Clear static display and uncheck if user starts typing again after a selection
                                 if (staticAddressDisplay.value && internalAutocompleteInput.value !== staticAddressDisplay.value) {
                                     staticAddressDisplay.value = '';
-                                    confirmAddressCheckbox.checked = false; // Uncheck if address is being re-typed
+                                    confirmAddressCheckbox.checked = false; 
+                                    console.log('Static display cleared, confirmation unchecked due to re-typing.');
                                 }
-                                console.log('Raw address input updated:', serviceAddressRawInput.value);
                             });
-                            obs.disconnect(); // Disconnect observer once the input is found and listener attached
+                            obs.disconnect(); 
                         }
                     }
                 });
@@ -182,7 +183,7 @@
 
                 addressAutocompleteElement.addEventListener('gmp-placeselect', async (event) => { 
                     const placePrediction = event.placePrediction; 
-                    console.log('Place prediction selected:', placePrediction); 
+                    console.log('gmp-placeselect event fired. Place prediction:', placePrediction); 
 
                     if (!placePrediction) {
                         staticAddressDisplay.value = ''; 
@@ -223,6 +224,7 @@
                         // Keep the autocomplete input populated with the selected address for consistency
                         if (internalAutocompleteInput) {
                             internalAutocompleteInput.value = place.formattedAddress;
+                            console.log('Internal autocomplete input value updated to:', internalAutocompleteInput.value);
                         }
 
                     } catch (error) {
@@ -238,20 +240,20 @@
 
             // --- Logic for the "Clear Selected Address" button ---
             clearAddressBtn.addEventListener('click', () => {
-                staticAddressDisplay.value = ''; // Clear the visible static display
-                serviceAddressRawInput.value = ''; // Clear our hidden input
-                zipCodeInput.value = ''; // Clear zip code
-                confirmAddressCheckbox.checked = false; // Uncheck the confirmation box
+                staticAddressDisplay.value = ''; 
+                serviceAddressRawInput.value = ''; 
+                zipCodeInput.value = ''; 
+                confirmAddressCheckbox.checked = false; 
+                console.log('Address fields cleared by "Clear Selected Address" button.');
 
-                // Clear the actual input element of gmp-place-autocomplete
                 if (addressAutocompleteElement.shadowRoot) {
                     const internalInput = addressAutocompleteElement.shadowRoot.querySelector('input');
                     if (internalInput) {
                         internalInput.value = ''; 
-                        internalInput.focus(); // Put focus back to allow new typing
+                        internalInput.focus(); 
+                        console.log('Internal autocomplete input cleared and focused.');
                     }
                 }
-                console.log('Address fields cleared.');
             });
 
             // --- Password Validation ---
