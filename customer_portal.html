@@ -96,38 +96,40 @@
         const bookingForm = document.getElementById('booking-form');
         const bookingMessage = document.getElementById('booking-message');
 
-        let customerToken = localStorage.getItem('customerToken');
-
         // --- Core Functions ---
         function updateUI() {
-            customerToken = localStorage.getItem('customerToken');
-            if (customerToken) {
+            const customerToken = localStorage.getItem('customerToken');
+            const customerFullName = localStorage.getItem('customerFullName');
+
+            if (customerToken && customerFullName) {
                 authSection.style.display = 'none';
                 dashboardSection.style.display = 'block';
-                fetchCustomerData();
+                customerNameSpan.textContent = customerFullName; // Immediately set name from storage
+                fetchCustomerData(customerToken);
             } else {
                 authSection.style.display = 'block';
                 dashboardSection.style.display = 'none';
             }
         }
 
-        async function fetchCustomerData() {
-            if (!customerToken) return;
-
+        async function fetchCustomerData(token) {
             try {
                 const response = await fetch(`${API_BASE_URL}/customer/data`, {
-                    headers: { 'Authorization': `Bearer ${customerToken}` }
+                    headers: { 'Authorization': `Bearer ${token}` }
                 });
                 
                 if (!response.ok) {
-                    console.error('Failed to fetch customer data:', response.status, await response.text()); // Log error
+                    console.error('Failed to fetch customer data:', response.status, await response.text());
                     logout(); // If token is invalid or expired
                     return;
                 }
 
                 const data = await response.json();
                 
+                // Name is already set, but we can refresh it just in case
                 customerNameSpan.textContent = data.full_name;
+                localStorage.setItem('customerFullName', data.full_name); // Update storage
+                
                 document.getElementById('booking-address').value = data.address || '';
                 renderVehicles(data.vehicles);
                 renderAppointments(data.appointments);
@@ -141,35 +143,26 @@
             const bookingVehicleSelect = document.getElementById('booking-vehicle');
             vehiclesList.innerHTML = '';
             bookingVehicleSelect.innerHTML = '<option value="">-- Select a Vehicle --</option>';
+
             if (!vehicles || vehicles.length === 0) {
                 vehiclesList.innerHTML = '<p class="text-gray-500">No vehicles on file.</p>';
             } else {
-                // Combine primary and secondary vehicles for display and selection
-                const allVehicles = [];
-                if (vehicles.primary_vehicle) {
-                    allVehicles.push({ ...vehicles.primary_vehicle, type: 'Primary' });
-                }
-                if (vehicles.secondary_vehicle) {
-                    allVehicles.push({ ...vehicles.secondary_vehicle, type: 'Secondary' });
-                }
+                vehicles.forEach(v => {
+                    const vehicleType = v.is_primary ? 'Primary' : 'Secondary';
+                    const vehicleText = `${v.year} ${v.make} ${v.model} (${vehicleType})`;
 
-                if (allVehicles.length === 0) {
-                    vehiclesList.innerHTML = '<p class="text-gray-500">No vehicles on file.</p>';
-                } else {
-                    allVehicles.forEach(v => {
-                        const vehicleDiv = document.createElement('div');
-                        vehicleDiv.className = 'p-3 bg-gray-100 rounded-md';
-                        vehicleDiv.textContent = `${v.year} ${v.make} ${v.model} (${v.type})`; // Show type
-                        vehiclesList.appendChild(vehicleDiv);
+                    // Populate the "My Vehicles" list
+                    const vehicleDiv = document.createElement('div');
+                    vehicleDiv.className = 'p-3 bg-gray-100 rounded-md';
+                    vehicleDiv.textContent = vehicleText;
+                    vehiclesList.appendChild(vehicleDiv);
 
-                        const vehicleOption = document.createElement('option');
-                        // Use a unique ID that combines vehicle type and its actual ID if needed for backend booking
-                        // For simplicity, let's assume v.id is unique across both primary/secondary for now
-                        vehicleOption.value = v.id; 
-                        vehicleOption.textContent = `${v.year} ${v.make} ${v.model} (${v.type})`;
-                        bookingVehicleSelect.appendChild(vehicleOption);
-                    });
-                }
+                    // Populate the "Select a Vehicle" dropdown
+                    const vehicleOption = document.createElement('option');
+                    vehicleOption.value = v.id; 
+                    vehicleOption.textContent = vehicleText;
+                    bookingVehicleSelect.appendChild(vehicleOption);
+                });
             }
         }
 
@@ -178,18 +171,13 @@
             if (!appointments || appointments.length === 0) {
                 appointmentsList.innerHTML = '<p class="text-gray-500">No past appointments.</p>';
             } else {
-                appointments.forEach(a => {
-                    const el = document.createElement('div');
-                    el.className = 'p-3 bg-gray-100 rounded-md';
-                    const date = new Date(a.date + 'T00:00:00').toLocaleDateString(); // Adjust for timezone
-                    el.innerHTML = `<p class="font-semibold">${a.vehicle}</p><p>${date} - <span class="capitalize font-medium">${a.status}</span></p>`;
-                    appointmentsList.appendChild(el);
-                });
+                // Placeholder for future appointment rendering
             }
         }
         
         function logout() {
             localStorage.removeItem('customerToken');
+            localStorage.removeItem('customerFullName');
             updateUI();
         }
 
@@ -197,9 +185,7 @@
         loginButton.addEventListener('click', async () => {
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
-
-            loginMessage.textContent = ''; // Clear previous messages
-            loginMessage.className = 'text-red-500 text-center mt-2'; // Reset class
+            loginMessage.textContent = '';
 
             try {
                 const response = await fetch(`${API_BASE_URL}/customer/login`, {
@@ -208,24 +194,26 @@
                     body: JSON.stringify({ email, password })
                 });
 
-                // Log the full response for debugging
                 const data = await response.json();
-                console.log('Login API Response:', data); 
-
                 if (response.ok) {
+                    // Store both the token and the full name in localStorage
                     localStorage.setItem('customerToken', data.token);
+                    localStorage.setItem('customerFullName', data.full_name);
                     updateUI();
                 } else {
                     loginMessage.textContent = data.message || 'An error occurred during login.';
                 }
             } catch (error) {
-                console.error('Login Fetch Error:', error); // Log the fetch error
+                console.error('Login Fetch Error:', error);
                 loginMessage.textContent = 'A network error occurred during login. Please try again.';
             }
         });
 
         bookingForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            const customerToken = localStorage.getItem('customerToken');
+            if (!customerToken) return;
+
             bookingMessage.textContent = 'Booking...';
             bookingMessage.className = 'text-center mt-2 text-blue-600';
 
@@ -236,29 +224,10 @@
                 time: document.getElementById('booking-time').value,
             };
 
-            try {
-                const response = await fetch(`${API_BASE_URL}/customer/book_appointment`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${customerToken}`
-                    },
-                    body: JSON.stringify(payload)
-                });
-                const data = await response.json();
-                if (response.ok) {
-                    bookingMessage.textContent = 'Appointment Booked!';
-                    bookingMessage.className = 'text-center mt-2 text-green-600';
-                    bookingForm.reset();
-                    fetchCustomerData(); // Refresh data to show new appointment
-                } else {
-                    bookingMessage.textContent = data.message || 'Booking failed.';
-                    bookingMessage.className = 'text-center mt-2 text-red-600';
-                }
-            } catch (error) {
-                bookingMessage.textContent = 'A network error occurred.';
-                bookingMessage.className = 'text-center mt-2 text-red-600';
-            }
+            // This is a placeholder for the booking API call
+            console.log("Booking payload:", payload);
+            bookingMessage.textContent = 'Booking functionality not yet implemented.';
+            bookingMessage.className = 'text-center mt-2 text-yellow-600';
         });
         
         logoutButton.addEventListener('click', logout);
@@ -268,5 +237,3 @@
     </script>
 </body>
 </html>
-
-}
