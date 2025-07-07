@@ -80,24 +80,39 @@
             <!-- Vehicle Management Section -->
             <div id="vehicle-management-section" class="form-section bg-white p-8 rounded-xl shadow-md">
                 <h3 class="text-xl font-bold text-gray-700 mb-4">Manage Vehicles</h3>
+                
                 <!-- Edit Primary Vehicle Form -->
-                <form id="edit-primary-vehicle-form" class="space-y-3 p-4 border rounded-lg mb-4">
+                <form id="edit-primary-vehicle-form" class="space-y-3 p-4 border rounded-lg mb-4" style="display: none;">
                     <h4 class="font-semibold">Edit Primary Vehicle</h4>
-                    <input type="hidden" id="edit-vehicle-id">
-                    <input type="text" id="edit-vehicle-year" placeholder="Year" required class="w-full px-3 py-2 border rounded-lg">
-                    <input type="text" id="edit-vehicle-make" placeholder="Make" required class="w-full px-3 py-2 border rounded-lg">
-                    <input type="text" id="edit-vehicle-model" placeholder="Model" required class="w-full px-3 py-2 border rounded-lg">
+                    <input type="hidden" id="edit-primary-vehicle-id">
+                    <input type="text" id="edit-primary-vehicle-year" placeholder="Year" required class="w-full px-3 py-2 border rounded-lg">
+                    <input type="text" id="edit-primary-vehicle-make" placeholder="Make" required class="w-full px-3 py-2 border rounded-lg">
+                    <input type="text" id="edit-primary-vehicle-model" placeholder="Model" required class="w-full px-3 py-2 border rounded-lg">
                     <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg">Save Primary Vehicle</button>
+                    <button type="button" id="delete-primary-vehicle-btn" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg mt-2">Delete Primary Vehicle</button>
                 </form>
-                <!-- Add Secondary Vehicle Form -->
-                <form id="add-secondary-vehicle-form" class="space-y-3 p-4 border rounded-lg">
-                    <h4 class="font-semibold">Add Another Vehicle</h4>
+
+                <!-- Edit Secondary Vehicle Form -->
+                <form id="edit-secondary-vehicle-form" class="space-y-3 p-4 border rounded-lg mb-4" style="display: none;">
+                    <h4 class="font-semibold">Edit Second Vehicle</h4>
+                    <input type="hidden" id="edit-secondary-vehicle-id">
+                    <input type="text" id="edit-secondary-vehicle-year" placeholder="Year" required class="w-full px-3 py-2 border rounded-lg">
+                    <input type="text" id="edit-secondary-vehicle-make" placeholder="Make" required class="w-full px-3 py-2 border rounded-lg">
+                    <input type="text" id="edit-secondary-vehicle-model" placeholder="Model" required class="w-full px-3 py-2 border rounded-lg">
+                    <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg">Save Second Vehicle</button>
+                    <button type="button" id="delete-secondary-vehicle-btn" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg mt-2">Delete Second Vehicle</button>
+                </form>
+
+                <!-- Add Vehicle Form -->
+                <form id="add-vehicle-form" class="space-y-3 p-4 border rounded-lg" style="display: none;">
+                    <h4 class="font-semibold">Add a Vehicle</h4>
                     <input type="text" id="add-vehicle-year" placeholder="Year" required class="w-full px-3 py-2 border rounded-lg">
                     <input type="text" id="add-vehicle-make" placeholder="Make" required class="w-full px-3 py-2 border rounded-lg">
                     <input type="text" id="add-vehicle-model" placeholder="Model" required class="w-full px-3 py-2 border rounded-lg">
                     <button type="submit" class="w-full bg-green-600 text-white py-2 px-4 rounded-lg">Add Vehicle</button>
                 </form>
-                 <p id="vehicle-message" class="text-center mt-2"></p>
+
+                <p id="vehicle-message" class="text-center mt-2"></p>
             </div>
 
             <!-- Address Edit Section -->
@@ -131,6 +146,7 @@
         function initializeApp() {
             const API_BASE_URL = 'https://michie-detailing-admin.onrender.com';
             
+            // --- Get all DOM elements ---
             const authSection = document.getElementById('auth-section');
             const dashboardSection = document.getElementById('dashboard-section');
             const loginButton = document.getElementById('login-button');
@@ -141,10 +157,17 @@
             const editAddressBtn = document.getElementById('edit-address-btn');
             const vehicleManagementSection = document.getElementById('vehicle-management-section');
             const addressEditSection = document.getElementById('address-edit-section');
-            const addSecondaryVehicleForm = document.getElementById('add-secondary-vehicle-form');
-            const editAddressForm = document.getElementById('edit-address-form');
             const vehicleMessage = document.getElementById('vehicle-message');
             const addressMessage = document.getElementById('address-message');
+            const bookingMessage = document.getElementById('booking-message');
+            
+            const bookingForm = document.getElementById('booking-form');
+            const editPrimaryVehicleForm = document.getElementById('edit-primary-vehicle-form');
+            const editSecondaryVehicleForm = document.getElementById('edit-secondary-vehicle-form');
+            const addVehicleForm = document.getElementById('add-vehicle-form');
+            const editAddressForm = document.getElementById('edit-address-form');
+            const deletePrimaryVehicleBtn = document.getElementById('delete-primary-vehicle-btn');
+            const deleteSecondaryVehicleBtn = document.getElementById('delete-secondary-vehicle-btn');
 
             let customerData = {}; 
 
@@ -176,10 +199,8 @@
                 customerNameSpan.textContent = customerData.full_name;
                 primaryAddressDisplay.textContent = customerData.address || 'No address on file.';
 
-                // --- NEW: Render all vehicles into a dropdown ---
                 const vehicleSelect = document.getElementById('vehicle-select');
-                vehicleSelect.innerHTML = ''; // Clear the dropdown first
-
+                vehicleSelect.innerHTML = ''; 
                 if (customerData.vehicles && customerData.vehicles.length > 0) {
                     customerData.vehicles.forEach(vehicle => {
                         const option = document.createElement('option');
@@ -197,17 +218,33 @@
                     vehicleSelect.appendChild(option);
                 }
                 
-                // --- Populate the "Edit Primary Vehicle" form and manage its visibility ---
                 const primaryVehicle = customerData.vehicles.find(v => v.is_primary);
-                const editPrimaryVehicleForm = document.getElementById('edit-primary-vehicle-form');
+                const secondaryVehicle = customerData.vehicles.find(v => !v.is_primary);
+
                 if (primaryVehicle) {
                     editPrimaryVehicleForm.style.display = 'block';
-                    document.getElementById('edit-vehicle-id').value = primaryVehicle.id;
-                    document.getElementById('edit-vehicle-year').value = primaryVehicle.year;
-                    document.getElementById('edit-vehicle-make').value = primaryVehicle.make;
-                    document.getElementById('edit-vehicle-model').value = primaryVehicle.model;
+                    document.getElementById('edit-primary-vehicle-id').value = primaryVehicle.id;
+                    document.getElementById('edit-primary-vehicle-year').value = primaryVehicle.year;
+                    document.getElementById('edit-primary-vehicle-make').value = primaryVehicle.make;
+                    document.getElementById('edit-primary-vehicle-model').value = primaryVehicle.model;
                 } else {
                     editPrimaryVehicleForm.style.display = 'none';
+                }
+
+                if (secondaryVehicle) {
+                    editSecondaryVehicleForm.style.display = 'block';
+                    document.getElementById('edit-secondary-vehicle-id').value = secondaryVehicle.id;
+                    document.getElementById('edit-secondary-vehicle-year').value = secondaryVehicle.year;
+                    document.getElementById('edit-secondary-vehicle-make').value = secondaryVehicle.make;
+                    document.getElementById('edit-secondary-vehicle-model').value = secondaryVehicle.model;
+                } else {
+                    editSecondaryVehicleForm.style.display = 'none';
+                }
+
+                if (customerData.vehicles.length < 2) {
+                    addVehicleForm.style.display = 'block';
+                } else {
+                    addVehicleForm.style.display = 'none';
                 }
             }
 
@@ -217,6 +254,7 @@
                 updateUI();
             }
 
+            // --- All Event Listeners ---
             loginButton.addEventListener('click', async () => {
                 const email = document.getElementById('login-email').value;
                 const password = document.getElementById('login-password').value;
@@ -241,19 +279,13 @@
             manageVehicleBtn.addEventListener('click', () => {
                 vehicleManagementSection.style.display = vehicleManagementSection.style.display === 'block' ? 'none' : 'block';
             });
+
             editAddressBtn.addEventListener('click', () => {
                 addressEditSection.style.display = addressEditSection.style.display === 'block' ? 'none' : 'block';
             });
 
-            document.getElementById('edit-primary-vehicle-form').addEventListener('submit', async (e) => {
-                e.preventDefault();
+            async function handleVehicleUpdate(vehicleId, payload) {
                 const token = localStorage.getItem('customerToken');
-                const vehicleId = document.getElementById('edit-vehicle-id').value;
-                const payload = {
-                    year: document.getElementById('edit-vehicle-year').value,
-                    make: document.getElementById('edit-vehicle-make').value,
-                    model: document.getElementById('edit-vehicle-model').value,
-                };
                 try {
                     const response = await fetch(`${API_BASE_URL}/customer/vehicle/${vehicleId}`, {
                         method: 'PUT',
@@ -264,9 +296,48 @@
                     vehicleMessage.textContent = data.message;
                     if (response.ok) fetchCustomerData(token);
                 } catch (error) { console.error('Update vehicle error:', error); }
+            }
+
+            async function handleVehicleDelete(vehicleId) {
+                const token = localStorage.getItem('customerToken');
+                if (!vehicleId) return;
+                try {
+                    const response = await fetch(`${API_BASE_URL}/customer/vehicle/${vehicleId}`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${token}` },
+                    });
+                    const data = await response.json();
+                    vehicleMessage.textContent = data.message;
+                    if (response.ok) fetchCustomerData(token);
+                } catch (error) {
+                    console.error('Delete vehicle error:', error);
+                    vehicleMessage.textContent = 'Failed to delete vehicle due to a network error.';
+                }
+            }
+
+            editPrimaryVehicleForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const vehicleId = document.getElementById('edit-primary-vehicle-id').value;
+                const payload = {
+                    year: document.getElementById('edit-primary-vehicle-year').value,
+                    make: document.getElementById('edit-primary-vehicle-make').value,
+                    model: document.getElementById('edit-primary-vehicle-model').value,
+                };
+                handleVehicleUpdate(vehicleId, payload);
+            });
+
+            editSecondaryVehicleForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const vehicleId = document.getElementById('edit-secondary-vehicle-id').value;
+                const payload = {
+                    year: document.getElementById('edit-secondary-vehicle-year').value,
+                    make: document.getElementById('edit-secondary-vehicle-make').value,
+                    model: document.getElementById('edit-secondary-vehicle-model').value,
+                };
+                handleVehicleUpdate(vehicleId, payload);
             });
             
-            addSecondaryVehicleForm.addEventListener('submit', async (e) => {
+            addVehicleForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const token = localStorage.getItem('customerToken');
                 const payload = {
@@ -283,7 +354,7 @@
                     const data = await response.json();
                     vehicleMessage.textContent = data.message;
                     if (response.ok) {
-                        addSecondaryVehicleForm.reset();
+                        addVehicleForm.reset();
                         fetchCustomerData(token);
                     }
                 } catch (error) { console.error('Add vehicle error:', error); }
@@ -303,6 +374,54 @@
                     addressMessage.textContent = data.message;
                     if (response.ok) fetchCustomerData(token);
                 } catch (error) { console.error('Update address error:', error); }
+            });
+
+            deletePrimaryVehicleBtn.addEventListener('click', () => {
+                const vehicleId = document.getElementById('edit-primary-vehicle-id').value;
+                handleVehicleDelete(vehicleId);
+            });
+
+            deleteSecondaryVehicleBtn.addEventListener('click', () => {
+                const vehicleId = document.getElementById('edit-secondary-vehicle-id').value;
+                handleVehicleDelete(vehicleId);
+            });
+
+            // --- NEW: Booking Form Submission Handler ---
+            bookingForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const token = localStorage.getItem('customerToken');
+                const payload = {
+                    vehicle_id: document.getElementById('vehicle-select').value,
+                    date: document.getElementById('booking-date').value,
+                    time: document.getElementById('booking-time').value,
+                };
+
+                // Basic validation
+                if (!payload.vehicle_id || !payload.date || !payload.time) {
+                    bookingMessage.textContent = 'Please select a vehicle, date, and time.';
+                    bookingMessage.style.color = 'red';
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/customer/appointment`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                        body: JSON.stringify(payload)
+                    });
+                    const data = await response.json();
+                    bookingMessage.textContent = data.message;
+                    if (response.ok) {
+                        bookingMessage.style.color = 'green';
+                        bookingForm.reset(); // Clear the form on success
+                    } else {
+                        bookingMessage.style.color = 'red';
+                    }
+                } catch (error) {
+                    console.error('Booking error:', error);
+                    bookingMessage.textContent = 'Failed to book appointment due to a network error.';
+                    bookingMessage.style.color = 'red';
+                }
             });
 
             updateUI();
