@@ -40,9 +40,11 @@
             </div>
 
             <!-- Confirmed Appointment Section -->
-            <div id="confirmed-appointment-section" class="feature-section bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 rounded-lg" role="alert">
-                <p class="font-bold">Upcoming Appointment</p>
-                <p id="confirmed-appointment-details"></p>
+            <div id="upcoming-appointments-section" class="feature-section bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 rounded-lg" role="alert">
+                <p class="font-bold">Upcoming Appointments</p>
+                <div id="upcoming-appointments-list" class="space-y-2">
+                    <!-- Upcoming appointment details will be dynamically inserted here -->
+                </div>
                 <div class="mt-4 text-sm">
                     <p>If you need to reschedule or cancel your appointment please call our support line. *Fees for appointments canceled or rescheduled may apply</p>
                     <a href="tel:4052955189" class="inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mt-2">Call (405) 295-5189</a>
@@ -167,8 +169,8 @@
                 bookingMessage: document.getElementById('booking-message'),
                 bookingForm: document.getElementById('booking-form'),
                 editAddressForm: document.getElementById('edit-address-form'),
-                confirmedAppointmentSection: document.getElementById('confirmed-appointment-section'),
-                confirmedAppointmentDetails: document.getElementById('confirmed-appointment-details'),
+                upcomingAppointmentsSection: document.getElementById('upcoming-appointments-section'), // Changed ID
+                upcomingAppointmentsList: document.getElementById('upcoming-appointments-list'), // New element
                 showFinanceBtn: document.getElementById('show-finance-btn'),
                 financingBookingSection: document.getElementById('financing-booking-section'),
                 financingBookingForm: document.getElementById('financing-booking-form'),
@@ -176,7 +178,7 @@
                 viewPastAppointmentsBtn: document.getElementById('view-past-appointments-btn'),
                 pastAppointmentsSection: document.getElementById('past-appointments-section'),
                 pastAppointmentsList: document.getElementById('past-appointments-list'),
-                installmentsList: document.getElementById('installments-list'), // New element for payment schedule
+                installmentsList: document.getElementById('installments-list'), 
             };
 
             let customerData = {}; 
@@ -207,9 +209,9 @@
                 elements.primaryAddressDisplay.textContent = customerData.address || 'No address on file.';
                 renderVehicleDropdown();
                 renderVehicleManagementForms();
-                renderUpcomingAppointment();
+                renderUpcomingAppointments(); // Changed function name
                 renderPastAppointments();
-                renderPaymentSchedule(); // Call the new function to render payment schedule
+                renderPaymentSchedule(); 
             }
 
             function renderVehicleDropdown() {
@@ -289,19 +291,23 @@
                 }
             }
 
-            function renderUpcomingAppointment() {
-                elements.confirmedAppointmentSection.style.display = 'none';
+            // Renamed and updated to show all upcoming appointments
+            function renderUpcomingAppointments() {
+                elements.upcomingAppointmentsList.innerHTML = ''; // Clear previous entries
                 if (customerData.upcoming_appointments && customerData.upcoming_appointments.length > 0) {
-                    const nextAppointment = customerData.upcoming_appointments[0];
-                    const timePart = nextAppointment.time ? nextAppointment.time.slice(0, 5) : '00:00';
-                    const apptDateTime = new Date(`${nextAppointment.date}T${timePart}:00`);
-                    
-                    const threeHoursAfter = new Date(apptDateTime.getTime() + 3 * 60 * 60 * 1000);
-                    if (new Date() < threeHoursAfter) {
+                    elements.upcomingAppointmentsSection.style.display = 'block'; // Show the section
+                    customerData.upcoming_appointments.forEach(appt => {
+                        const timePart = appt.time ? appt.time.slice(0, 5) : '00:00';
+                        const apptDateTime = new Date(`${appt.date}T${timePart}:00`);
                         const options = { timeZone: "America/Chicago", weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
-                        elements.confirmedAppointmentDetails.textContent = `Your appointment is confirmed for ${apptDateTime.toLocaleString('en-US', options)}`;
-                        elements.confirmedAppointmentSection.style.display = 'block';
-                    }
+                        
+                        const apptItem = document.createElement('div');
+                        apptItem.className = 'p-3 bg-white rounded-md shadow-sm';
+                        apptItem.textContent = `${appt.title} on ${apptDateTime.toLocaleString('en-US', options)}`;
+                        elements.upcomingAppointmentsList.appendChild(apptItem);
+                    });
+                } else {
+                    elements.upcomingAppointmentsSection.style.display = 'none'; // Hide if no upcoming appointments
                 }
             }
 
@@ -319,9 +325,8 @@
                 }
             }
 
-            // New function to render the payment schedule
             function renderPaymentSchedule() {
-                elements.installmentsList.innerHTML = ''; // Clear previous entries
+                elements.installmentsList.innerHTML = ''; 
                 const today = new Date();
                 const formatter = new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 
@@ -394,11 +399,10 @@
             elements.manageVehicleBtn.addEventListener('click', () => { elements.vehicleManagementSection.style.display = 'block'; });
             elements.editAddressBtn.addEventListener('click', () => { elements.addressEditSection.style.display = 'block'; });
             
-            // Toggle financing section visibility and re-render schedule
             elements.showFinanceBtn.addEventListener('click', () => { 
                 elements.financingBookingSection.style.display = elements.financingBookingSection.style.display === 'block' ? 'none' : 'block'; 
                 if (elements.financingBookingSection.style.display === 'block') {
-                    renderPaymentSchedule(); // Re-render when shown
+                    renderPaymentSchedule(); 
                 }
             });
 
