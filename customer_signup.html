@@ -25,6 +25,29 @@
         .invalid {
             color: #dc2626; /* red-600 */
         }
+        /* Style for Google Places Autocomplete dropdown */
+        .pac-container {
+            background-color: #FFF;
+            z-index: 1000;
+            position: fixed;
+            display: inline-block;
+            float: left;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            font-family: 'Inter', sans-serif;
+        }
+        .pac-item {
+            padding: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            border-top: 1px solid #e5e7eb;
+        }
+        .pac-item:first-child {
+            border-top: none;
+        }
+        .pac-item-query {
+            font-weight: 600;
+        }
     </style>
 </head>
 <body class="bg-gray-100">
@@ -41,7 +64,9 @@
                     <h2 class="text-2xl font-semibold text-gray-700 mb-4 border-b pb-2">Account Information</h2>
                     <div class="grid grid-cols-1 gap-y-4">
                         <input type="text" id="full-name" placeholder="Full Name" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        
                         <input type="text" id="address" placeholder="Address Where Detail is Taking Place" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        
                         <input type="tel" id="phone" placeholder="Phone Number" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <input type="email" id="email" placeholder="Email Address" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <div>
@@ -98,11 +123,31 @@
         </div>
     </div>
 
+    <!-- ==================================================================
+         PASTE YOUR GOOGLE API KEY HERE
+    ================================================================== -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAksMo2srFUskoBWk-gIPf-DWYhateR_5Q&libraries=places&callback=initAutocomplete" async defer></script>
+
     <script>
-        // ==================================================================
-        //                  API URL IS NOW LIVE
-        // ==================================================================
         const API_BASE_URL = 'https://michie-detailing-admin.onrender.com';
+        
+        // Function to initialize Google Places Autocomplete
+        let autocomplete;
+        function initAutocomplete() {
+            const addressInput = document.getElementById('address');
+            autocomplete = new google.maps.places.Autocomplete(addressInput, {
+                componentRestrictions: { 'country': 'us' },
+                fields: ['formatted_address', 'address_components'],
+                types: ['address']
+            });
+
+            autocomplete.addListener('place_changed', () => {
+                const place = autocomplete.getPlace();
+                if (place.formatted_address) {
+                    addressInput.value = place.formatted_address;
+                }
+            });
+        }
 
         const signupForm = document.getElementById('signup-form');
         const passwordInput = document.getElementById('password');
@@ -113,7 +158,6 @@
         const submitButton = document.getElementById('submit-button');
         const formMessage = document.getElementById('form-message');
 
-        // --- Password Validation ---
         function validatePassword() {
             const value = passwordInput.value;
             const hasLength = value.length >= 6;
@@ -129,12 +173,10 @@
         }
         passwordInput.addEventListener('input', validatePassword);
 
-        // --- Toggle Second Vehicle ---
         addSecondVehicleCheckbox.addEventListener('change', () => {
             secondVehicleFields.classList.toggle('hidden-section');
         });
 
-        // --- Form Submission ---
         signupForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             if (!validatePassword()) {
@@ -181,7 +223,7 @@
                     formMessage.textContent = 'Account created successfully! You will be redirected to the login page.';
                     formMessage.className = 'text-center mt-4 text-green-600';
                     setTimeout(() => {
-                        window.location.href = 'customer_portal.html'; // Redirect to your login page
+                        window.location.href = 'customer_portal.html';
                     }, 3000);
                 } else {
                     formMessage.textContent = data.message || 'An error occurred during signup.';
