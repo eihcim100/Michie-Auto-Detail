@@ -10,10 +10,15 @@
         body { font-family: 'Inter', sans-serif; }
         .hidden-section { display: none; }
         .password-requirement { transition: color 0.3s; }
-        .valid { color: #16a34a; }
-        .invalid { color: #dc2626; }
-        /* This style is for the classic autocomplete dropdown */
-        .pac-container { z-index: 1000; }
+        .valid { color: #16a34a; /* Green */ }
+        .invalid { color: #dc2626; /* Red */ }
+        /* Style for the Google Autocomplete dropdown to ensure it appears above other elements */
+        .pac-container {
+            background-color: #FFF;
+            z-index: 1050 !important; /* High z-index to appear over other content */
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 <body class="bg-gray-100">
@@ -29,20 +34,23 @@
                 <div>
                     <h2 class="text-2xl font-semibold text-gray-700 mb-4 border-b pb-2">Account Information</h2>
                     <div class="grid grid-cols-1 gap-y-4">
-                        <input type="text" id="full-name" placeholder="Full Name" required class="w-full px-4 py-2 border rounded-lg" autocomplete="name">
+                        <input type="text" id="full-name" placeholder="Full Name" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="name">
                         
-                        <!-- ==================================================================
-                                            THE DEFINITIVE FIX
-                            This uses a standard <input> tag, which is guaranteed to be
-                            visible. The Google functionality is attached via JavaScript.
-                        ================================================================== -->
-                        <input type="text" id="address" placeholder="Address Where Detail is Taking Place" required class="w-full px-4 py-2 border rounded-lg" autocomplete="street-address">
+                        <!-- 
+                          ==================================================================
+                          THE FIX: A STANDARD INPUT FIELD
+                          This is a regular <input> tag. It will always be visible.
+                          The Google Autocomplete functionality is attached via JavaScript below.
+                          This prevents the field from disappearing.
+                          ==================================================================
+                        -->
+                        <input type="text" id="address" placeholder="Service Address" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="street-address">
                         
-                        <input type="tel" id="phone" placeholder="Phone Number" required class="w-full px-4 py-2 border rounded-lg" autocomplete="tel">
-                        <input type="email" id="email" placeholder="Email Address" required class="w-full px-4 py-2 border rounded-lg" autocomplete="email">
+                        <input type="tel" id="phone" placeholder="Phone Number" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="tel">
+                        <input type="email" id="email" placeholder="Email Address" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="email">
                         <div>
-                            <input type="password" id="password" placeholder="Password" required class="w-full px-4 py-2 border rounded-lg" autocomplete="new-password">
-                            <div id="password-reqs" class="text-sm text-gray-500 mt-2 space-y-1">
+                            <input type="password" id="password" placeholder="Password" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="new-password">
+                            <div id="password-reqs" class="text-sm text-gray-500 mt-2 space-y-1 pl-1">
                                 <p id="req-length" class="password-requirement invalid">At least 6 characters</p>
                                 <p id="req-capital" class="password-requirement invalid">At least 1 capital letter</p>
                             </div>
@@ -54,22 +62,22 @@
                 <div>
                     <h2 class="text-2xl font-semibold text-gray-700 mb-4 border-b pb-2">Primary Vehicle</h2>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <input type="text" id="year1" placeholder="Year" required class="px-4 py-2 border rounded-lg">
-                        <input type="text" id="make1" placeholder="Make" required class="px-4 py-2 border rounded-lg">
-                        <input type="text" id="model1" placeholder="Model" required class="px-4 py-2 border rounded-lg">
+                        <input type="text" id="year1" placeholder="Year" required class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <input type="text" id="make1" placeholder="Make" required class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <input type="text" id="model1" placeholder="Model" required class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                     </div>
                     <div class="mt-6">
-                        <label for="add-second-vehicle" class="flex items-center space-x-2 cursor-pointer">
-                            <input type="checkbox" id="add-second-vehicle" class="rounded">
+                        <label for="add-second-vehicle" class="flex items-center space-x-2 cursor-pointer text-gray-600">
+                            <input type="checkbox" id="add-second-vehicle" class="rounded h-4 w-4 text-blue-600 focus:ring-blue-500">
                             <span>Add a second vehicle (Optional)</span>
                         </label>
                     </div>
                     <div id="second-vehicle-fields" class="hidden-section mt-4 space-y-4">
                         <h3 class="text-xl font-semibold text-gray-600">Second Vehicle</h3>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <input type="text" id="year2" placeholder="Year" class="px-4 py-2 border rounded-lg">
-                            <input type="text" id="make2" placeholder="Make" class="px-4 py-2 border rounded-lg">
-                            <input type="text" id="model2" placeholder="Model" class="px-4 py-2 border rounded-lg">
+                            <input type="text" id="year2" placeholder="Year" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <input type="text" id="make2" placeholder="Make" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <input type="text" id="model2" placeholder="Model" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                         </div>
                     </div>
                 </div>
@@ -77,12 +85,12 @@
                 <!-- Verification -->
                 <div>
                     <h2 class="text-2xl font-semibold text-gray-700 mb-4 border-b pb-2">Verification</h2>
-                     <input type="text" id="zip-code" placeholder="Enter Your Zip Code for Verification" required class="w-full px-4 py-2 border rounded-lg" autocomplete="postal-code">
+                     <input type="text" id="zip-code" placeholder="Enter Your Zip Code for Verification" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="postal-code">
                 </div>
                 
                 <!-- Submission -->
                 <div>
-                    <button type="submit" id="submit-button" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg">Create Account</button>
+                    <button type="submit" id="submit-button" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-300 disabled:bg-gray-400">Create Account</button>
                     <p id="form-message" class="text-center mt-4"></p>
                 </div>
             </form>
@@ -93,17 +101,19 @@
     </div>
 
     <script>
-        const API_BASE_URL = 'https://michie-detailing-admin.onrender.com';
-        
-        // This function is now called by the Google script when it loads
+        // This function will be called by the Google Maps script once it's loaded
         function initAutocomplete() {
             const addressInput = document.getElementById('address');
-            // This attaches the Google functionality to our visible input field
-            const autocomplete = new google.maps.places.Autocomplete(addressInput, {
-                componentRestrictions: { 'country': 'us' },
-                fields: ['formatted_address'],
-                types: ['address']
-            });
+            
+            // These are the options for the autocomplete functionality
+            const options = {
+                componentRestrictions: { 'country': 'us' }, // Restrict to US addresses
+                fields: ['formatted_address', 'geometry'], // Fields to retrieve
+                types: ['address'] // Only show address results
+            };
+            
+            // This creates the autocomplete object and attaches it to our input field
+            const autocomplete = new google.maps.places.Autocomplete(addressInput, options);
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -116,27 +126,34 @@
             const submitButton = document.getElementById('submit-button');
             const formMessage = document.getElementById('form-message');
 
+            // --- Password Validation ---
             function validatePassword() {
                 const value = passwordInput.value;
                 const hasLength = value.length >= 6;
                 const hasCapital = /[A-Z]/.test(value);
+
                 reqLength.classList.toggle('valid', hasLength);
                 reqLength.classList.toggle('invalid', !hasLength);
                 reqCapital.classList.toggle('valid', hasCapital);
                 reqCapital.classList.toggle('invalid', !hasCapital);
+                
                 return hasLength && hasCapital;
             }
             passwordInput.addEventListener('input', validatePassword);
 
+            // --- Toggle Second Vehicle ---
             addSecondVehicleCheckbox.addEventListener('change', () => {
                 secondVehicleFields.classList.toggle('hidden-section');
             });
 
+            // --- Form Submission ---
             signupForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
+                e.preventDefault(); // Prevent default form submission
+                
+                // Final password validation check on submit
                 if (!validatePassword()) {
-                    formMessage.textContent = 'Please ensure your password meets the requirements.';
-                    formMessage.className = 'text-center mt-4 text-red-600';
+                    formMessage.textContent = 'Please ensure your password meets all requirements.';
+                    formMessage.className = 'text-center mt-4 text-red-600 font-semibold';
                     return;
                 }
                 
@@ -144,6 +161,7 @@
                 submitButton.textContent = 'Creating Account...';
                 formMessage.textContent = '';
 
+                // Construct the data payload
                 const vehicle2 = addSecondVehicleCheckbox.checked ? {
                     year: document.getElementById('year2').value,
                     make: document.getElementById('make2').value,
@@ -165,26 +183,35 @@
                     vehicle2: vehicle2
                 };
 
+                // Replace with your actual API endpoint
+                const API_BASE_URL = 'https://michie-detailing-admin.onrender.com';
+
                 try {
                     const response = await fetch(`${API_BASE_URL}/customer/full_signup`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(formData)
                     });
+
                     const data = await response.json();
+
                     if (response.ok) {
                         formMessage.textContent = 'Account created successfully! Redirecting...';
-                        formMessage.className = 'text-center mt-4 text-green-600';
-                        setTimeout(() => { window.location.href = 'customer_portal.html'; }, 3000);
+                        formMessage.className = 'text-center mt-4 text-green-600 font-semibold';
+                        setTimeout(() => { 
+                            // Redirect to the customer portal or login page
+                            window.location.href = 'customer_portal.html'; 
+                        }, 3000);
                     } else {
-                        formMessage.textContent = data.message || 'An error occurred.';
-                        formMessage.className = 'text-center mt-4 text-red-600';
+                        formMessage.textContent = data.message || 'An error occurred. Please check your information.';
+                        formMessage.className = 'text-center mt-4 text-red-600 font-semibold';
                         submitButton.disabled = false;
                         submitButton.textContent = 'Create Account';
                     }
                 } catch (error) {
-                    formMessage.textContent = 'A network error occurred. Please try again.';
-                    formMessage.className = 'text-center mt-4 text-red-600';
+                    console.error('Submission Error:', error);
+                    formMessage.textContent = 'A network error occurred. Please try again later.';
+                    formMessage.className = 'text-center mt-4 text-red-600 font-semibold';
                     submitButton.disabled = false;
                     submitButton.textContent = 'Create Account';
                 }
@@ -192,10 +219,15 @@
         });
     </script>
     
-    <!-- ==================================================================
-         USING THE CLASSIC, RELIABLE GOOGLE SCRIPT
-         This script will call the `initAutocomplete` function once it loads.
-    ================================================================== -->
+    <!-- 
+      ==================================================================
+      THE SCRIPT THAT MAKES IT WORK
+      This loads the classic Google Maps Places library.
+      IMPORTANT: The `callback=initAutocomplete` part tells the script
+      to run our `initAutocomplete` function once it has finished loading.
+      The `async defer` attributes help the page load faster.
+      ================================================================== 
+    -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAksMo2srFUskoBWk-gIPf-DWYhateR_5Q&libraries=places&callback=initAutocomplete" async defer></script>
 </body>
 </html>
