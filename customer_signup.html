@@ -6,43 +6,21 @@
     <title>Create Your Michie Auto Detailing Account</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- ==================================================================
+         UPDATED GOOGLE SCRIPT - LOADS THE NEW PLACES ELEMENT LIBRARY
+    ================================================================== -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAksMo2srFUskoBWk-gIPf-DWYhateR_5Q&libraries=places.element&v=beta" async></script>
+
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        .hidden-section {
-            display: none;
-        }
-        .password-requirement {
-            transition: color 0.3s;
-        }
-        .valid {
-            color: #16a34a; /* green-600 */
-        }
-        .invalid {
-            color: #dc2626; /* red-600 */
-        }
-        .pac-container {
-            background-color: #FFF;
-            z-index: 1000;
-            position: fixed;
-            display: inline-block;
-            float: left;
-            border-radius: 0.5rem;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-            font-family: 'Inter', sans-serif;
-        }
-        .pac-item {
-            padding: 10px;
-            font-size: 14px;
-            cursor: pointer;
-            border-top: 1px solid #e5e7eb;
-        }
-        .pac-item:first-child {
-            border-top: none;
-        }
-        .pac-item-query {
-            font-weight: 600;
+        body { font-family: 'Inter', sans-serif; }
+        .hidden-section { display: none; }
+        .password-requirement { transition: color 0.3s; }
+        .valid { color: #16a34a; }
+        .invalid { color: #dc2626; }
+        .pac-container { z-index: 1000; }
+        /* Style the input inside Google's web component */
+        gmp-place-autocomplete > input {
+            @apply w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500;
         }
     </style>
 </head>
@@ -59,12 +37,23 @@
                 <div>
                     <h2 class="text-2xl font-semibold text-gray-700 mb-4 border-b pb-2">Account Information</h2>
                     <div class="grid grid-cols-1 gap-y-4">
-                        <input type="text" id="full-name" placeholder="Full Name" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <input type="text" id="address" placeholder="Address Where Detail is Taking Place" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <input type="tel" id="phone" placeholder="Phone Number" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <input type="email" id="email" placeholder="Email Address" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <input type="text" id="full-name" placeholder="Full Name" required class="w-full px-4 py-2 border rounded-lg">
+                        
+                        <!-- NEW: Google's Modern Autocomplete Element -->
                         <div>
-                            <input type="password" id="password" placeholder="Password" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <label for="address-autocomplete" class="sr-only">Address</label>
+                            <gmp-place-autocomplete
+                                id="address-autocomplete"
+                                placeholder="Address Where Detail is Taking Place"
+                            ></gmp-place-autocomplete>
+                            <!-- Hidden input to store the validated address for form submission -->
+                            <input type="hidden" id="address" name="address" required>
+                        </div>
+                        
+                        <input type="tel" id="phone" placeholder="Phone Number" required class="w-full px-4 py-2 border rounded-lg">
+                        <input type="email" id="email" placeholder="Email Address" required class="w-full px-4 py-2 border rounded-lg">
+                        <div>
+                            <input type="password" id="password" placeholder="Password" required class="w-full px-4 py-2 border rounded-lg">
                             <div id="password-reqs" class="text-sm text-gray-500 mt-2 space-y-1">
                                 <p id="req-length" class="password-requirement invalid">At least 6 characters</p>
                                 <p id="req-capital" class="password-requirement invalid">At least 1 capital letter</p>
@@ -100,12 +89,12 @@
                 <!-- Verification -->
                 <div>
                     <h2 class="text-2xl font-semibold text-gray-700 mb-4 border-b pb-2">Verification</h2>
-                     <input type="text" id="zip-code" placeholder="Enter Your Zip Code for Verification" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                     <input type="text" id="zip-code" placeholder="Enter Your Zip Code for Verification" required class="w-full px-4 py-2 border rounded-lg">
                 </div>
                 
                 <!-- Submission -->
                 <div>
-                    <button type="submit" id="submit-button" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 disabled:bg-gray-400">Create Account</button>
+                    <button type="submit" id="submit-button" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg">Create Account</button>
                     <p id="form-message" class="text-center mt-4"></p>
                 </div>
             </form>
@@ -118,24 +107,6 @@
     <script>
         const API_BASE_URL = 'https://michie-detailing-admin.onrender.com';
         
-        // This function needs to be globally available for the Google script's callback
-        function initAutocomplete() {
-            const addressInput = document.getElementById('address');
-            const autocomplete = new google.maps.places.Autocomplete(addressInput, {
-                componentRestrictions: { 'country': 'us' },
-                fields: ['formatted_address'],
-                types: ['address']
-            });
-
-            autocomplete.addListener('place_changed', () => {
-                const place = autocomplete.getPlace();
-                if (place.formatted_address) {
-                    addressInput.value = place.formatted_address;
-                }
-            });
-        }
-
-        // All other page logic can be wrapped in an event listener to ensure the DOM is ready
         document.addEventListener('DOMContentLoaded', () => {
             const signupForm = document.getElementById('signup-form');
             const passwordInput = document.getElementById('password');
@@ -145,6 +116,18 @@
             const secondVehicleFields = document.getElementById('second-vehicle-fields');
             const submitButton = document.getElementById('submit-button');
             const formMessage = document.getElementById('form-message');
+
+            // NEW: Logic for the modern Google Places Autocomplete Element
+            const autocompleteComponent = document.getElementById('address-autocomplete');
+            const hiddenAddressInput = document.getElementById('address');
+            
+            autocompleteComponent.addEventListener('gmp-placechange', () => {
+                const place = autocompleteComponent.place;
+                if (place) {
+                    // Update the hidden input's value when a place is selected
+                    hiddenAddressInput.value = place.formattedAddress;
+                }
+            });
 
             function validatePassword() {
                 const value = passwordInput.value;
@@ -170,6 +153,12 @@
                     return;
                 }
                 
+                // Manually update the address from the visible input just before submission
+                // This handles cases where the user types an address but doesn't select a suggestion
+                if (!hiddenAddressInput.value) {
+                    hiddenAddressInput.value = autocompleteComponent.input.value;
+                }
+                
                 submitButton.disabled = true;
                 submitButton.textContent = 'Creating Account...';
                 formMessage.textContent = '';
@@ -182,7 +171,7 @@
 
                 const formData = {
                     full_name: document.getElementById('full-name').value,
-                    address: document.getElementById('address').value,
+                    address: hiddenAddressInput.value, // Use the hidden input for submission
                     phone: document.getElementById('phone').value,
                     email: document.getElementById('email').value,
                     password: passwordInput.value,
@@ -203,7 +192,7 @@
                     });
                     const data = await response.json();
                     if (response.ok) {
-                        formMessage.textContent = 'Account created successfully! Redirecting to login...';
+                        formMessage.textContent = 'Account created successfully! Redirecting...';
                         formMessage.className = 'text-center mt-4 text-green-600';
                         setTimeout(() => { window.location.href = 'customer_portal.html'; }, 3000);
                     } else {
@@ -221,11 +210,5 @@
             });
         });
     </script>
-    
-    <!-- ==================================================================
-         THE GOOGLE SCRIPT IS NOW THE LAST THING IN THE BODY
-         This ensures all of your page's JavaScript is loaded first.
-    ================================================================== -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAksMo2srFUskoBWk-gIPf-DWYhateR_5Q&libraries=places&callback=initAutocomplete" async defer></script>
 </body>
 </html>
