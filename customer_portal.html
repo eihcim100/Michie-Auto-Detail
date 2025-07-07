@@ -1,4 +1,3 @@
-666
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -126,11 +125,12 @@
         </div>
     </div>
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk&libraries=places&callback=initPortal" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk&libraries=places&callback=initPortal" defer></script>
     <script>
         let editAddressAutocomplete;
 
-        // PATCH: Make the initPortal function globally accessible by attaching it to the window object.
+        // Make the initPortal function globally accessible by attaching it to the window object.
+        // This function is the callback for the Google Maps API script.
         window.initPortal = function() {
             initializeApp();
             const editAddressInput = document.getElementById('edit-address-input');
@@ -143,6 +143,7 @@
             }
         }
 
+        // This function contains the main application logic.
         function initializeApp() {
             const API_BASE_URL = 'https://michie-detailing-admin.onrender.com';
             
@@ -302,6 +303,7 @@
                 } catch (error) { console.error('Update address error:', error); }
             });
 
+            // Initial call to set up the UI based on whether a token exists.
             updateUI();
         }
     </script>
