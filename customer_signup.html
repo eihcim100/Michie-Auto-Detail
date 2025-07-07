@@ -1,4 +1,4 @@
-666
+777
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,33 +7,14 @@
     <title>Create Your Michie Auto Detailing Account</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- ==================================================================
-         SIMPLIFIED GOOGLE SCRIPT - LOADS THE NEW PLACES ELEMENT LIBRARY
-    ================================================================== -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAksMo2srFUskoBWk-gIPf-DWYhateR_5Q&libraries=places.element&v=beta" async></script>
-
     <style>
         body { font-family: 'Inter', sans-serif; }
         .hidden-section { display: none; }
         .password-requirement { transition: color 0.3s; }
         .valid { color: #16a34a; }
         .invalid { color: #dc2626; }
+        /* This style is for the classic autocomplete dropdown */
         .pac-container { z-index: 1000; }
-
-        /* ==================================================================
-                            THE DEFINITIVE FIX
-            This simplified CSS directly styles the Google input field
-            to ensure it is visible and matches the other form fields.
-        ================================================================== */
-        gmp-place-autocomplete > input {
-            display: block;
-            width: 100%;
-            border: 1px solid #d1d5db; /* gray-300 */
-            border-radius: 0.5rem;   /* rounded-lg */
-            padding: 0.5rem 1rem;      /* py-2 px-4 */
-            font-size: 1rem;
-            line-height: 1.5rem;
-        }
     </style>
 </head>
 <body class="bg-gray-100">
@@ -51,11 +32,12 @@
                     <div class="grid grid-cols-1 gap-y-4">
                         <input type="text" id="full-name" placeholder="Full Name" required class="w-full px-4 py-2 border rounded-lg" autocomplete="name">
                         
-                        <!-- Google's Modern Autocomplete Element -->
-                        <div>
-                            <gmp-place-autocomplete id="address-autocomplete" placeholder="Address Where Detail is Taking Place"></gmp-place-autocomplete>
-                            <input type="hidden" id="address" name="address" required>
-                        </div>
+                        <!-- ==================================================================
+                                            THE FIX IS HERE
+                            We are now using a standard <input> tag for the address.
+                            This guarantees it will be visible on the page.
+                        ================================================================== -->
+                        <input type="text" id="address" placeholder="Address Where Detail is Taking Place" required class="w-full px-4 py-2 border rounded-lg" autocomplete="street-address">
                         
                         <input type="tel" id="phone" placeholder="Phone Number" required class="w-full px-4 py-2 border rounded-lg" autocomplete="tel">
                         <input type="email" id="email" placeholder="Email Address" required class="w-full px-4 py-2 border rounded-lg" autocomplete="email">
@@ -114,6 +96,16 @@
     <script>
         const API_BASE_URL = 'https://michie-detailing-admin.onrender.com';
         
+        // This function will be called by the Google script when it loads
+        function initAutocomplete() {
+            const addressInput = document.getElementById('address');
+            const autocomplete = new google.maps.places.Autocomplete(addressInput, {
+                componentRestrictions: { 'country': 'us' },
+                fields: ['formatted_address'],
+                types: ['address']
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const signupForm = document.getElementById('signup-form');
             const passwordInput = document.getElementById('password');
@@ -123,16 +115,6 @@
             const secondVehicleFields = document.getElementById('second-vehicle-fields');
             const submitButton = document.getElementById('submit-button');
             const formMessage = document.getElementById('form-message');
-
-            const autocompleteComponent = document.getElementById('address-autocomplete');
-            const hiddenAddressInput = document.getElementById('address');
-            
-            autocompleteComponent.addEventListener('gmp-placechange', () => {
-                const place = autocompleteComponent.place;
-                if (place && place.formattedAddress) {
-                    hiddenAddressInput.value = place.formattedAddress;
-                }
-            });
 
             function validatePassword() {
                 const value = passwordInput.value;
@@ -158,14 +140,6 @@
                     return;
                 }
                 
-                // Handle case where user types an address but doesn't select a suggestion
-                if (!hiddenAddressInput.value) {
-                    const visibleInput = autocompleteComponent.input;
-                    if (visibleInput && visibleInput.value) {
-                        hiddenAddressInput.value = visibleInput.value;
-                    }
-                }
-                
                 submitButton.disabled = true;
                 submitButton.textContent = 'Creating Account...';
                 formMessage.textContent = '';
@@ -178,7 +152,7 @@
 
                 const formData = {
                     full_name: document.getElementById('full-name').value,
-                    address: hiddenAddressInput.value,
+                    address: document.getElementById('address').value,
                     phone: document.getElementById('phone').value,
                     email: document.getElementById('email').value,
                     password: passwordInput.value,
@@ -217,5 +191,11 @@
             });
         });
     </script>
+    
+    <!-- ==================================================================
+         USING THE CLASSIC, RELIABLE GOOGLE SCRIPT
+         This script will call the `initAutocomplete` function once it loads.
+    ================================================================== -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAksMo2srFUskoBWk-gIPf-DWYhateR_5Q&libraries=places&callback=initAutocomplete" async defer></script>
 </body>
 </html>
