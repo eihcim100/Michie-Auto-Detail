@@ -9,7 +9,7 @@
     <!-- ==================================================================
          UPDATED GOOGLE SCRIPT - LOADS THE NEW PLACES ELEMENT LIBRARY
     ================================================================== -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAksMo2srFUskoBWk-gIPf-DWYhateR_5Q&libraries=places.element&v=beta" async></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_API_KEY&libraries=places.element&v=beta" async></script>
 
     <style>
         body { font-family: 'Inter', sans-serif; }
@@ -18,9 +18,27 @@
         .valid { color: #16a34a; }
         .invalid { color: #dc2626; }
         .pac-container { z-index: 1000; }
-        /* Style the input inside Google's web component */
+
+        /* ==================================================================
+                                THE FIX IS HERE
+            This is standard CSS to style the input field inside Google's
+            new component, making it visible and match the other fields.
+        ================================================================== */
         gmp-place-autocomplete > input {
-            @apply w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500;
+            display: block;
+            width: 100%;
+            border: 1px solid #d1d5db; /* Tailwind gray-300 */
+            border-radius: 0.5rem; /* Tailwind rounded-lg */
+            padding: 0.5rem 1rem; /* Tailwind py-2 px-4 */
+            font-size: 1rem;
+            line-height: 1.5rem;
+            box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        }
+        gmp-place-autocomplete > input:focus {
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+            border-color: #3b82f6; /* Tailwind blue-500 */
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
         }
     </style>
 </head>
@@ -117,14 +135,12 @@
             const submitButton = document.getElementById('submit-button');
             const formMessage = document.getElementById('form-message');
 
-            // NEW: Logic for the modern Google Places Autocomplete Element
             const autocompleteComponent = document.getElementById('address-autocomplete');
             const hiddenAddressInput = document.getElementById('address');
             
             autocompleteComponent.addEventListener('gmp-placechange', () => {
                 const place = autocompleteComponent.place;
                 if (place) {
-                    // Update the hidden input's value when a place is selected
                     hiddenAddressInput.value = place.formattedAddress;
                 }
             });
@@ -153,10 +169,11 @@
                     return;
                 }
                 
-                // Manually update the address from the visible input just before submission
-                // This handles cases where the user types an address but doesn't select a suggestion
                 if (!hiddenAddressInput.value) {
-                    hiddenAddressInput.value = autocompleteComponent.input.value;
+                    const visibleInput = autocompleteComponent.input;
+                    if (visibleInput && visibleInput.value) {
+                        hiddenAddressInput.value = visibleInput.value;
+                    }
                 }
                 
                 submitButton.disabled = true;
@@ -171,7 +188,7 @@
 
                 const formData = {
                     full_name: document.getElementById('full-name').value,
-                    address: hiddenAddressInput.value, // Use the hidden input for submission
+                    address: hiddenAddressInput.value,
                     phone: document.getElementById('phone').value,
                     email: document.getElementById('email').value,
                     password: passwordInput.value,
