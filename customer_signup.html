@@ -8,38 +8,36 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- The new Places API requires its own library. loading=async is best practice. -->
-    <script type="module" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk&libraries=places,core&loading=async"></script>
+    <!-- Libraries changed to 'places' only, as we are using Autocomplete directly -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk&libraries=places&loading=async"></script>
 
     <style>
         body { font-family: 'Inter', sans-serif; }
         .hidden-section, .hidden { display: none !important; } /* Use !important to ensure it stays hidden */
         .password-requirement { transition: color 0.3s; }
         .valid { color: #16a34a; /* Green */ }
-        .invalid { color: #dc2626; /* Red */ }\
+        .invalid { color: #dc2626; /* Red */ }
         
-        /* Styling for the new Place Autocomplete Element */
-        gmp-place-autocomplete {
-            width: 100%;
-        }
-        gmp-place-autocomplete input {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid #d1d5db !important; 
+        /* Basic styling for Autocomplete dropdown */
+        .pac-container {
+            background-color: #fff;
             border-radius: 0.5rem;
-            font-size: 1rem;
-            box-shadow: none;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            z-index: 1000; /* Ensure it's above other elements */
         }
-        gmp-place-autocomplete input:focus {
-            --tw-ring-color: #3b82f6;
-            --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-            --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-            box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
-            border-color: #3b82f6;
-            outline: 2px solid transparent;
-            outline-offset: 2px;
+        .pac-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            border-bottom: 1px solid #e5e7eb;
         }
-        gmp-place-autocomplete::part(icon) {
-            display: none;
+        .pac-item:hover {
+            background-color: #f3f4f6;
+        }
+        .pac-item-query {
+            font-weight: 600;
+        }
+        .pac-icon {
+            display: none; /* Hide default Google Maps icon */
         }
     </style>
 </head>
@@ -58,22 +56,19 @@
                     <div class="grid grid-cols-1 gap-y-4">
                         <input type="text" id="full-name" placeholder="Full Name" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="name">
                         
-                        <!-- Step 1: Search Box (initially visible) -->
-                        <div id="address-search-container">
-                            <gmp-place-autocomplete
-                                id="address-autocomplete"
-                                placeholder="Service Address"
-                                country="us"
-                                requested-fields="addressComponents,formattedAddress,geometry,name">
-                            </gmp-place-autocomplete>
+                        <!-- Separate Address Fields -->
+                        <div>
+                            <input type="text" id="address-line1" placeholder="Address Line 1" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="address-line1">
+                            <p class="text-sm text-gray-500 mt-1 pl-1">Start typing and select from suggestions.</p>
                         </div>
-
-                        <!-- Step 2: Confirmed Address Display (initially hidden) -->
-                        <div id="selected-address-container" class="hidden items-center justify-between p-3 bg-gray-100 rounded-lg">
-                            <p id="selected-address-text" class="text-gray-800 pr-4"></p>
-                            <button type="button" id="change-address-btn" class="text-sm text-blue-600 hover:underline font-semibold flex-shrink-0">Change</button>
+                        <input type="text" id="address-line2" placeholder="Address Line 2 (Optional)" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="address-line2">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <input type="text" id="city" placeholder="City" required class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="address-level2">
+                            <input type="text" id="state" placeholder="State (e.g., CA)" required class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="address-level1">
                         </div>
+                        <input type="text" id="zip-code" placeholder="Zip Code" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="postal-code">
 
+                        <!-- Hidden flag to confirm Google validation -->
                         <input type="checkbox" id="address-confirmed-flag" class="hidden">
 
                         <input type="tel" id="phone" placeholder="Phone Number" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="tel">
@@ -112,12 +107,6 @@
                     </div>
                 </div>
 
-                <!-- Verification -->
-                <div>
-                    <h2 class="text-2xl font-semibold text-gray-700 mb-4 border-b pb-2">Verification</h2>
-                     <input type="text" id="zip-code" placeholder="Enter Your Zip Code for Verification" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="postal-code">
-                </div>
-                
                 <!-- Submission -->
                 <div>
                     <button type="submit" id="submit-button" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-300 disabled:bg-gray-400">Create Account</button>
@@ -141,71 +130,93 @@
             const secondVehicleFields = document.getElementById('second-vehicle-fields');
             const submitButton = document.getElementById('submit-button');
             const formMessage = document.getElementById('form-message');
-            const zipCodeInput = document.getElementById('zip-code');
-
-            // --- Address Handling Elements ---
-            const addressSearchContainer = document.getElementById('address-search-container');
-            const selectedAddressContainer = document.getElementById('selected-address-container');
-            const selectedAddressText = document.getElementById('selected-address-text');
-            const changeAddressBtn = document.getElementById('change-address-btn');
-            const addressConfirmedFlag = document.getElementById('address-confirmed-flag');
             
-            // --- Logic for when a place is selected from the dropdown ---
-            customElements.whenDefined('gmp-place-autocomplete').then(() => {
-                const autocompleteElement = document.getElementById('address-autocomplete');
-                
-                autocompleteElement.addEventListener('gmp-placeselect', (event) => {
-                    const place = event.place;
-                    if (!place || !place.formattedAddress) {
-                        selectedAddressText.textContent = ''; 
-                        addressConfirmedFlag.checked = false; // Un-flag if invalid
-                        // Ensure the autocomplete input is re-enabled if selection is invalid
-                        if (autocompleteElement.shadowRoot) {
-                            autocompleteElement.shadowRoot.querySelector('input').disabled = false;
-                        }
+            // --- Address Handling Elements ---
+            const addressLine1Input = document.getElementById('address-line1');
+            const addressLine2Input = document.getElementById('address-line2');
+            const cityInput = document.getElementById('city');
+            const stateInput = document.getElementById('state');
+            const zipCodeInput = document.getElementById('zip-code');
+            const addressConfirmedFlag = document.getElementById('address-confirmed-flag');
+
+            // --- Google Places Autocomplete Initialization ---
+            let autocomplete;
+            function initAutocomplete() {
+                // Create the autocomplete object, restricting the search to geographical location types.
+                autocomplete = new google.maps.places.Autocomplete(addressLine1Input, {
+                    types: ['address'],
+                    componentRestrictions: { 'country': ['us'] } // Restrict to US addresses
+                });
+
+                // When the user selects an address from the dropdown, populate the address fields.
+                autocomplete.addListener('place_changed', () => {
+                    const place = autocomplete.getPlace();
+
+                    if (!place.address_components) {
+                        console.error('No address components found for the selected place.');
+                        addressConfirmedFlag.checked = false;
                         return;
                     }
 
-                    // 1. Store the data in the VISIBLE text element
-                    selectedAddressText.textContent = place.formattedAddress;
+                    // Reset fields
+                    addressLine1Input.value = '';
+                    cityInput.value = '';
+                    stateInput.value = '';
+                    zipCodeInput.value = '';
+                    addressConfirmedFlag.checked = false;
 
-                    const zipCodeComponent = place.addressComponents?.find(c => c.types.includes('postal_code'));
-                    if (zipCodeComponent) {
-                        zipCodeInput.value = zipCodeComponent.longText;
+                    let streetNumber = '';
+                    let streetName = '';
+
+                    // Get each component of the address from the place details,
+                    // and then fill the corresponding field in the form.
+                    for (const component of place.address_components) {
+                        const componentType = component.types[0];
+
+                        switch (componentType) {
+                            case 'street_number':
+                                streetNumber = component.long_name;
+                                break;
+                            case 'route':
+                                streetName = component.long_name;
+                                break;
+                            case 'locality':
+                                cityInput.value = component.long_name;
+                                break;
+                            case 'administrative_area_level_1':
+                                stateInput.value = component.short_name; // Use short_name (e.g., CA)
+                                break;
+                            case 'postal_code':
+                                zipCodeInput.value = component.long_name;
+                                break;
+                        }
                     }
+                    addressLine1Input.value = streetNumber + ' ' + streetName;
 
-                    // 2. Set our reliable confirmation flag to true
-                    addressConfirmedFlag.checked = true;
-
-                    // 3. Disable the autocomplete input to lock the selection
-                    if (autocompleteElement.shadowRoot) {
-                        autocompleteElement.shadowRoot.querySelector('input').disabled = true;
+                    // Set the flag to true if we successfully populated the fields
+                    if (addressLine1Input.value && cityInput.value && stateInput.value && zipCodeInput.value) {
+                        addressConfirmedFlag.checked = true;
+                    } else {
+                        // If any required field is missing, consider it not fully validated
+                        addressConfirmedFlag.checked = false;
+                        formMessage.textContent = 'Please select a more specific address from the dropdown.';
+                        formMessage.className = 'text-center mt-4 text-red-600 font-semibold';
                     }
-
-                    // 4. Update the UI 
-                    addressSearchContainer.classList.add('hidden');
-                    selectedAddressContainer.classList.remove('hidden');
-                    selectedAddressContainer.classList.add('flex');
                 });
-            });
 
-            // --- Logic for the "Change" button ---
-            changeAddressBtn.addEventListener('click', () => {
-                // 1. Clear the visual data and UNCHECK the flag
-                selectedAddressText.textContent = '';
-                addressConfirmedFlag.checked = false;
-                const autocompleteElement = document.getElementById('address-autocomplete');
-                if (autocompleteElement.shadowRoot) {
-                    autocompleteElement.shadowRoot.querySelector('input').value = '';
-                    // 2. Re-enable the autocomplete input
-                    autocompleteElement.shadowRoot.querySelector('input').disabled = false;
-                }
+                // Clear the address-confirmed-flag if the user manually changes addressLine1 after selection
+                addressLine1Input.addEventListener('input', () => {
+                    addressConfirmedFlag.checked = false;
+                });
+            }
 
-                // 3. Update the UI to show the search box again
-                selectedAddressContainer.classList.add('hidden');
-                selectedAddressContainer.classList.remove('flex');
-                addressSearchContainer.classList.remove('hidden');
-            });
+            // Ensure Google Maps API is loaded before initializing Autocomplete
+            if (typeof google !== 'undefined' && typeof google.maps !== 'undefined' && typeof google.maps.places !== 'undefined') {
+                initAutocomplete();
+            } else {
+                // Fallback if API not loaded, though 'loading=async' should handle it
+                window.addEventListener('load', initAutocomplete);
+            }
 
             // --- Password Validation ---
             function validatePassword() {
@@ -237,16 +248,31 @@
                     return;
                 }
                 
-                // The check is now against our reliable hidden checkbox flag
-                if (!addressConfirmedFlag.checked) {
-                    formMessage.textContent = 'Please select a valid service address from the dropdown.';
+                // Frontend validation for new address fields
+                if (!addressLine1Input.value || !cityInput.value || !stateInput.value || !zipCodeInput.value) {
+                    formMessage.textContent = 'Please fill in all required address fields.';
                     formMessage.className = 'text-center mt-4 text-red-600 font-semibold';
                     return;
                 }
 
+                // Check if the address was selected via Google Autocomplete
+                if (!addressConfirmedFlag.checked) {
+                    formMessage.textContent = 'Please select your address from the Google suggestions for validation.';
+                    formMessage.className = 'text-center mt-4 text-red-600 font-semibold';
+                    return;
+                }
+
+
                 submitButton.disabled = true;
                 submitButton.textContent = 'Creating Account...';
                 formMessage.textContent = '';
+
+                // Construct the full address string from individual fields
+                let fullAddress = addressLine1Input.value;
+                if (addressLine2Input.value) {
+                    fullAddress += ', ' + addressLine2Input.value;
+                }
+                fullAddress += ', ' + cityInput.value + ', ' + stateInput.value + ' ' + zipCodeInput.value;
 
                 const vehicle2 = addSecondVehicleCheckbox.checked ? {
                     year: document.getElementById('year2').value,
@@ -256,11 +282,11 @@
 
                 const formData = {
                     full_name: document.getElementById('full-name').value,
-                    address: selectedAddressText.textContent, // Use the visible text
+                    address: fullAddress, // Send the bundled address string
                     phone: document.getElementById('phone').value,
                     email: document.getElementById('email').value,
                     password: passwordInput.value,
-                    zip_code: zipCodeInput.value,
+                    zip_code: zipCodeInput.value, // Still send zip_code separately if backend expects it
                     vehicle1: {
                         year: document.getElementById('year1').value,
                         make: document.getElementById('make1').value,
