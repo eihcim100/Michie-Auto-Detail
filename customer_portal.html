@@ -59,7 +59,7 @@
             background-color: #ffffff;
             border: 1px solid #dee2e6;
             border-radius: 0.75rem;
-            padding: 2rem; /* Increased padding for a boxier look */
+            padding: 1.25rem; /* Adjusted padding for a more square/compact look */
             display: flex;
             flex-direction: column;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* More prominent shadow */
@@ -71,28 +71,28 @@
             box-shadow: 0 15px 30px rgba(0, 123, 255, 0.2); /* Enhanced hover shadow */
         }
         .pricing-level {
-            font-size: 1.5rem; /* Restored slightly larger font for clarity */
+            font-size: 1.2rem; /* Smaller font size */
             font-weight: 800;
             color: #212529;
-            margin-bottom: 0.75rem; /* Adjusted margin */
+            margin-bottom: 0.5rem; /* Adjusted margin */
         }
         .pricing-price {
-            font-size: 2.5rem; /* Restored slightly larger font for clarity */
+            font-size: 2rem; /* Smaller font size */
             font-weight: 800;
             color: #28a745;
-            margin-bottom: 2rem; /* Adjusted margin */
+            margin-bottom: 1.5rem; /* Adjusted margin */
         }
         .feature-list {
             list-style: none;
             padding: 0;
             text-align: left;
             flex-grow: 1;
-            margin-bottom: 2rem; /* Space before button */
+            margin-bottom: 1.5rem; /* Reduced space before button */
         }
         .feature-list li {
             position: relative;
             padding-left: 1.75rem;
-            margin-bottom: 1rem; /* Increased margin for better spacing */
+            margin-bottom: 0.6rem; /* Reduced margin for tighter spacing */
             color: #495057;
         }
         .feature-list li::before {
@@ -140,9 +140,7 @@
         .package-slider-track {
             display: flex;
             transition: transform 0.5s ease-in-out; /* Smooth sliding animation */
-            /* Removed scroll-snap-type for JS control */
             -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-            /* Added for consistent spacing within the flex container */
             padding: 0 1rem; /* Adjust padding to match card margins */
         }
         .package-slider-dots {
@@ -200,17 +198,15 @@
             .pricing-grid {
                 display: flex; /* Change to flex for horizontal sliding */
                 overflow: hidden; /* Hide overflow, JS controls movement */
-                /* Removed scroll-snap-type */
                 gap: 0; /* No gap in flex container, gap handled by card margin */
                 padding: 0; /* Reset padding from desktop grid */
             }
             .pricing-card {
                 flex-shrink: 0; /* Prevent cards from shrinking */
                 width: 100%; /* Each card takes full width of the track */
-                /* Removed scroll-snap-align */
                 margin-left: 0; /* Reset margins from desktop grid */
                 margin-right: 0; /* Reset margins from desktop grid */
-                padding: 1.5rem; /* Adjusted padding for mobile cards */
+                padding: 1.25rem; /* Adjusted padding for mobile cards */
             }
             /* Ensure cards are centered within the mobile viewport */
             .package-slider-track .pricing-card {
@@ -607,7 +603,7 @@
 
             let customerData = {}; 
             const availableTimes = ['09:00', '11:00', '12:00', '14:00', '16:00', '17:00', '18:00'];
-            const SLIDE_INTERVAL_TIME = 12000; // 12 seconds
+            const SLIDE_INTERVAL_TIME = 12000; // 12 seconds (No longer used for auto-rotation, but kept as a constant)
             const MOBILE_BREAKPOINT = 767; // px
 
             // Store slider instances
@@ -904,7 +900,7 @@
                 }
 
                 let currentSlide = 0;
-                let slideInterval = null;
+                // Removed slideInterval as auto-rotation is no longer desired.
 
                 // Clear existing dots
                 sliderDotsContainer.innerHTML = '';
@@ -915,7 +911,7 @@
                     dot.classList.add('slider-dot');
                     dot.addEventListener('click', () => {
                         goToSlide(index);
-                        resetAutoSlide();
+                        // No need to reset auto-slide as there's no auto-slide
                     });
                     sliderDotsContainer.appendChild(dot);
                 });
@@ -941,12 +937,10 @@
 
                 function prevSlide() {
                     goToSlide(currentSlide - 1);
-                    resetAutoSlide();
                 }
 
                 function nextSlide() {
                     goToSlide(currentSlide + 1);
-                    resetAutoSlide();
                 }
 
                 function updateDots() {
@@ -959,24 +953,7 @@
                     });
                 }
 
-                function startAutoSlide() {
-                    if (window.innerWidth <= MOBILE_BREAKPOINT) {
-                        stopAutoSlide(); // Clear any existing interval
-                        slideInterval = setInterval(nextSlide, SLIDE_INTERVAL_TIME);
-                    }
-                }
-
-                function stopAutoSlide() {
-                    if (slideInterval) {
-                        clearInterval(slideInterval);
-                        slideInterval = null;
-                    }
-                }
-
-                function resetAutoSlide() {
-                    stopAutoSlide();
-                    startAutoSlide();
-                }
+                // Removed startAutoSlide, stopAutoSlide, resetAutoSlide functions.
 
                 // Attach arrow button event listeners
                 prevBtn.addEventListener('click', prevSlide);
@@ -984,17 +961,16 @@
 
                 // Initial setup
                 updateSliderPosition();
-                startAutoSlide();
+                // Removed initial call to startAutoSlide.
 
                 // Return an object with methods to control the slider, useful for cleanup
                 return {
-                    start: startAutoSlide,
-                    stop: stopAutoSlide,
+                    // Removed start/stop methods as auto-rotation is gone.
                     goTo: goToSlide,
                     destroy: () => {
-                        stopAutoSlide();
+                        // No auto-slide to stop here.
                         prevBtn.removeEventListener('click', prevSlide);
-                        nextBtn.removeEventListener('click', nextBtn); // Fix: nextBtn instead of prevBtn
+                        nextBtn.removeEventListener('click', nextSlide);
                         dots.forEach(dot => dot.removeEventListener('click', () => {})); // Remove dot listeners
                     }
                 };
@@ -1012,9 +988,9 @@
                 elements.selectTruckBtn.classList.remove('active');
                 elements.selectSuvBtn.classList.remove('active');
 
-                // Stop any running sliders when returning to vehicle type selection
-                if (sedanSliderInstance) sedanSliderInstance.stop();
-                if (suvTruckSliderInstance) suvTruckSliderInstance.stop();
+                // Destroy any running sliders when returning to vehicle type selection
+                if (sedanSliderInstance) { sedanSliderInstance.destroy(); sedanSliderInstance = null; }
+                if (suvTruckSliderInstance) { suvTruckSliderInstance.destroy(); suvTruckSliderInstance = null; }
             }
 
             function showPackageSelection(vehicleCategory, clickedButton) {
@@ -1026,9 +1002,9 @@
                 elements.sedanPackagesSlider.style.display = 'none';
                 elements.suvTruckPackagesSlider.style.display = 'none';
 
-                // Stop existing sliders before showing a new one
-                if (sedanSliderInstance) sedanSliderInstance.stop();
-                if (suvTruckSliderInstance) suvTruckSliderInstance.stop();
+                // Destroy existing sliders before showing a new one
+                if (sedanSliderInstance) { sedanSliderInstance.destroy(); sedanSliderInstance = null; }
+                if (suvTruckSliderInstance) { suvTruckSliderInstance.destroy(); suvTruckSliderInstance = null; }
 
                 // Remove active class from all vehicle type buttons
                 elements.selectCarBtn.classList.remove('active');
@@ -1037,26 +1013,33 @@
                 // Add active class to the clicked button
                 clickedButton.classList.add('active');
 
-                if (vehicleCategory === 'sedan') {
-                    elements.sedanPackagesSlider.style.display = 'block';
-                    // Initialize or restart slider
-                    if (!sedanSliderInstance) { 
-                        sedanSliderInstance = initPackageSlider('sedan-packages-slider', 'sedan-packages-track', 'sedan-packages-dots', 'sedan-prev-btn', 'sedan-next-btn');
+                // Use a setTimeout to allow elements to become visible before initializing slider
+                setTimeout(() => {
+                    if (window.innerWidth <= MOBILE_BREAKPOINT) {
+                        if (vehicleCategory === 'sedan') {
+                            elements.sedanPackagesSlider.style.display = 'block';
+                            sedanSliderInstance = initPackageSlider('sedan-packages-slider', 'sedan-packages-track', 'sedan-packages-dots', 'sedan-prev-btn', 'sedan-next-btn');
+                            if (sedanSliderInstance) sedanSliderInstance.goTo(0);
+                        } else if (vehicleCategory === 'suv-truck') {
+                            elements.suvTruckPackagesSlider.style.display = 'block';
+                            suvTruckSliderInstance = initPackageSlider('suv-truck-packages-slider', 'suv-truck-packages-track', 'suv-truck-packages-dots', 'suv-truck-prev-btn', 'suv-truck-next-btn');
+                            if (suvTruckSliderInstance) suvTruckSliderInstance.goTo(0);
+                        }
                     } else {
-                        sedanSliderInstance.start(); 
-                        sedanSliderInstance.goTo(0); // Go to first slide when showing
+                        // Desktop view: ensure grid is displayed directly
+                        if (vehicleCategory === 'sedan') {
+                            elements.sedanPackagesSlider.style.display = 'block';
+                            elements.sedanPackagesTrack.style.display = 'grid';
+                            elements.sedanPackagesTrack.style.transform = 'translateX(0)';
+                        } else if (vehicleCategory === 'suv-truck') {
+                            elements.suvTruckPackagesSlider.style.display = 'block';
+                            elements.suvTruckPackagesTrack.style.display = 'grid';
+                            elements.suvTruckPackagesTrack.style.transform = 'translateX(0)';
+                        }
                     }
-                } else if (vehicleCategory === 'suv-truck') {
-                    elements.suvTruckPackagesSlider.style.display = 'block';
-                    // Initialize or restart slider
-                     if (!suvTruckSliderInstance) { 
-                        suvTruckSliderInstance = initPackageSlider('suv-truck-packages-slider', 'suv-truck-packages-track', 'suv-truck-packages-dots', 'suv-truck-prev-btn', 'suv-truck-next-btn');
-                    } else {
-                        suvTruckSliderInstance.start(); 
-                        suvTruckSliderInstance.goTo(0); // Go to first slide when showing
-                    }
-                }
-                 elements.finalBookAppointmentBtn.style.display = 'none'; // Hide final book button until package is selected
+                }, 50); // Small delay to ensure elements are rendered
+                
+                elements.finalBookAppointmentBtn.style.display = 'none'; // Hide final book button until package is selected
             }
 
             function handlePackageSelection(packageType, packagePrice) {
@@ -1071,9 +1054,9 @@
                 elements.bookingFormSection.style.display = 'block'; // Show main booking form
                 elements.finalBookAppointmentBtn.style.display = 'block'; // Show final book button
 
-                // Stop any running sliders when a package is selected
-                if (sedanSliderInstance) sedanSliderInstance.stop();
-                if (suvTruckSliderInstance) suvTruckSliderInstance.stop();
+                // Destroy any running sliders when a package is selected
+                if (sedanSliderInstance) { sedanSliderInstance.destroy(); sedanSliderInstance = null; }
+                if (suvTruckSliderInstance) { suvTruckSliderInstance.destroy(); suvTruckSliderInstance = null; }
             }
 
             // --- All Event Listeners ---
@@ -1100,9 +1083,9 @@
                 elements.packageSelectionContainer.style.display = 'none';
                 elements.vehicleTypeSelection.style.display = 'none';
 
-                // Stop any running sliders
-                if (sedanSliderInstance) sedanSliderInstance.stop();
-                if (suvTruckSliderInstance) suvTruckSliderInstance.stop();
+                // Destroy any running sliders
+                if (sedanSliderInstance) { sedanSliderInstance.destroy(); sedanSliderInstance = null; }
+                if (suvTruckSliderInstance) { suvTruckSliderInstance.destroy(); suvTruckSliderInstance = null; }
             });
             elements.editAddressBtn.addEventListener('click', () => { 
                 elements.addressEditSection.style.display = elements.addressEditSection.style.display === 'block' ? 'none' : 'block'; 
@@ -1114,9 +1097,9 @@
                 elements.packageSelectionContainer.style.display = 'none';
                 elements.vehicleTypeSelection.style.display = 'none';
 
-                // Stop any running sliders
-                if (sedanSliderInstance) sedanSliderInstance.stop();
-                if (suvTruckSliderInstance) suvTruckSliderInstance.stop();
+                // Destroy any running sliders
+                if (sedanSliderInstance) { sedanSliderInstance.destroy(); sedanSliderInstance = null; }
+                if (suvTruckSliderInstance) { suvTruckSliderInstance.destroy(); suvTruckSliderInstance = null; }
             });
             
             elements.showFinanceBtn.addEventListener('click', () => { 
@@ -1136,9 +1119,9 @@
                 elements.packageSelectionContainer.style.display = 'none';
                 elements.vehicleTypeSelection.style.display = 'none';
 
-                // Stop any running sliders
-                if (sedanSliderInstance) sedanSliderInstance.stop();
-                if (suvTruckSliderInstance) suvTruckSliderInstance.stop();
+                // Destroy any running sliders
+                if (sedanSliderInstance) { sedanSliderInstance.destroy(); sedanSliderInstance = null; }
+                if (suvTruckSliderInstance) { suvTruckSliderInstance.destroy(); suvTruckSliderInstance = null; }
             });
 
             // Event listeners for date input changes to re-render time buttons
@@ -1256,40 +1239,40 @@
 
             // Handle window resize to re-evaluate slider activation
             window.addEventListener('resize', () => {
+                // If transitioning to mobile view and a slider is active, re-initialize it
                 if (window.innerWidth <= MOBILE_BREAKPOINT) {
-                    // Re-initialize if not already and visible
                     if (elements.sedanPackagesSlider.style.display === 'block' && !sedanSliderInstance) {
                         sedanSliderInstance = initPackageSlider('sedan-packages-slider', 'sedan-packages-track', 'sedan-packages-dots', 'sedan-prev-btn', 'sedan-next-btn');
+                        if (sedanSliderInstance) sedanSliderInstance.goTo(0);
                     }
                     if (elements.suvTruckPackagesSlider.style.display === 'block' && !suvTruckSliderInstance) {
                         suvTruckSliderInstance = initPackageSlider('suv-truck-packages-slider', 'suv-truck-packages-track', 'suv-truck-packages-dots', 'suv-truck-prev-btn', 'suv-truck-next-btn');
+                        if (suvTruckSliderInstance) suvTruckSliderInstance.goTo(0);
                     }
-                    // Start auto-slide if visible
-                    if (elements.sedanPackagesSlider.style.display === 'block' && sedanSliderInstance) sedanSliderInstance.start();
-                    if (elements.suvTruckPackagesSlider.style.display === 'block' && suvTruckSliderInstance) suvTruckSliderInstance.start();
                 } else {
-                    // Stop sliders and revert to grid layout on larger screens
-                    if (sedanSliderInstance) sedanSliderInstance.stop();
-                    if (suvTruckSliderInstance) suvTruckSliderInstance.stop();
-                    // Ensure grid display is set for desktop if it was flex for mobile
-                    if (elements.sedanPackagesSlider.style.display === 'block') {
+                    // If transitioning to desktop view, destroy sliders and ensure grid layout
+                    if (sedanSliderInstance) {
+                        sedanSliderInstance.destroy();
+                        sedanSliderInstance = null;
                         elements.sedanPackagesTrack.style.display = 'grid';
-                        elements.sedanPackagesTrack.style.overflow = 'unset'; /* Revert overflow */
-                        elements.sedanPackagesTrack.style.transform = 'translateX(0)'; /* Reset transform */
+                        elements.sedanPackagesTrack.style.overflow = 'unset';
+                        elements.sedanPackagesTrack.style.transform = 'translateX(0)';
                         Array.from(elements.sedanPackagesTrack.children).forEach(card => {
                             card.style.flexShrink = 'unset';
                             card.style.width = 'unset';
-                            card.style.padding = '2rem'; /* Reset padding for desktop cards */
+                            card.style.padding = '1.25rem'; // Ensure desktop padding
                         });
                     }
-                     if (elements.suvTruckPackagesSlider.style.display === 'block') {
+                    if (suvTruckSliderInstance) {
+                        suvTruckSliderInstance.destroy();
+                        suvTruckSliderInstance = null;
                         elements.suvTruckPackagesTrack.style.display = 'grid';
-                        elements.suvTruckPackagesTrack.style.overflow = 'unset'; /* Revert overflow */
-                        elements.suvTruckPackagesTrack.style.transform = 'translateX(0)'; /* Reset transform */
+                        elements.suvTruckPackagesTrack.style.overflow = 'unset';
+                        elements.suvTruckPackagesTrack.style.transform = 'translateX(0)';
                         Array.from(elements.suvTruckPackagesTrack.children).forEach(card => {
                             card.style.flexShrink = 'unset';
                             card.style.width = 'unset';
-                            card.style.padding = '2rem'; /* Reset padding for desktop cards */
+                            card.style.padding = '1.25rem'; // Ensure desktop padding
                         });
                     }
                 }
