@@ -518,6 +518,14 @@
                 editAddressAutocomplete = new google.maps.places.Autocomplete(editAddressInput, {
                     componentRestrictions: { country: "us" }, fields: ["formatted_address"], types: ["address"],
                 });
+                // Listen for place_changed event if you want to use the formatted address from autocomplete
+                editAddressAutocomplete.addListener('place_changed', () => {
+                    const place = editAddressAutocomplete.getPlace();
+                    if (place.formatted_address) {
+                        editAddressInput.value = place.formatted_address;
+                        console.log("Autocomplete selected address:", place.formatted_address);
+                    }
+                });
             }
         }
 
@@ -876,7 +884,7 @@
                     const button = document.createElement('button'); // Explicitly create a button
                     button.type = 'button'; // Set type to button to prevent form submission
                     // Apply base styling classes directly here for robustness.
-                    button.classList.add('time-button', 'px-4', 'py-2', 'rounded-lg', 'border-2', 'font-medium', 'cursor-pointer', 'transition-all', 'duration-300', 'bg-blue-100', 'text-blue-800', 'border-blue-300', 'shadow-sm', 'inline-flex', 'justify-center', 'items-center', 'whitespace-nowrap'); 
+                    button.classList.add('time-button', 'px-4', 'py-2', 'rounded-lg', 'border-2', 'font-medium', 'cursor-pointer', 'transition-all', 'duration-300', 'bg-blue-100', 'text-blue-800', 'border-blue-300', 'shadow-sm', 'inline-flex', 'justify-content-center', 'items-center', 'whitespace-nowrap'); 
                     button.textContent = formatTimeDisplay(time);
                     button.dataset.time = time; // Store the 24hr time for easy access
 
@@ -1199,6 +1207,7 @@
                     make: document.getElementById(`${type}-vehicle-make`).value,
                     model: document.getElementById(`${type}-vehicle-model`).value,
                 };
+                console.log(`[handleVehicleUpdate] Sending update for vehicle ${vehicleId}:`, payload);
                 const { ok, data } = await apiCall(`/customer/vehicle/${vehicleId}`, 'PUT', payload);
                 elements.vehicleMessage.textContent = data.message;
                 if(ok) {
@@ -1216,6 +1225,7 @@
                     make: document.getElementById('add-vehicle-make').value,
                     model: document.getElementById('add-vehicle-model').value,
                 };
+                console.log(`[handleAddVehicle] Sending add vehicle request:`, payload);
                 const { ok, data } = await apiCall('/customer/vehicle', 'POST', payload);
                 elements.vehicleMessage.textContent = data.message;
                 if(ok) {
@@ -1228,6 +1238,7 @@
 
             async function handleVehicleDelete(vehicleId) {
                 if(!vehicleId) return;
+                console.log(`[handleVehicleDelete] Sending delete request for vehicle ${vehicleId}`);
                 const { ok, data } = await apiCall(`/customer/vehicle/${vehicleId}`, 'DELETE');
                 elements.vehicleMessage.textContent = data.message;
                 if(ok) {
@@ -1241,6 +1252,7 @@
             async function handleAddressUpdate(e) {
                 e.preventDefault();
                 const newAddress = document.getElementById('edit-address-input').value;
+                console.log("[handleAddressUpdate] New address captured:", newAddress); // Log the captured address
                 if (!newAddress) {
                     elements.addressMessage.textContent = 'Please enter an address.';
                     elements.addressMessage.style.color = 'red';
