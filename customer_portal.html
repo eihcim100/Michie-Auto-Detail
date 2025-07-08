@@ -494,6 +494,8 @@
             <div id="vehicle-management-section" class="form-section bg-white p-8 rounded-xl shadow-md">
                 <!-- Vehicle management forms will be rendered here by JS -->
             </div>
+            <!-- Moved vehicle-message outside dynamic rendering -->
+            <p id="vehicle-message" class="text-center mt-2"></p>
 
             <div id="address-edit-section" class="form-section bg-white p-8 rounded-xl shadow-md">
                  <h3 class="text-xl font-bold text-gray-700 mb-4">Update Address</h3>
@@ -501,8 +503,9 @@
                     <input type="text" id="edit-address-input" placeholder="Search for new address..." required class="w-full px-3 py-2 border rounded-lg">
                     <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg">Save New Address</button>
                  </form>
-                 <p id="address-message" class="text-center mt-2"></p>
             </div>
+            <!-- Moved address-message outside dynamic rendering -->
+            <p id="address-message" class="text-center mt-2"></p>
         </div>
     </div>
 
@@ -532,8 +535,8 @@
                 editAddressBtn: document.getElementById('edit-address-btn'),
                 vehicleManagementSection: document.getElementById('vehicle-management-section'),
                 addressEditSection: document.getElementById('address-edit-section'),
-                vehicleMessage: document.getElementById('vehicle-message'),
-                addressMessage: document.getElementById('address-message'),
+                vehicleMessage: document.getElementById('vehicle-message'), // Now a persistent element
+                addressMessage: document.getElementById('address-message'), // Now a persistent element
                 bookingMessage: document.getElementById('booking-message'),
                 bookingForm: document.getElementById('booking-form'),
                 editAddressForm: document.getElementById('edit-address-form'),
@@ -577,10 +580,6 @@
             const availableTimes = ['09:00', '11:00', '12:00', '14:00', '16:00', '17:00', '18:00'];
             const MOBILE_BREAKPOINT = 767; // px
 
-            // Declare initialCSTHour and initialCSTMinute globally or in a scope accessible to renderTimeButtons
-            let initialCSTHour;
-            let initialCSTMinute;
-
             function updateUI() {
                 const token = localStorage.getItem('customerToken');
                 if (token) {
@@ -597,12 +596,7 @@
                 elements.bookingDateInput.value = todayFormatted;
                 elements.financingBookingDateInput.value = todayFormatted;
                 
-                // Capture current CST time once on UI update (triggered by login or initial load)
-                const now = new Date();
-                initialCSTHour = parseInt(now.toLocaleString('en-US', { hour: '2-digit', hourCycle: 'h23', timeZone: 'America/Chicago' }));
-                initialCSTMinute = parseInt(now.toLocaleString('en-US', { minute: '2-digit', timeZone: 'America/Chicago' }));
-                console.log(`[initializeApp] Initial CST Time Captured: ${initialCSTHour}:${initialCSTMinute}`);
-
+                // Render time buttons on UI update
                 renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, elements.bookingDateInput.value);
                 renderTimeButtons(elements.financingTimeButtonsContainer, elements.selectedFinancingTimeInput, elements.financingBookingDateInput.value);
             }
@@ -647,12 +641,14 @@
             }
 
             function renderVehicleManagementForms() {
+                // Clear previous messages when re-rendering forms
+                elements.vehicleMessage.textContent = ''; 
+
                 elements.vehicleManagementSection.innerHTML = `
                     <h3 class="text-xl font-bold text-gray-700 mb-4">Manage Vehicles</h3>
                     <form id="edit-primary-vehicle-form" class="space-y-3 p-4 border rounded-lg mb-4" style="display: none;"></form>
                     <form id="edit-secondary-vehicle-form" class="space-y-3 p-4 border rounded-lg mb-4" style="display: none;"></form>
                     <form id="add-vehicle-form" class="space-y-3 p-4 border rounded-lg" style="display: none;"></form>
-                    <p id="vehicle-message" class="text-center mt-2"></p>
                 `;
                 
                 const primaryVehicle = customerData.vehicles.find(v => v.is_primary);
@@ -836,6 +832,8 @@
                 elements.vehicleManagementSection.style.display = 'none';
                 elements.addressEditSection.style.display = 'none';
                 elements.confirmationMessage.style.display = 'none';
+                elements.vehicleMessage.textContent = ''; // Clear messages on logout
+                elements.addressMessage.textContent = ''; // Clear messages on logout
             }
 
             async function apiCall(endpoint, method, payload = null) {
@@ -857,16 +855,28 @@
                 console.log(`[renderTimeButtons] Called for container: ${container.id}, date: ${selectedDate}`);
                 container.innerHTML = ''; // Clear existing buttons
                 
-                const selectedDateObj = new Date(selectedDate); // Start of selected day, local time (e.g., 2025-07-08 00:00:00 local)
+                const selectedDateObj = new Date(selectedDate + 'T00:00:00'); // Ensure date is parsed consistently, avoiding timezone issues for comparison
 
-                // Check if the selected date is today's date (ignoring time)
-                const isToday = selectedDateObj.toDateString() === new Date().toDateString();
+                // Get today's date in CST without time component for comparison
+                const todayCST = new Date().toLocaleString('en-US', { timeZone: 'America/Chicago', year: 'numeric', month: '2-digit', day: '2-digit' });
+                const selectedDateCST = selectedDateObj.toLocaleString('en-US', { timeZone: 'America/Chicago', year: 'numeric', month: '2-digit', day: '2-digit' });
+
+                const isToday = selectedDateCST === todayCST;
                 console.log(`[renderTimeButtons] Is selected date today? ${isToday}`);
+                console.log(`[renderTimeButtons] Today CST: ${todayCST}, Selected Date CST: ${selectedDateCST}`);
+
+                const nowCST = new Date(); // Current local time
+                const currentCSTHour = parseInt(nowCST.toLocaleString('en-US', { hour: '2-digit', hourCycle: 'h23', timeZone: 'America/Chicago' }));
+                const currentCSTMinute = parseInt(nowCST.toLocaleString('en-US', { minute: '2-digit', timeZone: 'America/Chicago' }));
+                
+                console.log(`[renderTimeButtons] Current CST Time: ${currentCSTHour}:${currentCSTMinute}`);
+
 
                 availableTimes.forEach(time => {
                     const button = document.createElement('button'); // Explicitly create a button
                     button.type = 'button'; // Set type to button to prevent form submission
-                    button.classList.add('time-button'); // Apply base styling class
+                    // Apply base styling classes directly here for robustness.
+                    button.classList.add('time-button', 'px-4', 'py-2', 'rounded-lg', 'border-2', 'font-medium', 'cursor-pointer', 'transition-all', 'duration-300', 'bg-blue-100', 'text-blue-800', 'border-blue-300', 'shadow-sm', 'inline-flex', 'justify-center', 'items-center', 'whitespace-nowrap'); 
                     button.textContent = formatTimeDisplay(time);
                     button.dataset.time = time; // Store the 24hr time for easy access
 
@@ -874,16 +884,16 @@
                     if (isToday) {
                         const [appointmentHour, appointmentMinute] = time.split(':').map(Number);
 
-                        // Calculate total minutes from midnight for initial CST time
-                        const initialTotalCSTMinutes = (initialCSTHour * 60) + initialCSTMinute;
+                        // Calculate total minutes from midnight for current CST time
+                        const currentTotalCSTMinutes = (currentCSTHour * 60) + currentCSTMinute;
                         // Calculate total minutes from midnight for the appointment time
                         const appointmentTotalMinutes = (appointmentHour * 60) + appointmentMinute;
 
                         // Calculate difference in minutes
-                        const differenceMinutes = appointmentTotalMinutes - initialTotalCSTMinutes;
-                        console.log(`[renderTimeButtons] Time ${time}: Initial CST Total Minutes: ${initialTotalCSTMinutes}, Appointment Total Minutes: ${appointmentTotalMinutes}, Difference: ${differenceMinutes} minutes.`);
+                        const differenceMinutes = appointmentTotalMinutes - currentTotalCSTMinutes;
+                        console.log(`[renderTimeButtons] Time ${time}: Current CST Total Minutes: ${currentTotalCSTMinutes}, Appointment Total Minutes: ${appointmentTotalMinutes}, Difference: ${differenceMinutes} minutes.`);
 
-                        // Disable if the appointment time is in the past, or less than 2 hours (120 minutes) from the initial CST time
+                        // Disable if the appointment time is in the past, or less than 2 hours (120 minutes) from the current CST time
                         if (differenceMinutes < 120) {
                             isDisabled = true;
                             console.log(`[renderTimeButtons] Time ${time} disabled for today due to 2-hour rule.`);
@@ -891,7 +901,7 @@
                     }
 
                     if (isDisabled) {
-                        button.classList.add('disabled'); // Apply disabled styling
+                        button.classList.add('disabled', 'bg-gray-200', 'text-gray-400', 'cursor-not-allowed', 'border-gray-300', 'shadow-inner'); // Apply disabled styling directly
                         button.disabled = true; // Disable button functionality
                     } else {
                         button.addEventListener('click', () => {
@@ -899,12 +909,14 @@
                             // Deselect all other buttons in the same container
                             Array.from(container.children).forEach(btn => {
                                 if (btn.classList.contains('selected')) {
-                                    btn.classList.remove('selected');
+                                    btn.classList.remove('selected', 'bg-green-600', 'text-white', 'border-green-600', 'shadow-lg'); // Remove selected styling
+                                    btn.classList.add('bg-blue-100', 'text-blue-800', 'border-blue-300', 'shadow-sm'); // Reapply default styling
                                     console.log(`[renderTimeButtons] Removed 'selected' from ${btn.dataset.time}`);
                                 }
                             });
                             // Select the clicked button
-                            button.classList.add('selected'); // Apply selected styling
+                            button.classList.remove('bg-blue-100', 'text-blue-800', 'border-blue-300', 'shadow-sm'); // Remove default styling
+                            button.classList.add('selected', 'bg-green-600', 'text-white', 'border-green-600', 'shadow-lg'); // Apply selected styling
                             // Update the hidden input value
                             hiddenInput.value = time;
                             console.log(`[renderTimeButtons] Selected time for ${container.id}: ${hiddenInput.value}`);
@@ -1031,6 +1043,9 @@
                 elements.vehicleTypeSelection.style.display = 'none';
             });
             
+            // New: Event listener for address edit form submission
+            elements.editAddressForm.addEventListener('submit', handleAddressUpdate);
+
             elements.showFinanceBtn.addEventListener('click', () => { 
                 elements.financingBookingSection.style.display = elements.financingBookingSection.style.display === 'block' ? 'none' : 'block'; 
                 if (elements.financingBookingSection.style.display === 'block') {
@@ -1185,8 +1200,13 @@
                     model: document.getElementById(`${type}-vehicle-model`).value,
                 };
                 const { ok, data } = await apiCall(`/customer/vehicle/${vehicleId}`, 'PUT', payload);
-                document.getElementById('vehicle-message').textContent = data.message;
-                if(ok) fetchCustomerData(localStorage.getItem('customerToken'));
+                elements.vehicleMessage.textContent = data.message;
+                if(ok) {
+                    elements.vehicleMessage.style.color = 'green';
+                    fetchCustomerData(localStorage.getItem('customerToken'));
+                } else {
+                    elements.vehicleMessage.style.color = 'red';
+                }
             }
 
             async function handleAddVehicle(e) {
@@ -1197,15 +1217,45 @@
                     model: document.getElementById('add-vehicle-model').value,
                 };
                 const { ok, data } = await apiCall('/customer/vehicle', 'POST', payload);
-                document.getElementById('vehicle-message').textContent = data.message;
-                if(ok) fetchCustomerData(localStorage.getItem('customerToken'));
+                elements.vehicleMessage.textContent = data.message;
+                if(ok) {
+                    elements.vehicleMessage.style.color = 'green';
+                    fetchCustomerData(localStorage.getItem('customerToken'));
+                } else {
+                    elements.vehicleMessage.style.color = 'red';
+                }
             }
 
             async function handleVehicleDelete(vehicleId) {
                 if(!vehicleId) return;
                 const { ok, data } = await apiCall(`/customer/vehicle/${vehicleId}`, 'DELETE');
-                document.getElementById('vehicle-message').textContent = data.message;
-                if(ok) fetchCustomerData(localStorage.getItem('customerToken'));
+                elements.vehicleMessage.textContent = data.message;
+                if(ok) {
+                    elements.vehicleMessage.style.color = 'green';
+                    fetchCustomerData(localStorage.getItem('customerToken'));
+                } else {
+                    elements.vehicleMessage.style.color = 'red';
+                }
+            }
+
+            async function handleAddressUpdate(e) {
+                e.preventDefault();
+                const newAddress = document.getElementById('edit-address-input').value;
+                if (!newAddress) {
+                    elements.addressMessage.textContent = 'Please enter an address.';
+                    elements.addressMessage.style.color = 'red';
+                    return;
+                }
+                const { ok, data } = await apiCall('/customer/address', 'PUT', { address: newAddress });
+                elements.addressMessage.textContent = data.message;
+                if (ok) {
+                    elements.addressMessage.style.color = 'green';
+                    fetchCustomerData(localStorage.getItem('customerToken')); // Re-fetch to update dashboard
+                    // Optionally hide the address edit section after successful update
+                    elements.addressEditSection.style.display = 'none';
+                } else {
+                    elements.addressMessage.style.color = 'red';
+                }
             }
 
             // No specific resize handling needed for this package display method.
