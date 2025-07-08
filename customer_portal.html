@@ -15,12 +15,11 @@
         .time-button {
             /* Base styles for all time buttons */
             @apply px-4 py-2 rounded-lg border-2 font-medium cursor-pointer transition-all duration-300;
-            /* Enhanced default look for better visibility */
-            @apply bg-blue-100 text-blue-800 border-blue-300 shadow-sm; 
+            @apply bg-white text-blue-700 border-blue-400 shadow-sm; /* Default look, similar to vehicle buttons */
         }
         .time-button:hover:not(.disabled) {
             /* Hover effect for active buttons */
-            @apply bg-blue-200 text-blue-900 shadow-md;
+            @apply bg-blue-50 text-blue-800 shadow-md;
         }
         .time-button.selected {
             /* Selected state */
@@ -252,7 +251,7 @@
                                 <li>Steering wheel and dash clean</li>
                             </ul>
                         </div>
-                        <button class="select-package-btn btn-green" data-package-type="Level 1 Detail" data-package-price="149">Select Package</button>
+                        <button class="select-package-btn btn-green" data-package-type="Level 1 Detail - Sedan" data-package-price="149">Select Package</button>
                     </div>
                     <div class="pricing-card">
                         <h4 class="pricing-level">Level 2 Detail</h4>
@@ -278,7 +277,7 @@
                                 <li>Odor removal</li>
                             </ul>
                         </div>
-                        <button class="select-package-btn btn-green" data-package-type="Level 2 Detail" data-package-price="249">Select Package</button>
+                        <button class="select-package-btn btn-green" data-package-type="Level 2 Detail - Sedan" data-package-price="249">Select Package</button>
                     </div>
                     <div class="pricing-card">
                         <h4 class="pricing-level">Level 3 Detail</h4>
@@ -313,7 +312,7 @@
                                 <li>Protection plan (complimentary maintenance clean within 15 days)</li>
                             </ul>
                         </div>
-                        <button class="select-package-btn btn-green" data-package-type="Level 3 Detail" data-package-price="349">Select Package</button>
+                        <button class="select-package-btn btn-green" data-package-type="Level 3 Detail - Sedan" data-package-price="349">Select Package</button>
                     </div>
                 </div>
 
@@ -336,7 +335,7 @@
                                 <li>Steering wheel and dash clean</li>
                             </ul>
                         </div>
-                        <button class="select-package-btn btn-green" data-package-type="Level 1 Detail" data-package-price="199">Select Package</button>
+                        <button class="select-package-btn btn-green" data-package-type="Level 1 Detail - SUV/Truck" data-package-price="199">Select Package</button>
                     </div>
                     <div class="pricing-card">
                         <h4 class="pricing-level">Level 2 Detail</h4>
@@ -362,7 +361,7 @@
                                 <li>Odor removal</li>
                             </ul>
                         </div>
-                        <button class="select-package-btn btn-green" data-package-type="Level 2 Detail" data-package-price="299">Select Package</button>
+                        <button class="select-package-btn btn-green" data-package-type="Level 2 Detail - SUV/Truck" data-package-price="299">Select Package</button>
                     </div>
                     <div class="pricing-card">
                         <h4 class="pricing-level">Level 3 Detail</h4>
@@ -397,7 +396,7 @@
                                 <li>Protection plan (complimentary maintenance clean within 15 days)</li>
                             </ul>
                         </div>
-                        <button class="select-package-btn btn-green" data-package-type="Level 3 Detail" data-package-price="399">Select Package</button>
+                        <button class="select-package-btn btn-green" data-package-type="Level 3 Detail - SUV/Truck" data-package-price="399">Select Package</button>
                     </div>
                 </div>
             </div>
@@ -436,7 +435,6 @@
                     </div>
                     <input type="hidden" id="selected-package-type" name="package-type">
                     <input type="hidden" id="selected-package-price" name="package-price">
-                    <input type="hidden" id="selected-vehicle-category" name="vehicle-category"> <!-- New hidden input for vehicle category -->
                     <button type="submit" id="final-book-appointment-btn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg hidden">Book Appointment</button>
                     <p id="booking-message" class="text-center mt-2"></p>
                 </form>
@@ -471,7 +469,6 @@
                         </div>
                         <input type="hidden" id="financing-selected-package-type" name="package-type">
                         <input type="hidden" id="financing-selected-package-price" name="package-price">
-                        <input type="hidden" id="financing-selected-vehicle-category" name="vehicle-category"> <!-- New hidden input for vehicle category -->
                         <button type="submit" class="w-full bg-blue-800 hover:bg-blue-900 text-white font-bold py-3 px-4 rounded-lg">Book with Financing</button>
                         <p id="financing-booking-message" class="text-center mt-2"></p>
                     </form>
@@ -564,8 +561,6 @@
                 confirmationMessage: document.getElementById('confirmation-message'),
                 financingSelectedPackageTypeInput: document.getElementById('financing-selected-package-type'),
                 financingSelectedPackagePriceInput: document.getElementById('financing-selected-package-price'),
-                selectedVehicleCategoryInput: document.getElementById('selected-vehicle-category'), // New
-                financingSelectedVehicleCategoryInput: document.getElementById('financing-selected-vehicle-category'), // New
             };
 
             let customerData = {}; 
@@ -690,39 +685,17 @@
 
             function renderUpcomingAppointments() {
                 elements.upcomingAppointmentsList.innerHTML = ''; // Clear previous entries
-                console.log("Upcoming Appointments Data:", customerData.upcoming_appointments); // Debugging log
                 if (customerData.upcoming_appointments && customerData.upcoming_appointments.length > 0) {
                     elements.upcomingAppointmentsSection.style.display = 'block'; // Show the section
-                    
-                    const uniqueAppointments = new Map(); // Map to store unique appointments by a composite key
                     customerData.upcoming_appointments.forEach(appt => {
-                        // Create a unique key for deduplication: date + time + customer_id + package_type + vehicle_id
-                        // Assuming customerData.full_name is the "person's name"
-                        const uniqueKey = `${appt.date}-${appt.time}-${customerData.full_name}-${appt.package_type}-${appt.vehicle_id}`;
-                        if (!uniqueAppointments.has(uniqueKey)) {
-                            uniqueAppointments.set(uniqueKey, appt);
-                        }
-                    });
-
-                    Array.from(uniqueAppointments.values()).forEach(appt => {
                         const timePart = appt.time ? appt.time.slice(0, 5) : '00:00';
                         const apptDateTime = new Date(`${appt.date}T${timePart}:00`);
                         // Ensure timezone is set for consistent display
                         const options = { timeZone: "America/Chicago", weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
                         
-                        // Find the vehicle using the vehicle_id (which is now the actual DB UUID)
-                        const vehicle = customerData.vehicles.find(v => v.id === appt.vehicle_id);
-                        const vehicleInfo = vehicle ? `${vehicle.year} ${vehicle.make} ${vehicle.model}` : 'Vehicle N/A';
-                        const packagePrice = appt.package_price ? `$${appt.package_price}` : 'Price N/A';
-
                         const apptItem = document.createElement('div');
                         apptItem.className = 'p-3 bg-white rounded-md shadow-sm';
-                        // Removed status display
-                        apptItem.innerHTML = `
-                            <p class="font-semibold">${appt.package_type} - ${vehicleInfo}</p>
-                            <p>Date: ${apptDateTime.toLocaleString('en-US', options)}</p>
-                            <p>Price: ${packagePrice}</p>
-                        `;
+                        apptItem.textContent = `${appt.title} on ${apptDateTime.toLocaleString('en-US', options)}`;
                         elements.upcomingAppointmentsList.appendChild(apptItem);
                     });
                 } else {
@@ -733,34 +706,10 @@
             function renderPastAppointments() {
                 elements.pastAppointmentsList.innerHTML = '';
                 if (customerData.past_appointments && customerData.past_appointments.length > 0) {
-
-                    const uniqueAppointments = new Map(); // Map to store unique appointments by a composite key
                     customerData.past_appointments.forEach(appt => {
-                        // Create a unique key for deduplication: date + time + customer_id + package_type + vehicle_id
-                        const uniqueKey = `${appt.date}-${appt.time}-${customerData.full_name}-${appt.package_type}-${appt.vehicle_id}`;
-                        if (!uniqueAppointments.has(uniqueKey)) {
-                            uniqueAppointments.set(uniqueKey, appt);
-                        }
-                    });
-
-                    Array.from(uniqueAppointments.values()).forEach(appt => {
-                        const timePart = appt.time ? appt.time.slice(0, 5) : '00:00';
-                        const apptDateTime = new Date(`${appt.date}T${timePart}:00`);
-                        const options = { timeZone: "America/Chicago", weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
-                        
-                        // Find the vehicle using the vehicle_id (which is now the actual DB UUID)
-                        const vehicle = customerData.vehicles.find(v => v.id === appt.vehicle_id);
-                        const vehicleInfo = vehicle ? `${vehicle.year} ${vehicle.make} ${vehicle.model}` : 'Vehicle N/A';
-                        const packagePrice = appt.package_price ? `$${appt.package_price}` : 'Price N/A';
-
                         const apptItem = document.createElement('div');
                         apptItem.className = 'p-3 bg-gray-100 rounded-md';
-                        // Removed status display
-                        apptItem.innerHTML = `
-                            <p class="font-semibold">${appt.package_type} - ${vehicleInfo}</p>
-                            <p>Date: ${apptDateTime.toLocaleString('en-US', options)}</p>
-                            <p>Price: ${packagePrice}</p>
-                        `;
+                        apptItem.textContent = `${appt.title} on ${appt.date} (${appt.status})`;
                         elements.pastAppointmentsList.appendChild(apptItem);
                     });
                 } else {
@@ -838,16 +787,15 @@
 
             // --- Time Button Logic ---
             function renderTimeButtons(container, hiddenInput, selectedDate) {
-                console.log(`Rendering time buttons for container: ${container.id}, date: ${selectedDate}`);
                 container.innerHTML = ''; // Clear existing buttons
                 const now = new Date();
                 const selectedDateTime = new Date(selectedDate);
                 const isToday = selectedDateTime.toDateString() === now.toDateString();
 
                 availableTimes.forEach(time => {
-                    const button = document.createElement('button'); // Correctly creating a button element
+                    const button = document.createElement('button');
                     button.type = 'button';
-                    button.classList.add('time-button'); // Adding the base class
+                    button.classList.add('time-button');
                     button.textContent = formatTimeDisplay(time);
                     button.dataset.time = time;
 
@@ -866,26 +814,25 @@
 
                     if (isDisabled) {
                         button.classList.add('disabled');
-                        button.disabled = true;
-                        console.log(`Time button ${time} disabled.`);
-                    } else {
-                        button.addEventListener('click', () => {
-                            console.log(`Time button ${time} clicked.`);
-                            // Deselect all other buttons in the same container
-                            Array.from(container.children).forEach(btn => btn.classList.remove('selected'));
-                            // Select the clicked button
-                            button.classList.add('selected');
-                            // Update the hidden input value
-                            hiddenInput.value = time;
-                            console.log(`Selected time for ${container.id}: ${hiddenInput.value}`);
-                        });
+                        button.disabled = true; // This line ensures the button is truly non-interactive
                     }
-                    container.appendChild(button); // Appending the button to the container
-                    console.log(`Appended button for time: ${time}`);
+                    
+                    // Always attach the event listener, but check for disabled state inside
+                    button.addEventListener('click', () => {
+                        if (button.disabled) { // Prevent action if disabled
+                            return;
+                        }
+                        // Deselect all other buttons in the same container
+                        Array.from(container.children).forEach(btn => btn.classList.remove('selected'));
+                        // Select the clicked button
+                        button.classList.add('selected');
+                        // Update the hidden input value
+                        hiddenInput.value = time;
+                    });
+                    container.appendChild(button);
                 });
                 // Clear selected time when date changes
                 hiddenInput.value = '';
-                console.log(`Hidden input for ${container.id} cleared.`);
             }
 
             function formatTimeDisplay(time24hr) {
@@ -916,8 +863,6 @@
                 elements.vehicleTypeSelection.style.display = 'none';
                 elements.bookingFormSection.style.display = 'none';
                 elements.packageSelectionContainer.style.display = 'block';
-                elements.selectedVehicleCategoryInput.value = vehicleCategory === 'sedan' ? 'Car' : (vehicleCategory === 'suv-truck' ? clickedButton.textContent : '');
-                elements.financingSelectedVehicleCategoryInput.value = vehicleCategory === 'sedan' ? 'Car' : (vehicleCategory === 'suv-truck' ? clickedButton.textContent : '');
 
                 // Hide all package display containers initially
                 elements.sedanPackagesDisplay.style.display = 'none';
@@ -1069,7 +1014,6 @@
                 const selectedTime = document.getElementById(selectedTimeInputId).value;
                 const packageType = form.querySelector('input[name="package-type"]').value;
                 const packagePrice = form.querySelector('input[name="package-price"]').value;
-                // const vehicleCategory = form.querySelector('input[name="vehicle-category"]').value; // Removed as we'll use actual make/model
 
 
                 if (!selectedTime) {
@@ -1083,27 +1027,13 @@
                     return;
                 }
 
-                // Get the selected vehicle's ID
-                const selectedVehicleId = document.getElementById('vehicle-select').value;
-                // Find the vehicle object from customerData.vehicles
-                const selectedVehicle = customerData.vehicles.find(v => v.id === selectedVehicleId);
-
-                let dealName = "";
-                if (selectedVehicle) {
-                    // Construct the deal name using packageType, vehicle make, and model
-                    dealName = `${packageType} ${selectedVehicle.make} ${selectedVehicle.model}`;
-                } else {
-                    // Fallback if vehicle data isn't found (though it should be)
-                    dealName = `${packageType} Detail`; // Fallback to old deal name format
-                }
 
                 const payload = {
-                    vehicle_id: selectedVehicleId,
+                    vehicle_id: document.getElementById('vehicle-select').value,
                     date: form.querySelector('input[type="date"]').value,
                     time: selectedTime,
                     package_type: packageType, // Include package type in payload
                     package_price: packagePrice, // Include package price in payload
-                    deal_name: dealName // Include the constructed deal name
                 };
                 const { ok, data } = await apiCall(endpoint, 'POST', payload);
                 if (ok) {
