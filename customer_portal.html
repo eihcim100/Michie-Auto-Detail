@@ -20,13 +20,33 @@
         .time-button.disabled {
             @apply bg-gray-200 text-gray-400 cursor-not-allowed border-gray-300;
         }
-        /* Vehicle type selection buttons */
+        /* Vehicle type selection buttons - Direct Tailwind classes for robustness */
         .vehicle-type-button {
-            @apply px-6 py-3 rounded-xl border-2 border-blue-400 text-blue-700 font-bold cursor-pointer transition-all duration-300 shadow-md bg-white hover:bg-blue-50 hover:text-blue-800 hover:shadow-lg; /* Added more styling */
+            /* Removed @apply and added direct classes for better compatibility */
+            padding: 0.75rem 1.5rem; /* px-6 py-3 */
+            border-radius: 0.75rem; /* rounded-xl */
+            border-width: 2px; /* border-2 */
+            border-color: #60a5fa; /* border-blue-400 */
+            color: #1d4ed8; /* text-blue-700 */
+            font-weight: 700; /* font-bold */
+            cursor: pointer;
+            transition-property: all; /* transition-all */
+            transition-duration: 300ms; /* duration-300 */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+            background-color: #ffffff; /* bg-white */
+        }
+        .vehicle-type-button:hover {
+            background-color: #eff6ff; /* hover:bg-blue-50 */
+            color: #1e40af; /* hover:text-blue-800 */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* hover:shadow-lg */
         }
         .vehicle-type-button.active {
-            @apply bg-blue-600 text-white border-blue-600 shadow-xl; /* More prominent active state */
+            background-color: #2563eb; /* bg-blue-600 */
+            color: #ffffff; /* text-white */
+            border-color: #2563eb; /* border-blue-600 */
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); /* shadow-xl */
         }
+
         /* Pricing Card styles */
         .pricing-grid {
             display: grid;
