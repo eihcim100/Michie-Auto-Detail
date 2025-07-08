@@ -9,12 +9,7 @@
     <style>
         body { font-family: 'Inter', sans-serif; }
         .pac-container { z-index: 1050 !important; }
-        .form-section, .feature-section, #vehicle-type-selection, #package-selection-container, #booking-form-section, #confirmation-message, #financing-flow-container { display: none; } /* Hide sections by default */
-        
-        /* * The .time-button CSS with @apply has been removed. 
-         * All styling is now handled directly in the JavaScript `renderTimeButtons` function 
-         * to ensure Tailwind classes are applied correctly without a build step.
-         */
+        .form-section, .feature-section, #vehicle-type-selection, #package-selection-container, #booking-form-section, #confirmation-message, #financing-flow-container, #vehicle-management-section, #address-edit-section { display: none; } /* Hide sections by default */
 
         /* Vehicle type and financing selection buttons */
         .vehicle-type-button {
@@ -218,6 +213,7 @@
             <div id="package-selection-container" class="bg-white p-8 rounded-xl shadow-md hidden">
                 <h3 class="text-2xl font-bold text-gray-700 mb-4 text-center">Select Your Package</h3>
                 <div id="sedan-packages-display" class="pricing-grid hidden">
+                     <!-- Sedan Package Cards -->
                      <div class="pricing-card">
                         <h4 class="pricing-level">Level 1 Detail</h4>
                         <p class="pricing-price">$149</p>
@@ -300,6 +296,7 @@
                     </div>
                 </div>
                 <div id="suv-truck-packages-display" class="pricing-grid hidden">
+                    <!-- SUV/Truck Package Cards -->
                     <div class="pricing-card">
                         <h4 class="pricing-level">Level 1 Detail</h4>
                         <p class="pricing-price">$199</p>
@@ -515,7 +512,9 @@
                  <h3 class="text-2xl font-bold text-gray-700 mb-4">Past Appointments</h3>
                  <div id="past-appointments-list" class="space-y-3"></div>
             </div>
-            <div id="vehicle-management-section" class="form-section bg-white p-8 rounded-xl shadow-md"></div>
+            <div id="vehicle-management-section" class="form-section bg-white p-8 rounded-xl shadow-md">
+                <!-- JS will render forms here -->
+            </div>
             <p id="vehicle-message" class="text-center mt-2"></p>
             <div id="address-edit-section" class="form-section bg-white p-8 rounded-xl shadow-md">
                  <h3 class="text-xl font-bold text-gray-700 mb-4">Update Address</h3>
@@ -523,6 +522,7 @@
                     <input type="text" id="edit-address-input" placeholder="Search for new address..." required class="w-full px-3 py-2 border rounded-lg">
                     <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg">Save New Address</button>
                  </form>
+                 <button type="button" id="address-done-btn" class="mt-4 w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg">Done</button>
             </div>
             <p id="address-message" class="text-center mt-2"></p>
         </div>
@@ -609,6 +609,9 @@
                 financingBookingDateInput: document.getElementById('financing-booking-date'),
                 financingTimeButtonsContainer: document.getElementById('financing-time-buttons'),
                 selectedFinancingTimeInput: document.getElementById('selected-financing-time'),
+
+                // NEW Back/Done buttons
+                addressDoneBtn: document.getElementById('address-done-btn'),
             };
 
             let customerData = {}; 
@@ -617,22 +620,14 @@
             // --- API Call Function ---
             async function apiCall(endpoint, method, payload = null) {
                 const token = localStorage.getItem('customerToken');
-                const headers = {
-                    'Content-Type': 'application/json'
-                };
+                const headers = { 'Content-Type': 'application/json' };
                 if (token) {
                     headers['Authorization'] = `Bearer ${token}`;
                 }
-                
-                const options = {
-                    method,
-                    headers
-                };
-
+                const options = { method, headers };
                 if (payload) {
                     options.body = JSON.stringify(payload);
                 }
-
                 try {
                     const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
                     const responseText = await response.text();
@@ -645,13 +640,12 @@
             }
             
             // --- UI Control Functions ---
-            function hideAllSections() {
+            function hideAllMajorSections() {
                 const allSections = [
-                    elements.upcomingAppointmentsSection, elements.vehicleTypeSelection,
-                    elements.packageSelectionContainer, elements.bookingFormSection,
-                    elements.financingFlowContainer, elements.confirmationMessage,
-                    elements.pastAppointmentsSection, elements.vehicleManagementSection,
-                    elements.addressEditSection
+                    elements.vehicleTypeSelection, elements.packageSelectionContainer, 
+                    elements.bookingFormSection, elements.financingFlowContainer, 
+                    elements.confirmationMessage, elements.pastAppointmentsSection, 
+                    elements.vehicleManagementSection, elements.addressEditSection
                 ];
                 allSections.forEach(el => {
                     if (el) el.style.display = 'none';
@@ -659,9 +653,15 @@
             }
 
             function showStartPage() {
-                hideAllSections();
+                hideAllMajorSections();
+                if (elements.upcomingAppointmentsSection) elements.upcomingAppointmentsSection.style.display = 'block';
                 elements.vehicleTypeSelection.style.display = 'block';
                 document.querySelectorAll('.vehicle-type-button.active').forEach(b => b.classList.remove('active'));
+            }
+
+            function showBookingForm() {
+                hideAllMajorSections();
+                elements.bookingFormSection.style.display = 'block';
             }
 
             function updateUI() {
@@ -752,7 +752,7 @@
                 localStorage.removeItem('customerToken');
                 customerData = {};
                 updateUI();
-                hideAllSections();
+                hideAllMajorSections();
             }
 
             // --- Event Listeners ---
@@ -778,7 +778,7 @@
             elements.selectSuvBtn.addEventListener('click', (e) => showPackageSelection('suv-truck', e.target));
 
             elements.financeOptionBtn.addEventListener('click', () => {
-                hideAllSections();
+                hideAllMajorSections();
                 elements.financingFlowContainer.style.display = 'block';
                 elements.financingPackageDetails.style.display = 'block';
                 elements.financingTerms.style.display = 'none';
@@ -801,13 +801,18 @@
             elements.bookingForm.addEventListener('submit', (e) => handleBooking(e, '/customer/appointment', elements.bookingMessage, 'selected-booking-time', 'vehicle-select'));
             elements.financingBookingForm.addEventListener('submit', (e) => handleBooking(e, '/customer/appointment/financing', elements.financingBookingMessage, 'selected-financing-time', 'financing-vehicle-select'));
 
-            // Other event listeners (manage vehicles, address, etc.)
-            elements.manageVehicleBtn.addEventListener('click', () => { 
-                elements.vehicleManagementSection.style.display = elements.vehicleManagementSection.style.display === 'block' ? 'none' : 'block';
+            // FIXED: Event listeners for management sections
+            elements.manageVehicleBtn.addEventListener('click', () => {
+                hideAllMajorSections();
+                elements.vehicleManagementSection.style.display = 'block';
             });
-            elements.editAddressBtn.addEventListener('click', () => { 
-                elements.addressEditSection.style.display = elements.addressEditSection.style.display === 'block' ? 'none' : 'block'; 
+            elements.editAddressBtn.addEventListener('click', () => {
+                hideAllMajorSections();
+                elements.addressEditSection.style.display = 'block';
             });
+            elements.addressDoneBtn.addEventListener('click', showBookingForm);
+
+
             elements.editAddressForm.addEventListener('submit', handleAddressUpdate);
             elements.viewPastAppointmentsBtn.addEventListener('click', () => { 
                 elements.pastAppointmentsSection.style.display = elements.pastAppointmentsSection.style.display === 'block' ? 'none' : 'block'; 
@@ -835,7 +840,7 @@
 
             // --- Core Logic Functions ---
             function showPackageSelection(vehicleCategory, clickedButton) {
-                hideAllSections();
+                hideAllMajorSections();
                 elements.packageSelectionContainer.style.display = 'block';
                 document.querySelectorAll('.vehicle-type-button.active').forEach(b => b.classList.remove('active'));
                 clickedButton.classList.add('active');
@@ -847,8 +852,7 @@
                 elements.selectedPackageDisplay.textContent = packageType;
                 elements.selectedPackageTypeInput.value = packageType;
                 elements.selectedPackagePriceInput.value = packagePrice;
-                hideAllSections();
-                elements.bookingFormSection.style.display = 'block';
+                showBookingForm();
             }
 
             async function handleBooking(e, endpoint, messageEl, selectedTimeInputId, vehicleSelectId) {
@@ -880,9 +884,9 @@
 
                 const { ok, data } = await apiCall(endpoint, 'POST', payload);
                 if (ok) {
-                    hideAllSections();
+                    hideAllMajorSections();
                     elements.confirmationMessage.style.display = 'block';
-                    fetchCustomerData(localStorage.getItem('customerToken'));
+                    await fetchCustomerData(localStorage.getItem('customerToken'));
                     setTimeout(() => showStartPage(), 5000);
                 } else {
                     messageEl.textContent = data.message;
@@ -891,19 +895,14 @@
             }
             
             // --- Helper Functions (Time Buttons, Vehicle/Address Management, etc.) ---
-
-            // CORRECTED Time Button Logic
             function renderTimeButtons(container, hiddenInput, selectedDate) {
                 if (!container) return;
-                container.innerHTML = ''; // Clear existing buttons
-                
-                const selectedDateObj = new Date(selectedDate + 'T00:00:00'); 
-
+                container.innerHTML = '';
+                const selectedDateObj = new Date(selectedDate + 'T00:00:00');
                 const todayCST = new Date().toLocaleString('en-US', { timeZone: 'America/Chicago', year: 'numeric', month: '2-digit', day: '2-digit' });
                 const selectedDateCST = selectedDateObj.toLocaleString('en-US', { timeZone: 'America/Chicago', year: 'numeric', month: '2-digit', day: '2-digit' });
                 const isToday = selectedDateCST === todayCST;
-                
-                const nowCST = new Date(); 
+                const nowCST = new Date();
                 const currentCSTHour = parseInt(nowCST.toLocaleString('en-US', { hour: '2-digit', hourCycle: 'h23', timeZone: 'America/Chicago' }));
                 const currentCSTMinute = parseInt(nowCST.toLocaleString('en-US', { minute: '2-digit', timeZone: 'America/Chicago' }));
 
@@ -918,35 +917,23 @@
                         const [appointmentHour] = time.split(':').map(Number);
                         const currentTotalCSTMinutes = (currentCSTHour * 60) + currentCSTMinute;
                         const appointmentTotalMinutes = (appointmentHour * 60);
-                        const differenceMinutes = appointmentTotalMinutes - currentTotalCSTMinutes;
-
-                        // Disable if the appointment time is in the past, or less than 2 hours (120 minutes) from the current CST time
-                        if (differenceMinutes < 120) {
+                        if ((appointmentTotalMinutes - currentTotalCSTMinutes) < 120) {
                             isDisabled = true;
                         }
                     }
 
                     if (isDisabled) {
-                        // Apply all disabled classes directly
                         button.className = 'px-4 py-2 rounded-lg border-2 font-medium cursor-not-allowed transition-all duration-300 bg-gray-200 text-gray-400 border-gray-300 shadow-inner inline-flex justify-center items-center whitespace-nowrap';
                         button.disabled = true;
                     } else {
-                        // Apply all default classes directly
                         button.className = 'px-4 py-2 rounded-lg border-2 font-medium cursor-pointer transition-all duration-300 bg-blue-100 text-blue-800 border-blue-300 shadow-sm hover:bg-blue-200 hover:text-blue-900 hover:shadow-md inline-flex justify-center items-center whitespace-nowrap';
                         button.addEventListener('click', () => {
-                            // Find previously selected button in the same container
                             const currentlySelected = container.querySelector('.selected');
                             if (currentlySelected) {
-                                // Reset it to default state by replacing classes
                                 currentlySelected.className = 'px-4 py-2 rounded-lg border-2 font-medium cursor-pointer transition-all duration-300 bg-blue-100 text-blue-800 border-blue-300 shadow-sm hover:bg-blue-200 hover:text-blue-900 hover:shadow-md inline-flex justify-center items-center whitespace-nowrap';
                             }
-
-                            // Apply selected state to the clicked button (Blue version from screenshot)
                             button.className = 'selected px-4 py-2 rounded-lg border-2 font-medium cursor-pointer transition-all duration-300 bg-blue-600 text-white border-blue-600 shadow-lg inline-flex justify-center items-center whitespace-nowrap';
-                            
                             hiddenInput.value = time;
-                            
-                            // Show booking button if applicable
                             if (container.id === 'booking-time-buttons') {
                                 elements.finalBookAppointmentBtn.style.display = 'block';
                             }
@@ -954,7 +941,6 @@
                     }
                     container.appendChild(button);
                 });
-                
                 hiddenInput.value = '';
                 if (container.id === 'booking-time-buttons') {
                     elements.finalBookAppointmentBtn.style.display = 'none';
@@ -978,10 +964,7 @@
                         const vehicle = customerData.vehicles.find(v => v.id === appt.vehicle_id);
                         const vehicleInfo = vehicle ? `${vehicle.year} ${vehicle.make} ${vehicle.model}` : 'Vehicle N/A';
                         const apptDateTime = new Date(`${appt.date}T${appt.time}`);
-                        apptItem.innerHTML = `
-                            <p class="font-semibold">${appt.package_type} - ${vehicleInfo}</p>
-                            <p>Date: ${apptDateTime.toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'short' })}</p>
-                            <p>Price: $${appt.package_price}</p>`;
+                        apptItem.innerHTML = `<p class="font-semibold">${appt.package_type} - ${vehicleInfo}</p><p>Date: ${apptDateTime.toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'short' })}</p><p>Price: $${appt.package_price}</p>`;
                         elements.upcomingAppointmentsList.appendChild(apptItem);
                     });
                 } else {
@@ -998,10 +981,7 @@
                         const vehicle = customerData.vehicles.find(v => v.id === appt.vehicle_id);
                         const vehicleInfo = vehicle ? `${vehicle.year} ${vehicle.make} ${vehicle.model}` : 'Vehicle N/A';
                          const apptDateTime = new Date(`${appt.date}T${appt.time}`);
-                        apptItem.innerHTML = `
-                            <p class="font-semibold">${appt.package_type} - ${vehicleInfo}</p>
-                            <p>Date: ${apptDateTime.toLocaleString('en-US', { dateStyle: 'long' })}</p>
-                            <p>Price: $${appt.package_price}</p>`;
+                        apptItem.innerHTML = `<p class="font-semibold">${appt.package_type} - ${vehicleInfo}</p><p>Date: ${apptDateTime.toLocaleString('en-US', { dateStyle: 'long' })}</p><p>Price: $${appt.package_price}</p>`;
                         elements.pastAppointmentsList.appendChild(apptItem);
                     });
                 } else {
@@ -1018,6 +998,14 @@
                 if(primaryVehicle) elements.vehicleManagementSection.appendChild(createVehicleForm('edit-primary', primaryVehicle));
                 if(secondaryVehicle) elements.vehicleManagementSection.appendChild(createVehicleForm('edit-secondary', secondaryVehicle));
                 if(customerData.vehicles.length < 2) elements.vehicleManagementSection.appendChild(createVehicleForm('add'));
+
+                // Add the "Done" button
+                const doneButton = document.createElement('button');
+                doneButton.type = 'button';
+                doneButton.textContent = 'Done';
+                doneButton.className = 'mt-4 w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg';
+                doneButton.addEventListener('click', showBookingForm);
+                elements.vehicleManagementSection.appendChild(doneButton);
             }
 
             function createVehicleForm(type, vehicle = {}) {
@@ -1048,21 +1036,30 @@
                 const { ok, data } = await apiCall(`/customer/vehicle/${vehicleId}`, 'PUT', payload);
                 elements.vehicleMessage.textContent = data.message;
                 elements.vehicleMessage.style.color = ok ? 'green' : 'red';
-                if(ok) fetchCustomerData(localStorage.getItem('customerToken'));
+                if(ok) {
+                    await fetchCustomerData(localStorage.getItem('customerToken'));
+                    showBookingForm();
+                }
             }
 
             async function handleAddVehicle(payload) {
                 const { ok, data } = await apiCall('/customer/vehicle', 'POST', payload);
                 elements.vehicleMessage.textContent = data.message;
                 elements.vehicleMessage.style.color = ok ? 'green' : 'red';
-                if(ok) fetchCustomerData(localStorage.getItem('customerToken'));
+                if(ok) {
+                    await fetchCustomerData(localStorage.getItem('customerToken'));
+                    showBookingForm();
+                }
             }
 
             async function handleVehicleDelete(vehicleId) {
                 const { ok, data } = await apiCall(`/customer/vehicle/${vehicleId}`, 'DELETE');
                 elements.vehicleMessage.textContent = data.message;
                 elements.vehicleMessage.style.color = ok ? 'green' : 'red';
-                if(ok) fetchCustomerData(localStorage.getItem('customerToken'));
+                if(ok) {
+                    await fetchCustomerData(localStorage.getItem('customerToken'));
+                    showBookingForm();
+                }
             }
 
             async function handleAddressUpdate(e) {
@@ -1077,8 +1074,8 @@
                 elements.addressMessage.textContent = data.message;
                 if (ok) {
                     elements.addressMessage.style.color = 'green';
-                    fetchCustomerData(localStorage.getItem('customerToken'));
-                    elements.addressEditSection.style.display = 'none';
+                    await fetchCustomerData(localStorage.getItem('customerToken'));
+                    showBookingForm();
                 } else {
                     elements.addressMessage.style.color = 'red';
                 }
