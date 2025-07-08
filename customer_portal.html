@@ -685,6 +685,7 @@
 
             function renderUpcomingAppointments() {
                 elements.upcomingAppointmentsList.innerHTML = ''; // Clear previous entries
+                console.log("Upcoming Appointments Data:", customerData.upcoming_appointments); // Debugging log
                 if (customerData.upcoming_appointments && customerData.upcoming_appointments.length > 0) {
                     elements.upcomingAppointmentsSection.style.display = 'block'; // Show the section
                     customerData.upcoming_appointments.forEach(appt => {
@@ -695,7 +696,8 @@
                         
                         const apptItem = document.createElement('div');
                         apptItem.className = 'p-3 bg-white rounded-md shadow-sm';
-                        apptItem.textContent = `${appt.title} on ${apptDateTime.toLocaleString('en-US', options)}`;
+                        // Include status in the display for upcoming appointments
+                        apptItem.textContent = `${appt.title} on ${apptDateTime.toLocaleString('en-US', options)} (Status: ${appt.status.toUpperCase()})`;
                         elements.upcomingAppointmentsList.appendChild(apptItem);
                     });
                 } else {
@@ -709,7 +711,7 @@
                     customerData.past_appointments.forEach(appt => {
                         const apptItem = document.createElement('div');
                         apptItem.className = 'p-3 bg-gray-100 rounded-md';
-                        apptItem.textContent = `${appt.title} on ${appt.date} (${appt.status})`;
+                        apptItem.textContent = `${appt.title} on ${appt.date} (${appt.status.toUpperCase()})`; // Ensure status is uppercase for consistency
                         elements.pastAppointmentsList.appendChild(apptItem);
                     });
                 } else {
