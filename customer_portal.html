@@ -28,8 +28,8 @@
             @apply bg-blue-200 text-blue-900 shadow-md;
         }
         .time-button.selected {
-            /* Selected state */
-            @apply bg-blue-600 text-white border-blue-600 shadow-lg; /* Stronger blue, matching active vehicle button */
+            /* Selected state - using a distinct green for clear selection */
+            @apply bg-green-600 text-white border-green-600 shadow-lg; 
         }
         .time-button.disabled {
             /* Disabled state */
@@ -577,6 +577,10 @@
             const availableTimes = ['09:00', '11:00', '12:00', '14:00', '16:00', '17:00', '18:00'];
             const MOBILE_BREAKPOINT = 767; // px
 
+            // Declare initialCSTHour and initialCSTMinute globally or in a scope accessible to renderTimeButtons
+            let initialCSTHour;
+            let initialCSTMinute;
+
             function updateUI() {
                 const token = localStorage.getItem('customerToken');
                 if (token) {
@@ -592,6 +596,13 @@
                 const todayFormatted = today.toISOString().split('T')[0];
                 elements.bookingDateInput.value = todayFormatted;
                 elements.financingBookingDateInput.value = todayFormatted;
+                
+                // Capture current CST time once on UI update (triggered by login or initial load)
+                const now = new Date();
+                initialCSTHour = parseInt(now.toLocaleString('en-US', { hour: '2-digit', hourCycle: 'h23', timeZone: 'America/Chicago' }));
+                initialCSTMinute = parseInt(now.toLocaleString('en-US', { minute: '2-digit', timeZone: 'America/Chicago' }));
+                console.log(`[initializeApp] Initial CST Time Captured: ${initialCSTHour}:${initialCSTMinute}`);
+
                 renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, elements.bookingDateInput.value);
                 renderTimeButtons(elements.financingTimeButtonsContainer, elements.selectedFinancingTimeInput, elements.financingBookingDateInput.value);
             }
@@ -846,16 +857,10 @@
                 console.log(`[renderTimeButtons] Called for container: ${container.id}, date: ${selectedDate}`);
                 container.innerHTML = ''; // Clear existing buttons
                 
-                const now = new Date(); // Current local time
                 const selectedDateObj = new Date(selectedDate); // Start of selected day, local time (e.g., 2025-07-08 00:00:00 local)
 
-                // Get the current hour and minute in America/Chicago timezone
-                const currentCSTHour = parseInt(now.toLocaleString('en-US', { hour: '2-digit', hourCycle: 'h23', timeZone: 'America/Chicago' }));
-                const currentCSTMinute = parseInt(now.toLocaleString('en-US', { minute: '2-digit', timeZone: 'America/Chicago' }));
-                console.log(`[renderTimeButtons] Current CST Time: ${currentCSTHour}:${currentCSTMinute}`);
-
                 // Check if the selected date is today's date (ignoring time)
-                const isToday = selectedDateObj.toDateString() === now.toDateString();
+                const isToday = selectedDateObj.toDateString() === new Date().toDateString();
                 console.log(`[renderTimeButtons] Is selected date today? ${isToday}`);
 
                 availableTimes.forEach(time => {
@@ -869,16 +874,16 @@
                     if (isToday) {
                         const [appointmentHour, appointmentMinute] = time.split(':').map(Number);
 
-                        // Calculate total minutes from midnight for current CST time
-                        const currentTotalCSTMinutes = (currentCSTHour * 60) + currentCSTMinute;
+                        // Calculate total minutes from midnight for initial CST time
+                        const initialTotalCSTMinutes = (initialCSTHour * 60) + initialCSTMinute;
                         // Calculate total minutes from midnight for the appointment time
                         const appointmentTotalMinutes = (appointmentHour * 60) + appointmentMinute;
 
                         // Calculate difference in minutes
-                        const differenceMinutes = appointmentTotalMinutes - currentTotalCSTMinutes;
-                        console.log(`[renderTimeButtons] Time ${time}: Current CST Total Minutes: ${currentTotalCSTMinutes}, Appointment Total Minutes: ${appointmentTotalMinutes}, Difference: ${differenceMinutes} minutes.`);
+                        const differenceMinutes = appointmentTotalMinutes - initialTotalCSTMinutes;
+                        console.log(`[renderTimeButtons] Time ${time}: Initial CST Total Minutes: ${initialTotalCSTMinutes}, Appointment Total Minutes: ${appointmentTotalMinutes}, Difference: ${differenceMinutes} minutes.`);
 
-                        // Disable if the appointment time is in the past, or less than 2 hours (120 minutes) from now
+                        // Disable if the appointment time is in the past, or less than 2 hours (120 minutes) from the initial CST time
                         if (differenceMinutes < 120) {
                             isDisabled = true;
                             console.log(`[renderTimeButtons] Time ${time} disabled for today due to 2-hour rule.`);
@@ -1144,6 +1149,7 @@
                     elements.bookingMessage.textContent = ''; // Clear previous messages
                     elements.financingBookingMessage.textContent = '';
                     form.reset();
+                    // Re-render time buttons to clear selection and re-evaluate disabled states based on new "now"
                     renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, elements.bookingDateInput.value);
                     renderTimeButtons(elements.financingTimeButtonsContainer, elements.selectedFinancingTimeInput, elements.financingBookingDateInput.value);
                     
