@@ -135,18 +135,25 @@
             overflow: hidden; /* Hide overflowing cards */
             position: relative;
             width: 100%;
+            padding-bottom: 2rem; /* Space for dots */
         }
         .package-slider-track {
             display: flex;
             transition: transform 0.5s ease-in-out; /* Smooth sliding animation */
-            scroll-snap-type: x mandatory; /* Enable snap-scrolling */
+            /* Removed scroll-snap-type for JS control */
             -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+            /* Added for consistent spacing within the flex container */
+            padding: 0 1rem; /* Adjust padding to match card margins */
         }
         .package-slider-dots {
             display: flex;
             justify-content: center;
             margin-top: 1rem;
             gap: 0.5rem;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
         }
         .slider-dot {
             width: 10px;
@@ -160,37 +167,54 @@
             background-color: #2563eb; /* blue-600 */
         }
 
+        /* Slider Arrows */
+        .slider-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 0.5rem 0.75rem;
+            cursor: pointer;
+            z-index: 10;
+            font-size: 1.5rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .slider-arrow:hover {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        .slider-arrow.left {
+            left: 0.5rem;
+        }
+        .slider-arrow.right {
+            right: 0.5rem;
+        }
+
         /* Apply slider styles only on small screens (mobile) */
         @media (max-width: 767px) {
             .pricing-grid {
-                display: flex; /* Change to flex for horizontal scrolling */
-                overflow-x: auto; /* Enable horizontal scrolling */
-                scroll-snap-type: x mandatory; /* Enable snap-scrolling */
-                -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-                gap: 1rem; /* Gap between cards in slider */
-                padding-bottom: 1rem; /* Space for scrollbar on some devices */
+                display: flex; /* Change to flex for horizontal sliding */
+                overflow: hidden; /* Hide overflow, JS controls movement */
+                /* Removed scroll-snap-type */
+                gap: 0; /* No gap in flex container, gap handled by card margin */
+                padding: 0; /* Reset padding from desktop grid */
             }
             .pricing-card {
                 flex-shrink: 0; /* Prevent cards from shrinking */
-                width: calc(100% - 2rem); /* Full width minus gap on each side */
-                scroll-snap-align: start; /* Snap to the start of each card */
-                margin-left: 1rem; /* Half of the gap for the first card */
-                margin-right: 1rem; /* Half of the gap for the last card */
+                width: 100%; /* Each card takes full width of the track */
+                /* Removed scroll-snap-align */
+                margin-left: 0; /* Reset margins from desktop grid */
+                margin-right: 0; /* Reset margins from desktop grid */
+                padding: 1.5rem; /* Adjusted padding for mobile cards */
             }
-            /* Adjustments for the first/last card to align with the center of the screen */
-            .pricing-grid > *:first-child {
-                margin-left: 0; /* Remove left margin for the first card to align with container */
-            }
-            .pricing-grid > *:last-child {
-                margin-right: 0; /* Remove right margin for the last card */
-            }
-            /* Hide default scrollbar */
-            .pricing-grid::-webkit-scrollbar {
-                display: none;
-            }
-            .pricing-grid {
-                -ms-overflow-style: none; /* IE and Edge */
-                scrollbar-width: none; /* Firefox */
+            /* Ensure cards are centered within the mobile viewport */
+            .package-slider-track .pricing-card {
+                width: 100%; /* Each card takes full width of its parent (track) */
             }
         }
     </style>
@@ -302,6 +326,8 @@
                             <button class="select-package-btn btn-green" data-package-type="Level 3 Detail - Sedan" data-package-price="349">Select Package</button>
                         </div>
                     </div>
+                    <button class="slider-arrow left" id="sedan-prev-btn">&#8249;</button>
+                    <button class="slider-arrow right" id="sedan-next-btn">&#8250;</button>
                     <div id="sedan-packages-dots" class="package-slider-dots"></div>
                 </div>
 
@@ -357,6 +383,8 @@
                             <button class="select-package-btn btn-green" data-package-type="Level 3 Detail - SUV/Truck" data-package-price="399">Select Package</button>
                         </div>
                     </div>
+                    <button class="slider-arrow left" id="suv-truck-prev-btn">&#8249;</button>
+                    <button class="slider-arrow right" id="suv-truck-next-btn">&#8250;</button>
                     <div id="suv-truck-packages-dots" class="package-slider-dots"></div>
                 </div>
             </div>
@@ -511,12 +539,16 @@
                 selectTruckBtn: document.getElementById('select-truck-type'), 
                 selectSuvBtn: document.getElementById('select-suv-type'), 
                 packageSelectionContainer: document.getElementById('package-selection-container'),
-                sedanPackagesSlider: document.getElementById('sedan-packages-slider'), // New ID for slider container
-                suvTruckPackagesSlider: document.getElementById('suv-truck-packages-slider'), // New ID for slider container
-                sedanPackagesTrack: document.getElementById('sedan-packages-track'), // New ID for slider track
-                suvTruckPackagesTrack: document.getElementById('suv-truck-packages-track'), // New ID for slider track
-                sedanPackagesDots: document.getElementById('sedan-packages-dots'), // New ID for dots container
-                suvTruckPackagesDots: document.getElementById('suv-truck-packages-dots'), // New ID for dots container
+                sedanPackagesSlider: document.getElementById('sedan-packages-slider'), 
+                suvTruckPackagesSlider: document.getElementById('suv-truck-packages-slider'), 
+                sedanPackagesTrack: document.getElementById('sedan-packages-track'), 
+                suvTruckPackagesTrack: document.getElementById('suv-truck-packages-track'), 
+                sedanPackagesDots: document.getElementById('sedan-packages-dots'), 
+                suvTruckPackagesDots: document.getElementById('suv-truck-packages-dots'), 
+                sedanPrevBtn: document.getElementById('sedan-prev-btn'), // New
+                sedanNextBtn: document.getElementById('sedan-next-btn'), // New
+                suvTruckPrevBtn: document.getElementById('suv-truck-prev-btn'), // New
+                suvTruckNextBtn: document.getElementById('suv-truck-next-btn'), // New
                 bookingFormSection: document.getElementById('booking-form-section'),
                 selectedPackageDisplay: document.getElementById('selected-package-display'),
                 selectedPackageTypeInput: document.getElementById('selected-package-type'),
@@ -812,22 +844,21 @@
             }
 
             // --- Package Slider Logic ---
-            function initPackageSlider(sliderContainerId, sliderTrackId, sliderDotsId) {
+            function initPackageSlider(sliderContainerId, sliderTrackId, sliderDotsId, prevBtnId, nextBtnId) {
                 const sliderContainer = document.getElementById(sliderContainerId);
                 const sliderTrack = document.getElementById(sliderTrackId);
                 const sliderCards = Array.from(sliderTrack.children);
                 const sliderDotsContainer = document.getElementById(sliderDotsId);
+                const prevBtn = document.getElementById(prevBtnId);
+                const nextBtn = document.getElementById(nextBtnId);
 
-                if (!sliderContainer || !sliderTrack || sliderCards.length === 0) {
+                if (!sliderContainer || !sliderTrack || sliderCards.length === 0 || !prevBtn || !nextBtn) {
                     console.warn(`Slider initialization failed for ${sliderContainerId}: elements not found or no cards.`);
                     return null; // Return null if initialization fails
                 }
 
                 let currentSlide = 0;
                 let slideInterval = null;
-                let isDragging = false;
-                let startX = 0;
-                let scrollLeft = 0;
 
                 // Clear existing dots
                 sliderDotsContainer.innerHTML = '';
@@ -847,9 +878,9 @@
 
                 function updateSliderPosition() {
                     if (window.innerWidth <= MOBILE_BREAKPOINT) {
-                        // For mobile, use scrollLeft for native-like snap scrolling
-                        const cardWidth = sliderCards[0].offsetWidth + 32; // card width + gap (2rem = 32px)
-                        sliderTrack.scrollLeft = currentSlide * cardWidth;
+                        // Calculate translation for smooth sliding
+                        const cardWidth = sliderCards[0].offsetWidth; // Get actual card width
+                        sliderTrack.style.transform = `translateX(-${currentSlide * cardWidth}px)`;
                     } else {
                         // For desktop, revert to grid layout (handled by CSS)
                         sliderTrack.style.transform = 'translateX(0)';
@@ -862,8 +893,14 @@
                     updateSliderPosition();
                 }
 
+                function prevSlide() {
+                    goToSlide(currentSlide - 1);
+                    resetAutoSlide();
+                }
+
                 function nextSlide() {
                     goToSlide(currentSlide + 1);
+                    resetAutoSlide();
                 }
 
                 function updateDots() {
@@ -895,76 +932,9 @@
                     startAutoSlide();
                 }
 
-                // Touch/Swipe Events
-                sliderTrack.addEventListener('mousedown', (e) => {
-                    if (window.innerWidth > MOBILE_BREAKPOINT) return; // Only for mobile
-                    isDragging = true;
-                    startX = e.pageX - sliderTrack.offsetLeft;
-                    scrollLeft = sliderTrack.scrollLeft;
-                    stopAutoSlide(); // Stop auto-slide on manual interaction
-                });
-
-                sliderTrack.addEventListener('mouseleave', () => {
-                    if (window.innerWidth > MOBILE_BREAKPOINT) return; // Only for mobile
-                    isDragging = false;
-                });
-
-                sliderTrack.addEventListener('mouseup', () => {
-                    if (window.innerWidth > MOBILE_BREAKPOINT) return; // Only for mobile
-                    isDragging = false;
-                    // Snap to nearest slide after drag ends
-                    const cardWidth = sliderCards[0].offsetWidth + 32;
-                    currentSlide = Math.round(sliderTrack.scrollLeft / cardWidth);
-                    updateSliderPosition();
-                    startAutoSlide(); // Restart auto-slide after interaction
-                });
-
-                sliderTrack.addEventListener('mousemove', (e) => {
-                    if (window.innerWidth > MOBILE_BREAKPOINT || !isDragging) return; // Only for mobile
-                    e.preventDefault();
-                    const x = e.pageX - sliderTrack.offsetLeft;
-                    const walk = (x - startX) * 1.5; // Multiplier for faster scroll
-                    sliderTrack.scrollLeft = scrollLeft - walk;
-                });
-
-                // For touch devices
-                sliderTrack.addEventListener('touchstart', (e) => {
-                    if (window.innerWidth > MOBILE_BREAKPOINT) return; // Only for mobile
-                    isDragging = true;
-                    startX = e.touches[0].pageX - sliderTrack.offsetLeft;
-                    scrollLeft = sliderTrack.scrollLeft;
-                    stopAutoSlide();
-                });
-
-                sliderTrack.addEventListener('touchend', () => {
-                    if (window.innerWidth > MOBILE_BREAKPOINT) return; // Only for mobile
-                    isDragging = false;
-                    const cardWidth = sliderCards[0].offsetWidth + 32;
-                    currentSlide = Math.round(sliderTrack.scrollLeft / cardWidth);
-                    updateSliderPosition();
-                    startAutoSlide();
-                });
-
-                sliderTrack.addEventListener('touchmove', (e) => {
-                    if (window.innerWidth > MOBILE_BREAKPOINT || !isDragging) return; // Only for mobile
-                    e.preventDefault();
-                    const x = e.touches[0].pageX - sliderTrack.offsetLeft;
-                    const walk = (x - startX) * 1.5;
-                    sliderTrack.scrollLeft = scrollLeft - walk;
-                });
-
-                // Handle scroll end to update dots for non-drag scrolling (e.g., trackpad scroll)
-                let scrollTimeout;
-                sliderTrack.addEventListener('scroll', () => {
-                    if (window.innerWidth > MOBILE_BREAKPOINT) return; // Only for mobile
-                    clearTimeout(scrollTimeout);
-                    scrollTimeout = setTimeout(() => {
-                        const cardWidth = sliderCards[0].offsetWidth + 32;
-                        currentSlide = Math.round(sliderTrack.scrollLeft / cardWidth);
-                        updateDots();
-                    }, 150); // Debounce scroll event
-                });
-
+                // Attach arrow button event listeners
+                prevBtn.addEventListener('click', prevSlide);
+                nextBtn.addEventListener('click', nextSlide);
 
                 // Initial setup
                 updateSliderPosition();
@@ -977,15 +947,9 @@
                     goTo: goToSlide,
                     destroy: () => {
                         stopAutoSlide();
-                        // Remove event listeners if needed (for a full cleanup)
-                        sliderTrack.removeEventListener('mousedown', () => {});
-                        sliderTrack.removeEventListener('mouseleave', () => {});
-                        sliderTrack.removeEventListener('mouseup', () => {});
-                        sliderTrack.removeEventListener('mousemove', () => {});
-                        sliderTrack.removeEventListener('touchstart', () => {});
-                        sliderTrack.removeEventListener('touchend', () => {});
-                        sliderTrack.removeEventListener('touchmove', () => {});
-                        sliderTrack.removeEventListener('scroll', () => {});
+                        prevBtn.removeEventListener('click', prevSlide);
+                        nextBtn.removeEventListener('click', nextSlide);
+                        dots.forEach(dot => dot.removeEventListener('click', () => {})); // Remove dot listeners
                     }
                 };
             }
@@ -1029,17 +993,21 @@
 
                 if (vehicleCategory === 'sedan') {
                     elements.sedanPackagesSlider.style.display = 'block';
-                    if (!sedanSliderInstance) { // Initialize only once
-                        sedanSliderInstance = initPackageSlider('sedan-packages-slider', 'sedan-packages-track', 'sedan-packages-dots');
+                    // Initialize or restart slider
+                    if (!sedanSliderInstance) { 
+                        sedanSliderInstance = initPackageSlider('sedan-packages-slider', 'sedan-packages-track', 'sedan-packages-dots', 'sedan-prev-btn', 'sedan-next-btn');
                     } else {
-                        sedanSliderInstance.start(); // Restart if already initialized
+                        sedanSliderInstance.start(); 
+                        sedanSliderInstance.goTo(0); // Go to first slide when showing
                     }
                 } else if (vehicleCategory === 'suv-truck') {
                     elements.suvTruckPackagesSlider.style.display = 'block';
-                     if (!suvTruckSliderInstance) { // Initialize only once
-                        suvTruckSliderInstance = initPackageSlider('suv-truck-packages-slider', 'suv-truck-packages-track', 'suv-truck-packages-dots');
+                    // Initialize or restart slider
+                     if (!suvTruckSliderInstance) { 
+                        suvTruckSliderInstance = initPackageSlider('suv-truck-packages-slider', 'suv-truck-packages-track', 'suv-truck-packages-dots', 'suv-truck-prev-btn', 'suv-truck-next-btn');
                     } else {
-                        suvTruckSliderInstance.start(); // Restart if already initialized
+                        suvTruckSliderInstance.start(); 
+                        suvTruckSliderInstance.goTo(0); // Go to first slide when showing
                     }
                 }
                  elements.finalBookAppointmentBtn.style.display = 'none'; // Hide final book button until package is selected
@@ -1244,10 +1212,10 @@
             window.addEventListener('resize', () => {
                 if (window.innerWidth <= MOBILE_BREAKPOINT) {
                     if (elements.sedanPackagesSlider.style.display === 'block' && !sedanSliderInstance) {
-                        sedanSliderInstance = initPackageSlider('sedan-packages-slider', 'sedan-packages-track', 'sedan-packages-dots');
+                        sedanSliderInstance = initPackageSlider('sedan-packages-slider', 'sedan-packages-track', 'sedan-packages-dots', 'sedan-prev-btn', 'sedan-next-btn');
                     }
                     if (elements.suvTruckPackagesSlider.style.display === 'block' && !suvTruckSliderInstance) {
-                        suvTruckSliderInstance = initPackageSlider('suv-truck-packages-slider', 'suv-truck-packages-track', 'suv-truck-packages-dots');
+                        suvTruckSliderInstance = initPackageSlider('suv-truck-packages-slider', 'suv-truck-packages-track', 'suv-truck-packages-dots', 'suv-truck-prev-btn', 'suv-truck-next-btn');
                     }
                     if (sedanSliderInstance) sedanSliderInstance.start();
                     if (suvTruckSliderInstance) suvTruckSliderInstance.start();
@@ -1258,26 +1226,22 @@
                     // Ensure grid display is set for desktop if it was flex for mobile
                     if (elements.sedanPackagesSlider.style.display === 'block') {
                         elements.sedanPackagesTrack.style.display = 'grid';
-                        elements.sedanPackagesTrack.style.overflowX = 'hidden';
-                        elements.sedanPackagesTrack.style.scrollSnapType = 'none';
+                        elements.sedanPackagesTrack.style.overflow = 'unset'; /* Revert overflow */
+                        elements.sedanPackagesTrack.style.transform = 'translateX(0)'; /* Reset transform */
                         Array.from(elements.sedanPackagesTrack.children).forEach(card => {
                             card.style.flexShrink = 'unset';
                             card.style.width = 'unset';
-                            card.style.scrollSnapAlign = 'unset';
-                            card.style.marginLeft = 'unset';
-                            card.style.marginRight = 'unset';
+                            card.style.padding = '2rem'; /* Reset padding for desktop cards */
                         });
                     }
                      if (elements.suvTruckPackagesSlider.style.display === 'block') {
                         elements.suvTruckPackagesTrack.style.display = 'grid';
-                        elements.suvTruckPackagesTrack.style.overflowX = 'hidden';
-                        elements.suvTruckPackagesTrack.style.scrollSnapType = 'none';
+                        elements.suvTruckPackagesTrack.style.overflow = 'unset'; /* Revert overflow */
+                        elements.suvTruckPackagesTrack.style.transform = 'translateX(0)'; /* Reset transform */
                         Array.from(elements.suvTruckPackagesTrack.children).forEach(card => {
                             card.style.flexShrink = 'unset';
                             card.style.width = 'unset';
-                            card.style.scrollSnapAlign = 'unset';
-                            card.style.marginLeft = 'unset';
-                            card.style.marginRight = 'unset';
+                            card.style.padding = '2rem'; /* Reset padding for desktop cards */
                         });
                     }
                 }
