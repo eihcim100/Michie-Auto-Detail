@@ -1,1280 +1,515 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Michie Auto Detailing - Customer Portal</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        .pac-container { z-index: 1050 !important; }
-        .form-section, .feature-section, #vehicle-type-selection, #package-selection-container, #booking-form-section, #confirmation-message { display: none; } /* Hide sections by default */
+# admin_app.py
+
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+import os
+import psycopg2
+import psycopg2.extras 
+from bcrypt import hashpw, gensalt, checkpw
+import sys
+import traceback
+import json 
+import uuid # Ensure uuid is imported
+import httpx 
+import re 
+from datetime import datetime, timedelta
+import pytz # Import pytz for timezone handling
+
+app = Flask(__name__)
+
+# --- Configuration ---
+ADMIN_API_KEY = os.environ.get('ADMIN_API_KEY')
+DATABASE_URL = os.environ.get('DATABASE_URL')
+PIPEDRIVE_API_TOKEN = os.environ.get('PIPEDRIVE_API_TOKEN')
+PIPEDRIVE_COMPANY_DOMAIN = os.environ.get('PIPEDRIVE_COMPANY_DOMAIN')
+PIPEDRIVE_BASE_URL = f"https://{PIPEDRIVE_COMPANY_DOMAIN}.pipedrive.com/api/v1" if PIPEDRIVE_COMPANY_DOMAIN else None
+
+# --- Pipedrive Custom Field API Keys ---
+FIELD_KEYS = {
+    "VEHICLE_YEAR": "56c022b76dcf2d85030ec328aa5ccbb455c30540",
+    "VEHICLE_MAKE": "0182a3501330385f0164ad94f8627861d2e69024",
+    "VEHICLE_MODEL": "d278b92e98559a495f225ac4dff1084b0305cb4b",
+    "SERVICE_ADDRESS": "3fd7cb63ede74d310c9a9b9c047021b12a9fa8b6",
+    "APPOINTMENT_DATE": "f3301c53ce79896154cc15cc2bad3cf5a79252c9",
+    "APPOINTMENT_TIME": "0f2af5bac442a73cc054dc9e74a38f1cf3e8e90a",
+    "PAY": "df0924dde48a9f24dc9dfc6e741b26555c097be4",
+    "INSTALLMENT_1_DATE": "cdfbc483d18b7a4b67ae7785b9cdd72cdf33bced",
+    "INSTALLMENT_2_DATE": "9a903dece6dd10aefa05178db5ef3259cab45b4e",
+    "INSTALLMENT_3_DATE": "dbcd983b79990edd71d403627648365cc90117c6",
+    "VEHICLE_2_DETAILS": "1fe9cd653ad3de948c9685153f0d469523aca13c",
+    "PACKAGE_TYPE": "759b224c353b0136a161ff57097ba235c9115eed",  # Custom field for package type
+    "PACKAGE_PRICE": "5c5ade54364ebfd1ebc2d1eb1425441e46e641e0",  # Custom field for package price
+    "VEHICLE_1_UUID": "5ea831ebb0931443b5b817249eea4a8a737427bc", # New: Custom field for Primary Vehicle UUID
+    "VEHICLE_2_UUID": "a3d9414797ab496ddcc9ccc42750340a46b86436"  # New: Custom field for Secondary Vehicle UUID
+}
+
+# --- CORS Configuration ---
+CORS(app, resources={r"/*": {"origins": [
+    "https://michie-detailing-admin.onrender.com", 
+    "https://michieauto.com",                     
+    "http://127.0.0.1:5500",                      
+    "null"                                        
+]}}, supports_credentials=True)
+
+
+# --- Database Functions ---
+def get_db_connection():
+    if not DATABASE_URL: raise RuntimeError("DATABASE_URL is not set.")
+    return psycopg2.connect(DATABASE_URL)
+
+def init_db():
+    conn = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS customers (
+                id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                full_name VARCHAR(255) NOT NULL,
+                email VARCHAR(255) UNIQUE NOT NULL,
+                phone VARCHAR(50),
+                address TEXT,
+                password_hash TEXT NOT NULL,
+                zip_code VARCHAR(20),
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+            );
+        """)
         
-        /* Custom styles for time buttons */
-        .time-button {
-            /* Base styles for all time buttons */
-            @apply px-4 py-2 rounded-lg border-2 font-medium cursor-pointer transition-all duration-300;
-            /* Enhanced default look for better visibility */
-            @apply bg-blue-100 text-blue-800 border-blue-300 shadow-sm; 
-            /* Ensure buttons are block-level or inline-block for proper sizing and spacing in grid */
-            display: inline-flex; 
-            justify-content: center;
-            align-items: center;
-            white-space: nowrap; /* Prevent text wrapping */
-        }
-        .time-button:hover:not(.disabled) {
-            /* Hover effect for active buttons */
-            @apply bg-blue-200 text-blue-900 shadow-md;
-        }
-        .time-button.selected {
-            /* Selected state - using a distinct green for clear selection */
-            @apply bg-green-600 text-white border-green-600 shadow-lg; 
-        }
-        .time-button.disabled {
-            /* Disabled state */
-            @apply bg-gray-200 text-gray-400 cursor-not-allowed border-gray-300 shadow-inner; /* Subtle shadow for disabled */
-        }
+        cursor.execute("""
+            ALTER TABLE customers
+            ADD COLUMN IF NOT EXISTS pipedrive_person_id INTEGER;
+        """)
 
-        /* Vehicle type selection buttons - Direct Tailwind classes for robustness */
-        .vehicle-type-button {
-            padding: 0.75rem 1.5rem; /* px-6 py-3 */
-            border-radius: 0.75rem; /* rounded-xl */
-            border-width: 2px; /* border-2 */
-            border-color: #60a5fa; /* border-blue-400 */
-            color: #1d4ed8; /* text-blue-700 */
-            font-weight: 700; /* font-bold */
-            cursor: pointer;
-            transition-property: all; /* transition-all */
-            transition-duration: 300ms; /* duration-300 */
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
-            background-color: #ffffff; /* bg-white */
-        }
-        .vehicle-type-button:hover {
-            background-color: #eff6ff; /* hover:bg-blue-50 */
-            color: #1e40af; /* hover:text-blue-800 */
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* hover:shadow-lg */
-        }
-        .vehicle-type-button.active {
-            background-color: #2563eb; /* bg-blue-600 */
-            color: #ffffff; /* text-white */
-            border-color: #2563eb; /* border-blue-600 */
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); /* shadow-xl */
-        }
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS vehicles (
+                id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                customer_id UUID NOT NULL REFERENCES customers(id) ON DELETE CASCADE,
+                year VARCHAR(4),
+                make VARCHAR(255),
+                model VARCHAR(255),
+                is_primary BOOLEAN NOT NULL DEFAULT FALSE,
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+            );
+        """)
+        conn.commit()
+        print("--- Database tables checked/created successfully. ---")
+    except Exception as e:
+        print(f"ERROR: Database initialization failed: {e}")
+    finally:
+        if conn: conn.close()
 
-        /* Pricing Card styles */
-        .pricing-grid {
-            display: grid;
-            grid-template-columns: 1fr; /* Stack columns on small screens */
-            gap: 2rem; /* Consistent gap between cards */
-            justify-content: center; /* Center cards horizontally */
-            align-items: stretch; /* Ensure cards stretch to fill row height */
-        }
-        @media (min-width: 768px) {
-            .pricing-grid {
-                grid-template-columns: repeat(3, 1fr); /* 3 columns on medium screens and up */
-            }
-        }
-        .pricing-card {
-            background-color: #ffffff;
-            border: 1px solid #dee2e6;
-            border-radius: 0.75rem;
-            padding: 1.25rem; /* Adjusted padding for a more square/compact look */
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* More prominent shadow */
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            height: 100%; /* Ensure cards fill the grid cell height */
-        }
-        .pricing-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 123, 255, 0.2); /* Enhanced hover shadow */
-        }
-        .pricing-level {
-            font-size: 1.2rem; /* Smaller font size */
-            font-weight: 800;
-            color: #212529;
-            margin-bottom: 0.5rem; /* Adjusted margin */
-        }
-        .pricing-price {
-            font-size: 2rem; /* Smaller font size */
-            font-weight: 800;
-            color: #28a745;
-            margin-bottom: 1.5rem; /* Adjusted margin */
-        }
-        .feature-list {
-            list-style: none;
-            padding: 0;
-            text-align: left;
-            flex-grow: 1;
-            /* margin-bottom: 1.5rem; This will now be handled by feature-dropdown padding-bottom */
-        }
-        .feature-list li {
-            position: relative;
-            padding-left: 1.75rem;
-            margin-bottom: 0.6rem; /* Reduced margin for tighter spacing */
-            color: #495057;
-        }
-        .feature-list li::before {
-            content: '✓';
-            color: #28a745;
-            position: absolute;
-            left: 0;
-            font-weight: bold;
-        }
-        .select-package-btn {
-            background-color: #007bff;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            font-size: 1rem;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            text-decoration: none;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            width: 100%;
-            margin-top: auto; /* Push button to the bottom of the card */
-        }
-        .select-package-btn:hover {
-            background-color: #0056b3;
-            transform: translateY(-2px);
-        }
-        .btn-green {
-            background-color: #28a745;
-        }
-        .btn-green:hover {
-            background-color: #218838;
-        }
+def find_or_create_pipedrive_person_sync(client, cursor, customer):
+    if customer.get('pipedrive_person_id'):
+        return customer['pipedrive_person_id']
+    
+    search_res = client.get(
+        f"{PIPEDRIVE_BASE_URL}/persons/search",
+        params={"term": customer['email'], "fields": "email", "exact_match": True, "api_token": PIPEDRIVE_API_TOKEN}
+    )
+    search_res.raise_for_status()
+    search_data = search_res.json()
 
-        /* See What's Included Button */
-        .see-whats-included-btn {
-            background-color: #DBEAFE; /* Light blue background */
-            color: #1D4ED8; /* Dark blue text */
-            font-weight: 500; /* Medium font weight */
-            padding: 0.5rem 1rem; /* py-2 px-4 */
-            border-radius: 0.5rem; /* rounded-lg */
-            width: 100%; /* w-full */
-            margin-top: 0.5rem; /* mt-2 */
-            margin-bottom: 1rem; /* Added margin for spacing */
-            transition-colors: 0.2s; /* duration-200 */
-            cursor: pointer;
-            text-align: center;
-            border: none; /* Ensure no default button border */
-        }
-        .see-whats-included-btn:hover {
-            background-color: #BFDBFE; /* Hover light blue */
-        }
+    if search_data.get("data", {}).get("items"):
+        person_id = search_data["data"]["items"][0]["item"]["id"]
+        cursor.execute("UPDATE customers SET pipedrive_person_id = %s WHERE id = %s", (person_id, str(customer['id']))) # Convert customer['id'] to string
+        return person_id
+    else:
+        create_res = client.post(
+            f"{PIPEDRIVE_BASE_URL}/persons",
+            params={"api_token": PIPEDRIVE_API_TOKEN},
+            json={"name": customer['full_name'], "email": [customer['email']], "phone": [customer.get('phone')]}
+        )
+        create_res.raise_for_status()
+        person_id = create_res.json().get("data", {}).get("id")
+        if person_id:
+            cursor.execute("UPDATE customers SET pipedrive_person_id = %s WHERE id = %s", (person_id, str(customer['id']))) # Convert customer['id'] to string
+        return person_id
 
-        /* Feature Dropdown */
-        .feature-dropdown {
-            display: none; /* Hidden by default */
-            overflow: hidden; /* Ensures smooth transition */
-            transition: max-height 0.3s ease-out; /* For smooth reveal */
-            max-height: 0; /* Initial state for transition */
-            padding-bottom: 1rem; /* Added padding-bottom for spacing when open */
-        }
-        .feature-dropdown.show {
-            max-height: 1000px; /* Increased max-height to accommodate more features */
-            display: block; /* Ensure it's block for transition */
-        }
-    </style>
-</head>
-<body class="bg-gray-50">
 
-    <div class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-3xl">
-        <header class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-gray-800">Customer Portal</h1>
-        </header>
+# --- CUSTOMER PORTAL FUNCTIONS ---
+@app.route('/customer/login', methods=['POST'])
+def customer_login():
+    conn = None
+    try:
+        data = request.get_json()
+        email, password = data.get('email'), data.get('password')
+        if not email or not password: return jsonify({"message": "Email and password are required."}), 400
+        conn = get_db_connection()
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        cursor.execute("SELECT id, email, password_hash, full_name FROM customers WHERE email = %s", (email,))
+        customer = cursor.fetchone()
+        if customer and checkpw(password.encode('utf-8'), customer['password_hash'].encode('utf-8')):
+            return jsonify({"message": "Login successful!", "token": str(customer['id']), "full_name": customer['full_name']}), 200
+        else:
+            return jsonify({"message": "Invalid email or password."}), 401
+    except Exception as e:
+        print(f"ERROR: Customer login failed: {e}")
+        return jsonify({"message": "A network error occurred during login."}), 500
+    finally:
+        if conn: conn.close()
 
-        <div id="auth-section" class="bg-white p-8 rounded-xl shadow-md">
-             <div id="login-form">
-                <h2 class="text-2xl font-bold text-center mb-6 text-gray-700">Login to Your Account</h2>
-                <div class="space-y-4">
-                    <input type="email" id="login-email" placeholder="Email Address" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
-                    <input type="password" id="login-password" placeholder="Password" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
-                    <button id="login-button" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg">Login</button>
-                </div>
-                <p id="login-message" class="text-red-500 text-center mt-2"></p>
-            </div>
-        </div>
+@app.route('/customer/data', methods=['GET'])
+def get_customer_data():
+    conn = None
+    try:
+        auth_header = request.headers.get('Authorization')
+        if not auth_header or not auth_header.startswith('Bearer '):
+            return jsonify({"message": "Authorization token is missing."}), 401
+        
+        customer_id = auth_header.split(' ')[1]
+        conn = get_db_connection()
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-        <div id="dashboard-section" class="hidden space-y-8">
-            <div class="flex justify-between items-center">
-                 <h2 class="text-3xl font-bold text-gray-800">Welcome, <span id="customer-name"></span>!</h2>
-                 <button id="logout-button" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg">Logout</button>
-            </div>
+        cursor.execute("SELECT * FROM customers WHERE id = %s", (customer_id,))
+        customer = cursor.fetchone()
+        if not customer:
+            return jsonify({"message": "Customer not found."}), 404
 
-            <div id="confirmation-message" class="bg-green-100 border-l-4 border-green-500 text-green-700 p-6 rounded-lg text-center hidden">
-                <p class="text-2xl font-bold mb-2">Thank you for your business!</p>
-                <p class="text-xl">Your appointment is confirmed!</p>
-            </div>
-
-            <div id="upcoming-appointments-section" class="feature-section bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 rounded-lg" role="alert">
-                <p class="font-bold">Upcoming Appointments</p>
-                <div id="upcoming-appointments-list" class="space-y-2">
-                    <!-- Upcoming appointments will be loaded here -->
-                </div>
-                <div class="mt-4 text-sm">
-                    <p>Questions about your appointment, or need to make a change?</p>
-                    <a href="tel:4052955189" class="inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mt-2">Call (405) 295-5189</a>
-                </div>
-            </div>
-
-            <!-- New Booking Flow - Step 1: Vehicle Type Selection -->
-            <div id="vehicle-type-selection" class="bg-white p-8 rounded-xl shadow-md hidden">
-                <h3 class="text-2xl font-bold text-gray-700 mb-4 text-center">Select Your Vehicle Type</h3>
-                <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
-                    <button id="select-car-type" class="vehicle-type-button">Car</button>
-                    <button id="select-truck-type" class="vehicle-type-button">Truck</button>
-                    <button id="select-suv-type" class="vehicle-type-button">SUV</button>
-                </div>
-            </div>
-
-            <!-- New Booking Flow - Step 2: Package Selection -->
-            <div id="package-selection-container" class="bg-white p-8 rounded-xl shadow-md hidden">
-                <h3 class="text-2xl font-bold text-gray-700 mb-4 text-center">Select Your Package</h3>
-
-                <!-- Sedan Packages -->
-                <div id="sedan-packages-display" class="pricing-grid hidden">
-                    <div class="pricing-card">
-                        <h4 class="pricing-level">Level 1 Detail</h4>
-                        <p class="pricing-price">$149</p>
-                        <button class="see-whats-included-btn" data-target="sedan-level1-features">See what's included</button>
-                        <div id="sedan-level1-features" class="feature-dropdown">
-                            <ul class="feature-list">
-                                <li>External high pressure wash</li>
-                                <li>Tire cleaner</li>
-                                <li>Window cleaning inside and out</li>
-                                <li>Deep vaccuming</li>
-                                <li>Display controls and panels wipedown</li>
-                                <li>Mirror cleaning</li>
-                                <li>Seat vaccum</li>
-                                <li>Surface protectent for the dash and display/controls</li>
-                                <li>Steering wheel and dash clean</li>
-                            </ul>
-                        </div>
-                        <button class="select-package-btn btn-green" data-package-type="Level 1 Detail" data-package-price="149">Select Package</button>
-                    </div>
-                    <div class="pricing-card">
-                        <h4 class="pricing-level">Level 2 Detail</h4>
-                        <p class="pricing-price">$249</p>
-                        <button class="see-whats-included-btn" data-target="sedan-level2-features">See what's included</button>
-                        <div id="sedan-level2-features" class="feature-dropdown">
-                            <ul class="feature-list">
-                                <li>External high pressure wash</li>
-                                <li>Tire cleaner</li>
-                                <li>Window cleaning inside and out</li>
-                                <li>Deep vaccuming</li>
-                                <li>Display controls and panels wipedown</li>
-                                <li>Mirror cleaning</li>
-                                <li>Seat vaccum</li>
-                                <li>Surface protectent for the dash and display/controls</li>
-                                <li>Steering wheel and dash clean</li>
-                                <li>Shampoo carpets and seats</li>
-                                <li>Premium Leather treatment</li>
-                                <li>Door jam cleaning</li>
-                                <li>Rims and tires cleaned and wiped down</li>
-                                <li>Console scrub down</li>
-                                <li>Pet hair removal</li>
-                                <li>Odor removal</li>
-                            </ul>
-                        </div>
-                        <button class="select-package-btn btn-green" data-package-type="Level 2 Detail" data-package-price="249">Select Package</button>
-                    </div>
-                    <div class="pricing-card">
-                        <h4 class="pricing-level">Level 3 Detail</h4>
-                        <p class="pricing-price">$349</p>
-                        <button class="see-whats-included-btn" data-target="sedan-level3-features">See what's included</button>
-                        <div id="sedan-level3-features" class="feature-dropdown">
-                            <ul class="feature-list">
-                                <li>External high pressure wash</li>
-                                <li>Tire cleaner</li>
-                                <li>Window cleaning inside and out</li>
-                                <li>Deep vaccuming</li>
-                                <li>Display controls and panels wipedown</li>
-                                <li>Mirror cleaning</li>
-                                <li>Seat vaccum</li>
-                                <li>Surface protectent for the dash and display/controls</li>
-                                <li>Steering wheel and dash clean</li>
-                                <li>Shampoo carpets and seats</li>
-                                <li>Premium Leather treatment</li>
-                                <li>Door jam cleaning</li>
-                                <li>Rims and tires cleaned and wiped down</li>
-                                <li>Console scrub down</li>
-                                <li>Pet hair removal</li>
-                                <li>Odor removal</li>
-                                <li>FINE TOOTH COMB in between seats cleaning</li>
-                                <li>Glove compartment cleaning</li>
-                                <li>Trunk shampoo and vaccum</li>
-                                <li>Door controls cleaning</li>
-                                <li>Hard to reach areas deep level shampoo</li>
-                                <li>Meticulous cleaning of all frequently touched surfaces</li>
-                                <li>External bug removal</li>
-                                <li>Free microfiber cloth</li>
-                                <li>Protection plan (complimentary maintenance clean within 15 days)</li>
-                            </ul>
-                        </div>
-                        <button class="select-package-btn btn-green" data-package-type="Level 3 Detail" data-package-price="349">Select Package</button>
-                    </div>
-                </div>
-
-                <!-- SUV/Truck Packages -->
-                <div id="suv-truck-packages-display" class="pricing-grid hidden">
-                    <div class="pricing-card">
-                        <h4 class="pricing-level">Level 1 Detail</h4>
-                        <p class="pricing-price">$199</p>
-                        <button class="see-whats-included-btn" data-target="suv-truck-level1-features">See what's included</button>
-                        <div id="suv-truck-level1-features" class="feature-dropdown">
-                            <ul class="feature-list">
-                                <li>External high pressure wash</li>
-                                <li>Tire cleaner</li>
-                                <li>Window cleaning inside and out</li>
-                                <li>Deep vaccuming</li>
-                                <li>Display controls and panels wipedown</li>
-                                <li>Mirror cleaning</li>
-                                <li>Seat vaccum</li>
-                                <li>Surface protectent for the dash and display/controls</li>
-                                <li>Steering wheel and dash clean</li>
-                            </ul>
-                        </div>
-                        <button class="select-package-btn btn-green" data-package-type="Level 1 Detail" data-package-price="199">Select Package</button>
-                    </div>
-                    <div class="pricing-card">
-                        <h4 class="pricing-level">Level 2 Detail</h4>
-                        <p class="pricing-price">$299</p>
-                        <button class="see-whats-included-btn" data-target="suv-truck-level2-features">See what's included</button>
-                        <div id="suv-truck-level2-features" class="feature-dropdown">
-                            <ul class="feature-list">
-                                <li>External high pressure wash</li>
-                                <li>Tire cleaner</li>
-                                <li>Window cleaning inside and out</li>
-                                <li>Deep vaccuming</li>
-                                <li>Display controls and panels wipedown</li>
-                                <li>Mirror cleaning</li>
-                                <li>Seat vaccum</li>
-                                <li>Surface protectent for the dash and display/controls</li>
-                                <li>Steering wheel and dash clean</li>
-                                <li>Shampoo carpets and seats</li>
-                                <li>Premium Leather treatment</li>
-                                <li>Door jam cleaning</li>
-                                <li>Rims and tires cleaned and wiped down</li>
-                                <li>Console scrub down</li>
-                                <li>Pet hair removal</li>
-                                <li>Odor removal</li>
-                            </ul>
-                        </div>
-                        <button class="select-package-btn btn-green" data-package-type="Level 2 Detail" data-package-price="299">Select Package</button>
-                    </div>
-                    <div class="pricing-card">
-                        <h4 class="pricing-level">Level 3 Detail</h4>
-                        <p class="pricing-price">$399</p>
-                        <button class="see-whats-included-btn" data-target="suv-truck-level3-features">See what's included</button>
-                        <div id="suv-truck-level3-features" class="feature-dropdown">
-                            <ul class="feature-list">
-                                <li>External high pressure wash</li>
-                                <li>Tire cleaner</li>
-                                <li>Window cleaning inside and out</li>
-                                <li>Deep vaccuming</li>
-                                <li>Display controls and panels wipedown</li>
-                                <li>Mirror cleaning</li>
-                                <li>Seat vaccum</li>
-                                <li>Surface protectent for the dash and display/controls</li>
-                                <li>Steering wheel and dash clean</li>
-                                <li>Shampoo carpets and seats</li>
-                                <li>Premium Leather treatment</li>
-                                <li>Door jam cleaning</li>
-                                <li>Rims and tires cleaned and wiped down</li>
-                                <li>Console scrub down</li>
-                                <li>Pet hair removal</li>
-                                <li>Odor removal</li>
-                                <li>FINE TOOTH COMB in between seats cleaning</li>
-                                <li>Glove compartment cleaning</li>
-                                <li>Trunk shampoo and vaccum</li>
-                                <li>Door controls cleaning</li>
-                                <li>Hard to reach areas deep level shampoo</li>
-                                <li>Meticulous cleaning of all frequently touched surfaces</li>
-                                <li>External bug removal</li>
-                                <li>Free microfiber cloth</li>
-                                <li>Protection plan (complimentary maintenance clean within 15 days)</li>
-                            </ul>
-                        </div>
-                        <button class="select-package-btn btn-green" data-package-type="Level 3 Detail" data-package-price="399">Select Package</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Original Booking Form - now Step 3 -->
-            <div id="booking-form-section" class="bg-white p-8 rounded-xl shadow-md hidden">
-                <h3 class="text-2xl font-bold text-gray-700 mb-4">Book a New Detail</h3>
-                <p class="text-lg font-semibold text-gray-800 mb-4">Selected Package: <span id="selected-package-display" class="text-blue-600"></span></p>
-                <form id="booking-form" class="space-y-6">
-                    <div>
-                        <label for="vehicle-select" class="block text-sm font-medium text-gray-700 mb-1">Select Vehicle</label>
-                        <div class="p-3 bg-gray-100 rounded-md">
-                            <select id="vehicle-select" name="vehicle-select" class="w-full p-2 border border-gray-300 rounded-lg"></select>
-                            <button type="button" id="manage-vehicle-btn" class="text-sm text-blue-600 hover:underline mt-2">Edit / Add Vehicles</button>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Service Address</label>
-                         <div class="p-3 bg-gray-100 rounded-md flex justify-between items-center">
-                            <span id="primary-address-display"></span>
-                            <button type="button" id="edit-address-btn" class="text-sm text-blue-600 hover:underline">Edit</button>
-                        </div>
-                    </div>
-                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label for="booking-date" class="block text-sm font-medium text-gray-700 mb-1">Date</label>
-                            <input type="date" id="booking-date" required class="w-full px-4 py-2 border rounded-lg">
-                        </div>
-                        <div>
-                            <label for="booking-time-buttons" class="block text-sm font-medium text-gray-700 mb-1">Time</label>
-                            <div id="booking-time-buttons" class="grid grid-cols-3 gap-2">
-                                <!-- Time buttons will be loaded here -->
-                            </div>
-                            <input type="hidden" id="selected-booking-time" name="booking-time" required>
-                        </div>
-                    </div>
-                    <input type="hidden" id="selected-package-type" name="package-type">
-                    <input type="hidden" id="selected-package-price" name="package-price">
-                    <input type="hidden" id="selected-vehicle-category" name="vehicle-category"> <!-- New hidden input for vehicle category -->
-                    <button type="submit" id="final-book-appointment-btn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg hidden">Book Appointment</button>
-                    <p id="booking-message" class="text-center mt-2"></p>
-                </form>
-
-                <div class="text-center pt-4">
-                    <button type="button" id="show-finance-btn" class="text-sm text-blue-600 hover:underline">Need financing? Pay in 3 installments</button>
-                </div>
-                <div id="financing-booking-section" class="form-section mt-6 pt-6 border-t">
-                    <h4 class="text-xl font-bold text-gray-700 mb-2">Book with Financing</h4>
-                    <p class="text-gray-600 mb-4">Pay in 3 easy installments: $99 today, and $99 every 14 days for 2 remaining installments.</p>
+        cursor.execute("SELECT id, year, make, model, is_primary FROM vehicles WHERE customer_id = %s ORDER BY is_primary DESC, created_at ASC", (customer_id,))
+        vehicles = [dict(row) for row in cursor.fetchall()]
+        
+        upcoming_appointments = []
+        past_appointments = []
+        
+        # Define CST timezone
+        cst_timezone = pytz.timezone('America/Chicago') # CST is America/Chicago
+        
+        try:
+            if customer.get('pipedrive_person_id') and all([PIPEDRIVE_API_TOKEN, PIPEDRIVE_BASE_URL]):
+                with httpx.Client(timeout=10.0) as client:
+                    # Fetch ALL deals for the person, regardless of status
+                    deals_res = client.get(
+                        f"{PIPEDRIVE_BASE_URL}/persons/{customer['pipedrive_person_id']}/deals",
+                        params={"api_token": PIPEDRIVE_API_TOKEN, "limit": 500} # Increased limit to fetch more deals
+                    )
+                    deals_res.raise_for_status()
+                    deals = deals_res.json().get("data", [])
                     
-                    <div id="payment-schedule" class="bg-gray-100 p-4 rounded-lg mb-4">
-                        <h5 class="font-semibold text-gray-700 mb-2">Your Payment Plan:</h5>
-                        <div class="space-y-2" id="installments-list">
-                            <!-- Installments will be loaded here -->
-                        </div>
-                    </div>
+                    if deals:
+                        # Get current time in CST
+                        now_cst = datetime.now(cst_timezone)
 
-                    <form id="financing-booking-form" class="space-y-4">
-                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label for="financing-booking-date" class="block text-sm font-medium text-gray-700 mb-1">Date</label>
-                                <input type="date" id="financing-booking-date" required class="w-full px-4 py-2 border rounded-lg">
-                            </div>
-                            <div>
-                                <label for="financing-time-buttons" class="block text-sm font-medium text-gray-700 mb-1">Time</label>
-                                <div id="financing-time-buttons" class="grid grid-cols-3 gap-2">
-                                    <!-- Financing time buttons will be loaded here -->
-                                </div>
-                                <input type="hidden" id="selected-financing-time" name="financing-booking-time" required>
-                            </div>
-                        </div>
-                        <input type="hidden" id="financing-selected-package-type" name="package-type">
-                        <input type="hidden" id="financing-selected-package-price" name="package-price">
-                        <input type="hidden" id="financing-selected-vehicle-category" name="vehicle-category"> <!-- New hidden input for vehicle category -->
-                        <button type="submit" class="w-full bg-blue-800 hover:bg-blue-900 text-white font-bold py-3 px-4 rounded-lg">Book with Financing</button>
-                        <p id="financing-booking-message" class="text-center mt-2"></p>
-                    </form>
-                </div>
-            </div>
+                        for deal in deals:
+                            appt_date_str = deal.get(FIELD_KEYS["APPOINTMENT_DATE"])
+                            appt_time_str = deal.get(FIELD_KEYS["APPOINTMENT_TIME"])
+                            package_type = deal.get(FIELD_KEYS["PACKAGE_TYPE"], "N/A") 
+                            package_price = deal.get(FIELD_KEYS["PACKAGE_PRICE"]) 
+                            
+                            # Determine the correct vehicle_id (database UUID) from Pipedrive deal
+                            # Check if either Vehicle 1 UUID or Vehicle 2 UUID field is populated
+                            vehicle_id_from_deal = None
+                            if deal.get(FIELD_KEYS["VEHICLE_1_UUID"]):
+                                vehicle_id_from_deal = deal.get(FIELD_KEYS["VEHICLE_1_UUID"])
+                            elif deal.get(FIELD_KEYS["VEHICLE_2_UUID"]):
+                                vehicle_id_from_deal = deal.get(FIELD_KEYS["VEHICLE_2_UUID"])
+                            
+                            if appt_date_str and appt_time_str:
+                                try:
+                                    # Combine date and time into a datetime object
+                                    # Use '%Y-%m-%d %H:%M:%S' to handle times with seconds
+                                    appointment_datetime_naive = datetime.strptime(f"{appt_date_str} {appt_time_str}", '%Y-%m-%d %H:%M:%S')
+                                    appointment_datetime_cst = cst_timezone.localize(appointment_datetime_naive)
 
-            <div class="text-center">
-                <button type="button" id="view-past-appointments-btn" class="text-gray-600 hover:text-gray-900 font-semibold">View Previous Appointments</button>
-            </div>
-            <div id="past-appointments-section" class="feature-section bg-white p-8 rounded-xl shadow-md">
-                 <h3 class="text-2xl font-bold text-gray-700 mb-4">Past Appointments</h3>
-                 <div id="past-appointments-list" class="space-y-3"></div>
-            </div>
+                                    # Calculate the "display until" time (1 hour after appointment)
+                                    display_until_time_cst = appointment_datetime_cst + timedelta(hours=1)
 
-            <div id="vehicle-management-section" class="form-section bg-white p-8 rounded-xl shadow-md">
-                <!-- Vehicle management forms will be rendered here by JS -->
-            </div>
-            <!-- Moved vehicle-message outside dynamic rendering -->
-            <p id="vehicle-message" class="text-center mt-2"></p>
+                                    appointment_info = {
+                                        "title": deal.get('title'), # Use the actual deal title
+                                        "date": appt_date_str,
+                                        "time": appt_time_str, 
+                                        "status": deal.get("status"),
+                                        "package_type": package_type, # Include package type
+                                        "package_price": package_price, # Include package price
+                                        "vehicle_id": vehicle_id_from_deal # This will now be the actual database UUID
+                                    }
 
-            <div id="address-edit-section" class="form-section bg-white p-8 rounded-xl shadow-md">
-                 <h3 class="text-xl font-bold text-gray-700 mb-4">Update Address</h3>
-                 <form id="edit-address-form" class="space-y-3">
-                    <input type="text" id="edit-address-input" placeholder="Search for new address..." required class="w-full px-3 py-2 border rounded-lg">
-                    <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg">Save New Address</button>
-                 </form>
-            </div>
-            <!-- Moved address-message outside dynamic rendering -->
-            <p id="address-message" class="text-center mt-2"></p>
-        </div>
-    </div>
+                                    # Check if the appointment is upcoming (current CST time is before display_until_time_cst)
+                                    if now_cst < display_until_time_cst:
+                                        upcoming_appointments.append(appointment_info)
+                                    else:
+                                        past_appointments.append(appointment_info)
+                                except ValueError as ve:
+                                    print(f"WARNING: Could not parse appointment date/time for deal {deal.get('id')}: {appt_date_str} {appt_time_str}. Error: {ve}")
+                                    # If parsing fails, treat as past or skip, depending on desired behavior.
+                                    # For now, adding to past if parsing fails to avoid missing data.
+                                    past_appointments.append({
+                                        "title": deal.get('title'), 
+                                        "date": appt_date_str if appt_date_str else "N/A",
+                                        "time": appt_time_str if appt_time_str else "N/A", 
+                                        "status": deal.get("status"),
+                                        "package_type": package_type,
+                                        "package_price": package_price,
+                                        "vehicle_id": vehicle_id_from_deal,
+                                        "note": "Date/Time parsing error"
+                                    })
+                            else:
+                                # If date or time is missing, it cannot be an upcoming appointment.
+                                # Add to past appointments with a note.
+                                past_appointments.append({
+                                    "title": deal.get('title'), 
+                                    "date": appt_date_str if appt_date_str else "N/A",
+                                    "time": appt_time_str if appt_time_str else "N/A", 
+                                    "status": deal.get("status"),
+                                    "package_type": package_type,
+                                    "package_price": package_price,
+                                    "vehicle_id": vehicle_id_from_deal,
+                                    "note": "Missing date or time"
+                                })
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk&libraries=places&callback=initPortal" defer></script>
-    <script>
-        window.initPortal = function() {
-            initializeApp();
-            const editAddressInput = document.getElementById('edit-address-input');
-            if (window.google && editAddressInput) {
-                editAddressAutocomplete = new google.maps.places.Autocomplete(editAddressInput, {
-                    componentRestrictions: { country: "us" }, fields: ["formatted_address"], types: ["address"],
-                });
-                // Listen for place_changed event if you want to use the formatted address from autocomplete
-                editAddressAutocomplete.addListener('place_changed', () => {
-                    const place = editAddressAutocomplete.getPlace();
-                    if (place.formatted_address) {
-                        editAddressInput.value = place.formatted_address;
-                        console.log("Autocomplete selected address:", place.formatted_address);
-                    }
-                });
-            }
+        except Exception as e:
+            print(f"CRITICAL: Could not fetch deals from Pipedrive, but serving data anyway. Error: {e}")
+        
+        response_data = {
+            "full_name": customer['full_name'],
+            "address": customer['address'],
+            "vehicles": vehicles,
+            "upcoming_appointments": sorted(upcoming_appointments, key=lambda x: (x['date'], x['time'] or '00:00')),
+            "past_appointments": sorted(past_appointments, key=lambda x: (x['date'], x['time'] or '00:00'), reverse=True)
         }
-
-        function initializeApp() {
-            const API_BASE_URL = 'https://michie-detailing-admin.onrender.com';
-            
-            const elements = {
-                authSection: document.getElementById('auth-section'),
-                dashboardSection: document.getElementById('dashboard-section'),
-                loginButton: document.getElementById('login-button'),
-                logoutButton: document.getElementById('logout-button'),
-                customerNameSpan: document.getElementById('customer-name'),
-                primaryAddressDisplay: document.getElementById('primary-address-display'),
-                manageVehicleBtn: document.getElementById('manage-vehicle-btn'),
-                editAddressBtn: document.getElementById('edit-address-btn'),
-                vehicleManagementSection: document.getElementById('vehicle-management-section'),
-                addressEditSection: document.getElementById('address-edit-section'),
-                vehicleMessage: document.getElementById('vehicle-message'), // Now a persistent element
-                addressMessage: document.getElementById('address-message'), // Now a persistent element
-                bookingMessage: document.getElementById('booking-message'),
-                bookingForm: document.getElementById('booking-form'),
-                editAddressForm: document.getElementById('edit-address-form'),
-                upcomingAppointmentsSection: document.getElementById('upcoming-appointments-section'),
-                upcomingAppointmentsList: document.getElementById('upcoming-appointments-list'),
-                showFinanceBtn: document.getElementById('show-finance-btn'),
-                financingBookingSection: document.getElementById('financing-booking-section'),
-                financingBookingForm: document.getElementById('financing-booking-form'),
-                financingBookingMessage: document.getElementById('financing-booking-message'),
-                viewPastAppointmentsBtn: document.getElementById('view-past-appointments-btn'),
-                pastAppointmentsSection: document.getElementById('past-appointments-section'),
-                pastAppointmentsList: document.getElementById('past-appointments-list'),
-                installmentsList: document.getElementById('installments-list'),
-                bookingDateInput: document.getElementById('booking-date'),
-                financingBookingDateInput: document.getElementById('financing-booking-date'),
-                bookingTimeButtonsContainer: document.getElementById('booking-time-buttons'),
-                financingTimeButtonsContainer: document.getElementById('financing-time-buttons'),
-                selectedBookingTimeInput: document.getElementById('selected-booking-time'),
-                selectedFinancingTimeInput: document.getElementById('selected-financing-time'),
-                // New elements for booking flow
-                vehicleTypeSelection: document.getElementById('vehicle-type-selection'),
-                selectCarBtn: document.getElementById('select-car-type'), 
-                selectTruckBtn: document.getElementById('select-truck-type'), 
-                selectSuvBtn: document.getElementById('select-suv-type'), 
-                packageSelectionContainer: document.getElementById('package-selection-container'),
-                sedanPackagesDisplay: document.getElementById('sedan-packages-display'), 
-                suvTruckPackagesDisplay: document.getElementById('suv-truck-packages-display'), 
-                bookingFormSection: document.getElementById('booking-form-section'),
-                selectedPackageDisplay: document.getElementById('selected-package-display'),
-                selectedPackageTypeInput: document.getElementById('selected-package-type'),
-                selectedPackagePriceInput: document.getElementById('selected-package-price'),
-                finalBookAppointmentBtn: document.getElementById('final-book-appointment-btn'),
-                confirmationMessage: document.getElementById('confirmation-message'),
-                financingSelectedPackageTypeInput: document.getElementById('financing-selected-package-type'),
-                financingSelectedPackagePriceInput: document.getElementById('financing-selected-package-price'),
-                selectedVehicleCategoryInput: document.getElementById('selected-vehicle-category'), // New
-                financingSelectedVehicleCategoryInput: document.getElementById('financing-selected-vehicle-category'), // New
-            };
-
-            let customerData = {}; 
-            const availableTimes = ['09:00', '11:00', '12:00', '14:00', '16:00', '17:00', '18:00'];
-            const MOBILE_BREAKPOINT = 767; // px
-
-            function updateUI() {
-                const token = localStorage.getItem('customerToken');
-                if (token) {
-                    elements.authSection.style.display = 'none';
-                    elements.dashboardSection.style.display = 'block';
-                    fetchCustomerData(token);
-                } else {
-                    elements.authSection.style.display = 'block';
-                    elements.dashboardSection.style.display = 'none';
-                }
-                // Set default date to today and render time buttons
-                const today = new Date();
-                const todayFormatted = today.toISOString().split('T')[0];
-                elements.bookingDateInput.value = todayFormatted;
-                elements.financingBookingDateInput.value = todayFormatted;
-                
-                // Render time buttons on UI update
-                renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, elements.bookingDateInput.value);
-                renderTimeButtons(elements.financingTimeButtonsContainer, elements.selectedFinancingTimeInput, elements.financingBookingDateInput.value);
-            }
-
-            async function fetchCustomerData(token) {
-                try {
-                    const response = await fetch(`${API_BASE_URL}/customer/data`, { headers: { 'Authorization': `Bearer ${token}` } });
-                    if (!response.ok) { logout(); return; }
-                    customerData = await response.json();
-                    renderDashboard();
-                    showVehicleTypeSelection(); // Start the new booking flow here
-                } catch (error) { console.error('Error fetching data:', error); }
-            }
-
-            function renderDashboard() {
-                elements.customerNameSpan.textContent = customerData.full_name;
-                elements.primaryAddressDisplay.textContent = customerData.address || 'No address on file.';
-                renderVehicleDropdown();
-                renderVehicleManagementForms();
-                renderUpcomingAppointments();
-                renderPastAppointments();
-                renderPaymentSchedule(); 
-            }
-
-            function renderVehicleDropdown() {
-                const vehicleSelect = document.getElementById('vehicle-select');
-                vehicleSelect.innerHTML = ''; 
-                if (customerData.vehicles && customerData.vehicles.length > 0) {
-                    customerData.vehicles.forEach(vehicle => {
-                        const option = document.createElement('option');
-                        option.value = vehicle.id;
-                        option.textContent = `${vehicle.year} ${vehicle.make} ${vehicle.model}`;
-                        if (vehicle.is_primary) option.selected = true;
-                        vehicleSelect.appendChild(option);
-                    });
-                } else {
-                    const option = document.createElement('option');
-                    option.textContent = 'No vehicles on file. Please add one.';
-                    option.disabled = true;
-                    vehicleSelect.appendChild(option);
-                }
-            }
-
-            function renderVehicleManagementForms() {
-                // Clear previous messages when re-rendering forms
-                elements.vehicleMessage.textContent = ''; 
-
-                elements.vehicleManagementSection.innerHTML = `
-                    <h3 class="text-xl font-bold text-gray-700 mb-4">Manage Vehicles</h3>
-                    <form id="edit-primary-vehicle-form" class="space-y-3 p-4 border rounded-lg mb-4" style="display: none;"></form>
-                    <form id="edit-secondary-vehicle-form" class="space-y-3 p-4 border rounded-lg mb-4" style="display: none;"></form>
-                    <form id="add-vehicle-form" class="space-y-3 p-4 border rounded-lg" style="display: none;"></form>
-                `;
-                
-                const primaryVehicle = customerData.vehicles.find(v => v.is_primary);
-                const secondaryVehicle = customerData.vehicles.find(v => !v.is_primary);
-                
-                const editPrimaryForm = document.getElementById('edit-primary-vehicle-form');
-                if(primaryVehicle) {
-                    editPrimaryForm.style.display = 'block';
-                    editPrimaryForm.innerHTML = `
-                        <h4 class="font-semibold">Edit Primary Vehicle</h4>
-                        <input type="hidden" id="edit-primary-vehicle-id" value="${primaryVehicle.id}">
-                        <input type="text" id="edit-primary-vehicle-year" placeholder="Year" required class="w-full px-3 py-2 border rounded-lg" value="${primaryVehicle.year}">
-                        <input type="text" id="edit-primary-vehicle-make" placeholder="Make" required class="w-full px-3 py-2 border rounded-lg" value="${primaryVehicle.make}">
-                        <input type="text" id="edit-primary-vehicle-model" placeholder="Model" required class="w-full px-3 py-2 border rounded-lg" value="${primaryVehicle.model}">
-                        <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg">Save Primary Vehicle</button>
-                        <button type="button" id="delete-primary-vehicle-btn" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg mt-2">Delete Primary Vehicle</button>
-                    `;
-                    editPrimaryForm.addEventListener('submit', (e) => handleVehicleUpdate(e, 'edit-primary'));
-                    document.getElementById('delete-primary-vehicle-btn').addEventListener('click', () => handleVehicleDelete(primaryVehicle.id));
-                }
-
-                const editSecondaryForm = document.getElementById('edit-secondary-vehicle-form');
-                if(secondaryVehicle) {
-                    editSecondaryForm.style.display = 'block';
-                    editSecondaryForm.innerHTML = `
-                        <h4 class="font-semibold">Edit Second Vehicle</h4>
-                        <input type="hidden" id="edit-secondary-vehicle-id" value="${secondaryVehicle.id}">
-                        <input type="text" id="edit-secondary-vehicle-year" placeholder="Year" required class="w-full px-3 py-2 border rounded-lg" value="${secondaryVehicle.year}">
-                        <input type="text" id="edit-secondary-vehicle-make" placeholder="Make" required class="w-full px-3 py-2 border rounded-lg" value="${secondaryVehicle.make}">
-                        <input type="text" id="edit-secondary-vehicle-model" placeholder="Model" required class="w-full px-3 py-2 border rounded-lg" value="${secondaryVehicle.model}">
-                        <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg">Save Second Vehicle</button>
-                        <button type="button" id="delete-secondary-vehicle-btn" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg mt-2">Delete Second Vehicle</button>
-                    `;
-                    editSecondaryForm.addEventListener('submit', (e) => handleVehicleUpdate(e, 'edit-secondary'));
-                    document.getElementById('delete-secondary-vehicle-btn').addEventListener('click', () => handleVehicleDelete(secondaryVehicle.id));
-                }
-
-                const addForm = document.getElementById('add-vehicle-form');
-                if(customerData.vehicles.length < 2) {
-                    addForm.style.display = 'block';
-                    addForm.innerHTML = `
-                        <h4 class="font-semibold">Add a Vehicle</h4>
-                        <input type="text" id="add-vehicle-year" placeholder="Year" required class="w-full px-3 py-2 border rounded-lg">
-                        <input type="text" id="add-vehicle-make" placeholder="Make" required class="w-full px-3 py-2 border rounded-lg">
-                        <input type="text" id="add-vehicle-model" placeholder="Model" required class="w-full px-3 py-2 border rounded-lg">
-                        <button type="submit" class="w-full bg-green-600 text-white py-2 px-4 rounded-lg">Add Vehicle</button>
-                    `;
-                    addForm.addEventListener('submit', handleAddVehicle);
-                }
-            }
-
-            function renderUpcomingAppointments() {
-                elements.upcomingAppointmentsList.innerHTML = ''; // Clear previous entries
-                console.log("Upcoming Appointments Data:", customerData.upcoming_appointments); // Debugging log
-                if (customerData.upcoming_appointments && customerData.upcoming_appointments.length > 0) {
-                    elements.upcomingAppointmentsSection.style.display = 'block'; // Show the section
-                    
-                    const uniqueAppointments = new Map(); // Map to store unique appointments by a composite key
-                    customerData.upcoming_appointments.forEach(appt => {
-                        // Create a unique key for deduplication: date + time + customer_id + package_type + vehicle_id
-                        // Assuming customerData.full_name is the "person's name"
-                        const uniqueKey = `${appt.date}-${appt.time}-${customerData.full_name}-${appt.package_type}-${appt.vehicle_id}`;
-                        if (!uniqueAppointments.has(uniqueKey)) {
-                            uniqueAppointments.set(uniqueKey, appt);
-                        }
-                    });
-
-                    Array.from(uniqueAppointments.values()).forEach(appt => {
-                        const timePart = appt.time ? appt.time.slice(0, 5) : '00:00';
-                        const apptDateTime = new Date(`${appt.date}T${timePart}:00`);
-                        // Ensure timezone is set for consistent display
-                        const options = { timeZone: "America/Chicago", weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
-                        
-                        // Find the vehicle using the vehicle_id (which is now the actual DB UUID)
-                        const vehicle = customerData.vehicles.find(v => v.id === appt.vehicle_id);
-                        const vehicleInfo = vehicle ? `${vehicle.year} ${vehicle.make} ${vehicle.model}` : 'Vehicle N/A';
-                        const packagePrice = appt.package_price ? `$${appt.package_price}` : 'Price N/A';
-
-                        const apptItem = document.createElement('div');
-                        apptItem.className = 'p-3 bg-white rounded-md shadow-sm';
-                        // Removed status display
-                        apptItem.innerHTML = `
-                            <p class="font-semibold">${appt.package_type} - ${vehicleInfo}</p>
-                            <p>Date: ${apptDateTime.toLocaleString('en-US', options)}</p>
-                            <p>Price: ${packagePrice}</p>
-                        `;
-                        elements.upcomingAppointmentsList.appendChild(apptItem);
-                    });
-                } else {
-                    elements.upcomingAppointmentsSection.style.display = 'none'; // Hide if no upcoming appointments
-                }
-            }
-
-            function renderPastAppointments() {
-                elements.pastAppointmentsList.innerHTML = '';
-                if (customerData.past_appointments && customerData.past_appointments.length > 0) {
-
-                    const uniqueAppointments = new Map(); // Map to store unique appointments by a composite key
-                    customerData.past_appointments.forEach(appt => {
-                        // Create a unique key for deduplication: date + time + customer_id + package_type + vehicle_id
-                        const uniqueKey = `${appt.date}-${appt.time}-${customerData.full_name}-${appt.package_type}-${appt.vehicle_id}`;
-                        if (!uniqueAppointments.has(uniqueKey)) {
-                            uniqueAppointments.set(uniqueKey, appt);
-                        }
-                    });
-
-                    Array.from(uniqueAppointments.values()).forEach(appt => {
-                        const timePart = appt.time ? appt.time.slice(0, 5) : '00:00';
-                        const apptDateTime = new Date(`${appt.date}T${timePart}:00`);
-                        const options = { timeZone: "America/Chicago", weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
-                        
-                        // Find the vehicle using the vehicle_id (which is now the actual DB UUID)
-                        const vehicle = customerData.vehicles.find(v => v.id === appt.vehicle_id);
-                        const vehicleInfo = vehicle ? `${vehicle.year} ${vehicle.make} ${vehicle.model}` : 'Vehicle N/A';
-                        const packagePrice = appt.package_price ? `$${appt.package_price}` : 'Price N/A';
-
-                        const apptItem = document.createElement('div');
-                        apptItem.className = 'p-3 bg-gray-100 rounded-md';
-                        // Removed status display
-                        apptItem.innerHTML = `
-                            <p class="font-semibold">${appt.package_type} - ${vehicleInfo}</p>
-                            <p>Date: ${apptDateTime.toLocaleString('en-US', options)}</p>
-                            <p>Price: ${packagePrice}</p>
-                        `;
-                        elements.pastAppointmentsList.appendChild(apptItem);
-                    });
-                } else {
-                    elements.pastAppointmentsList.textContent = 'No past appointments found.';
-                }
-            }
-
-            function renderPaymentSchedule() {
-                elements.installmentsList.innerHTML = ''; 
-                const today = new Date();
-                const formatter = new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-
-                // Payment 1: Today
-                const payment1Date = new Date(today);
-                const payment1Div = document.createElement('div');
-                payment1Div.className = 'flex justify-between items-center bg-white p-3 rounded-md shadow-sm';
-                payment1Div.innerHTML = `
-                    <span class="font-medium text-gray-800">Payment 1: $99</span>
-                    <span class="text-gray-600">${formatter.format(payment1Date)} (Today)</span>
-                `;
-                elements.installmentsList.appendChild(payment1Div);
-
-                // Payment 2: 14 days from today
-                const payment2Date = new Date(today);
-                payment2Date.setDate(today.getDate() + 14);
-                const payment2Div = document.createElement('div');
-                payment2Div.className = 'flex justify-between items-center bg-white p-3 rounded-md shadow-sm';
-                payment2Div.innerHTML = `
-                    <span class="font-medium text-gray-800">Payment 2: $99</span>
-                    <span class="text-gray-600">${formatter.format(payment2Date)}</span>
-                `;
-                elements.installmentsList.appendChild(payment2Div);
-
-                // Payment 3: 28 days from today
-                const payment3Date = new Date(today);
-                payment3Date.setDate(today.getDate() + 28);
-                const payment3Div = document.createElement('div');
-                payment3Div.className = 'flex justify-between items-center bg-white p-3 rounded-md shadow-sm';
-                payment3Div.innerHTML = `
-                    <span class="font-medium text-gray-800">Payment 3: $99</span>
-                    <span class="text-gray-600">${formatter.format(payment3Date)}</span>
-                `;
-                elements.installmentsList.appendChild(payment3Div);
-            }
-            
-            function logout() {
-                localStorage.removeItem('customerToken');
-                updateUI();
-                // Hide all dynamic sections on logout
-                elements.vehicleTypeSelection.style.display = 'none';
-                elements.packageSelectionContainer.style.display = 'none';
-                elements.sedanPackagesDisplay.style.display = 'none'; // Hide package containers
-                elements.suvTruckPackagesDisplay.style.display = 'none'; // Hide package containers
-                elements.bookingFormSection.style.display = 'none';
-                elements.financingBookingSection.style.display = 'none';
-                elements.pastAppointmentsSection.style.display = 'none';
-                elements.vehicleManagementSection.style.display = 'none';
-                elements.addressEditSection.style.display = 'none';
-                elements.confirmationMessage.style.display = 'none';
-                elements.vehicleMessage.textContent = ''; // Clear messages on logout
-                elements.addressMessage.textContent = ''; // Clear messages on logout
-            }
-
-            async function apiCall(endpoint, method, payload = null) {
-                const token = localStorage.getItem('customerToken');
-                const options = {
-                    method,
-                    headers: { 'Authorization': `Bearer ${token}` }
-                };
-                if (payload) {
-                    options.headers['Content-Type'] = 'application/json';
-                    options.body = JSON.stringify(payload);
-                }
-                const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
-                return { ok: response.ok, data: await response.json() };
-            }
-
-            // --- Time Button Logic ---
-            function renderTimeButtons(container, hiddenInput, selectedDate) {
-                console.log(`[renderTimeButtons] Called for container: ${container.id}, date: ${selectedDate}`);
-                container.innerHTML = ''; // Clear existing buttons
-                
-                const selectedDateObj = new Date(selectedDate + 'T00:00:00'); // Ensure date is parsed consistently, avoiding timezone issues for comparison
-
-                // Get today's date in CST without time component for comparison
-                const todayCST = new Date().toLocaleString('en-US', { timeZone: 'America/Chicago', year: 'numeric', month: '2-digit', day: '2-digit' });
-                const selectedDateCST = selectedDateObj.toLocaleString('en-US', { timeZone: 'America/Chicago', year: 'numeric', month: '2-digit', day: '2-digit' });
-
-                const isToday = selectedDateCST === todayCST;
-                console.log(`[renderTimeButtons] Is selected date today? ${isToday}`);
-                console.log(`[renderTimeButtons] Today CST: ${todayCST}, Selected Date CST: ${selectedDateCST}`);
-
-                const nowCST = new Date(); // Current local time
-                const currentCSTHour = parseInt(nowCST.toLocaleString('en-US', { hour: '2-digit', hourCycle: 'h23', timeZone: 'America/Chicago' }));
-                const currentCSTMinute = parseInt(nowCST.toLocaleString('en-US', { minute: '2-digit', timeZone: 'America/Chicago' }));
-                
-                console.log(`[renderTimeButtons] Current CST Time: ${currentCSTHour}:${currentCSTMinute}`);
-
-
-                availableTimes.forEach(time => {
-                    const button = document.createElement('button'); // Explicitly create a button
-                    button.type = 'button'; // Set type to button to prevent form submission
-                    // Apply base styling classes directly here for robustness.
-                    button.classList.add('time-button', 'px-4', 'py-2', 'rounded-lg', 'border-2', 'font-medium', 'cursor-pointer', 'transition-all', 'duration-300', 'bg-blue-100', 'text-blue-800', 'border-blue-300', 'shadow-sm', 'inline-flex', 'justify-content-center', 'items-center', 'whitespace-nowrap'); 
-                    button.textContent = formatTimeDisplay(time);
-                    button.dataset.time = time; // Store the 24hr time for easy access
-
-                    let isDisabled = false;
-                    if (isToday) {
-                        const [appointmentHour, appointmentMinute] = time.split(':').map(Number);
-
-                        // Calculate total minutes from midnight for current CST time
-                        const currentTotalCSTMinutes = (currentCSTHour * 60) + currentCSTMinute;
-                        // Calculate total minutes from midnight for the appointment time
-                        const appointmentTotalMinutes = (appointmentHour * 60) + appointmentMinute;
-
-                        // Calculate difference in minutes
-                        const differenceMinutes = appointmentTotalMinutes - currentTotalCSTMinutes;
-                        console.log(`[renderTimeButtons] Time ${time}: Current CST Total Minutes: ${currentTotalCSTMinutes}, Appointment Total Minutes: ${appointmentTotalMinutes}, Difference: ${differenceMinutes} minutes.`);
-
-                        // Disable if the appointment time is in the past, or less than 2 hours (120 minutes) from the current CST time
-                        if (differenceMinutes < 120) {
-                            isDisabled = true;
-                            console.log(`[renderTimeButtons] Time ${time} disabled for today due to 2-hour rule.`);
-                        }
-                    }
-
-                    if (isDisabled) {
-                        button.classList.add('disabled', 'bg-gray-200', 'text-gray-400', 'cursor-not-allowed', 'border-gray-300', 'shadow-inner'); // Apply disabled styling directly
-                        button.disabled = true; // Disable button functionality
-                    } else {
-                        button.addEventListener('click', () => {
-                            console.log(`[renderTimeButtons] Time button ${time} clicked.`);
-                            // Deselect all other buttons in the same container
-                            Array.from(container.children).forEach(btn => {
-                                if (btn.classList.contains('selected')) {
-                                    btn.classList.remove('selected', 'bg-green-600', 'text-white', 'border-green-600', 'shadow-lg'); // Remove selected styling
-                                    btn.classList.add('bg-blue-100', 'text-blue-800', 'border-blue-300', 'shadow-sm'); // Reapply default styling
-                                    console.log(`[renderTimeButtons] Removed 'selected' from ${btn.dataset.time}`);
-                                }
-                            });
-                            // Select the clicked button
-                            button.classList.remove('bg-blue-100', 'text-blue-800', 'border-blue-300', 'shadow-sm'); // Remove default styling
-                            button.classList.add('selected', 'bg-green-600', 'text-white', 'border-green-600', 'shadow-lg'); // Apply selected styling
-                            // Update the hidden input value
-                            hiddenInput.value = time;
-                            console.log(`[renderTimeButtons] Selected time for ${container.id}: ${hiddenInput.value}`);
-                            // Show the final book appointment button only when a time is selected
-                            elements.finalBookAppointmentBtn.style.display = 'block';
-                        });
-                    }
-                    container.appendChild(button); // Append the fully configured button to the container
-                    console.log(`[renderTimeButtons] Appended button for time: ${time} to ${container.id}. Is disabled: ${isDisabled}`);
-                });
-                // Clear selected time when date changes
-                hiddenInput.value = '';
-                // Hide the final book appointment button when date changes (and thus time selection is cleared)
-                elements.finalBookAppointmentBtn.style.display = 'none';
-                console.log(`[renderTimeButtons] Hidden input for ${container.id} cleared after rendering.`);
-            }
-
-            function formatTimeDisplay(time24hr) {
-                const [hours, minutes] = time24hr.split(':').map(Number);
-                const date = new Date();
-                date.setHours(hours, minutes);
-                return date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
-            }
-
-            // --- New Booking Flow Functions ---
-            function showVehicleTypeSelection() {
-                elements.packageSelectionContainer.style.display = 'none';
-                elements.bookingFormSection.style.display = 'none';
-                elements.vehicleTypeSelection.style.display = 'block';
-                elements.confirmationMessage.style.display = 'none'; // Hide confirmation if navigating back
-                
-                // Reset active state for vehicle type buttons
-                elements.selectCarBtn.classList.remove('active');
-                elements.selectTruckBtn.classList.remove('active');
-                elements.selectSuvBtn.classList.remove('active');
-
-                // Hide package display sections
-                elements.sedanPackagesDisplay.style.display = 'none';
-                elements.suvTruckPackagesDisplay.style.display = 'none';
-            }
-
-            function showPackageSelection(vehicleCategory, clickedButton) {
-                elements.vehicleTypeSelection.style.display = 'none';
-                elements.bookingFormSection.style.display = 'none';
-                elements.packageSelectionContainer.style.display = 'block';
-                elements.selectedVehicleCategoryInput.value = vehicleCategory === 'sedan' ? 'Car' : (vehicleCategory === 'suv-truck' ? clickedButton.textContent : '');
-                elements.financingSelectedVehicleCategoryInput.value = vehicleCategory === 'sedan' ? 'Car' : (vehicleCategory === 'suv-truck' ? clickedButton.textContent : '');
-
-                // Hide all package display containers initially
-                elements.sedanPackagesDisplay.style.display = 'none';
-                elements.suvTruckPackagesDisplay.style.display = 'none';
-
-                // Remove active class from all vehicle type buttons
-                elements.selectCarBtn.classList.remove('active');
-                elements.selectTruckBtn.classList.remove('active');
-                elements.selectSuvBtn.classList.remove('active');
-                // Add active class to the clicked button
-                clickedButton.classList.add('active');
-
-                if (vehicleCategory === 'sedan') {
-                    elements.sedanPackagesDisplay.style.display = 'grid'; // Show as grid
-                } else if (vehicleCategory === 'suv-truck') {
-                    elements.suvTruckPackagesDisplay.style.display = 'grid'; // Show as grid
-                }
-                 elements.finalBookAppointmentBtn.style.display = 'none'; // Hide final book button until package is selected
-
-                 // Close any open feature dropdowns when switching vehicle types
-                 document.querySelectorAll('.feature-dropdown.show').forEach(dropdown => {
-                    dropdown.classList.remove('show');
-                    dropdown.style.display = 'none';
-                    const btn = dropdown.previousElementSibling; // Get the "See what's included" button
-                    if (btn && btn.classList.contains('see-whats-included-btn')) {
-                        btn.textContent = 'See what\'s included';
-                    }
-                 });
-            }
-
-            function handlePackageSelection(packageType, packagePrice) {
-                elements.selectedPackageDisplay.textContent = packageType;
-                elements.selectedPackageTypeInput.value = packageType;
-                elements.selectedPackagePriceInput.value = packagePrice;
-
-                elements.financingSelectedPackageTypeInput.value = packageType;
-                elements.financingSelectedPackagePriceInput.value = packagePrice;
-
-                elements.packageSelectionContainer.style.display = 'none'; // Hide package selection
-                elements.bookingFormSection.style.display = 'block'; // Show main booking form
-                // The final book appointment button is now controlled by time selection, not package selection
-                elements.finalBookAppointmentBtn.style.display = 'none'; 
-            }
-
-            // --- All Event Listeners ---
-            elements.loginButton.addEventListener('click', async () => {
-                const { ok, data } = await apiCall('/customer/login', 'POST', {
-                    email: document.getElementById('login-email').value,
-                    password: document.getElementById('login-password').value
-                });
-                if(ok) {
-                    localStorage.setItem('customerToken', data.token);
-                    updateUI();
-                } else {
-                    document.getElementById('login-message').textContent = data.message || 'Login failed.';
-                }
-            });
-            elements.logoutButton.addEventListener('click', logout);
-            elements.manageVehicleBtn.addEventListener('click', () => { 
-                elements.vehicleManagementSection.style.display = elements.vehicleManagementSection.style.display === 'block' ? 'none' : 'block';
-                // Hide other sections if vehicle management is shown
-                elements.addressEditSection.style.display = 'none';
-                elements.pastAppointmentsSection.style.display = 'none';
-                elements.financingBookingSection.style.display = 'none';
-                elements.bookingFormSection.style.display = 'none';
-                elements.packageSelectionContainer.style.display = 'none';
-                elements.vehicleTypeSelection.style.display = 'none';
-            });
-            elements.editAddressBtn.addEventListener('click', () => { 
-                elements.addressEditSection.style.display = elements.addressEditSection.style.display === 'block' ? 'none' : 'block'; 
-                // Hide other sections if address edit is shown
-                elements.vehicleManagementSection.style.display = 'none';
-                elements.pastAppointmentsSection.style.display = 'none';
-                elements.financingBookingSection.style.display = 'none';
-                elements.bookingFormSection.style.display = 'none';
-                elements.packageSelectionContainer.style.display = 'none';
-                elements.vehicleTypeSelection.style.display = 'none';
-            });
-            
-            // New: Event listener for address edit form submission
-            elements.editAddressForm.addEventListener('submit', handleAddressUpdate);
-
-            elements.showFinanceBtn.addEventListener('click', () => { 
-                elements.financingBookingSection.style.display = elements.financingBookingSection.style.display === 'block' ? 'none' : 'block'; 
-                if (elements.financingBookingSection.style.display === 'block') {
-                    renderPaymentSchedule(); 
-                }
-            });
-
-            elements.viewPastAppointmentsBtn.addEventListener('click', () => { 
-                elements.pastAppointmentsSection.style.display = elements.pastAppointmentsSection.style.display === 'block' ? 'none' : 'block'; 
-                // Hide other sections if past appointments are shown
-                elements.vehicleManagementSection.style.display = 'none';
-                elements.addressEditSection.style.display = 'none';
-                elements.financingBookingSection.style.display = 'none';
-                elements.bookingFormSection.style.display = 'none';
-                elements.packageSelectionContainer.style.display = 'none';
-                elements.vehicleTypeSelection.style.display = 'none';
-            });
-
-            // Event listeners for date input changes to re-render time buttons
-            elements.bookingDateInput.addEventListener('change', (e) => {
-                console.log(`[EventListener] Booking date changed to: ${e.target.value}`);
-                renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, e.target.value);
-            });
-            elements.financingBookingDateInput.addEventListener('change', (e) => {
-                console.log(`[EventListener] Financing booking date changed to: ${e.target.value}`);
-                renderTimeButtons(elements.financingTimeButtonsContainer, elements.selectedFinancingTimeInput, e.target.value);
-            });
-
-            // New Vehicle Type Selection Event Listeners
-            elements.selectCarBtn.addEventListener('click', (e) => showPackageSelection('sedan', e.target));
-            elements.selectTruckBtn.addEventListener('click', (e) => showPackageSelection('suv-truck', e.target));
-            elements.selectSuvBtn.addEventListener('click', (e) => showPackageSelection('suv-truck', e.target));
-
-
-            // New Package Selection Event Listeners (Delegated for dynamically added buttons)
-            elements.packageSelectionContainer.addEventListener('click', (e) => {
-                if (e.target.classList.contains('select-package-btn')) {
-                    const packageType = e.target.dataset.packageType;
-                    const packagePrice = e.target.dataset.packagePrice;
-                    handlePackageSelection(packageType, packagePrice);
-                } else if (e.target.classList.contains('see-whats-included-btn')) {
-                    const targetId = e.target.dataset.target;
-                    const dropdown = document.getElementById(targetId);
-                    if (dropdown) {
-                        if (dropdown.classList.contains('show')) {
-                            dropdown.classList.remove('show');
-                            dropdown.style.display = 'none'; // Fully hide after transition
-                            e.target.textContent = 'See what\'s included';
-                        } else {
-                            // Close any other open dropdowns first
-                            document.querySelectorAll('.feature-dropdown.show').forEach(openDropdown => {
-                                openDropdown.classList.remove('show');
-                                openDropdown.style.display = 'none';
-                                const openBtn = openDropdown.previousElementSibling;
-                                if (openBtn && openBtn.classList.contains('see-whats-included-btn')) {
-                                    openBtn.textContent = 'See what\'s included';
-                                }
-                            });
-                            // Show the clicked dropdown
-                            dropdown.style.display = 'block'; // Make it block for transition
-                            setTimeout(() => { // Allow display:block to apply before adding show class
-                                dropdown.classList.add('show');
-                            }, 10); // Small delay
-                            e.target.textContent = 'Hide details';
-                        }
-                    }
-                }
-            });
-
-            async function handleBooking(e, endpoint, messageEl, selectedTimeInputId) {
-                e.preventDefault();
-                const form = e.target;
-                const selectedTime = document.getElementById(selectedTimeInputId).value;
-                const packageType = form.querySelector('input[name="package-type"]').value;
-                const packagePrice = form.querySelector('input[name="package-price"]').value;
-                // const vehicleCategory = form.querySelector('input[name="vehicle-category"]').value; // Removed as we'll use actual make/model
-
-
-                if (!selectedTime) {
-                    messageEl.textContent = 'Please select an appointment time.';
-                    messageEl.style.color = 'red';
-                    return;
-                }
-                 if (!packageType || !packagePrice) {
-                    messageEl.textContent = 'Please select a package first.';
-                    messageEl.style.color = 'red';
-                    return;
-                }
-
-                // Get the selected vehicle's ID
-                const selectedVehicleId = document.getElementById('vehicle-select').value;
-                // Find the vehicle object from customerData.vehicles
-                const selectedVehicle = customerData.vehicles.find(v => v.id === selectedVehicleId);
-
-                let dealName = "";
-                if (selectedVehicle) {
-                    // Construct the deal name using packageType, vehicle make, and model
-                    dealName = `${packageType} ${selectedVehicle.make} ${selectedVehicle.model}`;
-                } else {
-                    // Fallback if vehicle data isn't found (though it should be)
-                    dealName = `${packageType} Detail`; // Fallback to old deal name format
-                }
-
-                const payload = {
-                    vehicle_id: selectedVehicleId,
-                    date: form.querySelector('input[type="date"]').value,
-                    time: selectedTime,
-                    package_type: packageType, // Include package type in payload
-                    package_price: packagePrice, // Include package price in payload
-                    deal_name: dealName // Include the constructed deal name
-                };
-                console.log("[handleBooking] Attempting to book with payload:", payload);
-                const { ok, data } = await apiCall(endpoint, 'POST', payload);
-                if (ok) {
-                    console.log("[handleBooking] Booking successful:", data);
-                    elements.bookingMessage.textContent = ''; // Clear previous messages
-                    elements.financingBookingMessage.textContent = '';
-                    form.reset();
-                    // Re-render time buttons to clear selection and re-evaluate disabled states based on new "now"
-                    renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, elements.bookingDateInput.value);
-                    renderTimeButtons(elements.financingTimeButtonsContainer, elements.selectedFinancingTimeInput, elements.financingBookingDateInput.value);
-                    
-                    // Show confirmation message
-                    elements.confirmationMessage.style.display = 'block';
-                    elements.bookingFormSection.style.display = 'none'; // Hide the booking form
-                    elements.financingBookingSection.style.display = 'none'; // Hide financing section
-                    elements.packageSelectionContainer.style.display = 'none'; // Hide package section
-                    
-                    // Re-fetch customer data to update upcoming appointments list
-                    fetchCustomerData(localStorage.getItem('customerToken'));
-
-                    // Optionally, hide confirmation message after a few seconds and return to vehicle type selection
-                    setTimeout(() => {
-                        elements.confirmationMessage.style.display = 'none';
-                        showVehicleTypeSelection();
-                    }, 5000); // Hide after 5 seconds
-                } else {
-                    console.error("[handleBooking] Booking failed:", data);
-                    messageEl.textContent = data.message;
-                    messageEl.style.color = 'red';
-                }
-            }
-            elements.bookingForm.addEventListener('submit', (e) => handleBooking(e, '/customer/appointment', elements.bookingMessage, 'selected-booking-time'));
-            elements.financingBookingForm.addEventListener('submit', (e) => handleBooking(e, '/customer/appointment/financing', elements.financingBookingMessage, 'selected-financing-time'));
-
-            async function handleVehicleUpdate(e, type) {
-                e.preventDefault();
-                const vehicleId = document.getElementById(`${type}-vehicle-id`).value;
-                const payload = {
-                    year: document.getElementById(`${type}-vehicle-year`).value,
-                    make: document.getElementById(`${type}-vehicle-make`).value,
-                    model: document.getElementById(`${type}-vehicle-model`).value,
-                };
-                console.log(`[handleVehicleUpdate] Sending update for vehicle ${vehicleId}:`, payload);
-                const { ok, data } = await apiCall(`/customer/vehicle/${vehicleId}`, 'PUT', payload);
-                elements.vehicleMessage.textContent = data.message;
-                if(ok) {
-                    elements.vehicleMessage.style.color = 'green';
-                    fetchCustomerData(localStorage.getItem('customerToken'));
-                } else {
-                    elements.vehicleMessage.style.color = 'red';
-                }
-            }
-
-            async function handleAddVehicle(e) {
-                e.preventDefault();
-                const payload = {
-                    year: document.getElementById('add-vehicle-year').value,
-                    make: document.getElementById('add-vehicle-make').value,
-                    model: document.getElementById('add-vehicle-model').value,
-                };
-                console.log(`[handleAddVehicle] Sending add vehicle request:`, payload);
-                const { ok, data } = await apiCall('/customer/vehicle', 'POST', payload);
-                elements.vehicleMessage.textContent = data.message;
-                if(ok) {
-                    elements.vehicleMessage.style.color = 'green';
-                    fetchCustomerData(localStorage.getItem('customerToken'));
-                } else {
-                    elements.vehicleMessage.style.color = 'red';
-                }
-            }
-
-            async function handleVehicleDelete(vehicleId) {
-                if(!vehicleId) return;
-                console.log(`[handleVehicleDelete] Sending delete request for vehicle ${vehicleId}`);
-                const { ok, data } = await apiCall(`/customer/vehicle/${vehicleId}`, 'DELETE');
-                elements.vehicleMessage.textContent = data.message;
-                if(ok) {
-                    elements.vehicleMessage.style.color = 'green';
-                    fetchCustomerData(localStorage.getItem('customerToken'));
-                } else {
-                    elements.vehicleMessage.style.color = 'red';
-                }
-            }
-
-            async function handleAddressUpdate(e) {
-                e.preventDefault();
-                const newAddress = document.getElementById('edit-address-input').value;
-                console.log("[handleAddressUpdate] New address captured:", newAddress); // Log the captured address
-                if (!newAddress) {
-                    elements.addressMessage.textContent = 'Please enter an address.';
-                    elements.addressMessage.style.color = 'red';
-                    return;
-                }
-                const { ok, data } = await apiCall('/customer/address', 'PUT', { address: newAddress });
-                elements.addressMessage.textContent = data.message;
-                if (ok) {
-                    elements.addressMessage.style.color = 'green';
-                    fetchCustomerData(localStorage.getItem('customerToken')); // Re-fetch to update dashboard
-                    // Optionally hide the address edit section after successful update
-                    elements.addressEditSection.style.display = 'none';
-                } else {
-                    elements.addressMessage.style.color = 'red';
-                }
-            }
-
-            // No specific resize handling needed for this package display method.
-            // The grid system handles responsiveness inherently.
-
-            updateUI();
-        }
-    </script>
-</body>
-</html>
+        return jsonify(response_data), 200
+    except Exception as e:
+        print(f"ERROR: Failed to fetch customer data: {e}")
+        traceback.print_exc()
+        return jsonify({"message": "An error occurred while fetching data."}), 500
+    finally:
+        if conn: conn.close()
+
+@app.route('/customer/address', methods=['PUT'])
+def update_customer_address():
+    conn = None
+    try:
+        auth_header = request.headers.get('Authorization')
+        if not auth_header or not auth_header.startswith('Bearer '):
+            return jsonify({"message": "Authorization token is missing."}), 401
+        
+        customer_id = auth_header.split(' ')[1]
+        data = request.get_json()
+        new_address = data.get('address')
+        
+        if not new_address:
+            return jsonify({"message": "New address is required."}), 400
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Update address in customers table
+        cursor.execute("UPDATE customers SET address = %s WHERE id = %s", (new_address, customer_id,))
+        
+        # In Pipedrive, address is typically associated with deals or custom fields on persons/organizations.
+        # We are not attempting to update a generic 'address' field on the Pipedrive Person object here,
+        # as it's not a standard field. The 'SERVICE_ADDRESS' custom field will be populated when deals are created.
+        
+        conn.commit()
+        print(f"Address updated for customer {customer_id} to {new_address}") # Added logging
+        return jsonify({"message": "Address updated successfully!"}), 200
+    except Exception as e:
+        if conn: conn.rollback()
+        print(f"ERROR: Failed to update address: {e}")
+        traceback.print_exc()
+        return jsonify({"message": "An error occurred while updating the address."}), 500
+    finally:
+        if conn: conn.close()
+
+@app.route('/customer/vehicle/<uuid:vehicle_id>', methods=['PUT'])
+def update_vehicle(vehicle_id):
+    conn = None
+    try:
+        auth_header = request.headers.get('Authorization')
+        if not auth_header or not auth_header.startswith('Bearer '):
+            return jsonify({"message": "Authorization token is missing."}), 401
+        
+        customer_id = auth_header.split(' ')[1]
+        data = request.get_json()
+        year, make, model = data.get('year'), data.get('make'), data.get('model')
+
+        if not all([year, make, model]):
+            return jsonify({"message": "Year, make, and model are required."}), 400
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        # Verify the vehicle belongs to the authenticated customer
+        # Convert vehicle_id to string before passing to cursor.execute
+        cursor.execute("SELECT id FROM vehicles WHERE id = %s AND customer_id = %s", (str(vehicle_id), customer_id,))
+        if not cursor.fetchone():
+            return jsonify({"message": "Vehicle not found or does not belong to you."}), 404
+
+        # Convert vehicle_id to string before passing to cursor.execute
+        cursor.execute(
+            "UPDATE vehicles SET year = %s, make = %s, model = %s WHERE id = %s",
+            (year, make, model, str(vehicle_id))
+        )
+        conn.commit()
+        print(f"Vehicle {vehicle_id} updated for customer {customer_id}: Year={year}, Make={make}, Model={model}") # Added logging
+        return jsonify({"message": "Vehicle updated successfully!"}), 200
+    except Exception as e:
+        if conn: conn.rollback()
+        print(f"ERROR: Failed to update vehicle: {e}")
+        traceback.print_exc()
+        return jsonify({"message": "An error occurred while updating the vehicle."}), 500
+    finally:
+        if conn: conn.close()
+
+@app.route('/customer/vehicle/<uuid:vehicle_id>', methods=['DELETE'])
+def delete_vehicle(vehicle_id):
+    conn = None
+    try:
+        auth_header = request.headers.get('Authorization')
+        if not auth_header or not auth_header.startswith('Bearer '):
+            return jsonify({"message": "Authorization token is missing."}), 401
+        
+        customer_id = auth_header.split(' ')[1]
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        # Check if the vehicle belongs to the customer
+        # Convert vehicle_id to string before passing to cursor.execute
+        cursor.execute("SELECT customer_id FROM vehicles WHERE id = %s", (str(vehicle_id),))
+        vehicle_owner_id = cursor.fetchone()
+
+        if not vehicle_owner_id or str(vehicle_owner_id[0]) != customer_id:
+            return jsonify({"message": "Vehicle not found or does not belong to you."}), 404
+
+        # Prevent deleting the last vehicle if it's primary, or if it's the only vehicle
+        cursor.execute("SELECT COUNT(*) FROM vehicles WHERE customer_id = %s", (customer_id,))
+        vehicle_count = cursor.fetchone()[0]
+
+        # Convert vehicle_id to string before passing to cursor.execute
+        cursor.execute("SELECT is_primary FROM vehicles WHERE id = %s", (str(vehicle_id),))
+        is_primary = cursor.fetchone()[0]
+
+        if vehicle_count == 1:
+            return jsonify({"message": "Cannot delete your only vehicle. Please add another vehicle first if you wish to change your primary."}), 400
+        
+        if is_primary:
+            # If deleting primary, make the other vehicle primary if exists
+            cursor.execute("""
+                UPDATE vehicles
+                SET is_primary = TRUE
+                WHERE customer_id = %s AND id != %s
+            """, (customer_id, str(vehicle_id))) # Convert vehicle_id to string
+            print(f"Set another vehicle as primary for customer {customer_id}")
+
+        # Convert vehicle_id to string before passing to cursor.execute
+        cursor.execute("DELETE FROM vehicles WHERE id = %s AND customer_id = %s", (str(vehicle_id), customer_id,))
+        conn.commit()
+        print(f"Vehicle {vehicle_id} deleted for customer {customer_id}") # Added logging
+        return jsonify({"message": "Vehicle deleted successfully!"}), 200
+    except Exception as e:
+        if conn: conn.rollback()
+        print(f"ERROR: Failed to delete vehicle: {e}")
+        traceback.print_exc()
+        return jsonify({"message": "An error occurred while deleting the vehicle."}), 500
+    finally:
+        if conn: conn.close()
+
+@app.route('/customer/vehicle', methods=['POST'])
+def add_vehicle():
+    conn = None
+    try:
+        auth_header = request.headers.get('Authorization')
+        if not auth_header or not auth_header.startswith('Bearer '):
+            return jsonify({"message": "Authorization token is missing."}), 401
+        
+        customer_id = auth_header.split(' ')[1]
+        data = request.get_json()
+        year, make, model = data.get('year'), data.get('make'), data.get('model')
+
+        if not all([year, make, model]):
+            return jsonify({"message": "Year, make, and model are required."}), 400
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        # Check existing vehicle count for the customer
+        cursor.execute("SELECT COUNT(*) FROM vehicles WHERE customer_id = %s", (customer_id,))
+        vehicle_count = cursor.fetchone()[0]
+
+        if vehicle_count >= 2:
+            return jsonify({"message": "You can only have up to two vehicles registered."}), 400
+
+        is_primary = False
+        if vehicle_count == 0: # If this is the first vehicle, make it primary
+            is_primary = True
+
+        cursor.execute(
+            "INSERT INTO vehicles (customer_id, year, make, model, is_primary) VALUES (%s, %s, %s, %s, %s) RETURNING id",
+            (customer_id, year, make, model, is_primary)
+        )
+        new_vehicle_id = cursor.fetchone()[0]
+        conn.commit()
+        print(f"Vehicle added for customer {customer_id}: ID={new_vehicle_id}, Year={year}, Make={make}, Model={model}, IsPrimary={is_primary}") # Added logging
+        return jsonify({"message": "Vehicle added successfully!", "vehicle_id": str(new_vehicle_id)}), 201
+    except Exception as e:
+        if conn: conn.rollback()
+        print(f"ERROR: Failed to add vehicle: {e}")
+        traceback.print_exc()
+        return jsonify({"message": "An error occurred while adding the vehicle."}), 500
+    finally:
+        if conn: conn.close()
+
+@app.route('/customer/appointment', methods=['POST'])
+def book_appointment():
+    conn = None
+    try:
+        auth_header = request.headers.get('Authorization')
+        if not auth_header or not auth_header.startswith('Bearer '): return jsonify({"message": "Authorization token is missing."}), 401
+        customer_id = auth_header.split(' ')[1]
+        
+        data = request.get_json()
+        vehicle_id, booking_date, booking_time = data.get('vehicle_id'), data.get('date'), data.get('time')
+        package_type, package_price = data.get('package_type'), data.get('package_price') # Get new fields
+        deal_name = data.get('deal_name') # Get the new deal_name field
+        
+        if not all([vehicle_id, booking_date, booking_time, package_type, package_price, deal_name]): return jsonify({"message": "Vehicle, date, time, package type, package price, and deal name are required."}), 400
+
+        conn = get_db_connection()
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        create_pipedrive_deal(cursor, customer_id, vehicle_id, booking_date, booking_time, package_type, package_price, deal_name, financing=False)
+        
+        conn.commit()
+        return jsonify({"message": "Appointment booked successfully!"}), 201
+    except Exception as e:
+        if conn: conn.rollback()
+        print(f"ERROR: Failed to book appointment: {e}")
+        traceback.print_exc()
+        return jsonify({"message": "An error occurred while booking the appointment."}), 500
+    finally:
+        if conn: conn.close()
+
+@app.route('/customer/appointment/financing', methods=['POST'])
+def book_financing_appointment():
+    conn = None
+    try:
+        auth_header = request.headers.get('Authorization')
+        if not auth_header or not auth_header.startswith('Bearer '): return jsonify({"message": "Authorization token is missing."}), 401
+        customer_id = auth_header.split(' ')[1]
+        
+        data = request.get_json()
+        vehicle_id, booking_date, booking_time = data.get('vehicle_id'), data.get('date'), data.get('time')
+        package_type, package_price = data.get('package_type'), data.get('package_price') # Get new fields
+        deal_name = data.get('deal_name') # Get the new deal_name field
+
+        if not all([vehicle_id, booking_date, booking_time, package_type, package_price, deal_name]): return jsonify({"message": "Vehicle, date, time, package type, package price, and deal name are required."}), 400
+
+        conn = get_db_connection()
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        create_pipedrive_deal(cursor, customer_id, vehicle_id, booking_date, booking_time, package_type, package_price, deal_name, financing=True)
+        
+        conn.commit()
+        return jsonify({"message": "Financed appointment booked successfully!"}), 201
+    except Exception as e:
+        if conn: conn.rollback()
+        print(f"ERROR: Failed to book financing appointment: {e}")
+        traceback.print_exc()
+        return jsonify({"message": "An error occurred while booking the appointment."}), 500
+    finally:
+        if conn: conn.close()
+        
+# --- SCRIPT EXECUTION ---
+if __name__ == '__main__':
+    port = int(os.environ.get("PORT", 5001))
+    app.run(host='0.0.0.0', port=port)
+else:
+    init_db()
