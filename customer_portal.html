@@ -15,11 +15,12 @@
         .time-button {
             /* Base styles for all time buttons */
             @apply px-4 py-2 rounded-lg border-2 font-medium cursor-pointer transition-all duration-300;
-            @apply bg-white text-blue-700 border-blue-400 shadow-sm; /* Default look, similar to vehicle buttons */
+            /* Enhanced default look for better visibility */
+            @apply bg-blue-100 text-blue-800 border-blue-300 shadow-sm; 
         }
         .time-button:hover:not(.disabled) {
             /* Hover effect for active buttons */
-            @apply bg-blue-50 text-blue-800 shadow-md;
+            @apply bg-blue-200 text-blue-900 shadow-md;
         }
         .time-button.selected {
             /* Selected state */
@@ -837,15 +838,16 @@
 
             // --- Time Button Logic ---
             function renderTimeButtons(container, hiddenInput, selectedDate) {
+                console.log(`Rendering time buttons for container: ${container.id}, date: ${selectedDate}`);
                 container.innerHTML = ''; // Clear existing buttons
                 const now = new Date();
                 const selectedDateTime = new Date(selectedDate);
                 const isToday = selectedDateTime.toDateString() === now.toDateString();
 
                 availableTimes.forEach(time => {
-                    const button = document.createElement('button');
+                    const button = document.createElement('button'); // Correctly creating a button element
                     button.type = 'button';
-                    button.classList.add('time-button');
+                    button.classList.add('time-button'); // Adding the base class
                     button.textContent = formatTimeDisplay(time);
                     button.dataset.time = time;
 
@@ -865,20 +867,25 @@
                     if (isDisabled) {
                         button.classList.add('disabled');
                         button.disabled = true;
+                        console.log(`Time button ${time} disabled.`);
                     } else {
                         button.addEventListener('click', () => {
+                            console.log(`Time button ${time} clicked.`);
                             // Deselect all other buttons in the same container
                             Array.from(container.children).forEach(btn => btn.classList.remove('selected'));
                             // Select the clicked button
                             button.classList.add('selected');
                             // Update the hidden input value
                             hiddenInput.value = time;
+                            console.log(`Selected time for ${container.id}: ${hiddenInput.value}`);
                         });
                     }
-                    container.appendChild(button);
+                    container.appendChild(button); // Appending the button to the container
+                    console.log(`Appended button for time: ${time}`);
                 });
                 // Clear selected time when date changes
                 hiddenInput.value = '';
+                console.log(`Hidden input for ${container.id} cleared.`);
             }
 
             function formatTimeDisplay(time24hr) {
