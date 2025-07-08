@@ -654,7 +654,8 @@
 
             function showStartPage() {
                 hideAllMajorSections();
-                if (elements.upcomingAppointmentsSection) elements.upcomingAppointmentsSection.style.display = 'block';
+                // The line that unconditionally showed the appointments section has been removed.
+                // Its visibility is now correctly handled by the renderUpcomingAppointments() function.
                 elements.vehicleTypeSelection.style.display = 'block';
                 document.querySelectorAll('.vehicle-type-button.active').forEach(b => b.classList.remove('active'));
             }
