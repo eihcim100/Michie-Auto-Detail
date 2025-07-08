@@ -709,6 +709,7 @@
                         // Ensure timezone is set for consistent display
                         const options = { timeZone: "America/Chicago", weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
                         
+                        // Find the vehicle using the vehicle_id (which is now the actual DB UUID)
                         const vehicle = customerData.vehicles.find(v => v.id === appt.vehicle_id);
                         const vehicleInfo = vehicle ? `${vehicle.year} ${vehicle.make} ${vehicle.model}` : 'Vehicle N/A';
                         const packagePrice = appt.package_price ? `$${appt.package_price}` : 'Price N/A';
@@ -746,6 +747,7 @@
                         const apptDateTime = new Date(`${appt.date}T${timePart}:00`);
                         const options = { timeZone: "America/Chicago", weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
                         
+                        // Find the vehicle using the vehicle_id (which is now the actual DB UUID)
                         const vehicle = customerData.vehicles.find(v => v.id === appt.vehicle_id);
                         const vehicleInfo = vehicle ? `${vehicle.year} ${vehicle.make} ${vehicle.model}` : 'Vehicle N/A';
                         const packagePrice = appt.package_price ? `$${appt.package_price}` : 'Price N/A';
@@ -1060,7 +1062,7 @@
                 const selectedTime = document.getElementById(selectedTimeInputId).value;
                 const packageType = form.querySelector('input[name="package-type"]').value;
                 const packagePrice = form.querySelector('input[name="package-price"]').value;
-                const vehicleCategory = form.querySelector('input[name="vehicle-category"]').value;
+                // const vehicleCategory = form.querySelector('input[name="vehicle-category"]').value; // Removed as we'll use actual make/model
 
 
                 if (!selectedTime) {
@@ -1074,11 +1076,22 @@
                     return;
                 }
 
-                // Construct the deal name
-                const dealName = `${packageType} ${vehicleCategory} Detail`;
+                // Get the selected vehicle's ID
+                const selectedVehicleId = document.getElementById('vehicle-select').value;
+                // Find the vehicle object from customerData.vehicles
+                const selectedVehicle = customerData.vehicles.find(v => v.id === selectedVehicleId);
+
+                let dealName = "";
+                if (selectedVehicle) {
+                    // Construct the deal name using packageType, vehicle make, and model
+                    dealName = `${packageType} ${selectedVehicle.make} ${selectedVehicle.model}`;
+                } else {
+                    // Fallback if vehicle data isn't found (though it should be)
+                    dealName = `${packageType} Detail`; // Fallback to old deal name format
+                }
 
                 const payload = {
-                    vehicle_id: document.getElementById('vehicle-select').value,
+                    vehicle_id: selectedVehicleId,
                     date: form.querySelector('input[type="date"]').value,
                     time: selectedTime,
                     package_type: packageType, // Include package type in payload
