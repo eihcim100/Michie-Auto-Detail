@@ -845,9 +845,18 @@
             function renderTimeButtons(container, hiddenInput, selectedDate) {
                 console.log(`[renderTimeButtons] Called for container: ${container.id}, date: ${selectedDate}`);
                 container.innerHTML = ''; // Clear existing buttons
-                const now = new Date();
-                const selectedDateTime = new Date(selectedDate);
-                const isToday = selectedDateTime.toDateString() === now.toDateString();
+                
+                const now = new Date(); // Current local time
+                const selectedDateObj = new Date(selectedDate); // Start of selected day, local time (e.g., 2025-07-08 00:00:00 local)
+
+                // Get the current hour and minute in America/Chicago timezone
+                const currentCSTHour = parseInt(now.toLocaleString('en-US', { hour: '2-digit', hourCycle: 'h23', timeZone: 'America/Chicago' }));
+                const currentCSTMinute = parseInt(now.toLocaleString('en-US', { minute: '2-digit', timeZone: 'America/Chicago' }));
+                console.log(`[renderTimeButtons] Current CST Time: ${currentCSTHour}:${currentCSTMinute}`);
+
+                // Check if the selected date is today's date (ignoring time)
+                const isToday = selectedDateObj.toDateString() === now.toDateString();
+                console.log(`[renderTimeButtons] Is selected date today? ${isToday}`);
 
                 availableTimes.forEach(time => {
                     const button = document.createElement('button'); // Explicitly create a button
@@ -858,21 +867,27 @@
 
                     let isDisabled = false;
                     if (isToday) {
-                        const [hours, minutes] = time.split(':').map(Number);
-                        // Create a date object in CST for comparison
-                        const appointmentTimeCST = new Date(selectedDateTime.getFullYear(), selectedDateTime.getMonth(), selectedDateTime.getDate(), hours, minutes);
-                        const nowCST = new Date(now.toLocaleString('en-US', { timeZone: 'America/Chicago' }));
-                        
-                        // Disable if less than 2 hours from now in CST
-                        if ((appointmentTimeCST.getTime() - nowCST.getTime()) < (2 * 60 * 60 * 1000)) {
+                        const [appointmentHour, appointmentMinute] = time.split(':').map(Number);
+
+                        // Calculate total minutes from midnight for current CST time
+                        const currentTotalCSTMinutes = (currentCSTHour * 60) + currentCSTMinute;
+                        // Calculate total minutes from midnight for the appointment time
+                        const appointmentTotalMinutes = (appointmentHour * 60) + appointmentMinute;
+
+                        // Calculate difference in minutes
+                        const differenceMinutes = appointmentTotalMinutes - currentTotalCSTMinutes;
+                        console.log(`[renderTimeButtons] Time ${time}: Current CST Total Minutes: ${currentTotalCSTMinutes}, Appointment Total Minutes: ${appointmentTotalMinutes}, Difference: ${differenceMinutes} minutes.`);
+
+                        // Disable if the appointment time is in the past, or less than 2 hours (120 minutes) from now
+                        if (differenceMinutes < 120) {
                             isDisabled = true;
+                            console.log(`[renderTimeButtons] Time ${time} disabled for today due to 2-hour rule.`);
                         }
                     }
 
                     if (isDisabled) {
                         button.classList.add('disabled'); // Apply disabled styling
                         button.disabled = true; // Disable button functionality
-                        console.log(`[renderTimeButtons] Time button ${time} disabled.`);
                     } else {
                         button.addEventListener('click', () => {
                             console.log(`[renderTimeButtons] Time button ${time} clicked.`);
@@ -888,13 +903,17 @@
                             // Update the hidden input value
                             hiddenInput.value = time;
                             console.log(`[renderTimeButtons] Selected time for ${container.id}: ${hiddenInput.value}`);
+                            // Show the final book appointment button only when a time is selected
+                            elements.finalBookAppointmentBtn.style.display = 'block';
                         });
                     }
                     container.appendChild(button); // Append the fully configured button to the container
-                    console.log(`[renderTimeButtons] Appended button for time: ${time} to ${container.id}`);
+                    console.log(`[renderTimeButtons] Appended button for time: ${time} to ${container.id}. Is disabled: ${isDisabled}`);
                 });
                 // Clear selected time when date changes
                 hiddenInput.value = '';
+                // Hide the final book appointment button when date changes (and thus time selection is cleared)
+                elements.finalBookAppointmentBtn.style.display = 'none';
                 console.log(`[renderTimeButtons] Hidden input for ${container.id} cleared after rendering.`);
             }
 
@@ -968,7 +987,8 @@
 
                 elements.packageSelectionContainer.style.display = 'none'; // Hide package selection
                 elements.bookingFormSection.style.display = 'block'; // Show main booking form
-                elements.finalBookAppointmentBtn.style.display = 'block'; // Show final book button
+                // The final book appointment button is now controlled by time selection, not package selection
+                elements.finalBookAppointmentBtn.style.display = 'none'; 
             }
 
             // --- All Event Listeners ---
