@@ -49,13 +49,12 @@
         /* Pricing Card styles */
         .pricing-grid {
             display: grid;
-            /* Changed to auto-fit for horizontal flow with wrapping */
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            /* Default: 3 columns on larger screens */
+            grid-template-columns: repeat(3, 1fr); 
             gap: 2rem; /* Consistent gap between cards */
             justify-content: center; /* Center cards horizontally */
             align-items: stretch; /* Ensure cards stretch to fill row height */
         }
-        /* Removed media query as auto-fit handles responsiveness */
         .pricing-card {
             background-color: #ffffff;
             border: 1px solid #dee2e6;
@@ -130,6 +129,70 @@
         .btn-green:hover {
             background-color: #218838;
         }
+
+        /* Slider specific styles for mobile */
+        .package-slider-container {
+            overflow: hidden; /* Hide overflowing cards */
+            position: relative;
+            width: 100%;
+        }
+        .package-slider-track {
+            display: flex;
+            transition: transform 0.5s ease-in-out; /* Smooth sliding animation */
+            scroll-snap-type: x mandatory; /* Enable snap-scrolling */
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+        }
+        .package-slider-dots {
+            display: flex;
+            justify-content: center;
+            margin-top: 1rem;
+            gap: 0.5rem;
+        }
+        .slider-dot {
+            width: 10px;
+            height: 10px;
+            background-color: #cbd5e0; /* gray-300 */
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .slider-dot.active {
+            background-color: #2563eb; /* blue-600 */
+        }
+
+        /* Apply slider styles only on small screens (mobile) */
+        @media (max-width: 767px) {
+            .pricing-grid {
+                display: flex; /* Change to flex for horizontal scrolling */
+                overflow-x: auto; /* Enable horizontal scrolling */
+                scroll-snap-type: x mandatory; /* Enable snap-scrolling */
+                -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+                gap: 1rem; /* Gap between cards in slider */
+                padding-bottom: 1rem; /* Space for scrollbar on some devices */
+            }
+            .pricing-card {
+                flex-shrink: 0; /* Prevent cards from shrinking */
+                width: calc(100% - 2rem); /* Full width minus gap on each side */
+                scroll-snap-align: start; /* Snap to the start of each card */
+                margin-left: 1rem; /* Half of the gap for the first card */
+                margin-right: 1rem; /* Half of the gap for the last card */
+            }
+            /* Adjustments for the first/last card to align with the center of the screen */
+            .pricing-grid > *:first-child {
+                margin-left: 0; /* Remove left margin for the first card to align with container */
+            }
+            .pricing-grid > *:last-child {
+                margin-right: 0; /* Remove right margin for the last card */
+            }
+            /* Hide default scrollbar */
+            .pricing-grid::-webkit-scrollbar {
+                display: none;
+            }
+            .pricing-grid {
+                -ms-overflow-style: none; /* IE and Edge */
+                scrollbar-width: none; /* Firefox */
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -187,106 +250,114 @@
             <div id="package-selection-container" class="bg-white p-8 rounded-xl shadow-md hidden">
                 <h3 class="text-2xl font-bold text-gray-700 mb-4 text-center">Select Your Package</h3>
 
-                <div id="sedan-packages-selection" class="pricing-grid hidden">
-                    <div class="pricing-card">
-                        <h4 class="pricing-level">Level 1 Detail</h4>
-                        <p class="pricing-price">$149</p>
-                        <ul class="feature-list">
-                            <li>External high pressure wash</li>
-                            <li>Tire cleaner</li>
-                            <li>Window cleaning inside and out</li>
-                            <li>Deep vaccuming</li>
-                            <li>Display controls and panels wipedown</li>
-                            <li>Mirror cleaning</li>
-                            <li>Seat vaccum</li>
-                            <li>Surface protectent for the dash and display/controls</li>
-                            <li>Steering wheel and dash clean</li>
-                        </ul>
-                        <button class="select-package-btn btn-green" data-package-type="Level 1 Detail - Sedan" data-package-price="149">Select Package</button>
+                <!-- Sedan Packages Slider -->
+                <div id="sedan-packages-slider" class="package-slider-container hidden">
+                    <div id="sedan-packages-track" class="pricing-grid">
+                        <div class="pricing-card">
+                            <h4 class="pricing-level">Level 1 Detail</h4>
+                            <p class="pricing-price">$149</p>
+                            <ul class="feature-list">
+                                <li>External high pressure wash</li>
+                                <li>Tire cleaner</li>
+                                <li>Window cleaning inside and out</li>
+                                <li>Deep vaccuming</li>
+                                <li>Display controls and panels wipedown</li>
+                                <li>Mirror cleaning</li>
+                                <li>Seat vaccum</li>
+                                <li>Surface protectent for the dash and display/controls</li>
+                                <li>Steering wheel and dash clean</li>
+                            </ul>
+                            <button class="select-package-btn btn-green" data-package-type="Level 1 Detail - Sedan" data-package-price="149">Select Package</button>
+                        </div>
+                        <div class="pricing-card">
+                            <h4 class="pricing-level">Level 2 Detail</h4>
+                            <p class="pricing-price">$249</p>
+                            <ul class="feature-list">
+                                <li><strong>All items in Level 1, plus:</strong></li>
+                                <li>Shampoo carpets and seats</li>
+                                <li>Premium Leather treatment</li>
+                                <li>Door jam cleaning</li>
+                                <li>Rims and tires cleaned and wiped down</li>
+                                <li>console scrub down</li>
+                                <li>Pet hair removal</li>
+                                <li>Odor removal</li>
+                            </ul>
+                            <button class="select-package-btn btn-green" data-package-type="Level 2 Detail - Sedan" data-package-price="249">Select Package</button>
+                        </div>
+                        <div class="pricing-card">
+                            <h4 class="pricing-level">Level 3 Detail</h4>
+                            <p class="pricing-price">$349</p>
+                            <ul class="feature-list">
+                                <li><strong>All items in Level 2, plus:</strong></li>
+                                <li>FINE TOOTH COMB in between seats cleaning</li>
+                                <li>Glove compartment cleaning</li>
+                                <li>Trunk shampoo and vaccum</li>
+                                <li>Door controls cleaning</li>
+                                <li>Hard to reach areas deep level shampoo</li>
+                                <li>Meticulous cleaning of all frequently touched surfaces</li>
+                                <li>External bug removal</li>
+                                <li>Free microfiber cloth</li>
+                                <li>Protection plan (complimentary maintenance clean within 15 days)</li>
+                            </ul>
+                            <button class="select-package-btn btn-green" data-package-type="Level 3 Detail - Sedan" data-package-price="349">Select Package</button>
+                        </div>
                     </div>
-                    <div class="pricing-card">
-                        <h4 class="pricing-level">Level 2 Detail</h4>
-                        <p class="pricing-price">$249</p>
-                        <ul class="feature-list">
-                            <li><strong>All items in Level 1, plus:</strong></li>
-                            <li>Shampoo carpets and seats</li>
-                            <li>Premium Leather treatment</li>
-                            <li>Door jam cleaning</li>
-                            <li>Rims and tires cleaned and wiped down</li>
-                            <li>console scrub down</li>
-                            <li>Pet hair removal</li>
-                            <li>Odor removal</li>
-                        </ul>
-                        <button class="select-package-btn btn-green" data-package-type="Level 2 Detail - Sedan" data-package-price="249">Select Package</button>
-                    </div>
-                    <div class="pricing-card">
-                        <h4 class="pricing-level">Level 3 Detail</h4>
-                        <p class="pricing-price">$349</p>
-                        <ul class="feature-list">
-                            <li><strong>All items in Level 2, plus:</strong></li>
-                            <li>FINE TOOTH COMB in between seats cleaning</li>
-                            <li>Glove compartment cleaning</li>
-                            <li>Trunk shampoo and vaccum</li>
-                            <li>Door controls cleaning</li>
-                            <li>Hard to reach areas deep level shampoo</li>
-                            <li>Meticulous cleaning of all frequently touched surfaces</li>
-                            <li>External bug removal</li>
-                            <li>Free microfiber cloth</li>
-                            <li>Protection plan (complimentary maintenance clean within 15 days)</li>
-                        </ul>
-                        <button class="select-package-btn btn-green" data-package-type="Level 3 Detail - Sedan" data-package-price="349">Select Package</button>
-                    </div>
+                    <div id="sedan-packages-dots" class="package-slider-dots"></div>
                 </div>
 
-                <div id="suv-truck-packages-selection" class="pricing-grid hidden">
-                    <div class="pricing-card">
-                        <h4 class="pricing-level">Level 1 Detail</h4>
-                        <p class="pricing-price">$199</p>
-                        <ul class="feature-list">
-                            <li>External high pressure wash</li>
-                            <li>Tire cleaner</li>
-                            <li>Window cleaning inside and out</li>
-                            <li>Deep vaccuming</li>
-                            <li>Display controls and panels wipedown</li>
-                            <li>Mirror cleaning</li>
-                            <li>Seat vaccum</li>
-                            <li>Surface protectent for the dash and display/controls</li>
-                            <li>Steering wheel and dash clean</li>
-                        </ul>
-                        <button class="select-package-btn btn-green" data-package-type="Level 1 Detail - SUV/Truck" data-package-price="199">Select Package</button>
+                <!-- SUV/Truck Packages Slider -->
+                <div id="suv-truck-packages-slider" class="package-slider-container hidden">
+                    <div id="suv-truck-packages-track" class="pricing-grid">
+                        <div class="pricing-card">
+                            <h4 class="pricing-level">Level 1 Detail</h4>
+                            <p class="pricing-price">$199</p>
+                            <ul class="feature-list">
+                                <li>External high pressure wash</li>
+                                <li>Tire cleaner</li>
+                                <li>Window cleaning inside and out</li>
+                                <li>Deep vaccuming</li>
+                                <li>Display controls and panels wipedown</li>
+                                <li>Mirror cleaning</li>
+                                <li>Seat vaccum</li>
+                                <li>Surface protectent for the dash and display/controls</li>
+                                <li>Steering wheel and dash clean</li>
+                            </ul>
+                            <button class="select-package-btn btn-green" data-package-type="Level 1 Detail - SUV/Truck" data-package-price="199">Select Package</button>
+                        </div>
+                        <div class="pricing-card">
+                            <h4 class="pricing-level">Level 2 Detail</h4>
+                            <p class="pricing-price">$299</p>
+                            <ul class="feature-list">
+                                <li><strong>All items in Level 1, plus:</strong></li>
+                                <li>Shampoo carpets and seats</li>
+                                <li>Premium Leather treatment</li>
+                                <li>Door jam cleaning</li>
+                                <li>Rims and tires cleaned and wiped down</li>
+                                <li>console scrub down</li>
+                                <li>Pet hair removal</li>
+                                <li>Odor removal</li>
+                            </ul>
+                            <button class="select-package-btn btn-green" data-package-type="Level 2 Detail - SUV/Truck" data-package-price="299">Select Package</button>
+                        </div>
+                        <div class="pricing-card">
+                            <h4 class="pricing-level">Level 3 Detail</h4>
+                            <p class="pricing-price">$399</p>
+                            <ul class="feature-list">
+                                <li><strong>All items in Level 2, plus:</strong></li>
+                                <li>FINE TOOTH COMB in between seats cleaning</li>
+                                <li>Glove compartment cleaning</li>
+                                <li>Trunk (for vans/SUVs) shampoo and vaccum</li>
+                                <li>Door controls cleaning</li>
+                                <li>Hard to reach areas deep level shampoo</li>
+                                <li>Meticulous cleaning of all frequently touched surfaces</li>
+                                <li>External bug removal</li>
+                                <li>Free microfiber cloth</li>
+                                <li>Protection plan (complimentary maintenance clean within 15 days)</li>
+                            </ul>
+                            <button class="select-package-btn btn-green" data-package-type="Level 3 Detail - SUV/Truck" data-package-price="399">Select Package</button>
+                        </div>
                     </div>
-                    <div class="pricing-card">
-                        <h4 class="pricing-level">Level 2 Detail</h4>
-                        <p class="pricing-price">$299</p>
-                        <ul class="feature-list">
-                            <li><strong>All items in Level 1, plus:</strong></li>
-                            <li>Shampoo carpets and seats</li>
-                            <li>Premium Leather treatment</li>
-                            <li>Door jam cleaning</li>
-                            <li>Rims and tires cleaned and wiped down</li>
-                            <li>console scrub down</li>
-                            <li>Pet hair removal</li>
-                            <li>Odor removal</li>
-                        </ul>
-                        <button class="select-package-btn btn-green" data-package-type="Level 2 Detail - SUV/Truck" data-package-price="299">Select Package</button>
-                    </div>
-                    <div class="pricing-card">
-                        <h4 class="pricing-level">Level 3 Detail</h4>
-                        <p class="pricing-price">$399</p>
-                        <ul class="feature-list">
-                            <li><strong>All items in Level 2, plus:</strong></li>
-                            <li>FINE TOOTH COMB in between seats cleaning</li>
-                            <li>Glove compartment cleaning</li>
-                            <li>Trunk (for vans/SUVs) shampoo and vaccum</li>
-                            <li>Door controls cleaning</li>
-                            <li>Hard to reach areas deep level shampoo</li>
-                            <li>Meticulous cleaning of all frequently touched surfaces</li>
-                            <li>External bug removal</li>
-                            <li>Free microfiber cloth</li>
-                            <li>Protection plan (complimentary maintenance clean within 15 days)</li>
-                        </ul>
-                        <button class="select-package-btn btn-green" data-package-type="Level 3 Detail - SUV/Truck" data-package-price="399">Select Package</button>
-                    </div>
+                    <div id="suv-truck-packages-dots" class="package-slider-dots"></div>
                 </div>
             </div>
 
@@ -440,8 +511,12 @@
                 selectTruckBtn: document.getElementById('select-truck-type'), 
                 selectSuvBtn: document.getElementById('select-suv-type'), 
                 packageSelectionContainer: document.getElementById('package-selection-container'),
-                sedanPackagesSelection: document.getElementById('sedan-packages-selection'),
-                suvTruckPackagesSelection: document.getElementById('suv-truck-packages-selection'),
+                sedanPackagesSlider: document.getElementById('sedan-packages-slider'), // New ID for slider container
+                suvTruckPackagesSlider: document.getElementById('suv-truck-packages-slider'), // New ID for slider container
+                sedanPackagesTrack: document.getElementById('sedan-packages-track'), // New ID for slider track
+                suvTruckPackagesTrack: document.getElementById('suv-truck-packages-track'), // New ID for slider track
+                sedanPackagesDots: document.getElementById('sedan-packages-dots'), // New ID for dots container
+                suvTruckPackagesDots: document.getElementById('suv-truck-packages-dots'), // New ID for dots container
                 bookingFormSection: document.getElementById('booking-form-section'),
                 selectedPackageDisplay: document.getElementById('selected-package-display'),
                 selectedPackageTypeInput: document.getElementById('selected-package-type'),
@@ -454,6 +529,12 @@
 
             let customerData = {}; 
             const availableTimes = ['09:00', '11:00', '12:00', '14:00', '16:00', '17:00', '18:00'];
+            const SLIDE_INTERVAL_TIME = 12000; // 12 seconds
+            const MOBILE_BREAKPOINT = 767; // px
+
+            // Store slider instances
+            let sedanSliderInstance = null;
+            let suvTruckSliderInstance = null;
 
             function updateUI() {
                 const token = localStorage.getItem('customerToken');
@@ -649,14 +730,18 @@
                 // Hide all dynamic sections on logout
                 elements.vehicleTypeSelection.style.display = 'none';
                 elements.packageSelectionContainer.style.display = 'none';
-                elements.sedanPackagesSelection.style.display = 'none';
-                elements.suvTruckPackagesSelection.style.display = 'none';
+                elements.sedanPackagesSlider.style.display = 'none'; // Hide slider containers
+                elements.suvTruckPackagesSlider.style.display = 'none'; // Hide slider containers
                 elements.bookingFormSection.style.display = 'none';
                 elements.financingBookingSection.style.display = 'none';
                 elements.pastAppointmentsSection.style.display = 'none';
                 elements.vehicleManagementSection.style.display = 'none';
                 elements.addressEditSection.style.display = 'none';
                 elements.confirmationMessage.style.display = 'none';
+
+                // Stop any running sliders
+                if (sedanSliderInstance) sedanSliderInstance.destroy();
+                if (suvTruckSliderInstance) suvTruckSliderInstance.destroy();
             }
 
             async function apiCall(endpoint, method, payload = null) {
@@ -726,6 +811,185 @@
                 return date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
             }
 
+            // --- Package Slider Logic ---
+            function initPackageSlider(sliderContainerId, sliderTrackId, sliderDotsId) {
+                const sliderContainer = document.getElementById(sliderContainerId);
+                const sliderTrack = document.getElementById(sliderTrackId);
+                const sliderCards = Array.from(sliderTrack.children);
+                const sliderDotsContainer = document.getElementById(sliderDotsId);
+
+                if (!sliderContainer || !sliderTrack || sliderCards.length === 0) {
+                    console.warn(`Slider initialization failed for ${sliderContainerId}: elements not found or no cards.`);
+                    return null; // Return null if initialization fails
+                }
+
+                let currentSlide = 0;
+                let slideInterval = null;
+                let isDragging = false;
+                let startX = 0;
+                let scrollLeft = 0;
+
+                // Clear existing dots
+                sliderDotsContainer.innerHTML = '';
+
+                // Create dots
+                sliderCards.forEach((_, index) => {
+                    const dot = document.createElement('span');
+                    dot.classList.add('slider-dot');
+                    dot.addEventListener('click', () => {
+                        goToSlide(index);
+                        resetAutoSlide();
+                    });
+                    sliderDotsContainer.appendChild(dot);
+                });
+
+                const dots = Array.from(sliderDotsContainer.children);
+
+                function updateSliderPosition() {
+                    if (window.innerWidth <= MOBILE_BREAKPOINT) {
+                        // For mobile, use scrollLeft for native-like snap scrolling
+                        const cardWidth = sliderCards[0].offsetWidth + 32; // card width + gap (2rem = 32px)
+                        sliderTrack.scrollLeft = currentSlide * cardWidth;
+                    } else {
+                        // For desktop, revert to grid layout (handled by CSS)
+                        sliderTrack.style.transform = 'translateX(0)';
+                    }
+                    updateDots();
+                }
+
+                function goToSlide(index) {
+                    currentSlide = (index + sliderCards.length) % sliderCards.length;
+                    updateSliderPosition();
+                }
+
+                function nextSlide() {
+                    goToSlide(currentSlide + 1);
+                }
+
+                function updateDots() {
+                    dots.forEach((dot, index) => {
+                        if (index === currentSlide) {
+                            dot.classList.add('active');
+                        } else {
+                            dot.classList.remove('active');
+                        }
+                    });
+                }
+
+                function startAutoSlide() {
+                    if (window.innerWidth <= MOBILE_BREAKPOINT) {
+                        stopAutoSlide(); // Clear any existing interval
+                        slideInterval = setInterval(nextSlide, SLIDE_INTERVAL_TIME);
+                    }
+                }
+
+                function stopAutoSlide() {
+                    if (slideInterval) {
+                        clearInterval(slideInterval);
+                        slideInterval = null;
+                    }
+                }
+
+                function resetAutoSlide() {
+                    stopAutoSlide();
+                    startAutoSlide();
+                }
+
+                // Touch/Swipe Events
+                sliderTrack.addEventListener('mousedown', (e) => {
+                    if (window.innerWidth > MOBILE_BREAKPOINT) return; // Only for mobile
+                    isDragging = true;
+                    startX = e.pageX - sliderTrack.offsetLeft;
+                    scrollLeft = sliderTrack.scrollLeft;
+                    stopAutoSlide(); // Stop auto-slide on manual interaction
+                });
+
+                sliderTrack.addEventListener('mouseleave', () => {
+                    if (window.innerWidth > MOBILE_BREAKPOINT) return; // Only for mobile
+                    isDragging = false;
+                });
+
+                sliderTrack.addEventListener('mouseup', () => {
+                    if (window.innerWidth > MOBILE_BREAKPOINT) return; // Only for mobile
+                    isDragging = false;
+                    // Snap to nearest slide after drag ends
+                    const cardWidth = sliderCards[0].offsetWidth + 32;
+                    currentSlide = Math.round(sliderTrack.scrollLeft / cardWidth);
+                    updateSliderPosition();
+                    startAutoSlide(); // Restart auto-slide after interaction
+                });
+
+                sliderTrack.addEventListener('mousemove', (e) => {
+                    if (window.innerWidth > MOBILE_BREAKPOINT || !isDragging) return; // Only for mobile
+                    e.preventDefault();
+                    const x = e.pageX - sliderTrack.offsetLeft;
+                    const walk = (x - startX) * 1.5; // Multiplier for faster scroll
+                    sliderTrack.scrollLeft = scrollLeft - walk;
+                });
+
+                // For touch devices
+                sliderTrack.addEventListener('touchstart', (e) => {
+                    if (window.innerWidth > MOBILE_BREAKPOINT) return; // Only for mobile
+                    isDragging = true;
+                    startX = e.touches[0].pageX - sliderTrack.offsetLeft;
+                    scrollLeft = sliderTrack.scrollLeft;
+                    stopAutoSlide();
+                });
+
+                sliderTrack.addEventListener('touchend', () => {
+                    if (window.innerWidth > MOBILE_BREAKPOINT) return; // Only for mobile
+                    isDragging = false;
+                    const cardWidth = sliderCards[0].offsetWidth + 32;
+                    currentSlide = Math.round(sliderTrack.scrollLeft / cardWidth);
+                    updateSliderPosition();
+                    startAutoSlide();
+                });
+
+                sliderTrack.addEventListener('touchmove', (e) => {
+                    if (window.innerWidth > MOBILE_BREAKPOINT || !isDragging) return; // Only for mobile
+                    e.preventDefault();
+                    const x = e.touches[0].pageX - sliderTrack.offsetLeft;
+                    const walk = (x - startX) * 1.5;
+                    sliderTrack.scrollLeft = scrollLeft - walk;
+                });
+
+                // Handle scroll end to update dots for non-drag scrolling (e.g., trackpad scroll)
+                let scrollTimeout;
+                sliderTrack.addEventListener('scroll', () => {
+                    if (window.innerWidth > MOBILE_BREAKPOINT) return; // Only for mobile
+                    clearTimeout(scrollTimeout);
+                    scrollTimeout = setTimeout(() => {
+                        const cardWidth = sliderCards[0].offsetWidth + 32;
+                        currentSlide = Math.round(sliderTrack.scrollLeft / cardWidth);
+                        updateDots();
+                    }, 150); // Debounce scroll event
+                });
+
+
+                // Initial setup
+                updateSliderPosition();
+                startAutoSlide();
+
+                // Return an object with methods to control the slider, useful for cleanup
+                return {
+                    start: startAutoSlide,
+                    stop: stopAutoSlide,
+                    goTo: goToSlide,
+                    destroy: () => {
+                        stopAutoSlide();
+                        // Remove event listeners if needed (for a full cleanup)
+                        sliderTrack.removeEventListener('mousedown', () => {});
+                        sliderTrack.removeEventListener('mouseleave', () => {});
+                        sliderTrack.removeEventListener('mouseup', () => {});
+                        sliderTrack.removeEventListener('mousemove', () => {});
+                        sliderTrack.removeEventListener('touchstart', () => {});
+                        sliderTrack.removeEventListener('touchend', () => {});
+                        sliderTrack.removeEventListener('touchmove', () => {});
+                        sliderTrack.removeEventListener('scroll', () => {});
+                    }
+                };
+            }
+
             // --- New Booking Flow Functions ---
             function showVehicleTypeSelection() {
                 elements.packageSelectionContainer.style.display = 'none';
@@ -737,6 +1001,10 @@
                 elements.selectCarBtn.classList.remove('active');
                 elements.selectTruckBtn.classList.remove('active');
                 elements.selectSuvBtn.classList.remove('active');
+
+                // Stop any running sliders when returning to vehicle type selection
+                if (sedanSliderInstance) sedanSliderInstance.stop();
+                if (suvTruckSliderInstance) suvTruckSliderInstance.stop();
             }
 
             function showPackageSelection(vehicleCategory, clickedButton) {
@@ -744,8 +1012,13 @@
                 elements.bookingFormSection.style.display = 'none';
                 elements.packageSelectionContainer.style.display = 'block';
 
-                elements.sedanPackagesSelection.style.display = 'none';
-                elements.suvTruckPackagesSelection.style.display = 'none';
+                // Hide all slider containers initially
+                elements.sedanPackagesSlider.style.display = 'none';
+                elements.suvTruckPackagesSlider.style.display = 'none';
+
+                // Stop existing sliders before showing a new one
+                if (sedanSliderInstance) sedanSliderInstance.stop();
+                if (suvTruckSliderInstance) suvTruckSliderInstance.stop();
 
                 // Remove active class from all vehicle type buttons
                 elements.selectCarBtn.classList.remove('active');
@@ -755,9 +1028,19 @@
                 clickedButton.classList.add('active');
 
                 if (vehicleCategory === 'sedan') {
-                    elements.sedanPackagesSelection.style.display = 'grid';
+                    elements.sedanPackagesSlider.style.display = 'block';
+                    if (!sedanSliderInstance) { // Initialize only once
+                        sedanSliderInstance = initPackageSlider('sedan-packages-slider', 'sedan-packages-track', 'sedan-packages-dots');
+                    } else {
+                        sedanSliderInstance.start(); // Restart if already initialized
+                    }
                 } else if (vehicleCategory === 'suv-truck') {
-                    elements.suvTruckPackagesSelection.style.display = 'grid';
+                    elements.suvTruckPackagesSlider.style.display = 'block';
+                     if (!suvTruckSliderInstance) { // Initialize only once
+                        suvTruckSliderInstance = initPackageSlider('suv-truck-packages-slider', 'suv-truck-packages-track', 'suv-truck-packages-dots');
+                    } else {
+                        suvTruckSliderInstance.start(); // Restart if already initialized
+                    }
                 }
                  elements.finalBookAppointmentBtn.style.display = 'none'; // Hide final book button until package is selected
             }
@@ -773,6 +1056,10 @@
                 elements.packageSelectionContainer.style.display = 'none'; // Hide package selection
                 elements.bookingFormSection.style.display = 'block'; // Show main booking form
                 elements.finalBookAppointmentBtn.style.display = 'block'; // Show final book button
+
+                // Stop any running sliders when a package is selected
+                if (sedanSliderInstance) sedanSliderInstance.stop();
+                if (suvTruckSliderInstance) suvTruckSliderInstance.stop();
             }
 
             // --- All Event Listeners ---
@@ -799,6 +1086,9 @@
                 elements.packageSelectionContainer.style.display = 'none';
                 elements.vehicleTypeSelection.style.display = 'none';
 
+                // Stop any running sliders
+                if (sedanSliderInstance) sedanSliderInstance.stop();
+                if (suvTruckSliderInstance) suvTruckSliderInstance.stop();
             });
             elements.editAddressBtn.addEventListener('click', () => { 
                 elements.addressEditSection.style.display = elements.addressEditSection.style.display === 'block' ? 'none' : 'block'; 
@@ -809,6 +1099,10 @@
                 elements.bookingFormSection.style.display = 'none';
                 elements.packageSelectionContainer.style.display = 'none';
                 elements.vehicleTypeSelection.style.display = 'none';
+
+                // Stop any running sliders
+                if (sedanSliderInstance) sedanSliderInstance.stop();
+                if (suvTruckSliderInstance) suvTruckSliderInstance.stop();
             });
             
             elements.showFinanceBtn.addEventListener('click', () => { 
@@ -827,6 +1121,10 @@
                 elements.bookingFormSection.style.display = 'none';
                 elements.packageSelectionContainer.style.display = 'none';
                 elements.vehicleTypeSelection.style.display = 'none';
+
+                // Stop any running sliders
+                if (sedanSliderInstance) sedanSliderInstance.stop();
+                if (suvTruckSliderInstance) suvTruckSliderInstance.stop();
             });
 
             // Event listeners for date input changes to re-render time buttons
@@ -941,6 +1239,49 @@
                 document.getElementById('vehicle-message').textContent = data.message;
                 if(ok) fetchCustomerData(localStorage.getItem('customerToken'));
             }
+
+            // Handle window resize to re-evaluate slider activation
+            window.addEventListener('resize', () => {
+                if (window.innerWidth <= MOBILE_BREAKPOINT) {
+                    if (elements.sedanPackagesSlider.style.display === 'block' && !sedanSliderInstance) {
+                        sedanSliderInstance = initPackageSlider('sedan-packages-slider', 'sedan-packages-track', 'sedan-packages-dots');
+                    }
+                    if (elements.suvTruckPackagesSlider.style.display === 'block' && !suvTruckSliderInstance) {
+                        suvTruckSliderInstance = initPackageSlider('suv-truck-packages-slider', 'suv-truck-packages-track', 'suv-truck-packages-dots');
+                    }
+                    if (sedanSliderInstance) sedanSliderInstance.start();
+                    if (suvTruckSliderInstance) suvTruckSliderInstance.start();
+                } else {
+                    // Stop sliders and revert to grid layout on larger screens
+                    if (sedanSliderInstance) sedanSliderInstance.stop();
+                    if (suvTruckSliderInstance) suvTruckSliderInstance.stop();
+                    // Ensure grid display is set for desktop if it was flex for mobile
+                    if (elements.sedanPackagesSlider.style.display === 'block') {
+                        elements.sedanPackagesTrack.style.display = 'grid';
+                        elements.sedanPackagesTrack.style.overflowX = 'hidden';
+                        elements.sedanPackagesTrack.style.scrollSnapType = 'none';
+                        Array.from(elements.sedanPackagesTrack.children).forEach(card => {
+                            card.style.flexShrink = 'unset';
+                            card.style.width = 'unset';
+                            card.style.scrollSnapAlign = 'unset';
+                            card.style.marginLeft = 'unset';
+                            card.style.marginRight = 'unset';
+                        });
+                    }
+                     if (elements.suvTruckPackagesSlider.style.display === 'block') {
+                        elements.suvTruckPackagesTrack.style.display = 'grid';
+                        elements.suvTruckPackagesTrack.style.overflowX = 'hidden';
+                        elements.suvTruckPackagesTrack.style.scrollSnapType = 'none';
+                        Array.from(elements.suvTruckPackagesTrack.children).forEach(card => {
+                            card.style.flexShrink = 'unset';
+                            card.style.width = 'unset';
+                            card.style.scrollSnapAlign = 'unset';
+                            card.style.marginLeft = 'unset';
+                            card.style.marginRight = 'unset';
+                        });
+                    }
+                }
+            });
 
             updateUI();
         }
