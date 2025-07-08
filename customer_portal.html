@@ -22,7 +22,6 @@
         }
         /* Vehicle type selection buttons - Direct Tailwind classes for robustness */
         .vehicle-type-button {
-            /* Removed @apply and added direct classes for better compatibility */
             padding: 0.75rem 1.5rem; /* px-6 py-3 */
             border-radius: 0.75rem; /* rounded-xl */
             border-width: 2px; /* border-2 */
@@ -50,50 +49,51 @@
         /* Pricing Card styles */
         .pricing-grid {
             display: grid;
-            grid-template-columns: 1fr; /* Stack columns on small screens */
+            /* Changed to auto-fit for horizontal flow with wrapping */
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
             gap: 2rem; /* Consistent gap between cards */
+            justify-content: center; /* Center cards horizontally */
+            align-items: stretch; /* Ensure cards stretch to fill row height */
         }
-        @media (min-width: 768px) {
-            .pricing-grid {
-                grid-template-columns: repeat(3, 1fr); /* 3 columns on medium screens and up */
-            }
-        }
+        /* Removed media query as auto-fit handles responsiveness */
         .pricing-card {
             background-color: #ffffff;
             border: 1px solid #dee2e6;
             border-radius: 0.75rem;
-            padding: 1.5rem; /* Adjusted padding for better mobile fit */
+            padding: 2rem; /* Increased padding for a boxier look */
             display: flex;
             flex-direction: column;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* More prominent shadow */
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%; /* Ensure cards fill the grid cell height */
         }
         .pricing-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 12px 32px rgba(0, 123, 255, 0.15);
+            box-shadow: 0 15px 30px rgba(0, 123, 255, 0.2); /* Enhanced hover shadow */
         }
         .pricing-level {
-            font-size: 1.3rem; /* Slightly smaller for mobile */
+            font-size: 1.5rem; /* Restored slightly larger font for clarity */
             font-weight: 800;
             color: #212529;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem; /* Adjusted margin */
         }
         .pricing-price {
-            font-size: 2.2rem; /* Slightly smaller for mobile */
+            font-size: 2.5rem; /* Restored slightly larger font for clarity */
             font-weight: 800;
             color: #28a745;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem; /* Adjusted margin */
         }
         .feature-list {
             list-style: none;
             padding: 0;
             text-align: left;
             flex-grow: 1;
+            margin-bottom: 2rem; /* Space before button */
         }
         .feature-list li {
             position: relative;
             padding-left: 1.75rem;
-            margin-bottom: 0.8rem; /* Increased margin for better spacing */
+            margin-bottom: 1rem; /* Increased margin for better spacing */
             color: #495057;
         }
         .feature-list li::before {
@@ -118,7 +118,7 @@
             text-transform: uppercase;
             letter-spacing: 0.05em;
             width: 100%;
-            margin-top: 2rem;
+            margin-top: auto; /* Push button to the bottom of the card */
         }
         .select-package-btn:hover {
             background-color: #0056b3;
