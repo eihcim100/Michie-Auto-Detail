@@ -91,7 +91,7 @@
             padding: 0;
             text-align: left;
             flex-grow: 1;
-            margin-bottom: 1.5rem; /* Reduced space before button */
+            /* margin-bottom: 1.5rem; This will now be handled by feature-dropdown padding-bottom */
         }
         .feature-list li {
             position: relative;
@@ -136,17 +136,34 @@
 
         /* See What's Included Button */
         .see-whats-included-btn {
-            @apply w-full bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg mt-2 mb-4 transition-colors duration-200 hover:bg-gray-300;
+            background-color: #DBEAFE; /* Light blue background */
+            color: #1D4ED8; /* Dark blue text */
+            font-weight: 500; /* Medium font weight */
+            padding: 0.5rem 1rem; /* py-2 px-4 */
+            border-radius: 0.5rem; /* rounded-lg */
+            width: 100%; /* w-full */
+            margin-top: 0.5rem; /* mt-2 */
+            margin-bottom: 1rem; /* Added margin for spacing */
+            transition-colors: 0.2s; /* duration-200 */
+            cursor: pointer;
+            text-align: center;
+            border: none; /* Ensure no default button border */
         }
+        .see-whats-included-btn:hover {
+            background-color: #BFDBFE; /* Hover light blue */
+        }
+
         /* Feature Dropdown */
         .feature-dropdown {
             display: none; /* Hidden by default */
             overflow: hidden; /* Ensures smooth transition */
             transition: max-height 0.3s ease-out; /* For smooth reveal */
             max-height: 0; /* Initial state for transition */
+            padding-bottom: 1rem; /* Added padding-bottom for spacing when open */
         }
         .feature-dropdown.show {
             max-height: 500px; /* Max height to allow content to show, adjust if needed */
+            display: block; /* Ensure it's block for transition */
         }
     </style>
 </head>
@@ -524,8 +541,8 @@
                 selectTruckBtn: document.getElementById('select-truck-type'), 
                 selectSuvBtn: document.getElementById('select-suv-type'), 
                 packageSelectionContainer: document.getElementById('package-selection-container'),
-                sedanPackagesDisplay: document.getElementById('sedan-packages-display'), // Changed ID
-                suvTruckPackagesDisplay: document.getElementById('suv-truck-packages-display'), // Changed ID
+                sedanPackagesDisplay: document.getElementById('sedan-packages-display'), 
+                suvTruckPackagesDisplay: document.getElementById('suv-truck-packages-display'), 
                 bookingFormSection: document.getElementById('booking-form-section'),
                 selectedPackageDisplay: document.getElementById('selected-package-display'),
                 selectedPackageTypeInput: document.getElementById('selected-package-type'),
