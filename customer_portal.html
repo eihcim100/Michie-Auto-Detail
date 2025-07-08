@@ -20,12 +20,12 @@
         .time-button.disabled {
             @apply bg-gray-200 text-gray-400 cursor-not-allowed border-gray-300;
         }
-        /* Vehicle toggle buttons */
+        /* Vehicle type selection buttons */
         .vehicle-type-button {
-            @apply px-6 py-3 rounded-lg border-2 border-gray-300 text-gray-700 font-bold cursor-pointer transition-colors duration-200 shadow-sm;
+            @apply px-6 py-3 rounded-xl border-2 border-blue-400 text-blue-700 font-bold cursor-pointer transition-all duration-300 shadow-md bg-white hover:bg-blue-50 hover:text-blue-800 hover:shadow-lg; /* Added more styling */
         }
         .vehicle-type-button.active {
-            @apply bg-blue-600 text-white border-blue-600 shadow-md;
+            @apply bg-blue-600 text-white border-blue-600 shadow-xl; /* More prominent active state */
         }
         /* Pricing Card styles */
         .pricing-grid {
@@ -416,9 +416,9 @@
                 selectedFinancingTimeInput: document.getElementById('selected-financing-time'),
                 // New elements for booking flow
                 vehicleTypeSelection: document.getElementById('vehicle-type-selection'),
-                selectCarBtn: document.getElementById('select-car-type'), // Changed ID
-                selectTruckBtn: document.getElementById('select-truck-type'), // New ID
-                selectSuvBtn: document.getElementById('select-suv-type'), // Changed ID
+                selectCarBtn: document.getElementById('select-car-type'), 
+                selectTruckBtn: document.getElementById('select-truck-type'), 
+                selectSuvBtn: document.getElementById('select-suv-type'), 
                 packageSelectionContainer: document.getElementById('package-selection-container'),
                 sedanPackagesSelection: document.getElementById('sedan-packages-selection'),
                 suvTruckPackagesSelection: document.getElementById('suv-truck-packages-selection'),
