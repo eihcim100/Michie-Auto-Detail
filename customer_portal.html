@@ -11,23 +11,29 @@
         .pac-container { z-index: 1050 !important; }
         .form-section, .feature-section, #vehicle-type-selection, #package-selection-container, #booking-form-section, #confirmation-message, #financing-flow-container { display: none; } /* Hide sections by default */
         
-        /* Custom styles for time buttons */
+        /* Custom styles for time buttons (Restored from Version 7) */
         .time-button {
+            /* Base styles for all time buttons */
             @apply px-4 py-2 rounded-lg border-2 font-medium cursor-pointer transition-all duration-300;
+            /* Enhanced default look for better visibility */
             @apply bg-blue-100 text-blue-800 border-blue-300 shadow-sm; 
+            /* Ensure buttons are block-level or inline-block for proper sizing and spacing in grid */
             display: inline-flex; 
             justify-content: center;
             align-items: center;
-            white-space: nowrap;
+            white-space: nowrap; /* Prevent text wrapping */
         }
         .time-button:hover:not(.disabled) {
+            /* Hover effect for active buttons */
             @apply bg-blue-200 text-blue-900 shadow-md;
         }
         .time-button.selected {
+            /* Selected state - using a distinct green for clear selection */
             @apply bg-green-600 text-white border-green-600 shadow-lg; 
         }
         .time-button.disabled {
-            @apply bg-gray-200 text-gray-400 cursor-not-allowed border-gray-300 shadow-inner;
+            /* Disabled state */
+            @apply bg-gray-200 text-gray-400 cursor-not-allowed border-gray-300 shadow-inner; /* Subtle shadow for disabled */
         }
 
         /* Vehicle type and financing selection buttons */
@@ -516,7 +522,7 @@
                     </div>
                     <input type="hidden" id="selected-package-type" name="package-type">
                     <input type="hidden" id="selected-package-price" name="package-price">
-                    <button type="submit" id="final-book-appointment-btn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg">Book Appointment</button>
+                    <button type="submit" id="final-book-appointment-btn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg hidden">Book Appointment</button>
                     <p id="booking-message" class="text-center mt-2"></p>
                 </form>
             </div>
@@ -628,7 +634,7 @@
             let customerData = {}; 
             const availableTimes = ['09:00', '11:00', '12:00', '14:00', '16:00', '17:00', '18:00'];
 
-            // --- API Call Function (FIXED) ---
+            // --- API Call Function ---
             async function apiCall(endpoint, method, payload = null) {
                 const token = localStorage.getItem('customerToken');
                 const headers = {
@@ -904,28 +910,51 @@
                 }
             }
             
-            // --- Unchanged Helper Functions (Time Buttons, Vehicle/Address Management, etc.) ---
+            // --- Helper Functions (Time Buttons, Vehicle/Address Management, etc.) ---
+
+            // Restored Time Button Logic from Version 7
             function renderTimeButtons(container, hiddenInput, selectedDate) {
                 if (!container) return;
-                container.innerHTML = '';
-                const today = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
-                const selected = new Date(selectedDate + 'T00:00:00');
-                const isToday = today.toDateString() === selected.toDateString();
-                const nowCST = new Date();
+                console.log(`[renderTimeButtons] Called for container: ${container.id}, date: ${selectedDate}`);
+                container.innerHTML = ''; // Clear existing buttons
+                
+                const selectedDateObj = new Date(selectedDate + 'T00:00:00'); // Ensure date is parsed consistently, avoiding timezone issues for comparison
+
+                // Get today's date in CST without time component for comparison
+                const todayCST = new Date().toLocaleString('en-US', { timeZone: 'America/Chicago', year: 'numeric', month: '2-digit', day: '2-digit' });
+                const selectedDateCST = selectedDateObj.toLocaleString('en-US', { timeZone: 'America/Chicago', year: 'numeric', month: '2-digit', day: '2-digit' });
+
+                const isToday = selectedDateCST === todayCST;
+                console.log(`[renderTimeButtons] Is selected date today? ${isToday}`);
+                console.log(`[renderTimeButtons] Today CST: ${todayCST}, Selected Date CST: ${selectedDateCST}`);
+
+                const nowCST = new Date(); // Current local time
                 const currentCSTHour = parseInt(nowCST.toLocaleString('en-US', { hour: '2-digit', hourCycle: 'h23', timeZone: 'America/Chicago' }));
+                const currentCSTMinute = parseInt(nowCST.toLocaleString('en-US', { minute: '2-digit', timeZone: 'America/Chicago' }));
+                
+                console.log(`[renderTimeButtons] Current CST Time: ${currentCSTHour}:${currentCSTMinute}`);
+
 
                 availableTimes.forEach(time => {
-                    const button = document.createElement('button');
-                    button.type = 'button';
-                    button.className = 'time-button';
-                    const [h, m] = time.split(':');
-                    const d = new Date();
-                    d.setHours(parseInt(h), parseInt(m));
-                    button.textContent = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-                    
+                    const button = document.createElement('button'); // Explicitly create a button
+                    button.type = 'button'; // Set type to button to prevent form submission
+                    button.classList.add('time-button'); 
+                    button.textContent = formatTimeDisplay(time);
+                    button.dataset.time = time; // Store the 24hr time for easy access
+
                     let isDisabled = false;
-                    if (isToday && parseInt(h) < currentCSTHour + 2) {
-                        isDisabled = true;
+                    if (isToday) {
+                        const [appointmentHour, appointmentMinute] = time.split(':').map(Number);
+                        const currentTotalCSTMinutes = (currentCSTHour * 60) + currentCSTMinute;
+                        const appointmentTotalMinutes = (appointmentHour * 60) + appointmentMinute;
+                        const differenceMinutes = appointmentTotalMinutes - currentTotalCSTMinutes;
+                        console.log(`[renderTimeButtons] Time ${time}: Current CST Total Minutes: ${currentTotalCSTMinutes}, Appointment Total Minutes: ${appointmentTotalMinutes}, Difference: ${differenceMinutes} minutes.`);
+
+                        // Disable if the appointment time is in the past, or less than 2 hours (120 minutes) from the current CST time
+                        if (differenceMinutes < 120) {
+                            isDisabled = true;
+                            console.log(`[renderTimeButtons] Time ${time} disabled for today due to 2-hour rule.`);
+                        }
                     }
 
                     if (isDisabled) {
@@ -933,14 +962,35 @@
                         button.disabled = true;
                     } else {
                         button.addEventListener('click', () => {
+                            console.log(`[renderTimeButtons] Time button ${time} clicked.`);
                             Array.from(container.children).forEach(btn => btn.classList.remove('selected'));
                             button.classList.add('selected');
                             hiddenInput.value = time;
+                            console.log(`[renderTimeButtons] Selected time for ${container.id}: ${hiddenInput.value}`);
+                            
+                            // Show the final book appointment button only for the standard booking form when a time is selected
+                            if (container.id === 'booking-time-buttons') {
+                                elements.finalBookAppointmentBtn.style.display = 'block';
+                            }
                         });
                     }
                     container.appendChild(button);
+                    console.log(`[renderTimeButtons] Appended button for time: ${time} to ${container.id}. Is disabled: ${isDisabled}`);
                 });
+                
                 hiddenInput.value = '';
+                // Hide the final book appointment button when date changes
+                if (container.id === 'booking-time-buttons') {
+                    elements.finalBookAppointmentBtn.style.display = 'none';
+                }
+                console.log(`[renderTimeButtons] Hidden input for ${container.id} cleared after rendering.`);
+            }
+
+            function formatTimeDisplay(time24hr) {
+                const [hours, minutes] = time24hr.split(':').map(Number);
+                const date = new Date();
+                date.setHours(hours, minutes);
+                return date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
             }
             
             function renderUpcomingAppointments() {
