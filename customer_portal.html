@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,7 +9,8 @@
     <style>
         body { font-family: 'Inter', sans-serif; }
         .pac-container { z-index: 1050 !important; }
-        .form-section, .feature-section, #vehicle-type-selection, #package-selection-container, #booking-form-section, #confirmation-message, #financing-flow-container, #vehicle-management-section, #address-edit-section { display: none; } /* Hide sections by default */
+        /* Hide sections by default, including the new edit profile section */
+        .form-section, .feature-section, #vehicle-type-selection, #package-selection-container, #booking-form-section, #confirmation-message, #financing-flow-container, #vehicle-management-section, #address-edit-section, #edit-profile-section { display: none; }
 
         /* Vehicle type and financing selection buttons */
         .vehicle-type-button {
@@ -180,9 +180,12 @@
         </div>
 
         <div id="dashboard-section" class="hidden space-y-8">
-            <div class="flex justify-between items-center">
+            <div class="flex justify-between items-center mb-4">
                  <h2 class="text-3xl font-bold text-gray-800">Welcome, <span id="customer-name"></span>!</h2>
-                 <button id="logout-button" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg">Logout</button>
+                 <div class="flex space-x-2">
+                    <button id="edit-profile-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg">Edit Profile</button>
+                    <button id="logout-button" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg">Logout</button>
+                 </div>
             </div>
 
             <div id="confirmation-message" class="bg-green-100 border-l-4 border-green-500 text-green-700 p-6 rounded-lg text-center hidden">
@@ -190,11 +193,12 @@
                 <p class="text-xl">Your appointment is confirmed!</p>
             </div>
 
+            <!-- Upcoming Appointments Section - Conditional Display -->
             <div id="upcoming-appointments-section" class="feature-section bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 rounded-lg" role="alert">
-                <p class="font-bold">Upcoming Appointments</p>
+                <p id="upcoming-appointments-header" class="font-bold">Upcoming Appointments</p>
                 <div id="upcoming-appointments-list" class="space-y-2"></div>
-                <div class="mt-4 text-sm">
-                    <p>Questions about your appointment, or need to make a change?</p>
+                <div id="no-upcoming-appointments-message" class="mt-4 text-sm hidden">
+                    <p>Questions? Call now to book your appointment!</p>
                     <a href="tel:4052955189" class="inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mt-2">Call (405) 295-5189</a>
                 </div>
             </div>
@@ -477,14 +481,14 @@
                         <label for="vehicle-select" class="block text-sm font-medium text-gray-700 mb-1">Select Vehicle</label>
                         <div class="p-3 bg-gray-100 rounded-md">
                             <select id="vehicle-select" name="vehicle-select" class="w-full p-2 border border-gray-300 rounded-lg"></select>
-                            <button type="button" id="manage-vehicle-btn" class="text-sm text-blue-600 hover:underline mt-2">Edit / Add Vehicles</button>
+                            <!-- Removed manage-vehicle-btn as it's now in edit profile -->
                         </div>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Service Address</label>
                          <div class="p-3 bg-gray-100 rounded-md flex justify-between items-center">
                             <span id="primary-address-display"></span>
-                            <button type="button" id="edit-address-btn" class="text-sm text-blue-600 hover:underline">Edit</button>
+                            <!-- Removed edit-address-btn as it's now in edit profile -->
                         </div>
                     </div>
                      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -505,7 +509,7 @@
                 </form>
             </div>
 
-            <!-- Management Sections -->
+            <!-- Management Sections (Moved into Edit Profile) -->
             <div class="text-center">
                 <button type="button" id="view-past-appointments-btn" class="text-gray-600 hover:text-gray-900 font-semibold">View Previous Appointments</button>
             </div>
@@ -513,19 +517,58 @@
                  <h3 class="text-2xl font-bold text-gray-700 mb-4">Past Appointments</h3>
                  <div id="past-appointments-list" class="space-y-3"></div>
             </div>
-            <div id="vehicle-management-section" class="form-section bg-white p-8 rounded-xl shadow-md">
-                <!-- JS will render forms here -->
+
+            <!-- NEW: Edit Profile Section -->
+            <div id="edit-profile-section" class="form-section bg-white p-8 rounded-xl shadow-md">
+                <h3 class="text-2xl font-bold text-gray-700 mb-6 text-center">Edit Your Profile</h3>
+                
+                <!-- Customer Details Form -->
+                <form id="edit-customer-details-form" class="space-y-4 mb-8 p-4 border rounded-lg bg-gray-50">
+                    <h4 class="font-semibold text-lg text-gray-800">Personal Information</h4>
+                    <div>
+                        <label for="edit-full-name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                        <input type="text" id="edit-full-name" placeholder="Full Name" required class="w-full px-3 py-2 border rounded-lg">
+                    </div>
+                    <div>
+                        <label for="edit-phone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                        <input type="tel" id="edit-phone" placeholder="Phone Number" required class="w-full px-3 py-2 border rounded-lg">
+                    </div>
+                    <div>
+                        <label for="edit-email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                        <input type="email" id="edit-email" placeholder="Email Address" required class="w-full px-3 py-2 border rounded-lg">
+                    </div>
+                    <div>
+                        <label for="edit-address-input" class="block text-sm font-medium text-gray-700 mb-1">Service Address</label>
+                        <input type="text" id="edit-address-input" placeholder="Search for new address..." required class="w-full px-3 py-2 border rounded-lg">
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg">Save Profile Details</button>
+                    <p id="customer-details-message" class="text-center mt-2 text-sm"></p>
+                </form>
+
+                <!-- Change Password Form -->
+                <form id="change-password-form" class="space-y-4 mb-8 p-4 border rounded-lg bg-gray-50">
+                    <h4 class="font-semibold text-lg text-gray-800">Change Password</h4>
+                    <div>
+                        <label for="new-password" class="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+                        <input type="password" id="new-password" placeholder="New Password (min 6 characters)" required class="w-full px-3 py-2 border rounded-lg">
+                    </div>
+                    <div>
+                        <label for="confirm-password" class="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
+                        <input type="password" id="confirm-password" placeholder="Confirm New Password" required class="w-full px-3 py-2 border rounded-lg">
+                    </div>
+                    <button type="submit" class="w-full bg-yellow-600 hover:bg-yellow-700 text-white py-2 px-4 rounded-lg">Change Password</button>
+                    <p id="password-message" class="text-center mt-2 text-sm"></p>
+                </form>
+
+                <!-- Vehicle Management Forms (Integrated here) -->
+                <div id="vehicle-management-forms-container">
+                    <h4 class="font-semibold text-lg text-gray-800 mb-4">Your Vehicles</h4>
+                    <!-- JS will render vehicle forms here -->
+                </div>
+                <p id="vehicle-message" class="text-center mt-2 text-sm"></p>
+
+                <button type="button" id="edit-profile-done-btn" class="mt-8 w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-4 rounded-lg">Done Editing Profile</button>
             </div>
-            <p id="vehicle-message" class="text-center mt-2"></p>
-            <div id="address-edit-section" class="form-section bg-white p-8 rounded-xl shadow-md">
-                 <h3 class="text-xl font-bold text-gray-700 mb-4">Update Address</h3>
-                 <form id="edit-address-form" class="space-y-3">
-                    <input type="text" id="edit-address-input" placeholder="Search for new address..." required class="w-full px-3 py-2 border rounded-lg">
-                    <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg">Save New Address</button>
-                 </form>
-                 <button type="button" id="address-done-btn" class="mt-4 w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg">Done</button>
-            </div>
-            <p id="address-message" class="text-center mt-2"></p>
         </div>
     </div>
 
@@ -560,17 +603,18 @@
                 loginMessage: document.getElementById('login-message'),
                 customerNameSpan: document.getElementById('customer-name'),
                 primaryAddressDisplay: document.getElementById('primary-address-display'),
-                manageVehicleBtn: document.getElementById('manage-vehicle-btn'),
-                editAddressBtn: document.getElementById('edit-address-btn'),
-                vehicleManagementSection: document.getElementById('vehicle-management-section'),
-                addressEditSection: document.getElementById('address-edit-section'),
+                // Removed manageVehicleBtn and editAddressBtn from here
+                vehicleManagementSection: document.getElementById('vehicle-management-forms-container'), // Renamed ID
+                addressEditSection: document.getElementById('address-edit-section'), // This section is no longer directly used, but kept for reference
                 vehicleMessage: document.getElementById('vehicle-message'),
-                addressMessage: document.getElementById('address-message'),
+                addressMessage: document.getElementById('address-message'), // This message is for the old address edit section
                 bookingMessage: document.getElementById('booking-message'),
                 bookingForm: document.getElementById('booking-form'),
-                editAddressForm: document.getElementById('edit-address-form'),
+                // Removed editAddressForm from here
                 upcomingAppointmentsSection: document.getElementById('upcoming-appointments-section'),
                 upcomingAppointmentsList: document.getElementById('upcoming-appointments-list'),
+                noUpcomingAppointmentsMessage: document.getElementById('no-upcoming-appointments-message'), // New element
+                upcomingAppointmentsHeader: document.getElementById('upcoming-appointments-header'), // New element
                 viewPastAppointmentsBtn: document.getElementById('view-past-appointments-btn'),
                 pastAppointmentsSection: document.getElementById('past-appointments-section'),
                 pastAppointmentsList: document.getElementById('past-appointments-list'),
@@ -611,8 +655,20 @@
                 financingTimeButtonsContainer: document.getElementById('financing-time-buttons'),
                 selectedFinancingTimeInput: document.getElementById('selected-financing-time'),
 
-                // NEW Back/Done buttons
-                addressDoneBtn: document.getElementById('address-done-btn'),
+                // NEW Edit Profile Elements
+                editProfileBtn: document.getElementById('edit-profile-btn'),
+                editProfileSection: document.getElementById('edit-profile-section'),
+                editProfileDoneBtn: document.getElementById('edit-profile-done-btn'),
+                editFullNameInput: document.getElementById('edit-full-name'),
+                editPhoneInput: document.getElementById('edit-phone'),
+                editEmailInput: document.getElementById('edit-email'),
+                editAddressInput: document.getElementById('edit-address-input'),
+                customerDetailsMessage: document.getElementById('customer-details-message'),
+                editCustomerDetailsForm: document.getElementById('edit-customer-details-form'),
+                changePasswordForm: document.getElementById('change-password-form'),
+                newPasswordInput: document.getElementById('new-password'),
+                confirmPasswordInput: document.getElementById('confirm-password'),
+                passwordMessage: document.getElementById('password-message'),
             };
 
             let customerData = {}; 
@@ -646,7 +702,7 @@
                     elements.vehicleTypeSelection, elements.packageSelectionContainer, 
                     elements.bookingFormSection, elements.financingFlowContainer, 
                     elements.confirmationMessage, elements.pastAppointmentsSection, 
-                    elements.vehicleManagementSection, elements.addressEditSection
+                    elements.editProfileSection // Include the new edit profile section
                 ];
                 allSections.forEach(el => {
                     if (el) el.style.display = 'none';
@@ -655,7 +711,8 @@
 
             function showStartPage() {
                 hideAllMajorSections();
-                if (elements.upcomingAppointmentsSection) elements.upcomingAppointmentsSection.style.display = 'block';
+                // Always show the upcoming appointments section, its content will be conditional
+                elements.upcomingAppointmentsSection.style.display = 'block'; 
                 elements.vehicleTypeSelection.style.display = 'block';
                 document.querySelectorAll('.vehicle-type-button.active').forEach(b => b.classList.remove('active'));
             }
@@ -663,6 +720,8 @@
             function showBookingForm() {
                 hideAllMajorSections();
                 elements.bookingFormSection.style.display = 'block';
+                // Also ensure upcoming appointments are visible when booking form is shown
+                elements.upcomingAppointmentsSection.style.display = 'block'; 
             }
 
             function updateUI() {
@@ -691,6 +750,13 @@
 
             function renderDashboard() {
                 elements.customerNameSpan.textContent = customerData.full_name;
+                
+                // Populate edit profile fields
+                elements.editFullNameInput.value = customerData.full_name || '';
+                elements.editPhoneInput.value = customerData.phone || '';
+                elements.editEmailInput.value = customerData.email || '';
+                elements.editAddressInput.value = customerData.address || '';
+
                 const address = customerData.address || 'No address on file.';
                 elements.primaryAddressDisplay.textContent = address;
                 elements.financingPrimaryAddressDisplay.textContent = address;
@@ -698,7 +764,7 @@
                 renderVehicleDropdown(elements.vehicleSelect);
                 renderVehicleDropdown(elements.financingVehicleSelect);
 
-                renderVehicleManagementForms();
+                renderVehicleManagementForms(); // Now called to populate the edit profile section
                 renderUpcomingAppointments();
                 renderPastAppointments();
 
@@ -784,6 +850,7 @@
                 elements.financingPackageDetails.style.display = 'block';
                 elements.financingTerms.style.display = 'none';
                 elements.financingBookingFormSection.style.display = 'none';
+                elements.upcomingAppointmentsSection.style.display = 'none'; // Hide upcoming appointments when in financing flow
             });
 
             // Financing flow navigation
@@ -802,19 +869,20 @@
             elements.bookingForm.addEventListener('submit', (e) => handleBooking(e, '/customer/appointment', elements.bookingMessage, 'selected-booking-time', 'vehicle-select'));
             elements.financingBookingForm.addEventListener('submit', (e) => handleBooking(e, '/customer/appointment/financing', elements.financingBookingMessage, 'selected-financing-time', 'financing-vehicle-select'));
 
-            // FIXED: Event listeners for management sections
-            elements.manageVehicleBtn.addEventListener('click', () => {
+            // NEW: Edit Profile Button and its done button
+            elements.editProfileBtn.addEventListener('click', () => {
                 hideAllMajorSections();
-                elements.vehicleManagementSection.style.display = 'block';
+                elements.editProfileSection.style.display = 'block';
+                elements.upcomingAppointmentsSection.style.display = 'none'; // Hide upcoming appointments when editing profile
+                renderVehicleManagementForms(); // Re-render to ensure forms are up-to-date
             });
-            elements.editAddressBtn.addEventListener('click', () => {
-                hideAllMajorSections();
-                elements.addressEditSection.style.display = 'block';
-            });
-            elements.addressDoneBtn.addEventListener('click', showBookingForm);
+            elements.editProfileDoneBtn.addEventListener('click', showStartPage); // Go back to main dashboard
 
+            // Event listener for updating customer details (name, phone, email, address)
+            elements.editCustomerDetailsForm.addEventListener('submit', handleCustomerDetailsUpdate);
+            // Event listener for changing password
+            elements.changePasswordForm.addEventListener('submit', handleChangePassword);
 
-            elements.editAddressForm.addEventListener('submit', handleAddressUpdate);
             elements.viewPastAppointmentsBtn.addEventListener('click', () => { 
                 elements.pastAppointmentsSection.style.display = elements.pastAppointmentsSection.style.display === 'block' ? 'none' : 'block'; 
             });
@@ -847,6 +915,7 @@
                 clickedButton.classList.add('active');
                 elements.sedanPackagesDisplay.style.display = vehicleCategory === 'sedan' ? 'grid' : 'none';
                 elements.suvTruckPackagesDisplay.style.display = vehicleCategory === 'suv-truck' ? 'grid' : 'none';
+                elements.upcomingAppointmentsSection.style.display = 'none'; // Hide upcoming appointments when selecting package
             }
 
             function handlePackageSelection(packageType, packagePrice) {
@@ -958,7 +1027,10 @@
             function renderUpcomingAppointments() {
                 elements.upcomingAppointmentsList.innerHTML = '';
                 if (customerData.upcoming_appointments && customerData.upcoming_appointments.length > 0) {
-                    elements.upcomingAppointmentsSection.style.display = 'block';
+                    elements.upcomingAppointmentsHeader.textContent = 'Upcoming Appointments';
+                    elements.upcomingAppointmentsList.style.display = 'block';
+                    elements.noUpcomingAppointmentsMessage.style.display = 'none';
+
                     customerData.upcoming_appointments.forEach(appt => {
                         const apptItem = document.createElement('div');
                         apptItem.className = 'p-3 bg-white rounded-md shadow-sm';
@@ -969,7 +1041,9 @@
                         elements.upcomingAppointmentsList.appendChild(apptItem);
                     });
                 } else {
-                    elements.upcomingAppointmentsSection.style.display = 'none';
+                    elements.upcomingAppointmentsHeader.textContent = 'No Upcoming Appointments';
+                    elements.upcomingAppointmentsList.style.display = 'none';
+                    elements.noUpcomingAppointmentsMessage.style.display = 'block';
                 }
             }
 
@@ -992,43 +1066,48 @@
 
             function renderVehicleManagementForms() {
                 elements.vehicleMessage.textContent = ''; 
-                elements.vehicleManagementSection.innerHTML = `<h3 class="text-xl font-bold text-gray-700 mb-4">Manage Vehicles</h3>`;
+                elements.vehicleManagementSection.innerHTML = ``; // Clear previous forms
+                
                 const primaryVehicle = customerData.vehicles.find(v => v.is_primary);
                 const secondaryVehicle = customerData.vehicles.find(v => !v.is_primary);
                 
                 if(primaryVehicle) elements.vehicleManagementSection.appendChild(createVehicleForm('edit-primary', primaryVehicle));
                 if(secondaryVehicle) elements.vehicleManagementSection.appendChild(createVehicleForm('edit-secondary', secondaryVehicle));
                 if(customerData.vehicles.length < 2) elements.vehicleManagementSection.appendChild(createVehicleForm('add'));
-
-                // Add the "Done" button
-                const doneButton = document.createElement('button');
-                doneButton.type = 'button';
-                doneButton.textContent = 'Done';
-                doneButton.className = 'mt-4 w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg';
-                doneButton.addEventListener('click', showBookingForm);
-                elements.vehicleManagementSection.appendChild(doneButton);
             }
 
             function createVehicleForm(type, vehicle = {}) {
                 const form = document.createElement('form');
-                form.className = 'space-y-3 p-4 border rounded-lg mb-4';
+                form.className = 'space-y-3 p-4 border rounded-lg mb-4 bg-gray-50';
                 const isAdd = type === 'add';
                 form.innerHTML = `
-                    <h4 class="font-semibold">${isAdd ? 'Add a Vehicle' : (vehicle.is_primary ? 'Edit Primary Vehicle' : 'Edit Second Vehicle')}</h4>
+                    <h4 class="font-semibold text-base text-gray-800">${isAdd ? 'Add a Vehicle' : (vehicle.is_primary ? 'Edit Primary Vehicle' : 'Edit Second Vehicle')}</h4>
                     <input type="text" placeholder="Year" required class="w-full px-3 py-2 border rounded-lg" value="${vehicle.year || ''}">
                     <input type="text" placeholder="Make" required class="w-full px-3 py-2 border rounded-lg" value="${vehicle.make || ''}">
                     <input type="text" placeholder="Model" required class="w-full px-3 py-2 border rounded-lg" value="${vehicle.model || ''}">
                     <button type="submit" class="w-full ${isAdd ? 'bg-green-600' : 'bg-blue-600'} text-white py-2 px-4 rounded-lg">${isAdd ? 'Add Vehicle' : 'Save Vehicle'}</button>
                     ${!isAdd ? `<button type="button" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg mt-2">Delete Vehicle</button>` : ''}
                 `;
-                form.addEventListener('submit', (e) => {
+                form.addEventListener('submit', async (e) => {
                     e.preventDefault();
                     const inputs = e.target.querySelectorAll('input');
                     const payload = { year: inputs[0].value, make: inputs[1].value, model: inputs[2].value };
-                    if (isAdd) handleAddVehicle(payload); else handleVehicleUpdate(vehicle.id, payload);
+                    if (isAdd) await handleAddVehicle(payload); else await handleVehicleUpdate(vehicle.id, payload);
+                    // After update/add/delete, re-render the profile section to reflect changes
+                    await fetchCustomerData(localStorage.getItem('customerToken'));
+                    elements.customerDetailsMessage.textContent = ''; // Clear other messages
+                    elements.passwordMessage.textContent = ''; // Clear other messages
+                    elements.editProfileSection.style.display = 'block'; // Keep profile section open
                 });
                 if (!isAdd) {
-                    form.querySelector('button[type="button"]').addEventListener('click', () => handleVehicleDelete(vehicle.id));
+                    form.querySelector('button[type="button"]').addEventListener('click', async () => {
+                        await handleVehicleDelete(vehicle.id);
+                        // After update/add/delete, re-render the profile section to reflect changes
+                        await fetchCustomerData(localStorage.getItem('customerToken'));
+                        elements.customerDetailsMessage.textContent = ''; // Clear other messages
+                        elements.passwordMessage.textContent = ''; // Clear other messages
+                        elements.editProfileSection.style.display = 'block'; // Keep profile section open
+                    });
                 }
                 return form;
             }
@@ -1037,48 +1116,61 @@
                 const { ok, data } = await apiCall(`/customer/vehicle/${vehicleId}`, 'PUT', payload);
                 elements.vehicleMessage.textContent = data.message;
                 elements.vehicleMessage.style.color = ok ? 'green' : 'red';
-                if(ok) {
-                    await fetchCustomerData(localStorage.getItem('customerToken'));
-                    showBookingForm();
-                }
             }
 
             async function handleAddVehicle(payload) {
                 const { ok, data } = await apiCall('/customer/vehicle', 'POST', payload);
                 elements.vehicleMessage.textContent = data.message;
                 elements.vehicleMessage.style.color = ok ? 'green' : 'red';
-                if(ok) {
-                    await fetchCustomerData(localStorage.getItem('customerToken'));
-                    showBookingForm();
-                }
             }
 
             async function handleVehicleDelete(vehicleId) {
                 const { ok, data } = await apiCall(`/customer/vehicle/${vehicleId}`, 'DELETE');
                 elements.vehicleMessage.textContent = data.message;
                 elements.vehicleMessage.style.color = ok ? 'green' : 'red';
-                if(ok) {
-                    await fetchCustomerData(localStorage.getItem('customerToken'));
-                    showBookingForm();
+            }
+
+            async function handleCustomerDetailsUpdate(e) {
+                e.preventDefault();
+                const payload = {
+                    full_name: elements.editFullNameInput.value,
+                    phone: elements.editPhoneInput.value,
+                    email: elements.editEmailInput.value,
+                    address: elements.editAddressInput.value
+                };
+
+                const { ok, data } = await apiCall('/customer/data', 'PUT', payload); // Assuming PUT /customer/data updates details
+                elements.customerDetailsMessage.textContent = data.message;
+                elements.customerDetailsMessage.style.color = ok ? 'green' : 'red';
+                if (ok) {
+                    await fetchCustomerData(localStorage.getItem('customerToken')); // Re-fetch to update dashboard
+                    elements.editProfileSection.style.display = 'block'; // Keep profile section open
                 }
             }
 
-            async function handleAddressUpdate(e) {
+            async function handleChangePassword(e) {
                 e.preventDefault();
-                const newAddress = document.getElementById('edit-address-input').value;
-                if (!newAddress) {
-                    elements.addressMessage.textContent = 'Please enter an address.';
-                    elements.addressMessage.style.color = 'red';
+                const newPassword = elements.newPasswordInput.value;
+                const confirmPassword = elements.confirmPasswordInput.value;
+
+                if (newPassword.length < 6) {
+                    elements.passwordMessage.textContent = 'Password must be at least 6 characters long.';
+                    elements.passwordMessage.style.color = 'red';
                     return;
                 }
-                const { ok, data } = await apiCall('/customer/address', 'PUT', { address: newAddress });
-                elements.addressMessage.textContent = data.message;
+                if (newPassword !== confirmPassword) {
+                    elements.passwordMessage.textContent = 'New passwords do not match.';
+                    elements.passwordMessage.style.color = 'red';
+                    return;
+                }
+
+                const { ok, data } = await apiCall('/customer/password', 'PUT', { new_password: newPassword }); // Assuming PUT /customer/password
+                elements.passwordMessage.textContent = data.message;
+                elements.passwordMessage.style.color = ok ? 'green' : 'red';
                 if (ok) {
-                    elements.addressMessage.style.color = 'green';
-                    await fetchCustomerData(localStorage.getItem('customerToken'));
-                    showBookingForm();
-                } else {
-                    elements.addressMessage.style.color = 'red';
+                    elements.newPasswordInput.value = '';
+                    elements.confirmPasswordInput.value = '';
+                    elements.editProfileSection.style.display = 'block'; // Keep profile section open
                 }
             }
 
