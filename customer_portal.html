@@ -631,6 +631,7 @@
                 try {
                     const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
                     const responseText = await response.text();
+                    // Check if responseText is not empty before parsing as JSON
                     const data = responseText ? JSON.parse(responseText) : {};
                     return { ok: response.ok, data: data, status: response.status };
                 } catch (error) {
@@ -645,7 +646,8 @@
                     elements.vehicleTypeSelection, elements.packageSelectionContainer, 
                     elements.bookingFormSection, elements.financingFlowContainer, 
                     elements.confirmationMessage, elements.pastAppointmentsSection, 
-                    elements.vehicleManagementSection, elements.addressEditSection
+                    elements.vehicleManagementSection, elements.addressEditSection,
+                    elements.upcomingAppointmentsSection // Ensure this is hidden when not needed
                 ];
                 allSections.forEach(el => {
                     if (el) el.style.display = 'none';
@@ -654,8 +656,6 @@
 
             function showStartPage() {
                 hideAllMajorSections();
-                // The line that unconditionally showed the appointments section has been removed.
-                // Its visibility is now correctly handled by the renderUpcomingAppointments() function.
                 elements.vehicleTypeSelection.style.display = 'block';
                 document.querySelectorAll('.vehicle-type-button.active').forEach(b => b.classList.remove('active'));
             }
@@ -678,8 +678,10 @@
             }
 
             async function fetchCustomerData(token) {
+                // Fetch customer data including upcoming and past appointments
                 const { ok, data } = await apiCall('/customer/data');
                 if (ok) {
+                    // Assuming data now includes upcoming_appointments and past_appointments arrays
                     customerData = data;
                     renderDashboard();
                     showStartPage();
@@ -699,7 +701,7 @@
                 renderVehicleDropdown(elements.financingVehicleSelect);
 
                 renderVehicleManagementForms();
-                renderUpcomingAppointments();
+                renderUpcomingAppointments(); // Call this to display upcoming appointments
                 renderPastAppointments();
 
                 const todayFormatted = new Date().toISOString().split('T')[0];
@@ -957,7 +959,8 @@
             
             function renderUpcomingAppointments() {
                 elements.upcomingAppointmentsList.innerHTML = '';
-                if (customerData.upcoming_appointments && customerData.upcoming_appointments.length > 0) {
+                // Check if upcoming_appointments exists and is an array with items
+                if (customerData.upcoming_appointments && Array.isArray(customerData.upcoming_appointments) && customerData.upcoming_appointments.length > 0) {
                     elements.upcomingAppointmentsSection.style.display = 'block';
                     customerData.upcoming_appointments.forEach(appt => {
                         const apptItem = document.createElement('div');
@@ -969,6 +972,7 @@
                         elements.upcomingAppointmentsList.appendChild(apptItem);
                     });
                 } else {
+                    // Hide the section if no upcoming appointments
                     elements.upcomingAppointmentsSection.style.display = 'none';
                 }
             }
