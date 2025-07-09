@@ -1027,20 +1027,33 @@
             function renderUpcomingAppointments() {
                 elements.upcomingAppointmentsList.innerHTML = '';
                 if (customerData.upcoming_appointments && customerData.upcoming_appointments.length > 0) {
-                    elements.upcomingAppointmentsHeader.textContent = 'Upcoming Appointments';
-                    elements.upcomingAppointmentsList.style.display = 'block';
-                    elements.noUpcomingAppointmentsMessage.style.display = 'none';
+                    // Filter appointments to only show those associated with the current user's vehicles
+                    const userAppointments = customerData.upcoming_appointments.filter(appt =>
+                        customerData.vehicles.some(vehicle => vehicle.id === appt.vehicle_id)
+                    );
 
-                    customerData.upcoming_appointments.forEach(appt => {
-                        const apptItem = document.createElement('div');
-                        apptItem.className = 'p-3 bg-white rounded-md shadow-sm';
-                        const vehicle = customerData.vehicles.find(v => v.id === appt.vehicle_id);
-                        const vehicleInfo = vehicle ? `${vehicle.year} ${vehicle.make} ${vehicle.model}` : 'Vehicle N/A';
-                        const apptDateTime = new Date(`${appt.date}T${appt.time}`);
-                        apptItem.innerHTML = `<p class="font-semibold">${appt.package_type} - ${vehicleInfo}</p><p>Date: ${apptDateTime.toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'short' })}</p><p>Price: $${appt.package_price}</p>`;
-                        elements.upcomingAppointmentsList.appendChild(apptItem);
-                    });
+                    if (userAppointments.length > 0) {
+                        elements.upcomingAppointmentsHeader.textContent = 'Upcoming Appointments';
+                        elements.upcomingAppointmentsList.style.display = 'block';
+                        elements.noUpcomingAppointmentsMessage.style.display = 'none';
+
+                        userAppointments.forEach(appt => { // Iterate over filtered appointments
+                            const apptItem = document.createElement('div');
+                            apptItem.className = 'p-3 bg-white rounded-md shadow-sm';
+                            const vehicle = customerData.vehicles.find(v => v.id === appt.vehicle_id); // This will now always find a vehicle
+                            const vehicleInfo = vehicle ? `${vehicle.year} ${vehicle.make} ${vehicle.model}` : 'Vehicle N/A'; // Should not be N/A anymore
+                            const apptDateTime = new Date(`${appt.date}T${appt.time}`);
+                            apptItem.innerHTML = `<p class="font-semibold">${appt.package_type} - ${vehicleInfo}</p><p>Date: ${apptDateTime.toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'short' })}</p><p>Price: $${appt.package_price}</p>`;
+                            elements.upcomingAppointmentsList.appendChild(apptItem);
+                        });
+                    } else {
+                        // If after filtering, no appointments are left for this user
+                        elements.upcomingAppointmentsHeader.textContent = 'No Upcoming Appointments';
+                        elements.upcomingAppointmentsList.style.display = 'none';
+                        elements.noUpcomingAppointmentsMessage.style.display = 'block';
+                    }
                 } else {
+                    // If initially no appointments are fetched
                     elements.upcomingAppointmentsHeader.textContent = 'No Upcoming Appointments';
                     elements.upcomingAppointmentsList.style.display = 'none';
                     elements.noUpcomingAppointmentsMessage.style.display = 'block';
@@ -1050,15 +1063,23 @@
             function renderPastAppointments() {
                 elements.pastAppointmentsList.innerHTML = '';
                 if (customerData.past_appointments && customerData.past_appointments.length > 0) {
-                     customerData.past_appointments.forEach(appt => {
-                        const apptItem = document.createElement('div');
-                        apptItem.className = 'p-3 bg-gray-100 rounded-md';
-                        const vehicle = customerData.vehicles.find(v => v.id === appt.vehicle_id);
-                        const vehicleInfo = vehicle ? `${vehicle.year} ${vehicle.make} ${vehicle.model}` : 'Vehicle N/A';
-                         const apptDateTime = new Date(`${appt.date}T${appt.time}`);
-                        apptItem.innerHTML = `<p class="font-semibold">${appt.package_type} - ${vehicleInfo}</p><p>Date: ${apptDateTime.toLocaleString('en-US', { dateStyle: 'long' })}</p><p>Price: $${appt.package_price}</p>`;
-                        elements.pastAppointmentsList.appendChild(apptItem);
-                    });
+                    const userPastAppointments = customerData.past_appointments.filter(appt =>
+                        customerData.vehicles.some(vehicle => vehicle.id === appt.vehicle_id)
+                    );
+
+                    if (userPastAppointments.length > 0) {
+                        userPastAppointments.forEach(appt => {
+                            const apptItem = document.createElement('div');
+                            apptItem.className = 'p-3 bg-gray-100 rounded-md';
+                            const vehicle = customerData.vehicles.find(v => v.id === appt.vehicle_id);
+                            const vehicleInfo = vehicle ? `${vehicle.year} ${vehicle.make} ${vehicle.model}` : 'Vehicle N/A'; // Should not be N/A anymore
+                            const apptDateTime = new Date(`${appt.date}T${appt.time}`);
+                            apptItem.innerHTML = `<p class="font-semibold">${appt.package_type} - ${vehicleInfo}</p><p>Date: ${apptDateTime.toLocaleString('en-US', { dateStyle: 'long' })}</p><p>Price: $${appt.package_price}</p>`;
+                            elements.pastAppointmentsList.appendChild(apptItem);
+                        });
+                    } else {
+                        elements.pastAppointmentsList.textContent = 'No past appointments found for your vehicles.';
+                    }
                 } else {
                      elements.pastAppointmentsList.textContent = 'No past appointments found.';
                 }
