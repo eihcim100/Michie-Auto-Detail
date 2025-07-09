@@ -681,8 +681,8 @@
                 // Fetch customer data including upcoming and past appointments
                 const { ok, data } = await apiCall('/customer/data');
                 if (ok) {
-                    // Assuming data now includes upcoming_appointments and past_appointments arrays
                     customerData = data;
+                    console.log('Fetched customerData:', customerData); // LOG 1: Log the entire customerData object
                     renderDashboard();
                     showStartPage();
                 } else {
@@ -958,6 +958,7 @@
             }
             
             function renderUpcomingAppointments() {
+                console.log('Rendering Upcoming Appointments. Data:', customerData.upcoming_appointments); // LOG 2: Log upcoming appointments data
                 elements.upcomingAppointmentsList.innerHTML = '';
                 // Check if upcoming_appointments exists and is an array with items
                 if (customerData.upcoming_appointments && Array.isArray(customerData.upcoming_appointments) && customerData.upcoming_appointments.length > 0) {
@@ -978,6 +979,7 @@
             }
 
             function renderPastAppointments() {
+                console.log('Rendering Past Appointments. Data:', customerData.past_appointments); // LOG 3: Log past appointments data
                 elements.pastAppointmentsList.innerHTML = '';
                 if (customerData.past_appointments && customerData.past_appointments.length > 0) {
                      customerData.past_appointments.forEach(appt => {
