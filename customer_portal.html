@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -631,7 +632,6 @@
                 try {
                     const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
                     const responseText = await response.text();
-                    // Check if responseText is not empty before parsing as JSON
                     const data = responseText ? JSON.parse(responseText) : {};
                     return { ok: response.ok, data: data, status: response.status };
                 } catch (error) {
@@ -646,8 +646,7 @@
                     elements.vehicleTypeSelection, elements.packageSelectionContainer, 
                     elements.bookingFormSection, elements.financingFlowContainer, 
                     elements.confirmationMessage, elements.pastAppointmentsSection, 
-                    elements.vehicleManagementSection, elements.addressEditSection,
-                    elements.upcomingAppointmentsSection // Ensure this is hidden when not needed
+                    elements.vehicleManagementSection, elements.addressEditSection
                 ];
                 allSections.forEach(el => {
                     if (el) el.style.display = 'none';
@@ -656,6 +655,7 @@
 
             function showStartPage() {
                 hideAllMajorSections();
+                if (elements.upcomingAppointmentsSection) elements.upcomingAppointmentsSection.style.display = 'block';
                 elements.vehicleTypeSelection.style.display = 'block';
                 document.querySelectorAll('.vehicle-type-button.active').forEach(b => b.classList.remove('active'));
             }
@@ -678,11 +678,9 @@
             }
 
             async function fetchCustomerData(token) {
-                // Fetch customer data including upcoming and past appointments
                 const { ok, data } = await apiCall('/customer/data');
                 if (ok) {
                     customerData = data;
-                    console.log('Fetched customerData:', customerData); // LOG 1: Log the entire customerData object
                     renderDashboard();
                     showStartPage();
                 } else {
@@ -701,7 +699,7 @@
                 renderVehicleDropdown(elements.financingVehicleSelect);
 
                 renderVehicleManagementForms();
-                renderUpcomingAppointments(); // Call this to display upcoming appointments
+                renderUpcomingAppointments();
                 renderPastAppointments();
 
                 const todayFormatted = new Date().toISOString().split('T')[0];
@@ -958,10 +956,8 @@
             }
             
             function renderUpcomingAppointments() {
-                console.log('Rendering Upcoming Appointments. Data:', customerData.upcoming_appointments); // LOG 2: Log upcoming appointments data
                 elements.upcomingAppointmentsList.innerHTML = '';
-                // Check if upcoming_appointments exists and is an array with items
-                if (customerData.upcoming_appointments && Array.isArray(customerData.upcoming_appointments) && customerData.upcoming_appointments.length > 0) {
+                if (customerData.upcoming_appointments && customerData.upcoming_appointments.length > 0) {
                     elements.upcomingAppointmentsSection.style.display = 'block';
                     customerData.upcoming_appointments.forEach(appt => {
                         const apptItem = document.createElement('div');
@@ -973,13 +969,11 @@
                         elements.upcomingAppointmentsList.appendChild(apptItem);
                     });
                 } else {
-                    // Hide the section if no upcoming appointments
                     elements.upcomingAppointmentsSection.style.display = 'none';
                 }
             }
 
             function renderPastAppointments() {
-                console.log('Rendering Past Appointments. Data:', customerData.past_appointments); // LOG 3: Log past appointments data
                 elements.pastAppointmentsList.innerHTML = '';
                 if (customerData.past_appointments && customerData.past_appointments.length > 0) {
                      customerData.past_appointments.forEach(appt => {
