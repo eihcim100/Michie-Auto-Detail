@@ -158,6 +158,38 @@
             max-height: 1000px;
             display: block;
         }
+
+        /* Custom styles for the Pay Now button */
+        .pay-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            text-decoration: none;
+            color: white;
+            background-color: #4CAF50; /* Green */
+            border: none;
+            margin-top: 1rem;
+        }
+
+        .pay-button:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px -1px rgba(0, 0, 0, 0.15), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+        }
+
+        .pay-button.financing {
+            background-color: #8B5CF6; /* Purple */
+        }
+
+        .pay-button.financing:hover {
+            background-color: #7C3AED; /* Darker Purple */
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -674,6 +706,23 @@
             let customerData = {}; 
             const availableTimes = ['09:00', '11:00', '12:00', '14:00', '16:00', '17:00', '18:00'];
 
+            // Define payment links
+            const paymentLinks = {
+                "Level 1 Detail": {
+                    "149": "https://pay.michieauto.com/lvl1sedan",
+                    "199": "https://pay.michieauto.com/lvl1suv" // Covers SUV and Truck for Level 1
+                },
+                "Level 2 Detail": {
+                    "249": "https://pay.michieauto.com/lvl2sedan",
+                    "299": "https://pay.michieauto.com/lvl2suv" // Covers SUV and Truck for Level 2
+                },
+                "Level 3 Detail": {
+                    "349": "https://pay.michieauto.com/lvl3sedan",
+                    "399": "https://pay.michieauto.com/lvl3suv" // Covers SUV and Truck for Level 3
+                },
+                "Financed auto detail": "https://pay.michieauto.com/bnpl1"
+            };
+
             // --- API Call Function ---
             async function apiCall(endpoint, method, payload = null) {
                 const token = localStorage.getItem('customerToken');
@@ -1039,11 +1088,43 @@
 
                         userAppointments.forEach(appt => { // Iterate over filtered appointments
                             const apptItem = document.createElement('div');
-                            apptItem.className = 'p-3 bg-white rounded-md shadow-sm';
+                            apptItem.className = 'p-3 bg-white rounded-md shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center';
                             const vehicle = customerData.vehicles.find(v => v.id === appt.vehicle_id); // This will now always find a vehicle
                             const vehicleInfo = vehicle ? `${vehicle.year} ${vehicle.make} ${vehicle.model}` : 'Vehicle N/A'; // Should not be N/A anymore
                             const apptDateTime = new Date(`${appt.date}T${appt.time}`);
-                            apptItem.innerHTML = `<p class="font-semibold">${appt.package_type} - ${vehicleInfo}</p><p>Date: ${apptDateTime.toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'short' })}</p><p>Price: $${appt.package_price}</p>`;
+                            
+                            let paymentLink = '#';
+                            let buttonText = 'Pay Now';
+                            let buttonClass = 'pay-button';
+
+                            if (appt.package_type === "Financed auto detail") {
+                                paymentLink = paymentLinks["Financed auto detail"];
+                                buttonText = 'Pay Down Payment';
+                                buttonClass += ' financing';
+                            } else {
+                                // Ensure package_price is a string to match keys in paymentLinks
+                                const priceKey = String(appt.package_price); 
+                                if (paymentLinks[appt.package_type] && paymentLinks[appt.package_type][priceKey]) {
+                                    paymentLink = paymentLinks[appt.package_type][priceKey];
+                                } else {
+                                    console.warn(`No payment link found for package type: ${appt.package_type} and price: ${appt.package_price}`);
+                                    // Fallback or hide button if link is not found
+                                    paymentLink = '#'; // Or set to null to hide button
+                                }
+                            }
+
+                            apptItem.innerHTML = `
+                                <div>
+                                    <p class="font-semibold text-gray-800">${appt.package_type} - ${vehicleInfo}</p>
+                                    <p class="text-sm text-gray-600">Date: ${apptDateTime.toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'short' })}</p>
+                                    <p class="text-xl font-extrabold text-green-700 mt-1">Price: $${appt.package_price}</p>
+                                </div>
+                                ${paymentLink !== '#' ? `
+                                    <a href="${paymentLink}" target="_blank" class="${buttonClass}">
+                                        ${buttonText}
+                                    </a>
+                                ` : ''}
+                            `;
                             elements.upcomingAppointmentsList.appendChild(apptItem);
                         });
                     } else {
@@ -1106,7 +1187,9 @@
                     <input type="text" placeholder="Year" required class="w-full px-3 py-2 border rounded-lg" value="${vehicle.year || ''}">
                     <input type="text" placeholder="Make" required class="w-full px-3 py-2 border rounded-lg" value="${vehicle.make || ''}">
                     <input type="text" placeholder="Model" required class="w-full px-3 py-2 border rounded-lg" value="${vehicle.model || ''}">
-                    <button type="submit" class="w-full ${isAdd ? 'bg-green-600' : 'bg-blue-600'} text-white py-2 px-4 rounded-lg">${isAdd ? 'Add Vehicle' : 'Save Vehicle'}</button>
+                    <button type="submit" class="w-full ${isAdd ? 'bg-green-600' : 'bg-blue-600'} text-white py-2 px-4 rounded-lg">
+                        ${isAdd ? 'Add Vehicle' : 'Save Vehicle'}
+                    </button>
                     ${!isAdd ? `<button type="button" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg mt-2">Delete Vehicle</button>` : ''}
                 `;
                 form.addEventListener('submit', async (e) => {
