@@ -614,14 +614,29 @@
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk&libraries=places&callback=initBookingPage" defer></script>
     <script>
-        let addressAutocomplete;
+        // This function needs to be available for the autocomplete callback
+        function fillAddressFields(place, zipCodeInputId) {
+            let zipCode = '';
+            for (const component of place.address_components) {
+                if (component.types.includes('postal_code')) {
+                    zipCode = component.long_name;
+                }
+            }
+            const zipCodeInput = document.getElementById(zipCodeInputId);
+            if(zipCodeInput) {
+                zipCodeInput.value = zipCode;
+            }
+        }
 
+        // This function will be called by the Google Maps script.
+        // It is now ONLY responsible for the autocomplete feature.
         window.initBookingPage = function() {
-            initializeApp();
             const addressInput = document.getElementById('address-input');
-            if (window.google && addressInput) {
-                addressAutocomplete = new google.maps.places.Autocomplete(addressInput, {
-                    componentRestrictions: { country: "us" }, fields: ["formatted_address", "address_components"], types: ["address"],
+            if (window.google && window.google.maps && window.google.maps.places && addressInput) {
+                let addressAutocomplete = new google.maps.places.Autocomplete(addressInput, {
+                    componentRestrictions: { country: "us" },
+                    fields: ["formatted_address", "address_components"],
+                    types: ["address"],
                 });
                 addressAutocomplete.addListener('place_changed', () => {
                     const place = addressAutocomplete.getPlace();
@@ -630,19 +645,12 @@
                         fillAddressFields(place, 'zip-code');
                     }
                 });
+            } else {
+                console.warn("Google Maps Autocomplete could not be initialized. The feature will be disabled, but the form will still work.");
             }
         }
 
-        function fillAddressFields(place, zipCodeInputId) {
-            let zipCode = '';
-            for (const component of place.address_components) {
-                if (component.types.includes('postal_code')) {
-                    zipCode = component.long_name;
-                }
-            }
-            document.getElementById(zipCodeInputId).value = zipCode;
-        }
-
+        // The main application logic, including form event listeners.
         function initializeApp() {
             const API_BASE_URL = 'https://michie-detailing-admin.onrender.com';
             
@@ -656,6 +664,7 @@
                 sedanPackagesDisplay: document.getElementById('sedan-packages-display'), 
                 suvTruckPackagesDisplay: document.getElementById('suv-truck-packages-display'), 
                 bookingFormSection: document.getElementById('booking-form-section'),
+                bookingForm: document.getElementById('booking-form'),
                 selectedPackageDisplay: document.getElementById('selected-package-display'),
                 selectedPackageTypeInput: document.getElementById('selected-package-type'),
                 selectedPackagePriceInput: document.getElementById('selected-package-price'),
@@ -664,24 +673,12 @@
                 bookAnotherBtn: document.getElementById('book-another-btn'),
                 stickyBookNowBtn: document.getElementById('sticky-book-now-btn'), 
                 stickyBookNowFooter: document.getElementById('sticky-book-now-footer'), 
-                totalPriceDisplay: document.getElementById('total-price-display'), // New element for total price
-                payNowButton: document.getElementById('pay-now-button'), // New element for Pay Now button
-
-                // Standard Booking Form Elements (accessed directly in handleBooking now)
-                // fullNameInput: document.getElementById('full-name'),
-                // emailInput: document.getElementById('email'),
-                // phoneInput: document.getElementById('phone'),
-                // addressInput: document.getElementById('address-input'),
-                // zipCodeInput: document.getElementById('zip-code'),
-                // vehicleYearInput: document.getElementById('vehicle-year'),
-                // vehicleMakeInput: document.getElementById('vehicle-make'), 
-                // vehicleModelInput: document.getElementById('vehicle-model'),
+                totalPriceDisplay: document.getElementById('total-price-display'),
+                payNowButton: document.getElementById('pay-now-button'),
                 bookingDateInput: document.getElementById('booking-date'),
                 bookingTimeButtonsContainer: document.getElementById('booking-time-buttons'),
                 selectedBookingTimeInput: document.getElementById('selected-booking-time'),
                 bookingMessage: document.getElementById('booking-message'),
-
-                // New Account Creation Elements
                 createAccountCheckbox: document.getElementById('create-account-checkbox'),
                 passwordFields: document.getElementById('password-fields'),
                 passwordInput: document.getElementById('password'),
@@ -693,23 +690,12 @@
 
             const availableTimes = ['09:00', '11:00', '12:00', '14:00', '16:00', '17:00', '18:00'];
 
-            // Define payment links for direct booking (no login)
             const paymentLinks = {
-                "Level 1 Detail": {
-                    "149": "https://pay.michieauto.com/lvl1sedan",
-                    "199": "https://pay.michieauto.com/lvl1suv" // Covers SUV and Truck for Level 1
-                },
-                "Level 2 Detail": {
-                    "249": "https://pay.michieauto.com/lvl2sedan",
-                    "299": "https://pay.michieauto.com/lvl2suv" // Covers SUV and Truck for Level 2
-                },
-                "Level 3 Detail": {
-                    "349": "https://pay.michieauto.com/lvl3sedan",
-                    "399": "https://pay.michieauto.com/lvl3suv" // Covers SUV and Truck for Level 3
-                },
+                "Level 1 Detail": { "149": "https://pay.michieauto.com/lvl1sedan", "199": "https://pay.michieauto.com/lvl1suv" },
+                "Level 2 Detail": { "249": "https://pay.michieauto.com/lvl2sedan", "299": "https://pay.michieauto.com/lvl2suv" },
+                "Level 3 Detail": { "349": "https://pay.michieauto.com/lvl3sedan", "399": "https://pay.michieauto.com/lvl3suv" },
             };
 
-            // --- API Call Function ---
             async function apiCall(endpoint, method, payload = null) {
                 const headers = { 'Content-Type': 'application/json' };
                 const options = { method, headers };
@@ -727,106 +713,70 @@
                 }
             }
             
-            // --- UI Control Functions ---
             function hideAllMajorSections() {
-                const allSections = [
-                    elements.vehicleTypeSelection, elements.packageSelectionContainer, 
-                    elements.bookingFormSection, 
-                    elements.confirmationMessage
-                ];
-                allSections.forEach(el => {
-                    if (el) el.style.display = 'none';
-                });
+                [elements.vehicleTypeSelection, elements.packageSelectionContainer, elements.bookingFormSection, elements.confirmationMessage]
+                    .forEach(el => el && (el.style.display = 'none'));
             }
 
-            // showInitialPage now specifically shows the first step of the booking process
             function showInitialPage() {
                 hideAllMajorSections();
                 if (elements.vehicleTypeSelection) elements.vehicleTypeSelection.style.display = 'block';
                 document.querySelectorAll('.btn-primary.active').forEach(b => b.classList.remove('active'));
-                // The sticky button is handled by the stickyBookNowBtn event listener, not here.
-                // It should be visible initially, then hidden when the booking flow container is shown.
             }
 
             function showBookingForm() { 
                 hideAllMajorSections();
                 if (elements.bookingFormSection) elements.bookingFormSection.style.display = 'block';
-                if (elements.stickyBookNowFooter) elements.stickyBookNowFooter.style.display = 'none'; // Hide sticky button when booking form is shown
+                if (elements.stickyBookNowFooter) elements.stickyBookNowFooter.style.display = 'none';
             }
 
-            // --- Event Listeners ---
-            // Event listener for the new sticky "Book Your Detail Now!" button
             if (elements.stickyBookNowBtn) {
                 elements.stickyBookNowBtn.addEventListener('click', () => {
                     if (elements.bookingFlowContainer) {
                         elements.bookingFlowContainer.style.display = 'block';
-                        // Scroll to the booking flow container
                         elements.bookingFlowContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     }
-                    // Show the first step of the booking process
                     showInitialPage(); 
                 });
             }
 
             if (elements.selectCarBtn) elements.selectCarBtn.addEventListener('click', (e) => {
                 showPackageSelection('sedan', e.target);
-                if (elements.packageSelectionContainer) {
-                    elements.packageSelectionContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
+                if (elements.packageSelectionContainer) elements.packageSelectionContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
             });
             if (elements.selectTruckBtn) elements.selectTruckBtn.addEventListener('click', (e) => {
                 showPackageSelection('suv-truck', e.target);
-                if (elements.packageSelectionContainer) {
-                    elements.packageSelectionContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
+                if (elements.packageSelectionContainer) elements.packageSelectionContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
             });
             if (elements.selectSuvBtn) elements.selectSuvBtn.addEventListener('click', (e) => {
                 showPackageSelection('suv-truck', e.target);
-                if (elements.packageSelectionContainer) {
-                    elements.packageSelectionContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
+                if (elements.packageSelectionContainer) elements.packageSelectionContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
             });
 
-            // Form Submissions
-            if (elements.bookingForm) elements.bookingForm.addEventListener('submit', (e) => handleBooking(e, '/public/appointment', elements.bookingMessage, 'selected-booking-time'));
+            if (elements.bookingForm) {
+                elements.bookingForm.addEventListener('submit', (e) => handleBooking(e, '/public/appointment', elements.bookingMessage, 'selected-booking-time'));
+            }
 
             if (elements.bookAnotherBtn) elements.bookAnotherBtn.addEventListener('click', () => {
-                // Reset form fields when booking another appointment
-                document.getElementById('full-name').value = '';
-                document.getElementById('email').value = '';
-                document.getElementById('phone').value = '';
-                document.getElementById('address-input').value = '';
-                document.getElementById('zip-code').value = '';
-                document.getElementById('vehicle-year').value = '';
-                document.getElementById('vehicle-make').value = ''; 
-                document.getElementById('vehicle-model').value = '';
+                if (elements.bookingForm) elements.bookingForm.reset();
                 if (elements.createAccountCheckbox) elements.createAccountCheckbox.checked = false;
                 if (elements.passwordFields) elements.passwordFields.style.display = 'none';
                 if (elements.passwordInput) elements.passwordInput.value = '';
                 if (elements.confirmPasswordInput) elements.confirmPasswordInput.value = '';
-                if (elements.passwordLengthReq) elements.passwordLengthReq.classList.remove('valid', 'invalid');
-                if (elements.passwordUppercaseReq) elements.passwordUppercaseReq.classList.remove('valid', 'invalid');
                 if (elements.passwordMatchMessage) elements.passwordMatchMessage.classList.add('hidden');
                 if (elements.bookingMessage) elements.bookingMessage.textContent = '';
-
-                // Show sticky button again when returning to initial state
                 if (elements.stickyBookNowFooter) elements.stickyBookNowFooter.style.display = 'block'; 
                 showInitialPage();
             });
 
-            // Date input changes
             if (elements.bookingDateInput) elements.bookingDateInput.addEventListener('change', (e) => renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, e.target.value, elements.finalBookAppointmentBtn));
 
-            // Package selection event delegation
             if (elements.packageSelectionContainer) elements.packageSelectionContainer.addEventListener('click', (e) => {
                 if (e.target.classList.contains('select-package-btn')) {
                     const packageType = e.target.dataset.packageType;
                     const packagePrice = e.target.dataset.packagePrice;
                     handlePackageSelection(packageType, packagePrice);
-                    // Scroll to the booking form section after package selection
-                    if (elements.bookingFormSection) {
-                        elements.bookingFormSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }
+                    if (elements.bookingFormSection) elements.bookingFormSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 } else if (e.target.classList.contains('see-whats-included-btn')) {
                     const targetId = e.target.dataset.target;
                     const dropdown = document.getElementById(targetId);
@@ -837,58 +787,40 @@
                 }
             });
 
-            // Account Creation Checkbox Logic
             if (elements.createAccountCheckbox) {
                 elements.createAccountCheckbox.addEventListener('change', () => {
                     if (elements.passwordFields) {
                         elements.passwordFields.style.display = elements.createAccountCheckbox.checked ? 'block' : 'none';
-                        // Clear password fields and messages when hiding
                         if (!elements.createAccountCheckbox.checked) {
                             if (elements.passwordInput) elements.passwordInput.value = '';
                             if (elements.confirmPasswordInput) elements.confirmPasswordInput.value = '';
-                            if (elements.passwordLengthReq) elements.passwordLengthReq.classList.remove('valid', 'invalid');
-                            if (elements.passwordUppercaseReq) elements.passwordUppercaseReq.classList.remove('valid', 'invalid');
-                            if (elements.passwordMatchMessage) elements.passwordMatchMessage.classList.add('hidden');
                         }
                     }
                 });
             }
 
-            // Password validation feedback
-            if (elements.passwordInput) {
-                elements.passwordInput.addEventListener('input', validatePassword);
-                elements.passwordInput.addEventListener('input', checkPasswordsMatch);
-            }
-            if (elements.confirmPasswordInput) {
-                elements.confirmPasswordInput.addEventListener('input', checkPasswordsMatch);
-            }
+            if (elements.passwordInput) elements.passwordInput.addEventListener('input', validatePassword);
+            if (elements.passwordInput) elements.passwordInput.addEventListener('input', checkPasswordsMatch);
+            if (elements.confirmPasswordInput) elements.confirmPasswordInput.addEventListener('input', checkPasswordsMatch);
 
             function validatePassword() {
                 const password = elements.passwordInput ? elements.passwordInput.value : '';
                 const isLengthValid = password.length >= 6;
                 const hasUppercase = /[A-Z]/.test(password);
-
-                if (elements.passwordLengthReq) {
-                    elements.passwordLengthReq.classList.toggle('valid', isLengthValid);
-                    elements.passwordLengthReq.classList.toggle('invalid', !isLengthValid);
-                }
-                if (elements.passwordUppercaseReq) {
-                    elements.passwordUppercaseReq.classList.toggle('valid', hasUppercase);
-                    elements.passwordUppercaseReq.classList.toggle('invalid', !hasUppercase);
-                }
+                if (elements.passwordLengthReq) elements.passwordLengthReq.classList.toggle('valid', isLengthValid);
+                if (elements.passwordLengthReq) elements.passwordLengthReq.classList.toggle('invalid', !isLengthValid);
+                if (elements.passwordUppercaseReq) elements.passwordUppercaseReq.classList.toggle('valid', hasUppercase);
+                if (elements.passwordUppercaseReq) elements.passwordUppercaseReq.classList.toggle('invalid', !hasUppercase);
                 return isLengthValid && hasUppercase;
             }
 
             function checkPasswordsMatch() {
                 const password = elements.passwordInput ? elements.passwordInput.value : '';
                 const confirmPassword = elements.confirmPasswordInput ? elements.confirmPasswordInput.value : '';
-                if (elements.passwordMatchMessage) {
-                    elements.passwordMatchMessage.classList.toggle('hidden', password === confirmPassword);
-                }
+                if (elements.passwordMatchMessage) elements.passwordMatchMessage.classList.toggle('hidden', password === confirmPassword);
                 return password === confirmPassword;
             }
 
-            // --- Core Logic Functions ---
             function showPackageSelection(vehicleCategory, clickedButton) {
                 hideAllMajorSections();
                 if (elements.packageSelectionContainer) elements.packageSelectionContainer.style.display = 'block';
@@ -896,7 +828,7 @@
                 if (clickedButton) clickedButton.classList.add('active');
                 if (elements.sedanPackagesDisplay) elements.sedanPackagesDisplay.style.display = vehicleCategory === 'sedan' ? 'grid' : 'none';
                 if (elements.suvTruckPackagesDisplay) elements.suvTruckPackagesDisplay.style.display = vehicleCategory === 'suv-truck' ? 'grid' : 'none';
-                if (elements.stickyBookNowFooter) elements.stickyBookNowFooter.style.display = 'none'; // Hide sticky button when package selection starts
+                if (elements.stickyBookNowFooter) elements.stickyBookNowFooter.style.display = 'none';
             }
 
             function handlePackageSelection(packageType, packagePrice) {
@@ -904,18 +836,16 @@
                 if (elements.selectedPackageTypeInput) elements.selectedPackageTypeInput.value = packageType;
                 if (elements.selectedPackagePriceInput) elements.selectedPackagePriceInput.value = packagePrice;
                 showBookingForm(); 
-                // Set today's date and render times for the standard booking form
                 const todayFormatted = new Date().toISOString().split('T')[0];
                 if (elements.bookingDateInput) elements.bookingDateInput.value = todayFormatted;
                 renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, todayFormatted, elements.finalBookAppointmentBtn);
             }
 
             async function handleBooking(e, endpoint, messageEl, selectedTimeInputId) { 
-                e.preventDefault(); // This *must* be the first line to prevent refresh
-                console.log("handleBooking: Form submission initiated. Preventing default.");
+                e.preventDefault();
+                console.log("Form submission intercepted.");
 
                 try {
-                    // Directly access form elements for robustness
                     const fullName = document.getElementById('full-name').value;
                     const email = document.getElementById('email').value;
                     const phone = document.getElementById('phone').value;
@@ -929,139 +859,60 @@
                     const packageType = document.getElementById('selected-package-type').value; 
                     const packagePrice = document.getElementById('selected-package-price').value; 
 
-                    console.log("handleBooking: Collecting form data...");
-                    console.log("Full Name:", fullName);
-                    console.log("Email:", email);
-                    console.log("Phone:", phone);
-                    console.log("Address:", address);
-                    console.log("Zip Code:", zipCode);
-                    console.log("Vehicle Year:", vehicleYear);
-                    console.log("Vehicle Make:", vehicleMake);
-                    console.log("Vehicle Model:", vehicleModel);
-                    console.log("Booking Date:", bookingDate);
-                    console.log("Selected Time:", selectedTime);
-                    console.log("Package Type:", packageType);
-                    console.log("Package Price:", packagePrice);
-
-
-                    // Basic validation for required fields
                     if (!fullName || !email || !phone || !address || !zipCode || !vehicleYear || !vehicleMake || !vehicleModel || !bookingDate || !selectedTime || !packageType || !packagePrice) {
-                        if (messageEl) {
-                            messageEl.textContent = 'Please fill in all required fields.';
-                            messageEl.style.color = 'red';
-                        }
-                        console.error("handleBooking: Missing required fields.");
+                        if (messageEl) { messageEl.textContent = 'Please fill in all required fields.'; messageEl.style.color = 'red'; }
                         return;
                     }
-                    console.log("handleBooking: All required fields present.");
-
-                    // Email format validation
-                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                    if (!emailRegex.test(email)) {
-                        if (messageEl) {
-                            messageEl.textContent = 'Please enter a valid email address.';
-                            messageEl.style.color = 'red';
-                        }
-                        console.error("handleBooking: Invalid email format.");
+                    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                        if (messageEl) { messageEl.textContent = 'Please enter a valid email address.'; messageEl.style.color = 'red'; }
                         return;
                     }
-                    console.log("handleBooking: Email format valid.");
-
-                    // Phone number validation (10 digits, optional formatting)
-                    const phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
-                    if (!phoneRegex.test(phone)) {
-                        if (messageEl) {
-                            messageEl.textContent = 'Please enter a valid 10-digit phone number.';
-                            messageEl.style.color = 'red';
-                        }
-                        console.error("handleBooking: Invalid phone number format.");
+                    if (!/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(phone)) {
+                        if (messageEl) { messageEl.textContent = 'Please enter a valid 10-digit phone number.'; messageEl.style.color = 'red'; }
                         return;
                     }
-                    console.log("handleBooking: Phone number format valid.");
 
                     const createAccount = elements.createAccountCheckbox ? elements.createAccountCheckbox.checked : false;
                     let password = '';
-
                     if (createAccount) {
                         password = elements.passwordInput ? elements.passwordInput.value : '';
-                        if (!validatePassword()) {
-                            if (messageEl) {
-                                messageEl.textContent = 'Please meet all password requirements.';
-                                messageEl.style.color = 'red';
-                            }
-                            console.error("handleBooking: Password requirements not met.");
+                        if (!validatePassword() || !checkPasswordsMatch()) {
+                            if (messageEl) { messageEl.textContent = 'Please fix password errors.'; messageEl.style.color = 'red'; }
                             return;
                         }
-                        if (!checkPasswordsMatch()) {
-                            if (messageEl) {
-                                messageEl.textContent = 'New passwords do not match.';
-                                messageEl.style.color = 'red';
-                            }
-                            console.error("handleBooking: Passwords do not match.");
-                            return;
-                        }
-                        console.log("handleBooking: Account creation enabled, password validated.");
-                    } else {
-                        console.log("handleBooking: Account creation not enabled.");
                     }
 
                     const payload = {
-                        full_name: fullName,
-                        email: email,
-                        phone: phone,
-                        address: address,
-                        zip_code: zipCode,
-                        vehicle_year: vehicleYear,
-                        vehicle_make: vehicleMake,
-                        vehicle_model: vehicleModel,
-                        date: bookingDate,
-                        time: selectedTime,
-                        package_type: packageType,
-                        package_price: packagePrice,
+                        full_name: fullName, email, phone, address, zip_code: zipCode, vehicle_year: vehicleYear,
+                        vehicle_make: vehicleMake, vehicle_model: vehicleModel, date: bookingDate, time: selectedTime,
+                        package_type: packageType, package_price: packagePrice,
                         deal_name: `${packageType || 'Unknown Package'} ${vehicleMake || ''} ${vehicleModel || ''}`,
-                        offer_code: "CONNOR2438", 
-                        create_account: createAccount, 
-                        password: password 
+                        offer_code: "CONNOR2438", create_account: createAccount, password: password 
                     };
 
-                    console.log("handleBooking: Sending payload:", payload);
-
+                    console.log("Sending payload:", payload);
                     const { ok, data } = await apiCall(endpoint, 'POST', payload);
-                    console.log("handleBooking: API response received. OK:", ok, "Data:", data);
 
                     if (ok) {
                         hideAllMajorSections();
                         if (elements.confirmationMessage) {
                             elements.confirmationMessage.style.display = 'block';
-                            if (elements.totalPriceDisplay) {
-                                elements.totalPriceDisplay.textContent = `$${parseFloat(packagePrice).toFixed(2)}`;
-                            }
+                            if (elements.totalPriceDisplay) elements.totalPriceDisplay.textContent = `$${parseFloat(packagePrice).toFixed(2)}`;
                             let paymentRedirectLink = '#';
                             const priceKey = String(packagePrice); 
                             if (paymentLinks[packageType] && paymentLinks[packageType][priceKey]) {
                                 paymentRedirectLink = paymentLinks[packageType][priceKey];
                             }
                             if (elements.payNowButton) {
-                                elements.payNowButton.onclick = () => {
-                                    if (paymentRedirectLink !== '#') {
-                                        window.open(paymentRedirectLink, '_blank');
-                                    } else {
-                                        console.warn("No payment link available for this package.");
-                                    }
-                                };
+                                elements.payNowButton.onclick = () => { window.open(paymentRedirectLink, '_blank'); };
                             }
                         }
-                        if (elements.stickyBookNowFooter) elements.stickyBookNowFooter.style.display = 'none'; // Hide sticky button on confirmation
-                        console.log("handleBooking: Booking successful, showing confirmation.");
+                        if (elements.stickyBookNowFooter) elements.stickyBookNowFooter.style.display = 'none';
                     } else {
-                        if (messageEl) {
-                            messageEl.textContent = data.message || 'An error occurred during booking.';
-                            messageEl.style.color = 'red';
-                        }
-                        console.error("handleBooking: Booking failed. Message:", data.message);
+                        if (messageEl) { messageEl.textContent = data.message || 'An error occurred during booking.'; messageEl.style.color = 'red'; }
                     }
                 } catch (error) {
-                    console.error("handleBooking: An unexpected JavaScript error occurred:", error);
+                    console.error("An unexpected JavaScript error occurred:", error);
                     if (elements.bookingMessage) {
                         elements.bookingMessage.textContent = 'An unexpected error occurred. Please try again.';
                         elements.bookingMessage.style.color = 'red';
@@ -1069,7 +920,6 @@
                 }
             }
             
-            // --- Helper Functions (Time Buttons) ---
             function renderTimeButtons(container, hiddenInput, selectedDate, finalBookButton) {
                 if (!container) return;
                 container.innerHTML = '';
@@ -1077,7 +927,6 @@
                 const todayFormatted = new Date().toISOString().split('T')[0];
                 const selectedDateFormatted = selectedDateObj.toISOString().split('T')[0];
                 const isToday = selectedDateFormatted === todayFormatted;
-
                 const nowCST = new Date();
                 const currentCSTHour = parseInt(nowCST.toLocaleString('en-US', { hour: '2-digit', hourCycle: 'h23', timeZone: 'America/Chicago' }));
                 const currentCSTMinute = parseInt(nowCST.toLocaleString('en-US', { minute: '2-digit', timeZone: 'America/Chicago' }));
@@ -1087,18 +936,13 @@
                     button.type = 'button';
                     button.textContent = formatTimeDisplay(time);
                     button.dataset.time = time;
-
                     let isDisabled = false;
                     if (isToday) {
                         const [appointmentHour] = time.split(':').map(Number);
-                        const currentTotalCSTMinutes = (currentCSTHour * 60) + currentCSTMinute;
-                        const appointmentTotalMinutes = (appointmentHour * 60);
-                        // Disable if appointment is less than 2 hours from now
-                        if ((appointmentTotalMinutes - currentTotalCSTMinutes) < 120) {
+                        if (((appointmentHour * 60) - ((currentCSTHour * 60) + currentCSTMinute)) < 120) {
                             isDisabled = true;
                         }
                     }
-
                     if (isDisabled) {
                         button.className = 'time-button disabled';
                         button.disabled = true;
@@ -1106,22 +950,16 @@
                         button.className = 'time-button';
                         button.addEventListener('click', () => {
                             const currentlySelected = container.querySelector('.time-button.selected');
-                            if (currentlySelected) {
-                                currentlySelected.classList.remove('selected');
-                            }
+                            if (currentlySelected) currentlySelected.classList.remove('selected');
                             button.classList.add('selected');
                             if (hiddenInput) hiddenInput.value = time;
-                            if (finalBookButton) { // Only show for standard booking form
-                                finalBookButton.style.display = 'block';
-                            }
+                            if (finalBookButton) finalBookButton.style.display = 'block';
                         });
                     }
                     container.appendChild(button);
                 });
-                if (hiddenInput) hiddenInput.value = ''; // Clear selected time when date changes
-                if (finalBookButton) {
-                    finalBookButton.style.display = 'none'; // Hide button until time is selected
-                }
+                if (hiddenInput) hiddenInput.value = '';
+                if (finalBookButton) finalBookButton.style.display = 'none';
             }
 
             function formatTimeDisplay(time24hr) {
@@ -1131,11 +969,17 @@
                 return date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
             }
             
-            // Initialize the page
             const todayFormatted = new Date().toISOString().split('T')[0];
-            if (elements.bookingDateInput) elements.bookingDateInput.value = todayFormatted;
+            if (elements.bookingDateInput) {
+                elements.bookingDateInput.value = todayFormatted;
+                elements.bookingDateInput.min = todayFormatted; // Prevent selecting past dates
+            }
             renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, todayFormatted, elements.finalBookAppointmentBtn);
         }
+
+        // The key change: Run the main app logic when the page is ready,
+        // without waiting for Google Maps.
+        document.addEventListener('DOMContentLoaded', initializeApp);
     </script>
 </body>
 </html>
