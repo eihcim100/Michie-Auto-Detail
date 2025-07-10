@@ -277,7 +277,7 @@
 
     <div class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-4xl">
         <header class="text-center mb-10">
-            <img src="https://michieauto.com/logo.jpeg" alt="Michie Auto Detailing Logo" class="mx-auto mb-4 w-48 h-auto rounded-lg shadow-md"> <!-- Increased width to w-48 -->
+            <img src="https://michieauto.com/logo.jpeg" alt="Michie Auto Detailing Logo" class="mx-auto mb-4 w-48 h-auto rounded-lg shadow-md">
             <h1 class="text-4xl font-bold text-gray-800 mb-2">Book Your Auto Detail</h1>
             <p class="text-lg text-gray-600">It only takes 2 minutes!</p>
         </header>
@@ -886,10 +886,45 @@
             async function handleBooking(e, endpoint, messageEl, selectedTimeInputId) { 
                 e.preventDefault();
                 const form = e.target;
+
+                // Client-side validation checks
+                const fullName = elements.fullNameInput?.value;
+                const email = elements.emailInput?.value;
+                const phone = elements.phoneInput?.value;
+                const address = elements.addressInput?.value;
+                const zipCode = elements.zipCodeInput?.value;
+                const vehicleYear = elements.vehicleYearInput?.value;
+                const vehicleMake = elements.vehicleMakeInput?.value;
+                const vehicleModel = elements.vehicleModelInput?.value;
+                const bookingDate = elements.bookingDateInput?.value;
                 const selectedTime = document.getElementById(selectedTimeInputId)?.value; 
-                if (!selectedTime) {
+                const packageType = form.querySelector('input[name="package-type"]')?.value; 
+                const packagePrice = form.querySelector('input[name="package-price"]')?.value; 
+
+                // Basic validation for required fields (already handled by 'required' attribute, but good for custom messages)
+                if (!fullName || !email || !phone || !address || !zipCode || !vehicleYear || !vehicleMake || !vehicleModel || !bookingDate || !selectedTime || !packageType || !packagePrice) {
                     if (messageEl) {
-                        messageEl.textContent = 'Please select an appointment time.';
+                        messageEl.textContent = 'Please fill in all required fields.';
+                        messageEl.style.color = 'red';
+                    }
+                    return;
+                }
+
+                // Email format validation
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    if (messageEl) {
+                        messageEl.textContent = 'Please enter a valid email address.';
+                        messageEl.style.color = 'red';
+                    }
+                    return;
+                }
+
+                // Phone number validation (10 digits, optional formatting)
+                const phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+                if (!phoneRegex.test(phone)) {
+                    if (messageEl) {
+                        messageEl.textContent = 'Please enter a valid 10-digit phone number.';
                         messageEl.style.color = 'red';
                     }
                     return;
@@ -916,23 +951,20 @@
                     }
                 }
 
-                const packageType = form.querySelector('input[name="package-type"]')?.value; 
-                const packagePrice = form.querySelector('input[name="package-price"]')?.value; 
-
                 const payload = {
-                    full_name: elements.fullNameInput?.value,
-                    email: elements.emailInput?.value,
-                    phone: elements.phoneInput?.value,
-                    address: elements.addressInput?.value,
-                    zip_code: elements.zipCodeInput?.value,
-                    vehicle_year: elements.vehicleYearInput?.value,
-                    vehicle_make: elements.vehicleMakeInput?.value,
-                    vehicle_model: elements.vehicleModelInput?.value,
-                    date: elements.bookingDateInput?.value,
+                    full_name: fullName,
+                    email: email,
+                    phone: phone,
+                    address: address,
+                    zip_code: zipCode,
+                    vehicle_year: vehicleYear,
+                    vehicle_make: vehicleMake,
+                    vehicle_model: vehicleModel,
+                    date: bookingDate,
                     time: selectedTime,
                     package_type: packageType,
                     package_price: packagePrice,
-                    deal_name: `${packageType || 'Unknown Package'} ${elements.vehicleMakeInput?.value || ''} ${elements.vehicleModelInput?.value || ''}`,
+                    deal_name: `${packageType || 'Unknown Package'} ${vehicleMake || ''} ${vehicleModel || ''}`,
                     offer_code: "CONNOR2438", 
                     create_account: createAccount, 
                     password: password 
@@ -1021,7 +1053,6 @@
             }
             
             // Initialize the page
-            // booking-flow-container is hidden by default and shown by clicking stickyBookNowBtn
             const todayFormatted = new Date().toISOString().split('T')[0];
             if (elements.bookingDateInput) elements.bookingDateInput.value = todayFormatted;
             renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, todayFormatted, elements.finalBookAppointmentBtn);
