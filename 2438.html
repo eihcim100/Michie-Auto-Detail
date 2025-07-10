@@ -581,7 +581,7 @@
                             <input type="date" id="booking-date" required>
                         </div>
                         <div>
-                            <label for="booking-time-buttons" class="block text-sm font-medium text-gray-700 mb-1">Time</label>
+                            <label for="selected-booking-time" class="block text-sm font-medium text-gray-700 mb-1">Time</label> <!-- Corrected label 'for' attribute -->
                             <div id="booking-time-buttons" class="grid grid-cols-3 gap-2"></div>
                             <input type="hidden" id="selected-booking-time" name="booking-time" required>
                         </div>
@@ -665,14 +665,15 @@
                 stickyBookNowFooter: document.getElementById('sticky-book-now-footer'), 
 
                 // Standard Booking Form Elements
-                fullNameInput: document.getElementById('full-name'),
-                emailInput: document.getElementById('email'),
-                phoneInput: document.getElementById('phone'),
-                addressInput: document.getElementById('address-input'),
-                zipCodeInput: document.getElementById('zip-code'),
-                vehicleYearInput: document.getElementById('vehicle-year'),
-                vehicleMakeInput: document.getElementById('vehicle-make'), 
-                vehicleModelInput: document.getElementById('vehicle-model'),
+                // Directly access these in handleBooking for robustness
+                // fullNameInput: document.getElementById('full-name'),
+                // emailInput: document.getElementById('email'),
+                // phoneInput: document.getElementById('phone'),
+                // addressInput: document.getElementById('address-input'),
+                // zipCodeInput: document.getElementById('zip-code'),
+                // vehicleYearInput: document.getElementById('vehicle-year'),
+                // vehicleMakeInput: document.getElementById('vehicle-make'), 
+                // vehicleModelInput: document.getElementById('vehicle-model'),
                 bookingDateInput: document.getElementById('booking-date'),
                 bookingTimeButtonsContainer: document.getElementById('booking-time-buttons'),
                 selectedBookingTimeInput: document.getElementById('selected-booking-time'),
@@ -789,15 +790,14 @@
 
             if (elements.bookAnotherBtn) elements.bookAnotherBtn.addEventListener('click', () => {
                 // Reset form fields when booking another appointment
-                if (elements.fullNameInput) elements.fullNameInput.value = '';
-                if (elements.emailInput) elements.emailInput.value = '';
-                if (elements.phoneInput) elements.phoneInput.value = '';
-                if (elements.addressInput) elements.addressInput.value = '';
-                if (elements.zipCodeInput) elements.zipCodeInput.value = '';
-                if (elements.vehicleYearInput) elements.vehicleYearInput.value = '';
-                // Reset dropdown to default option
-                if (elements.vehicleMakeInput) elements.vehicleMakeInput.value = ''; 
-                if (elements.vehicleModelInput) elements.vehicleModelInput.value = '';
+                document.getElementById('full-name').value = '';
+                document.getElementById('email').value = '';
+                document.getElementById('phone').value = '';
+                document.getElementById('address-input').value = '';
+                document.getElementById('zip-code').value = '';
+                document.getElementById('vehicle-year').value = '';
+                document.getElementById('vehicle-make').value = ''; 
+                document.getElementById('vehicle-model').value = '';
                 if (elements.createAccountCheckbox) elements.createAccountCheckbox.checked = false;
                 if (elements.passwordFields) elements.passwordFields.style.display = 'none';
                 if (elements.passwordInput) elements.passwordInput.value = '';
@@ -909,109 +909,149 @@
             }
 
             async function handleBooking(e, endpoint, messageEl, selectedTimeInputId) { 
-                e.preventDefault();
-                const form = e.target;
+                e.preventDefault(); // This *must* be the first line to prevent refresh
+                console.log("handleBooking: Form submission initiated. Preventing default.");
 
-                // Client-side validation checks
-                const fullName = elements.fullNameInput?.value;
-                const email = elements.emailInput?.value;
-                const phone = elements.phoneInput?.value;
-                const address = elements.addressInput?.value;
-                const zipCode = elements.zipCodeInput?.value;
-                const vehicleYear = elements.vehicleYearInput?.value;
-                const vehicleMake = elements.vehicleMakeInput?.value;
-                const vehicleModel = elements.vehicleModelInput?.value;
-                const bookingDate = elements.bookingDateInput?.value;
-                const selectedTime = document.getElementById(selectedTimeInputId)?.value; 
-                const packageType = form.querySelector('input[name="package-type"]')?.value; 
-                const packagePrice = form.querySelector('input[name="package-price"]')?.value; 
+                try {
+                    // Directly access form elements for robustness
+                    const fullName = document.getElementById('full-name').value;
+                    const email = document.getElementById('email').value;
+                    const phone = document.getElementById('phone').value;
+                    const address = document.getElementById('address-input').value;
+                    const zipCode = document.getElementById('zip-code').value;
+                    const vehicleYear = document.getElementById('vehicle-year').value;
+                    const vehicleMake = document.getElementById('vehicle-make').value;
+                    const vehicleModel = document.getElementById('vehicle-model').value;
+                    const bookingDate = document.getElementById('booking-date').value;
+                    const selectedTime = document.getElementById(selectedTimeInputId).value; 
+                    const packageType = document.getElementById('selected-package-type').value; 
+                    const packagePrice = document.getElementById('selected-package-price').value; 
 
-                // Basic validation for required fields (already handled by 'required' attribute, but good for custom messages)
-                if (!fullName || !email || !phone || !address || !zipCode || !vehicleYear || !vehicleMake || !vehicleModel || !bookingDate || !selectedTime || !packageType || !packagePrice) {
-                    if (messageEl) {
-                        messageEl.textContent = 'Please fill in all required fields.';
-                        messageEl.style.color = 'red';
-                    }
-                    return;
-                }
+                    console.log("handleBooking: Collecting form data...");
+                    console.log("Full Name:", fullName);
+                    console.log("Email:", email);
+                    console.log("Phone:", phone);
+                    console.log("Address:", address);
+                    console.log("Zip Code:", zipCode);
+                    console.log("Vehicle Year:", vehicleYear);
+                    console.log("Vehicle Make:", vehicleMake);
+                    console.log("Vehicle Model:", vehicleModel);
+                    console.log("Booking Date:", bookingDate);
+                    console.log("Selected Time:", selectedTime);
+                    console.log("Package Type:", packageType);
+                    console.log("Package Price:", packagePrice);
 
-                // Email format validation
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test(email)) {
-                    if (messageEl) {
-                        messageEl.textContent = 'Please enter a valid email address.';
-                        messageEl.style.color = 'red';
-                    }
-                    return;
-                }
 
-                // Phone number validation (10 digits, optional formatting)
-                const phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
-                if (!phoneRegex.test(phone)) {
-                    if (messageEl) {
-                        messageEl.textContent = 'Please enter a valid 10-digit phone number.';
-                        messageEl.style.color = 'red';
-                    }
-                    return;
-                }
-
-                const createAccount = elements.createAccountCheckbox ? elements.createAccountCheckbox.checked : false;
-                let password = '';
-
-                if (createAccount) {
-                    password = elements.passwordInput ? elements.passwordInput.value : '';
-                    if (!validatePassword()) {
+                    // Basic validation for required fields
+                    if (!fullName || !email || !phone || !address || !zipCode || !vehicleYear || !vehicleMake || !vehicleModel || !bookingDate || !selectedTime || !packageType || !packagePrice) {
                         if (messageEl) {
-                            messageEl.textContent = 'Please meet all password requirements.';
+                            messageEl.textContent = 'Please fill in all required fields.';
                             messageEl.style.color = 'red';
                         }
+                        console.error("handleBooking: Missing required fields.");
                         return;
                     }
-                    if (!checkPasswordsMatch()) {
+                    console.log("handleBooking: All required fields present.");
+
+                    // Email format validation
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(email)) {
                         if (messageEl) {
-                            messageEl.textContent = 'New passwords do not match.';
+                            messageEl.textContent = 'Please enter a valid email address.';
                             messageEl.style.color = 'red';
                         }
+                        console.error("handleBooking: Invalid email format.");
                         return;
                     }
-                }
+                    console.log("handleBooking: Email format valid.");
 
-                const payload = {
-                    full_name: fullName,
-                    email: email,
-                    phone: phone,
-                    address: address,
-                    zip_code: zipCode,
-                    vehicle_year: vehicleYear,
-                    vehicle_make: vehicleMake,
-                    vehicle_model: vehicleModel,
-                    date: bookingDate,
-                    time: selectedTime,
-                    package_type: packageType,
-                    package_price: packagePrice,
-                    deal_name: `${packageType || 'Unknown Package'} ${vehicleMake || ''} ${vehicleModel || ''}`,
-                    offer_code: "CONNOR2438", 
-                    create_account: createAccount, 
-                    password: password 
-                };
+                    // Phone number validation (10 digits, optional formatting)
+                    const phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+                    if (!phoneRegex.test(phone)) {
+                        if (messageEl) {
+                            messageEl.textContent = 'Please enter a valid 10-digit phone number.';
+                            messageEl.style.color = 'red';
+                        }
+                        console.error("handleBooking: Invalid phone number format.");
+                        return;
+                    }
+                    console.log("handleBooking: Phone number format valid.");
 
-                const { ok, data } = await apiCall(endpoint, 'POST', payload);
-                if (ok) {
-                    hideAllMajorSections();
-                    if (elements.confirmationMessage) elements.confirmationMessage.style.display = 'block';
-                    if (elements.stickyBookNowFooter) elements.stickyBookNowFooter.style.display = 'none'; // Hide sticky button on confirmation
-                    let paymentRedirectLink = '#';
-                    const priceKey = String(packagePrice); 
-                    if (paymentLinks[packageType] && paymentLinks[packageType][priceKey]) {
-                        paymentRedirectLink = paymentLinks[packageType][priceKey];
+                    const createAccount = elements.createAccountCheckbox ? elements.createAccountCheckbox.checked : false;
+                    let password = '';
+
+                    if (createAccount) {
+                        password = elements.passwordInput ? elements.passwordInput.value : '';
+                        if (!validatePassword()) {
+                            if (messageEl) {
+                                messageEl.textContent = 'Please meet all password requirements.';
+                                messageEl.style.color = 'red';
+                            }
+                            console.error("handleBooking: Password requirements not met.");
+                            return;
+                        }
+                        if (!checkPasswordsMatch()) {
+                            if (messageEl) {
+                                messageEl.textContent = 'New passwords do not match.';
+                                messageEl.style.color = 'red';
+                            }
+                            console.error("handleBooking: Passwords do not match.");
+                            return;
+                        }
+                        console.log("handleBooking: Account creation enabled, password validated.");
+                    } else {
+                        console.log("handleBooking: Account creation not enabled.");
                     }
-                    if (paymentRedirectLink !== '#') {
-                        window.open(paymentRedirectLink, '_blank');
+
+                    const payload = {
+                        full_name: fullName,
+                        email: email,
+                        phone: phone,
+                        address: address,
+                        zip_code: zipCode,
+                        vehicle_year: vehicleYear,
+                        vehicle_make: vehicleMake,
+                        vehicle_model: vehicleModel,
+                        date: bookingDate,
+                        time: selectedTime,
+                        package_type: packageType,
+                        package_price: packagePrice,
+                        deal_name: `${packageType || 'Unknown Package'} ${vehicleMake || ''} ${vehicleModel || ''}`,
+                        offer_code: "CONNOR2438", 
+                        create_account: createAccount, 
+                        password: password 
+                    };
+
+                    console.log("handleBooking: Sending payload:", payload);
+
+                    const { ok, data } = await apiCall(endpoint, 'POST', payload);
+                    console.log("handleBooking: API response received. OK:", ok, "Data:", data);
+
+                    if (ok) {
+                        hideAllMajorSections();
+                        if (elements.confirmationMessage) elements.confirmationMessage.style.display = 'block';
+                        if (elements.stickyBookNowFooter) elements.stickyBookNowFooter.style.display = 'none'; // Hide sticky button on confirmation
+                        let paymentRedirectLink = '#';
+                        const priceKey = String(packagePrice); 
+                        if (paymentLinks[packageType] && paymentLinks[packageType][priceKey]) {
+                            paymentRedirectLink = paymentLinks[packageType][priceKey];
+                        }
+                        if (paymentRedirectLink !== '#') {
+                            window.open(paymentRedirectLink, '_blank');
+                        }
+                        console.log("handleBooking: Booking successful, redirecting/showing confirmation.");
+                    } else {
+                        if (messageEl) {
+                            messageEl.textContent = data.message || 'An error occurred during booking.';
+                            messageEl.style.color = 'red';
+                        }
+                        console.error("handleBooking: Booking failed. Message:", data.message);
                     }
-                } else {
-                    if (messageEl) {
-                        messageEl.textContent = data.message || 'An error occurred during booking.';
-                        messageEl.style.color = 'red';
+                } catch (error) {
+                    console.error("handleBooking: An unexpected JavaScript error occurred:", error);
+                    if (elements.bookingMessage) {
+                        elements.bookingMessage.textContent = 'An unexpected error occurred. Please try again.';
+                        elements.bookingMessage.style.color = 'red';
                     }
                 }
             }
