@@ -581,7 +581,7 @@
                             <input type="date" id="booking-date" required>
                         </div>
                         <div>
-                            <label for="selected-booking-time" class="block text-sm font-medium text-gray-700 mb-1">Time</label> <!-- Corrected label 'for' attribute -->
+                            <label for="selected-booking-time" class="block text-sm font-medium text-gray-700 mb-1">Time</label>
                             <div id="booking-time-buttons" class="grid grid-cols-3 gap-2"></div>
                             <input type="hidden" id="selected-booking-time" name="booking-time" required>
                         </div>
@@ -595,10 +595,11 @@
 
             <!-- Confirmation Message -->
             <div id="confirmation-message" class="bg-green-100 border-l-4 border-green-500 text-green-700 p-6 rounded-lg text-center hidden">
-                <p class="text-2xl font-bold mb-2">Thank you for your business!</p>
-                <p class="text-xl">Your appointment is confirmed!</p>
+                <p class="text-2xl font-bold mb-2">Thank you! Your booking is confirmed!</p>
+                <p class="text-xl">Your total is: <span id="total-price-display" class="font-extrabold">$0</span></p>
                 <p class="text-md mt-4">You will receive a confirmation email shortly.</p>
-                <button id="book-another-btn" class="btn-primary mt-6">Book Another Appointment</button>
+                <button id="pay-now-button" class="btn-success mt-6">Pay Now</button>
+                <button id="book-another-btn" class="btn-primary mt-6 ml-4">Book Another Appointment</button>
             </div>
 
         </div>
@@ -663,9 +664,10 @@
                 bookAnotherBtn: document.getElementById('book-another-btn'),
                 stickyBookNowBtn: document.getElementById('sticky-book-now-btn'), 
                 stickyBookNowFooter: document.getElementById('sticky-book-now-footer'), 
+                totalPriceDisplay: document.getElementById('total-price-display'), // New element for total price
+                payNowButton: document.getElementById('pay-now-button'), // New element for Pay Now button
 
-                // Standard Booking Form Elements
-                // Directly access these in handleBooking for robustness
+                // Standard Booking Form Elements (accessed directly in handleBooking now)
                 // fullNameInput: document.getElementById('full-name'),
                 // emailInput: document.getElementById('email'),
                 // phoneInput: document.getElementById('phone'),
@@ -1029,17 +1031,28 @@
 
                     if (ok) {
                         hideAllMajorSections();
-                        if (elements.confirmationMessage) elements.confirmationMessage.style.display = 'block';
+                        if (elements.confirmationMessage) {
+                            elements.confirmationMessage.style.display = 'block';
+                            if (elements.totalPriceDisplay) {
+                                elements.totalPriceDisplay.textContent = `$${parseFloat(packagePrice).toFixed(2)}`;
+                            }
+                            let paymentRedirectLink = '#';
+                            const priceKey = String(packagePrice); 
+                            if (paymentLinks[packageType] && paymentLinks[packageType][priceKey]) {
+                                paymentRedirectLink = paymentLinks[packageType][priceKey];
+                            }
+                            if (elements.payNowButton) {
+                                elements.payNowButton.onclick = () => {
+                                    if (paymentRedirectLink !== '#') {
+                                        window.open(paymentRedirectLink, '_blank');
+                                    } else {
+                                        console.warn("No payment link available for this package.");
+                                    }
+                                };
+                            }
+                        }
                         if (elements.stickyBookNowFooter) elements.stickyBookNowFooter.style.display = 'none'; // Hide sticky button on confirmation
-                        let paymentRedirectLink = '#';
-                        const priceKey = String(packagePrice); 
-                        if (paymentLinks[packageType] && paymentLinks[packageType][priceKey]) {
-                            paymentRedirectLink = paymentLinks[packageType][priceKey];
-                        }
-                        if (paymentRedirectLink !== '#') {
-                            window.open(paymentRedirectLink, '_blank');
-                        }
-                        console.log("handleBooking: Booking successful, redirecting/showing confirmation.");
+                        console.log("handleBooking: Booking successful, showing confirmation.");
                     } else {
                         if (messageEl) {
                             messageEl.textContent = data.message || 'An error occurred during booking.';
