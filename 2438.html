@@ -11,6 +11,7 @@
             font-family: 'Inter', sans-serif;
             background-color: #f8fafc; /* Light background */
             color: #334155; /* Darker text for contrast */
+            padding-bottom: 80px; /* Space for the sticky footer */
         }
         .pac-container { z-index: 1050 !important; } /* Ensure Google Autocomplete is above other elements */
 
@@ -228,14 +229,39 @@
         .password-requirement.invalid {
             color: #dc2626; /* red-600 */
         }
+
+        /* Hide booking flow by default */
+        #booking-flow-container {
+            display: none;
+        }
+
+        /* Sticky footer for the "Book Now" button */
+        .sticky-book-now-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #ffffff;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            text-align: center;
+            z-index: 1000; /* Ensure it's above other content */
+        }
+        .sticky-book-now-footer .btn-success {
+            font-size: 1.25rem; /* Larger text */
+            padding: 1rem 2.5rem; /* More padding */
+            border-radius: 9999px; /* Fully rounded */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
     </style>
 </head>
 <body class="bg-gray-50">
 
     <div class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-4xl">
         <header class="text-center mb-10">
+            <img src="https://michieauto.com/logo.jpeg" alt="Michie Auto Detailing Logo" class="mx-auto mb-4 w-48 h-auto rounded-lg shadow-md"> <!-- Increased width to w-48 -->
             <h1 class="text-4xl font-bold text-gray-800 mb-2">Book Your Auto Detail</h1>
-            <p class="text-lg text-gray-600">No account needed! Just pick your service, tell us about your vehicle, and select a time.</p>
+            <p class="text-lg text-gray-600">It only takes 2 minutes!</p>
         </header>
 
         <!-- Why Choose Us Section -->
@@ -248,11 +274,6 @@
                 <img src="https://res.cloudinary.com/dvrljjtdr/image/upload/v1751503250/IMG_20250702_124111_h4edvd.jpg" alt="Detailed car interior" class="w-full h-48 object-cover rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/400x300/cccccc/ffffff?text=Image+1'">
                 <img src="https://res.cloudinary.com/dvrljjtdr/image/upload/v1751502419/IMG_20250702_124112_uzh5mb.jpg" alt="Car exterior detailing" class="w-full h-48 object-cover rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/400x300/cccccc/ffffff?text=Image+2'">
                 <img src="https://res.cloudinary.com/dvrljjtdr/image/upload/v1751502419/IMG_20250702_124047_mmybkw.jpg" alt="Clean car seats" class="w-full h-48 object-cover rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/400x300/cccccc/ffffff?text=Image+3'">
-            </div>
-            <div class="text-center">
-                <a href="#booking-flow-container" class="btn-success text-lg px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300">
-                    Book Your Detail Now!
-                </a>
             </div>
         </section>
 
@@ -531,13 +552,19 @@
         </div>
     </div>
 
+    <!-- Sticky Book Now Footer -->
+    <div class="sticky-book-now-footer">
+        <button id="sticky-book-now-btn" class="btn-success">
+            Book Your Detail Now!
+        </button>
+    </div>
+
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk&libraries=places&callback=initBookingPage" defer></script>
     <script>
-        let addressAutocomplete; // Removed financingAddressAutocomplete as financing is gone
+        let addressAutocomplete;
 
         window.initBookingPage = function() {
             initializeApp();
-            // Initialize Google Places Autocomplete for standard booking form
             const addressInput = document.getElementById('address-input');
             if (window.google && addressInput) {
                 addressAutocomplete = new google.maps.places.Autocomplete(addressInput, {
@@ -582,6 +609,7 @@
                 finalBookAppointmentBtn: document.getElementById('final-book-appointment-btn'),
                 confirmationMessage: document.getElementById('confirmation-message'),
                 bookAnotherBtn: document.getElementById('book-another-btn'),
+                stickyBookNowBtn: document.getElementById('sticky-book-now-btn'), // Reference to the new sticky button
 
                 // Standard Booking Form Elements
                 fullNameInput: document.getElementById('full-name'),
@@ -655,29 +683,61 @@
                 });
             }
 
+            // showInitialPage now specifically shows the first step of the booking process
             function showInitialPage() {
                 hideAllMajorSections();
                 if (elements.vehicleTypeSelection) elements.vehicleTypeSelection.style.display = 'block';
-                // Reset active button state
                 document.querySelectorAll('.btn-primary.active').forEach(b => b.classList.remove('active'));
             }
 
-            function showBookingForm() { // Simplified: no isFinancing parameter needed
+            function showBookingForm() { 
                 hideAllMajorSections();
                 if (elements.bookingFormSection) elements.bookingFormSection.style.display = 'block';
             }
 
             // --- Event Listeners ---
+            // Event listener for the new sticky "Book Your Detail Now!" button
+            if (elements.stickyBookNowBtn) {
+                elements.stickyBookNowBtn.addEventListener('click', () => {
+                    if (elements.bookingFlowContainer) {
+                        elements.bookingFlowContainer.style.display = 'block';
+                        // Scroll to the booking flow container
+                        elements.bookingFlowContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                    // Show the first step of the booking process
+                    showInitialPage(); 
+                });
+            }
+
             if (elements.selectCarBtn) elements.selectCarBtn.addEventListener('click', (e) => showPackageSelection('sedan', e.target));
             if (elements.selectTruckBtn) elements.selectTruckBtn.addEventListener('click', (e) => showPackageSelection('suv-truck', e.target));
             if (elements.selectSuvBtn) elements.selectSuvBtn.addEventListener('click', (e) => showPackageSelection('suv-truck', e.target));
 
-            // Removed financeOptionBtn and related financing flow event listeners
-
             // Form Submissions
             if (elements.bookingForm) elements.bookingForm.addEventListener('submit', (e) => handleBooking(e, '/public/appointment', elements.bookingMessage, 'selected-booking-time'));
 
-            if (elements.bookAnotherBtn) elements.bookAnotherBtn.addEventListener('click', showInitialPage);
+            if (elements.bookAnotherBtn) elements.bookAnotherBtn.addEventListener('click', () => {
+                // Reset form fields when booking another appointment
+                if (elements.fullNameInput) elements.fullNameInput.value = '';
+                if (elements.emailInput) elements.emailInput.value = '';
+                if (elements.phoneInput) elements.phoneInput.value = '';
+                if (elements.addressInput) elements.addressInput.value = '';
+                if (elements.zipCodeInput) elements.zipCodeInput.value = '';
+                if (elements.vehicleYearInput) elements.vehicleYearInput.value = '';
+                if (elements.vehicleMakeInput) elements.vehicleMakeInput.value = '';
+                if (elements.vehicleModelInput) elements.vehicleModelInput.value = '';
+                if (elements.createAccountCheckbox) elements.createAccountCheckbox.checked = false;
+                if (elements.passwordFields) elements.passwordFields.style.display = 'none';
+                if (elements.passwordInput) elements.passwordInput.value = '';
+                if (elements.confirmPasswordInput) elements.confirmPasswordInput.value = '';
+                if (elements.passwordLengthReq) elements.passwordLengthReq.classList.remove('valid', 'invalid');
+                if (elements.passwordUppercaseReq) elements.passwordUppercaseReq.classList.remove('valid', 'invalid');
+                if (elements.passwordMatchMessage) elements.passwordMatchMessage.classList.add('hidden');
+                if (elements.bookingMessage) elements.bookingMessage.textContent = '';
+
+
+                showInitialPage();
+            });
 
             // Date input changes
             if (elements.bookingDateInput) elements.bookingDateInput.addEventListener('change', (e) => renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, e.target.value, elements.finalBookAppointmentBtn));
@@ -763,17 +823,17 @@
                 if (elements.selectedPackageDisplay) elements.selectedPackageDisplay.textContent = packageType;
                 if (elements.selectedPackageTypeInput) elements.selectedPackageTypeInput.value = packageType;
                 if (elements.selectedPackagePriceInput) elements.selectedPackagePriceInput.value = packagePrice;
-                showBookingForm(); // Simplified call
+                showBookingForm(); 
                 // Set today's date and render times for the standard booking form
                 const todayFormatted = new Date().toISOString().split('T')[0];
                 if (elements.bookingDateInput) elements.bookingDateInput.value = todayFormatted;
                 renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, todayFormatted, elements.finalBookAppointmentBtn);
             }
 
-            async function handleBooking(e, endpoint, messageEl, selectedTimeInputId) { // Removed isFinancingFlow
+            async function handleBooking(e, endpoint, messageEl, selectedTimeInputId) { 
                 e.preventDefault();
                 const form = e.target;
-                const selectedTime = document.getElementById(selectedTimeInputId)?.value; // Use optional chaining for safety
+                const selectedTime = document.getElementById(selectedTimeInputId)?.value; 
                 if (!selectedTime) {
                     if (messageEl) {
                         messageEl.textContent = 'Please select an appointment time.';
@@ -782,15 +842,11 @@
                     return;
                 }
 
-                // Get password fields if create account is checked
                 const createAccount = elements.createAccountCheckbox ? elements.createAccountCheckbox.checked : false;
                 let password = '';
-                let confirmPassword = '';
 
                 if (createAccount) {
                     password = elements.passwordInput ? elements.passwordInput.value : '';
-                    confirmPassword = elements.confirmPasswordInput ? elements.confirmPasswordInput.value : '';
-
                     if (!validatePassword()) {
                         if (messageEl) {
                             messageEl.textContent = 'Please meet all password requirements.';
@@ -807,8 +863,8 @@
                     }
                 }
 
-                const packageType = form.querySelector('input[name="package-type"]')?.value; // Use optional chaining
-                const packagePrice = form.querySelector('input[name="package-price"]')?.value; // Use optional chaining
+                const packageType = form.querySelector('input[name="package-type"]')?.value; 
+                const packagePrice = form.querySelector('input[name="package-price"]')?.value; 
 
                 const payload = {
                     full_name: elements.fullNameInput?.value,
@@ -824,16 +880,15 @@
                     package_type: packageType,
                     package_price: packagePrice,
                     deal_name: `${packageType || 'Unknown Package'} ${elements.vehicleMakeInput?.value || ''} ${elements.vehicleModelInput?.value || ''}`,
-                    offer_code: "CONNOR2438", // Explicitly add the offer code for public bookings
-                    create_account: createAccount, // Send flag to backend
-                    password: password // Send password if createAccount is true
+                    offer_code: "CONNOR2438", 
+                    create_account: createAccount, 
+                    password: password 
                 };
 
                 const { ok, data } = await apiCall(endpoint, 'POST', payload);
                 if (ok) {
                     hideAllMajorSections();
                     if (elements.confirmationMessage) elements.confirmationMessage.style.display = 'block';
-                    // Redirect to payment link if available
                     let paymentRedirectLink = '#';
                     const priceKey = String(packagePrice); 
                     if (paymentLinks[packageType] && paymentLinks[packageType][priceKey]) {
@@ -855,9 +910,11 @@
                 if (!container) return;
                 container.innerHTML = '';
                 const selectedDateObj = new Date(selectedDate + 'T00:00:00');
-                const todayCST = new Date().toLocaleString('en-US', { timeZone: 'America/Chicago', year: 'numeric', month: '2-digit', day: '2-digit' });
-                const selectedDateCST = selectedDateObj.toLocaleString('en-US', { timeZone: 'America/Chicago', year: 'numeric', month: '2-digit', day: '2-digit' });
-                const isToday = selectedDateCST === todayCST;
+                // Corrected date comparison by using YYYY-MM-DD string format
+                const todayFormatted = new Date().toISOString().split('T')[0];
+                const selectedDateFormatted = selectedDateObj.toISOString().split('T')[0];
+                const isToday = selectedDateFormatted === todayFormatted;
+
                 const nowCST = new Date();
                 const currentCSTHour = parseInt(nowCST.toLocaleString('en-US', { hour: '2-digit', hourCycle: 'h23', timeZone: 'America/Chicago' }));
                 const currentCSTMinute = parseInt(nowCST.toLocaleString('en-US', { minute: '2-digit', timeZone: 'America/Chicago' }));
@@ -911,14 +968,10 @@
                 return date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
             }
             
-            // Removed renderPaymentSchedule as financing is gone
-
             // Initialize the page
-            showInitialPage();
-            // Set today's date as default for date inputs
+            // booking-flow-container is hidden by default and shown by clicking stickyBookNowBtn
             const todayFormatted = new Date().toISOString().split('T')[0];
             if (elements.bookingDateInput) elements.bookingDateInput.value = todayFormatted;
-            // Render initial time buttons for the booking form (they will be hidden until relevant sections are shown)
             renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, todayFormatted, elements.finalBookAppointmentBtn);
         }
     </script>
