@@ -277,7 +277,7 @@
 
     <div class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-4xl">
         <header class="text-center mb-10">
-            <img src="https://michieauto.com/logo.jpeg" alt="Michie Auto Detailing Logo" class="mx-auto mb-4 w-48 h-auto rounded-lg shadow-md">
+            <img src="https://michieauto.com/logo.jpeg" alt="Michie Auto Detailing Logo" class="mx-auto mb-4 w-64 h-auto rounded-lg shadow-md"> <!-- Increased width to w-64 -->
             <h1 class="text-4xl font-bold text-gray-800 mb-2">Book Your Auto Detail</h1>
             <p class="text-lg text-gray-600">It only takes 2 minutes!</p>
         </header>
@@ -605,7 +605,7 @@
     </div>
 
     <!-- Sticky Book Now Footer -->
-    <div class="sticky-book-now-footer">
+    <div id="sticky-book-now-footer" class="sticky-book-now-footer">
         <button id="sticky-book-now-btn" class="btn-success">
             Book Your Detail Now!
         </button>
@@ -662,6 +662,7 @@
                 confirmationMessage: document.getElementById('confirmation-message'),
                 bookAnotherBtn: document.getElementById('book-another-btn'),
                 stickyBookNowBtn: document.getElementById('sticky-book-now-btn'), // Reference to the new sticky button
+                stickyBookNowFooter: document.getElementById('sticky-book-now-footer'), // Reference to the sticky footer container
 
                 // Standard Booking Form Elements
                 fullNameInput: document.getElementById('full-name'),
@@ -740,11 +741,13 @@
                 hideAllMajorSections();
                 if (elements.vehicleTypeSelection) elements.vehicleTypeSelection.style.display = 'block';
                 document.querySelectorAll('.btn-primary.active').forEach(b => b.classList.remove('active'));
+                if (elements.stickyBookNowFooter) elements.stickyBookNowFooter.style.display = 'none'; // Hide sticky button when booking flow starts
             }
 
             function showBookingForm() { 
                 hideAllMajorSections();
                 if (elements.bookingFormSection) elements.bookingFormSection.style.display = 'block';
+                if (elements.stickyBookNowFooter) elements.stickyBookNowFooter.style.display = 'none'; // Hide sticky button when booking form is shown
             }
 
             // --- Event Listeners ---
@@ -788,7 +791,8 @@
                 if (elements.passwordMatchMessage) elements.passwordMatchMessage.classList.add('hidden');
                 if (elements.bookingMessage) elements.bookingMessage.textContent = '';
 
-
+                // Show sticky button again when returning to initial state
+                if (elements.stickyBookNowFooter) elements.stickyBookNowFooter.style.display = 'block'; 
                 showInitialPage();
             });
 
@@ -870,6 +874,7 @@
                 if (clickedButton) clickedButton.classList.add('active');
                 if (elements.sedanPackagesDisplay) elements.sedanPackagesDisplay.style.display = vehicleCategory === 'sedan' ? 'grid' : 'none';
                 if (elements.suvTruckPackagesDisplay) elements.suvTruckPackagesDisplay.style.display = vehicleCategory === 'suv-truck' ? 'grid' : 'none';
+                if (elements.stickyBookNowFooter) elements.stickyBookNowFooter.style.display = 'none'; // Hide sticky button when package selection starts
             }
 
             function handlePackageSelection(packageType, packagePrice) {
@@ -974,6 +979,7 @@
                 if (ok) {
                     hideAllMajorSections();
                     if (elements.confirmationMessage) elements.confirmationMessage.style.display = 'block';
+                    if (elements.stickyBookNowFooter) elements.stickyBookNowFooter.style.display = 'none'; // Hide sticky button on confirmation
                     let paymentRedirectLink = '#';
                     const priceKey = String(packagePrice); 
                     if (paymentLinks[packageType] && paymentLinks[packageType][priceKey]) {
@@ -1053,6 +1059,7 @@
             }
             
             // Initialize the page
+            // booking-flow-container is hidden by default and shown by clicking stickyBookNowBtn
             const todayFormatted = new Date().toISOString().split('T')[0];
             if (elements.bookingDateInput) elements.bookingDateInput.value = todayFormatted;
             renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, todayFormatted, elements.finalBookAppointmentBtn);
