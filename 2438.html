@@ -277,7 +277,7 @@
 
     <div class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-4xl">
         <header class="text-center mb-10">
-            <img src="https://michieauto.com/logo.jpeg" alt="Michie Auto Detailing Logo" class="mx-auto mb-4 w-64 h-auto rounded-lg shadow-md"> <!-- Increased width to w-64 -->
+            <img src="https://michieauto.com/logo.jpeg" alt="Michie Auto Detailing Logo" class="mx-auto mb-4 w-64 h-auto rounded-lg shadow-md">
             <h1 class="text-4xl font-bold text-gray-800 mb-2">Book Your Auto Detail</h1>
             <p class="text-lg text-gray-600">It only takes 2 minutes!</p>
         </header>
@@ -661,8 +661,8 @@
                 finalBookAppointmentBtn: document.getElementById('final-book-appointment-btn'),
                 confirmationMessage: document.getElementById('confirmation-message'),
                 bookAnotherBtn: document.getElementById('book-another-btn'),
-                stickyBookNowBtn: document.getElementById('sticky-book-now-btn'), // Reference to the new sticky button
-                stickyBookNowFooter: document.getElementById('sticky-book-now-footer'), // Reference to the sticky footer container
+                stickyBookNowBtn: document.getElementById('sticky-book-now-btn'), 
+                stickyBookNowFooter: document.getElementById('sticky-book-now-footer'), 
 
                 // Standard Booking Form Elements
                 fullNameInput: document.getElementById('full-name'),
@@ -671,7 +671,7 @@
                 addressInput: document.getElementById('address-input'),
                 zipCodeInput: document.getElementById('zip-code'),
                 vehicleYearInput: document.getElementById('vehicle-year'),
-                vehicleMakeInput: document.getElementById('vehicle-make'), // Now a select element
+                vehicleMakeInput: document.getElementById('vehicle-make'), 
                 vehicleModelInput: document.getElementById('vehicle-model'),
                 bookingDateInput: document.getElementById('booking-date'),
                 bookingTimeButtonsContainer: document.getElementById('booking-time-buttons'),
@@ -741,7 +741,8 @@
                 hideAllMajorSections();
                 if (elements.vehicleTypeSelection) elements.vehicleTypeSelection.style.display = 'block';
                 document.querySelectorAll('.btn-primary.active').forEach(b => b.classList.remove('active'));
-                if (elements.stickyBookNowFooter) elements.stickyBookNowFooter.style.display = 'none'; // Hide sticky button when booking flow starts
+                // The sticky button is handled by the stickyBookNowBtn event listener, not here.
+                // It should be visible initially, then hidden when the booking flow container is shown.
             }
 
             function showBookingForm() { 
@@ -764,9 +765,24 @@
                 });
             }
 
-            if (elements.selectCarBtn) elements.selectCarBtn.addEventListener('click', (e) => showPackageSelection('sedan', e.target));
-            if (elements.selectTruckBtn) elements.selectTruckBtn.addEventListener('click', (e) => showPackageSelection('suv-truck', e.target));
-            if (elements.selectSuvBtn) elements.selectSuvBtn.addEventListener('click', (e) => showPackageSelection('suv-truck', e.target));
+            if (elements.selectCarBtn) elements.selectCarBtn.addEventListener('click', (e) => {
+                showPackageSelection('sedan', e.target);
+                if (elements.packageSelectionContainer) {
+                    elements.packageSelectionContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+            if (elements.selectTruckBtn) elements.selectTruckBtn.addEventListener('click', (e) => {
+                showPackageSelection('suv-truck', e.target);
+                if (elements.packageSelectionContainer) {
+                    elements.packageSelectionContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+            if (elements.selectSuvBtn) elements.selectSuvBtn.addEventListener('click', (e) => {
+                showPackageSelection('suv-truck', e.target);
+                if (elements.packageSelectionContainer) {
+                    elements.packageSelectionContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
 
             // Form Submissions
             if (elements.bookingForm) elements.bookingForm.addEventListener('submit', (e) => handleBooking(e, '/public/appointment', elements.bookingMessage, 'selected-booking-time'));
@@ -805,6 +821,10 @@
                     const packageType = e.target.dataset.packageType;
                     const packagePrice = e.target.dataset.packagePrice;
                     handlePackageSelection(packageType, packagePrice);
+                    // Scroll to the booking form section after package selection
+                    if (elements.bookingFormSection) {
+                        elements.bookingFormSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
                 } else if (e.target.classList.contains('see-whats-included-btn')) {
                     const targetId = e.target.dataset.target;
                     const dropdown = document.getElementById(targetId);
@@ -1059,7 +1079,6 @@
             }
             
             // Initialize the page
-            // booking-flow-container is hidden by default and shown by clicking stickyBookNowBtn
             const todayFormatted = new Date().toISOString().split('T')[0];
             if (elements.bookingDateInput) elements.bookingDateInput.value = todayFormatted;
             renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, todayFormatted, elements.finalBookAppointmentBtn);
