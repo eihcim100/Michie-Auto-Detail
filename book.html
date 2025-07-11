@@ -9,14 +9,15 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
-            color: #334155;
-            padding-bottom: 80px;
+            background-color: #f8fafc; /* Light background */
+            color: #334155; /* Darker text for contrast */
+            padding-bottom: 80px; /* Space for the sticky footer */
         }
-        .pac-container { z-index: 1050 !important; }
+        .pac-container { z-index: 1050 !important; } /* Ensure Google Autocomplete is above other elements */
 
+        /* General button styling for a light, stylish look */
         .btn-primary {
-            background-color: #3b82f6;
+            background-color: #3b82f6; /* Blue-500 */
             color: white;
             padding: 0.75rem 1.5rem;
             border-radius: 0.75rem;
@@ -27,12 +28,12 @@
             border: none;
         }
         .btn-primary:hover {
-            background-color: #2563eb;
+            background-color: #2563eb; /* Blue-600 */
             transform: translateY(-2px);
             box-shadow: 0 6px 10px -1px rgba(0, 0, 0, 0.15), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
         }
         .btn-success {
-            background-color: #22c55e;
+            background-color: #22c55e; /* Green-500 */
             color: white;
             padding: 0.75rem 1.5rem;
             border-radius: 0.75rem;
@@ -43,61 +44,183 @@
             border: none;
         }
         .btn-success:hover {
-            background-color: #16a34a;
+            background-color: #16a34a; /* Green-600 */
             transform: translateY(-2px);
             box-shadow: 0 6px 10px -1px rgba(0, 0, 0, 0.15), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
         }
 
+        /* Package card styles - adapted for this page */
         .pricing-grid {
             display: grid;
             grid-template-columns: 1fr;
             gap: 2rem;
+            justify-content: center;
+            align-items: stretch;
         }
-        @media (min-width: 768px) { .pricing-grid { grid-template-columns: repeat(3, 1fr); } }
-        
+        @media (min-width: 768px) {
+            .pricing-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
         .pricing-card {
             background-color: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 1rem;
+            border: 1px solid #e2e8f0; /* Light gray border */
+            border-radius: 1rem; /* More rounded corners */
             padding: 1.5rem;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05); /* Softer shadow */
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             height: 100%;
         }
         .pricing-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 30px rgba(0, 123, 255, 0.1);
+            transform: translateY(-8px); /* More pronounced lift */
+            box-shadow: 0 15px 30px rgba(0, 123, 255, 0.1); /* Softer blue shadow on hover */
         }
-        .pricing-level { font-size: 1.5rem; font-weight: 700; color: #1e293b; margin-bottom: 0.75rem; }
-        .pricing-price { font-size: 2.5rem; font-weight: 800; color: #059669; margin-bottom: 1.5rem; }
-        .feature-list { list-style: none; padding: 0; text-align: left; flex-grow: 1; margin-bottom: 1.5rem; }
-        .feature-list li { position: relative; padding-left: 2rem; margin-bottom: 0.8rem; color: #475569; font-size: 0.95rem; }
-        .feature-list li::before { content: '✓'; color: #059669; position: absolute; left: 0; font-weight: bold; font-size: 1.2rem; }
-        .select-package-btn { width: 100%; margin-top: auto; }
-        .see-whats-included-btn { background-color: #eff6ff; color: #1e40af; font-weight: 500; padding: 0.6rem 1.2rem; border-radius: 0.75rem; width: 100%; margin-top: 0.5rem; margin-bottom: 1rem; transition: background-color 0.2s; cursor: pointer; text-align: center; border: none; }
-        .see-whats-included-btn:hover { background-color: #dbeafe; }
-        .feature-dropdown { display: none; overflow: hidden; transition: max-height 0.3s ease-out; max-height: 0; padding-bottom: 1rem; }
-        .feature-dropdown.show { max-height: 1000px; display: block; }
+        .pricing-level {
+            font-size: 1.5rem; /* Larger title */
+            font-weight: 700; /* Semibold */
+            color: #1e293b; /* Darker text */
+            margin-bottom: 0.75rem;
+        }
+        .pricing-price {
+            font-size: 2.5rem; /* Larger price */
+            font-weight: 800; /* Extra bold */
+            color: #059669; /* Green-600 */
+            margin-bottom: 1.5rem;
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            flex-grow: 1;
+            margin-bottom: 1.5rem;
+        }
+        .feature-list li {
+            position: relative;
+            padding-left: 2rem; /* More space for checkmark */
+            margin-bottom: 0.8rem; /* More line spacing */
+            color: #475569; /* Gray-700 */
+            font-size: 0.95rem;
+        }
+        .feature-list li::before {
+            content: '✓';
+            color: #059669; /* Green checkmark */
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        .select-package-btn {
+            width: 100%;
+            margin-top: auto; /* Push button to bottom */
+        }
+        .see-whats-included-btn {
+            background-color: #eff6ff; /* Blue-50 */
+            color: #1e40af; /* Blue-800 */
+            font-weight: 500;
+            padding: 0.6rem 1.2rem;
+            border-radius: 0.75rem;
+            width: 100%;
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+            transition: background-color 0.2s;
+            cursor: pointer;
+            text-align: center;
+            border: none;
+        }
+        .see-whats-included-btn:hover { background-color: #dbeafe; } /* Blue-100 */
+        .feature-dropdown {
+            display: none;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            max-height: 0;
+            padding-bottom: 1rem;
+        }
+        .feature-dropdown.show {
+            max-height: 1000px; /* Arbitrarily large to show content */
+            display: block;
+        }
 
-        .time-button { padding: 0.75rem 1rem; border-radius: 0.75rem; border: 2px solid #cbd5e1; font-weight: 500; cursor: pointer; transition: all 0.2s ease; background-color: #e0f2fe; color: #1e40af; text-align: center; }
-        .time-button:hover:not(:disabled) { background-color: #bfdbfe; border-color: #60a5fa; }
-        .time-button.selected { background-color: #2563eb; color: white; border-color: #2563eb; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-        .time-button:disabled { background-color: #e2e8f0; color: #94a3b8; cursor: not-allowed; opacity: 0.7; }
+        /* Time slot buttons */
+        .time-button {
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border: 2px solid #cbd5e1; /* Gray-300 */
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background-color: #e0f2fe; /* Light Blue-100 */
+            color: #1e40af; /* Dark Blue-800 */
+            text-align: center;
+        }
+        .time-button:hover:not(:disabled) {
+            background-color: #bfdbfe; /* Blue-200 */
+            border-color: #60a5fa; /* Blue-400 */
+        }
+        .time-button.selected {
+            background-color: #2563eb; /* Blue-600 */
+            color: white;
+            border-color: #2563eb;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .time-button:disabled {
+            background-color: #e2e8f0; /* Gray-200 */
+            color: #94a3b8; /* Gray-400 */
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
 
-        input, select { width: 100%; padding: 0.75rem 1rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; background-color: #ffffff; font-size: 1rem; color: #334155; transition: border-color 0.2s, box-shadow 0.2s; }
-        input:focus, select:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
-        label { display: block; font-weight: 500; margin-bottom: 0.5rem; color: #475569; }
+        /* Form input styling */
+        input, select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 0.5rem;
+            background-color: #ffffff;
+            font-size: 1rem;
+            color: #334155;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #475569;
+        }
 
-        .password-requirement { font-size: 0.875rem; color: #64748b; }
+        /* Password requirements styling */
+        .password-requirement {
+            font-size: 0.875rem; /* text-sm */
+            color: #64748b; /* slate-500 */
+        }
         .password-requirement.valid { color: #16a34a; }
         .password-requirement.invalid { color: #dc2626; }
 
         #booking-flow-container { display: none; }
-        
-        .sticky-book-now-footer { position: fixed; bottom: 0; left: 0; width: 100%; background-color: #ffffff; box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1); padding: 1rem; text-align: center; z-index: 1000; }
-        .sticky-book-now-footer .btn-success { font-size: 1.25rem; padding: 1rem 2.5rem; border-radius: 9999px; box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); }
+
+        .sticky-book-now-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #ffffff;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            text-align: center;
+            z-index: 1000;
+        }
+        .sticky-book-now-footer .btn-success {
+            font-size: 1.25rem;
+            padding: 1rem 2.5rem;
+            border-radius: 9999px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
     </style>
 </head>
 <body class="bg-gray-50">
