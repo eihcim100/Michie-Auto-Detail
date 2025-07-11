@@ -688,7 +688,8 @@
                 passwordMatchMessage: document.getElementById('password-match-message')
             };
 
-            const availableTimes = ['09:00', '11:00', '12:00', '14:00', '16:00', '17:00', '18:00'];
+            // --- FIX: Changed time format to HH:MM:SS ---
+            const availableTimes = ['09:00:00', '11:00:00', '12:00:00', '14:00:00', '16:00:00', '17:00:00', '18:00:00'];
 
             const paymentLinks = {
                 "Level 1 Detail": { "149": "https://pay.michieauto.com/lvl1sedan", "199": "https://pay.michieauto.com/lvl1suv" },
@@ -924,13 +925,10 @@
                 if (!container) return;
                 container.innerHTML = '';
                 
-                // --- FIX STARTS HERE ---
-                // Use a robust, timezone-aware method to check if the selected date is today.
                 const now = new Date();
-                const todayCST = now.toLocaleDateString('en-CA', { timeZone: 'America/Chicago' }); // 'en-CA' gives YYYY-MM-DD format
+                const todayCST = now.toLocaleDateString('en-CA', { timeZone: 'America/Chicago' });
                 const selectedDateCST = new Date(selectedDate + 'T12:00:00Z').toLocaleDateString('en-CA', { timeZone: 'America/Chicago' });
                 const isToday = (todayCST === selectedDateCST);
-                // --- FIX ENDS HERE ---
 
                 const currentCSTHour = parseInt(now.toLocaleString('en-US', { hour: '2-digit', hourCycle: 'h23', timeZone: 'America/Chicago' }));
                 const currentCSTMinute = parseInt(now.toLocaleString('en-US', { minute: '2-digit', timeZone: 'America/Chicago' }));
@@ -941,8 +939,7 @@
                     button.textContent = formatTimeDisplay(time);
                     button.dataset.time = time;
                     let isDisabled = false;
-
-                    // Only apply the 2-hour rule if the selected date is today
+                    
                     if (isToday) {
                         const [appointmentHour] = time.split(':').map(Number);
                         const currentTotalMinutes = (currentCSTHour * 60) + currentCSTMinute;
