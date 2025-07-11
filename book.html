@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Michie Auto Detailing - Book an Appointment</title>
+    <!-- FIX: Re-added the Tailwind CSS script -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -437,11 +438,6 @@
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk&libraries=places&callback=initBookingPage" defer></script>
     <script>
-        /**
-         * This function is designated as the callback for the Google Maps API script.
-         * Its only job is to initialize the address autocomplete feature once the API is loaded.
-         * This prevents race conditions where the main app script might try to use the Google API before it's ready.
-         */
         function initBookingPage() {
             const addressInput = document.getElementById('address-input');
             if (window.google && window.google.maps && window.google.maps.places && addressInput) {
@@ -454,8 +450,6 @@
                     const place = addressAutocomplete.getPlace();
                     if (place.formatted_address) {
                         addressInput.value = place.formatted_address;
-                        
-                        // Helper to extract and fill the zip code
                         let zipCode = '';
                         for (const component of place.address_components) {
                             if (component.types.includes('postal_code')) {
@@ -470,14 +464,9 @@
             }
         }
 
-        /**
-         * Main application logic. This runs after the document is fully loaded and parsed.
-         * It is independent of the Google Maps script loading.
-         */
         document.addEventListener('DOMContentLoaded', function() {
             const API_BASE_URL = 'https://michie-detailing-admin.onrender.com';
             
-            // A single object to hold references to all DOM elements for easy access.
             const elements = {
                 bookingFlowContainer: document.getElementById('booking-flow-container'),
                 vehicleTypeSelection: document.getElementById('vehicle-type-selection'),
@@ -509,9 +498,6 @@
                 passwordMatchMessage: document.getElementById('password-match-message')
             };
 
-            // --- CORE DATA AND CONFIGURATION ---
-
-            // **FIX:** Times are now in HH:MM:SS format to match Pipedrive API requirements.
             const availableTimes = ['09:00:00', '11:00:00', '12:00:00', '14:00:00', '16:00:00', '17:00:00', '18:00:00'];
 
             const paymentLinks = {
@@ -519,8 +505,6 @@
                 "Level 2 Detail": { "249": "https://pay.michieauto.com/lvl2sedan", "299": "https://pay.michieauto.com/lvl2suv" },
                 "Level 3 Detail": { "349": "https://pay.michieauto.com/lvl3sedan", "399": "https://pay.michieauto.com/lvl3suv" },
             };
-
-            // --- UI CONTROL FUNCTIONS ---
 
             function hideAllMajorSections() {
                 [elements.vehicleTypeSelection, elements.packageSelectionContainer, elements.bookingFormSection, elements.confirmationMessage]
@@ -538,28 +522,6 @@
                 elements.bookingFormSection.style.display = 'block';
                 elements.stickyBookNowFooter.style.display = 'none';
             }
-
-            function showPackageSelection(vehicleCategory, clickedButton) {
-                hideAllMajorSections();
-                elements.packageSelectionContainer.style.display = 'block';
-                document.querySelectorAll('#vehicle-type-selection .btn-primary.active').forEach(b => b.classList.remove('active'));
-                clickedButton.classList.add('active');
-                elements.sedanPackagesDisplay.style.display = vehicleCategory === 'sedan' ? 'grid' : 'none';
-                elements.suvTruckPackagesDisplay.style.display = vehicleCategory === 'suv-truck' ? 'grid' : 'none';
-                elements.stickyBookNowFooter.style.display = 'none';
-            }
-
-            function handlePackageSelection(packageType, packagePrice) {
-                elements.selectedPackageDisplay.textContent = packageType;
-                elements.selectedPackageTypeInput.value = packageType;
-                elements.selectedPackagePriceInput.value = packagePrice;
-                showBookingForm(); 
-                const todayFormatted = new Date().toISOString().split('T')[0];
-                elements.bookingDateInput.value = todayFormatted;
-                renderTimeButtons(todayFormatted);
-            }
-
-            // --- EVENT LISTENERS ---
 
             elements.stickyBookNowBtn.addEventListener('click', () => {
                 elements.bookingFlowContainer.style.display = 'block';
@@ -621,7 +583,25 @@
             elements.passwordInput.addEventListener('input', validatePassword);
             elements.confirmPasswordInput.addEventListener('input', checkPasswordsMatch);
 
-            // --- CORE LOGIC FUNCTIONS ---
+            function showPackageSelection(vehicleCategory, clickedButton) {
+                hideAllMajorSections();
+                elements.packageSelectionContainer.style.display = 'block';
+                document.querySelectorAll('#vehicle-type-selection .btn-primary.active').forEach(b => b.classList.remove('active'));
+                clickedButton.classList.add('active');
+                elements.sedanPackagesDisplay.style.display = vehicleCategory === 'sedan' ? 'grid' : 'none';
+                elements.suvTruckPackagesDisplay.style.display = vehicleCategory === 'suv-truck' ? 'grid' : 'none';
+                elements.stickyBookNowFooter.style.display = 'none';
+            }
+
+            function handlePackageSelection(packageType, packagePrice) {
+                elements.selectedPackageDisplay.textContent = packageType;
+                elements.selectedPackageTypeInput.value = packageType;
+                elements.selectedPackagePriceInput.value = packagePrice;
+                showBookingForm(); 
+                const todayFormatted = new Date().toISOString().split('T')[0];
+                elements.bookingDateInput.value = todayFormatted;
+                renderTimeButtons(todayFormatted);
+            }
 
             async function handleBooking(e) { 
                 e.preventDefault();
@@ -655,7 +635,7 @@
                     package_type: elements.selectedPackageTypeInput.value,
                     package_price: elements.selectedPackagePriceInput.value,
                     deal_name: `${elements.selectedPackageTypeInput.value} ${document.getElementById('vehicle-make').value} ${document.getElementById('vehicle-model').value}`,
-                    offer_code: "OnlineBooking",
+                    offer_code: "CONNOR2438",
                     create_account: createAccount,
                     password: createAccount ? elements.passwordInput.value : ''
                 };
@@ -695,9 +675,8 @@
 
                 container.innerHTML = '';
                 
-                // **FIX:** This is the robust, timezone-aware check.
                 const now = new Date();
-                const todayCST = now.toLocaleDateString('en-CA', { timeZone: 'America/Chicago' }); // 'en-CA' format is YYYY-MM-DD
+                const todayCST = now.toLocaleDateString('en-CA', { timeZone: 'America/Chicago' });
                 const selectedDateCST = new Date(selectedDate + 'T12:00:00Z').toLocaleDateString('en-CA', { timeZone: 'America/Chicago' });
                 const isToday = (todayCST === selectedDateCST);
 
@@ -711,7 +690,6 @@
                     button.dataset.time = time;
                     let isDisabled = false;
                     
-                    // Only apply the 2-hour blocking rule if the selected date is today.
                     if (isToday) {
                         const [appointmentHour] = time.split(':').map(Number);
                         const currentTotalMinutes = (currentCSTHour * 60) + currentCSTMinute;
@@ -743,7 +721,7 @@
             function formatTimeDisplay(time24hr) {
                 const [hours] = time24hr.split(':').map(Number);
                 const date = new Date();
-                date.setHours(hours, 0); // Set minutes to 0 for clean display
+                date.setHours(hours, 0);
                 return date.toLocaleString('en-US', { hour: 'numeric', hour12: true });
             }
             
@@ -765,7 +743,6 @@
                 return password === confirmPassword;
             }
             
-            // --- INITIALIZE THE PAGE ---
             const todayFormatted = new Date().toISOString().split('T')[0];
             elements.bookingDateInput.value = todayFormatted;
             elements.bookingDateInput.min = todayFormatted;
