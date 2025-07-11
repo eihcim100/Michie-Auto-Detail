@@ -612,7 +612,7 @@
         </button>
     </div>
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk&libraries=places&callback=initBookingPage" defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk&libraries=places&callback=initBookingPage" async defer></script>
     <script>
         // This function needs to be available for the autocomplete callback
         function fillAddressFields(place, zipCodeInputId) {
@@ -695,6 +695,11 @@
                 "Level 2 Detail": { "249": "https://pay.michieauto.com/lvl2sedan", "299": "https://pay.michieauto.com/lvl2suv" },
                 "Level 3 Detail": { "349": "https://pay.michieauto.com/lvl3sedan", "399": "https://pay.michieauto.com/lvl3suv" },
             };
+            
+            // --- TIME LOGIC IMPROVEMENT ---
+            // Fetch the current time in CST only ONCE when the page loads.
+            const pageLoadTimeCST = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
+            // --- END IMPROVEMENT ---
 
             async function apiCall(endpoint, method, payload = null) {
                 const headers = { 'Content-Type': 'application/json' };
@@ -769,7 +774,10 @@
                 showInitialPage();
             });
 
-            if (elements.bookingDateInput) elements.bookingDateInput.addEventListener('change', (e) => renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, e.target.value, elements.finalBookAppointmentBtn));
+            if (elements.bookingDateInput) {
+                // Pass the single fetched time to the render function
+                elements.bookingDateInput.addEventListener('change', (e) => renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, e.target.value, elements.finalBookAppointmentBtn, pageLoadTimeCST));
+            }
 
             if (elements.packageSelectionContainer) elements.packageSelectionContainer.addEventListener('click', (e) => {
                 if (e.target.classList.contains('select-package-btn')) {
@@ -838,7 +846,7 @@
                 showBookingForm(); 
                 const todayFormatted = new Date().toISOString().split('T')[0];
                 if (elements.bookingDateInput) elements.bookingDateInput.value = todayFormatted;
-                renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, todayFormatted, elements.finalBookAppointmentBtn);
+                renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, todayFormatted, elements.finalBookAppointmentBtn, pageLoadTimeCST);
             }
 
             async function handleBooking(e, endpoint, messageEl, selectedTimeInputId) { 
@@ -920,16 +928,21 @@
                 }
             }
             
-            function renderTimeButtons(container, hiddenInput, selectedDate, finalBookButton) {
+            // --- REVISED TIME BUTTON LOGIC ---
+            function renderTimeButtons(container, hiddenInput, selectedDateStr, finalBookButton, now) {
                 if (!container) return;
                 container.innerHTML = '';
             
-                // Use a consistent timezone identifier for CST/CDT
-                const timeZone = 'America/Chicago';
+                // The time to compare against (with a 2-hour buffer)
+                const twoHoursInMs = 2 * 60 * 60 * 1000;
+                const comparisonTime = new Date(now.getTime() + twoHoursInMs);
             
-                // Get the current moment as a Date object representing the wall time in the specified timezone.
-                // This is a reliable way to create a Date object that reflects the current time in CST.
-                const nowInCST = new Date(new Date().toLocaleString('en-US', { timeZone }));
+                // Get the selected date and today's date, ignoring the time part for accurate day-to-day comparison.
+                const selectedDate = new Date(selectedDateStr + 'T00:00:00');
+                const today = new Date();
+                today.setHours(0, 0, 0, 0); // Normalize today to the start of the day
+            
+                const isToday = selectedDate.getTime() === today.getTime();
             
                 availableTimes.forEach(time => {
                     const button = document.createElement('button');
@@ -937,15 +950,14 @@
                     button.textContent = formatTimeDisplay(time);
                     button.dataset.time = time;
             
-                    // Create a date object for the appointment time slot.
-                    // We parse the date and time parts and construct a new Date.
-                    // This creates a Date object in the browser's local timezone, which is what we want for a direct comparison.
-                    const [appointmentHour, appointmentMinute] = time.split(':').map(Number);
-                    const [selectedYear, selectedMonth, selectedDay] = selectedDate.split('-').map(Number);
-                    const appointmentDateTime = new Date(selectedYear, selectedMonth - 1, selectedDay, appointmentHour, appointmentMinute);
+                    // Create a full Date object for the appointment slot
+                    const [hour, minute] = time.split(':').map(Number);
+                    const appointmentDateTime = new Date(selectedDate);
+                    appointmentDateTime.setHours(hour, minute);
             
-                    // Disable the button if the appointment time is in the past compared to the current time in CST.
-                    const isDisabled = appointmentDateTime < nowInCST;
+                    // A slot is disabled if it's for today AND it's earlier than the 2-hour buffer time.
+                    // For any future date, no slots are disabled.
+                    const isDisabled = isToday && (appointmentDateTime < comparisonTime);
             
                     if (isDisabled) {
                         button.className = 'time-button disabled';
@@ -979,11 +991,11 @@
                 elements.bookingDateInput.value = todayFormatted;
                 elements.bookingDateInput.min = todayFormatted; // Prevent selecting past dates
             }
-            renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, todayFormatted, elements.finalBookAppointmentBtn);
+            // Initial render of time buttons using the single fetched time
+            renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, todayFormatted, elements.finalBookAppointmentBtn, pageLoadTimeCST);
         }
 
-        // The key change: Run the main app logic when the page is ready,
-        // without waiting for Google Maps.
+        // Run the main app logic when the page is ready.
         document.addEventListener('DOMContentLoaded', initializeApp);
     </script>
 </body>
