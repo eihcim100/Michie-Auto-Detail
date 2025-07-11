@@ -9,15 +9,14 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f8fafc; /* Light background */
-            color: #334155; /* Darker text for contrast */
-            padding-bottom: 80px; /* Space for the sticky footer */
+            background-color: #f8fafc;
+            color: #334155;
+            padding-bottom: 80px;
         }
-        .pac-container { z-index: 1050 !important; } /* Ensure Google Autocomplete is above other elements */
+        .pac-container { z-index: 1050 !important; }
 
-        /* General button styling for a light, stylish look */
         .btn-primary {
-            background-color: #3b82f6; /* Blue-500 */
+            background-color: #3b82f6;
             color: white;
             padding: 0.75rem 1.5rem;
             border-radius: 0.75rem;
@@ -28,12 +27,12 @@
             border: none;
         }
         .btn-primary:hover {
-            background-color: #2563eb; /* Blue-600 */
+            background-color: #2563eb;
             transform: translateY(-2px);
             box-shadow: 0 6px 10px -1px rgba(0, 0, 0, 0.15), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
         }
         .btn-success {
-            background-color: #22c55e; /* Green-500 */
+            background-color: #22c55e;
             color: white;
             padding: 0.75rem 1.5rem;
             border-radius: 0.75rem;
@@ -44,22 +43,18 @@
             border: none;
         }
         .btn-success:hover {
-            background-color: #16a34a; /* Green-600 */
+            background-color: #16a34a;
             transform: translateY(-2px);
             box-shadow: 0 6px 10px -1px rgba(0, 0, 0, 0.15), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
         }
 
-        /* Package card styles */
         .pricing-grid {
             display: grid;
             grid-template-columns: 1fr;
             gap: 2rem;
         }
-        @media (min-width: 768px) {
-            .pricing-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
+        @media (min-width: 768px) { .pricing-grid { grid-template-columns: repeat(3, 1fr); } }
+        
         .pricing-card {
             background-color: #ffffff;
             border: 1px solid #e2e8f0;
@@ -75,152 +70,34 @@
             transform: translateY(-8px);
             box-shadow: 0 15px 30px rgba(0, 123, 255, 0.1);
         }
-        .pricing-level {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 0.75rem;
-        }
-        .pricing-price {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: #059669;
-            margin-bottom: 1.5rem;
-        }
-        .feature-list {
-            list-style: none;
-            padding: 0;
-            text-align: left;
-            flex-grow: 1;
-            margin-bottom: 1.5rem;
-        }
-        .feature-list li {
-            position: relative;
-            padding-left: 2rem;
-            margin-bottom: 0.8rem;
-            color: #475569;
-            font-size: 0.95rem;
-        }
-        .feature-list li::before {
-            content: '✓';
-            color: #059669;
-            position: absolute;
-            left: 0;
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-        .select-package-btn {
-            width: 100%;
-            margin-top: auto;
-        }
-        .see-whats-included-btn {
-            background-color: #eff6ff;
-            color: #1e40af;
-            font-weight: 500;
-            padding: 0.6rem 1.2rem;
-            border-radius: 0.75rem;
-            width: 100%;
-            margin-top: 0.5rem;
-            margin-bottom: 1rem;
-            transition: background-color 0.2s;
-            cursor: pointer;
-            text-align: center;
-            border: none;
-        }
+        .pricing-level { font-size: 1.5rem; font-weight: 700; color: #1e293b; margin-bottom: 0.75rem; }
+        .pricing-price { font-size: 2.5rem; font-weight: 800; color: #059669; margin-bottom: 1.5rem; }
+        .feature-list { list-style: none; padding: 0; text-align: left; flex-grow: 1; margin-bottom: 1.5rem; }
+        .feature-list li { position: relative; padding-left: 2rem; margin-bottom: 0.8rem; color: #475569; font-size: 0.95rem; }
+        .feature-list li::before { content: '✓'; color: #059669; position: absolute; left: 0; font-weight: bold; font-size: 1.2rem; }
+        .select-package-btn { width: 100%; margin-top: auto; }
+        .see-whats-included-btn { background-color: #eff6ff; color: #1e40af; font-weight: 500; padding: 0.6rem 1.2rem; border-radius: 0.75rem; width: 100%; margin-top: 0.5rem; margin-bottom: 1rem; transition: background-color 0.2s; cursor: pointer; text-align: center; border: none; }
         .see-whats-included-btn:hover { background-color: #dbeafe; }
-        .feature-dropdown {
-            display: none;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
-            max-height: 0;
-            padding-bottom: 1rem;
-        }
-        .feature-dropdown.show {
-            max-height: 1000px;
-            display: block;
-        }
+        .feature-dropdown { display: none; overflow: hidden; transition: max-height 0.3s ease-out; max-height: 0; padding-bottom: 1rem; }
+        .feature-dropdown.show { max-height: 1000px; display: block; }
 
-        /* Time slot buttons */
-        .time-button {
-            padding: 0.75rem 1rem;
-            border-radius: 0.75rem;
-            border: 2px solid #cbd5e1;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            background-color: #e0f2fe;
-            color: #1e40af;
-            text-align: center;
-        }
-        .time-button:hover:not(:disabled) {
-            background-color: #bfdbfe;
-            border-color: #60a5fa;
-        }
-        .time-button.selected {
-            background-color: #2563eb;
-            color: white;
-            border-color: #2563eb;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-        .time-button:disabled {
-            background-color: #e2e8f0;
-            color: #94a3b8;
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
+        .time-button { padding: 0.75rem 1rem; border-radius: 0.75rem; border: 2px solid #cbd5e1; font-weight: 500; cursor: pointer; transition: all 0.2s ease; background-color: #e0f2fe; color: #1e40af; text-align: center; }
+        .time-button:hover:not(:disabled) { background-color: #bfdbfe; border-color: #60a5fa; }
+        .time-button.selected { background-color: #2563eb; color: white; border-color: #2563eb; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .time-button:disabled { background-color: #e2e8f0; color: #94a3b8; cursor: not-allowed; opacity: 0.7; }
 
-        /* Form input styling */
-        input, select {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid #cbd5e1;
-            border-radius: 0.5rem;
-            background-color: #ffffff;
-            font-size: 1rem;
-            color: #334155;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-        input:focus, select:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-        }
-        label {
-            display: block;
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-            color: #475569;
-        }
+        input, select { width: 100%; padding: 0.75rem 1rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; background-color: #ffffff; font-size: 1rem; color: #334155; transition: border-color 0.2s, box-shadow 0.2s; }
+        input:focus, select:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
+        label { display: block; font-weight: 500; margin-bottom: 0.5rem; color: #475569; }
 
-        /* Password requirements styling */
-        .password-requirement {
-            font-size: 0.875rem;
-            color: #64748b;
-        }
+        .password-requirement { font-size: 0.875rem; color: #64748b; }
         .password-requirement.valid { color: #16a34a; }
         .password-requirement.invalid { color: #dc2626; }
 
-        /* Hide booking flow by default */
         #booking-flow-container { display: none; }
-
-        /* Sticky footer for the "Book Now" button */
-        .sticky-book-now-footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background-color: #ffffff;
-            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
-            padding: 1rem;
-            text-align: center;
-            z-index: 1000;
-        }
-        .sticky-book-now-footer .btn-success {
-            font-size: 1.25rem;
-            padding: 1rem 2.5rem;
-            border-radius: 9999px;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-        }
+        
+        .sticky-book-now-footer { position: fixed; bottom: 0; left: 0; width: 100%; background-color: #ffffff; box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1); padding: 1rem; text-align: center; z-index: 1000; }
+        .sticky-book-now-footer .btn-success { font-size: 1.25rem; padding: 1rem 2.5rem; border-radius: 9999px; box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -560,20 +437,12 @@
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk&libraries=places&callback=initBookingPage" defer></script>
     <script>
-        function fillAddressFields(place, zipCodeInputId) {
-            let zipCode = '';
-            for (const component of place.address_components) {
-                if (component.types.includes('postal_code')) {
-                    zipCode = component.long_name;
-                }
-            }
-            const zipCodeInput = document.getElementById(zipCodeInputId);
-            if(zipCodeInput) {
-                zipCodeInput.value = zipCode;
-            }
-        }
-
-        window.initBookingPage = function() {
+        /**
+         * This function is designated as the callback for the Google Maps API script.
+         * Its only job is to initialize the address autocomplete feature once the API is loaded.
+         * This prevents race conditions where the main app script might try to use the Google API before it's ready.
+         */
+        function initBookingPage() {
             const addressInput = document.getElementById('address-input');
             if (window.google && window.google.maps && window.google.maps.places && addressInput) {
                 let addressAutocomplete = new google.maps.places.Autocomplete(addressInput, {
@@ -585,7 +454,15 @@
                     const place = addressAutocomplete.getPlace();
                     if (place.formatted_address) {
                         addressInput.value = place.formatted_address;
-                        fillAddressFields(place, 'zip-code');
+                        
+                        // Helper to extract and fill the zip code
+                        let zipCode = '';
+                        for (const component of place.address_components) {
+                            if (component.types.includes('postal_code')) {
+                                zipCode = component.long_name;
+                            }
+                        }
+                        document.getElementById('zip-code').value = zipCode;
                     }
                 });
             } else {
@@ -593,9 +470,14 @@
             }
         }
 
+        /**
+         * Main application logic. This runs after the document is fully loaded and parsed.
+         * It is independent of the Google Maps script loading.
+         */
         document.addEventListener('DOMContentLoaded', function() {
             const API_BASE_URL = 'https://michie-detailing-admin.onrender.com';
             
+            // A single object to hold references to all DOM elements for easy access.
             const elements = {
                 bookingFlowContainer: document.getElementById('booking-flow-container'),
                 vehicleTypeSelection: document.getElementById('vehicle-type-selection'),
@@ -627,6 +509,9 @@
                 passwordMatchMessage: document.getElementById('password-match-message')
             };
 
+            // --- CORE DATA AND CONFIGURATION ---
+
+            // **FIX:** Times are now in HH:MM:SS format to match Pipedrive API requirements.
             const availableTimes = ['09:00:00', '11:00:00', '12:00:00', '14:00:00', '16:00:00', '17:00:00', '18:00:00'];
 
             const paymentLinks = {
@@ -634,6 +519,8 @@
                 "Level 2 Detail": { "249": "https://pay.michieauto.com/lvl2sedan", "299": "https://pay.michieauto.com/lvl2suv" },
                 "Level 3 Detail": { "349": "https://pay.michieauto.com/lvl3sedan", "399": "https://pay.michieauto.com/lvl3suv" },
             };
+
+            // --- UI CONTROL FUNCTIONS ---
 
             function hideAllMajorSections() {
                 [elements.vehicleTypeSelection, elements.packageSelectionContainer, elements.bookingFormSection, elements.confirmationMessage]
@@ -643,7 +530,7 @@
             function showInitialPage() {
                 hideAllMajorSections();
                 elements.vehicleTypeSelection.style.display = 'block';
-                document.querySelectorAll('.btn-primary.active').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('#vehicle-type-selection .btn-primary.active').forEach(b => b.classList.remove('active'));
             }
 
             function showBookingForm() { 
@@ -651,6 +538,28 @@
                 elements.bookingFormSection.style.display = 'block';
                 elements.stickyBookNowFooter.style.display = 'none';
             }
+
+            function showPackageSelection(vehicleCategory, clickedButton) {
+                hideAllMajorSections();
+                elements.packageSelectionContainer.style.display = 'block';
+                document.querySelectorAll('#vehicle-type-selection .btn-primary.active').forEach(b => b.classList.remove('active'));
+                clickedButton.classList.add('active');
+                elements.sedanPackagesDisplay.style.display = vehicleCategory === 'sedan' ? 'grid' : 'none';
+                elements.suvTruckPackagesDisplay.style.display = vehicleCategory === 'suv-truck' ? 'grid' : 'none';
+                elements.stickyBookNowFooter.style.display = 'none';
+            }
+
+            function handlePackageSelection(packageType, packagePrice) {
+                elements.selectedPackageDisplay.textContent = packageType;
+                elements.selectedPackageTypeInput.value = packageType;
+                elements.selectedPackagePriceInput.value = packagePrice;
+                showBookingForm(); 
+                const todayFormatted = new Date().toISOString().split('T')[0];
+                elements.bookingDateInput.value = todayFormatted;
+                renderTimeButtons(todayFormatted);
+            }
+
+            // --- EVENT LISTENERS ---
 
             elements.stickyBookNowBtn.addEventListener('click', () => {
                 elements.bookingFlowContainer.style.display = 'block';
@@ -712,43 +621,7 @@
             elements.passwordInput.addEventListener('input', validatePassword);
             elements.confirmPasswordInput.addEventListener('input', checkPasswordsMatch);
 
-            function validatePassword() {
-                const password = elements.passwordInput.value;
-                const isLengthValid = password.length >= 6;
-                const hasUppercase = /[A-Z]/.test(password);
-                elements.passwordLengthReq.classList.toggle('valid', isLengthValid);
-                elements.passwordLengthReq.classList.toggle('invalid', !isLengthValid);
-                elements.passwordUppercaseReq.classList.toggle('valid', hasUppercase);
-                elements.passwordUppercaseReq.classList.toggle('invalid', !hasUppercase);
-                return isLengthValid && hasUppercase;
-            }
-
-            function checkPasswordsMatch() {
-                const password = elements.passwordInput.value;
-                const confirmPassword = elements.confirmPasswordInput.value;
-                elements.passwordMatchMessage.classList.toggle('hidden', password === confirmPassword);
-                return password === confirmPassword;
-            }
-
-            function showPackageSelection(vehicleCategory, clickedButton) {
-                hideAllMajorSections();
-                elements.packageSelectionContainer.style.display = 'block';
-                document.querySelectorAll('#vehicle-type-selection .btn-primary.active').forEach(b => b.classList.remove('active'));
-                clickedButton.classList.add('active');
-                elements.sedanPackagesDisplay.style.display = vehicleCategory === 'sedan' ? 'grid' : 'none';
-                elements.suvTruckPackagesDisplay.style.display = vehicleCategory === 'suv-truck' ? 'grid' : 'none';
-                elements.stickyBookNowFooter.style.display = 'none';
-            }
-
-            function handlePackageSelection(packageType, packagePrice) {
-                elements.selectedPackageDisplay.textContent = packageType;
-                elements.selectedPackageTypeInput.value = packageType;
-                elements.selectedPackagePriceInput.value = packagePrice;
-                showBookingForm(); 
-                const todayFormatted = new Date().toISOString().split('T')[0];
-                elements.bookingDateInput.value = todayFormatted;
-                renderTimeButtons(todayFormatted);
-            }
+            // --- CORE LOGIC FUNCTIONS ---
 
             async function handleBooking(e) { 
                 e.preventDefault();
@@ -782,7 +655,7 @@
                     package_type: elements.selectedPackageTypeInput.value,
                     package_price: elements.selectedPackagePriceInput.value,
                     deal_name: `${elements.selectedPackageTypeInput.value} ${document.getElementById('vehicle-make').value} ${document.getElementById('vehicle-model').value}`,
-                    offer_code: "CONNOR2438",
+                    offer_code: "OnlineBooking",
                     create_account: createAccount,
                     password: createAccount ? elements.passwordInput.value : ''
                 };
@@ -822,8 +695,9 @@
 
                 container.innerHTML = '';
                 
+                // **FIX:** This is the robust, timezone-aware check.
                 const now = new Date();
-                const todayCST = now.toLocaleDateString('en-CA', { timeZone: 'America/Chicago' });
+                const todayCST = now.toLocaleDateString('en-CA', { timeZone: 'America/Chicago' }); // 'en-CA' format is YYYY-MM-DD
                 const selectedDateCST = new Date(selectedDate + 'T12:00:00Z').toLocaleDateString('en-CA', { timeZone: 'America/Chicago' });
                 const isToday = (todayCST === selectedDateCST);
 
@@ -837,6 +711,7 @@
                     button.dataset.time = time;
                     let isDisabled = false;
                     
+                    // Only apply the 2-hour blocking rule if the selected date is today.
                     if (isToday) {
                         const [appointmentHour] = time.split(':').map(Number);
                         const currentTotalMinutes = (currentCSTHour * 60) + currentCSTMinute;
@@ -866,12 +741,31 @@
             }
 
             function formatTimeDisplay(time24hr) {
-                const [hours, minutes] = time24hr.split(':').map(Number);
+                const [hours] = time24hr.split(':').map(Number);
                 const date = new Date();
-                date.setHours(hours, minutes);
-                return date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+                date.setHours(hours, 0); // Set minutes to 0 for clean display
+                return date.toLocaleString('en-US', { hour: 'numeric', hour12: true });
             }
             
+            function validatePassword() {
+                const password = elements.passwordInput.value;
+                const isLengthValid = password.length >= 6;
+                const hasUppercase = /[A-Z]/.test(password);
+                elements.passwordLengthReq.classList.toggle('valid', isLengthValid);
+                elements.passwordLengthReq.classList.toggle('invalid', !isLengthValid);
+                elements.passwordUppercaseReq.classList.toggle('valid', hasUppercase);
+                elements.passwordUppercaseReq.classList.toggle('invalid', !hasUppercase);
+                return isLengthValid && hasUppercase;
+            }
+
+            function checkPasswordsMatch() {
+                const password = elements.passwordInput.value;
+                const confirmPassword = elements.confirmPasswordInput.value;
+                elements.passwordMatchMessage.classList.toggle('hidden', password === confirmPassword);
+                return password === confirmPassword;
+            }
+            
+            // --- INITIALIZE THE PAGE ---
             const todayFormatted = new Date().toISOString().split('T')[0];
             elements.bookingDateInput.value = todayFormatted;
             elements.bookingDateInput.min = todayFormatted;
