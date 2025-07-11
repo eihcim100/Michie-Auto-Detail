@@ -923,13 +923,17 @@
             function renderTimeButtons(container, hiddenInput, selectedDate, finalBookButton) {
                 if (!container) return;
                 container.innerHTML = '';
-                const selectedDateObj = new Date(selectedDate + 'T00:00:00');
-                const todayFormatted = new Date().toISOString().split('T')[0];
-                const selectedDateFormatted = selectedDateObj.toISOString().split('T')[0];
-                const isToday = selectedDateFormatted === todayFormatted;
-                const nowCST = new Date();
-                const currentCSTHour = parseInt(nowCST.toLocaleString('en-US', { hour: '2-digit', hourCycle: 'h23', timeZone: 'America/Chicago' }));
-                const currentCSTMinute = parseInt(nowCST.toLocaleString('en-US', { minute: '2-digit', timeZone: 'America/Chicago' }));
+
+                // --- FIX STARTS HERE ---
+                // Use a robust, timezone-aware method to check if the selected date is today.
+                const now = new Date();
+                const todayCST = now.toLocaleDateString('en-CA', { timeZone: 'America/Chicago' }); // 'en-CA' gives YYYY-MM-DD format
+                const selectedDateCST = new Date(selectedDate + 'T12:00:00Z').toLocaleDateString('en-CA', { timeZone: 'America/Chicago' });
+                const isToday = (todayCST === selectedDateCST);
+                // --- FIX ENDS HERE ---
+
+                const currentCSTHour = parseInt(now.toLocaleString('en-US', { hour: '2-digit', hourCycle: 'h23', timeZone: 'America/Chicago' }));
+                const currentCSTMinute = parseInt(now.toLocaleString('en-US', { minute: '2-digit', timeZone: 'America/Chicago' }));
 
                 availableTimes.forEach(time => {
                     const button = document.createElement('button');
@@ -937,12 +941,17 @@
                     button.textContent = formatTimeDisplay(time);
                     button.dataset.time = time;
                     let isDisabled = false;
+
+                    // Only apply the 2-hour rule if the selected date is today
                     if (isToday) {
                         const [appointmentHour] = time.split(':').map(Number);
-                        if (((appointmentHour * 60) - ((currentCSTHour * 60) + currentCSTMinute)) < 120) {
+                        const currentTotalMinutes = (currentCSTHour * 60) + currentCSTMinute;
+                        const appointmentTotalMinutes = (appointmentHour * 60);
+                        if ((appointmentTotalMinutes - currentTotalMinutes) < 120) {
                             isDisabled = true;
                         }
                     }
+
                     if (isDisabled) {
                         button.className = 'time-button disabled';
                         button.disabled = true;
