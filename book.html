@@ -56,12 +56,21 @@
             transition: all 0.3s ease;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
-        .btn-success:hover {
+        .btn-success:hover:not(:disabled) {
             background-color: #16a34a; /* Green-600 */
             transform: translateY(-2px);
             box-shadow: 0 6px 10px -1px rgba(0, 0, 0, 0.15), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
         }
+        .btn-success:disabled {
+            background-color: #16a34a;
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
 
         /* Package card styles - adapted for this page */
         .pricing-grid {
@@ -762,17 +771,28 @@
                 elements.bookingForm.addEventListener('submit', (e) => handleBooking(e, '/public/appointment', elements.bookingMessage, 'selected-booking-time'));
             }
 
-            if (elements.bookAnotherBtn) elements.bookAnotherBtn.addEventListener('click', () => {
-                if (elements.bookingForm) elements.bookingForm.reset();
-                if (elements.createAccountCheckbox) elements.createAccountCheckbox.checked = false;
-                if (elements.passwordFields) elements.passwordFields.style.display = 'none';
-                if (elements.passwordInput) elements.passwordInput.value = '';
-                if (elements.confirmPasswordInput) elements.confirmPasswordInput.value = '';
-                if (elements.passwordMatchMessage) elements.passwordMatchMessage.classList.add('hidden');
-                if (elements.bookingMessage) elements.bookingMessage.textContent = '';
-                if (elements.stickyBookNowFooter) elements.stickyBookNowFooter.style.display = 'block'; 
-                showInitialPage();
-            });
+            if (elements.bookAnotherBtn) {
+                elements.bookAnotherBtn.addEventListener('click', () => {
+                    if (elements.bookingForm) elements.bookingForm.reset();
+                    if (elements.createAccountCheckbox) elements.createAccountCheckbox.checked = false;
+                    if (elements.passwordFields) elements.passwordFields.style.display = 'none';
+                    if (elements.passwordInput) elements.passwordInput.value = '';
+                    if (elements.confirmPasswordInput) elements.confirmPasswordInput.value = '';
+                    if (elements.passwordMatchMessage) elements.passwordMatchMessage.classList.add('hidden');
+                    if (elements.bookingMessage) elements.bookingMessage.textContent = '';
+                    if (elements.stickyBookNowFooter) elements.stickyBookNowFooter.style.display = 'block';
+                    
+                    // --- MODIFICATION ---
+                    // Reset the submit button's state when starting a new booking
+                    if (elements.finalBookAppointmentBtn) {
+                        elements.finalBookAppointmentBtn.disabled = false;
+                        elements.finalBookAppointmentBtn.innerHTML = 'Book Appointment';
+                    }
+                    // --- END MODIFICATION ---
+
+                    showInitialPage();
+                });
+            }
 
             if (elements.bookingDateInput) {
                 // Pass the single fetched time to the render function
@@ -780,9 +800,10 @@
             }
 
             if (elements.packageSelectionContainer) elements.packageSelectionContainer.addEventListener('click', (e) => {
-                if (e.target.classList.contains('select-package-btn')) {
-                    const packageType = e.target.dataset.packageType;
-                    const packagePrice = e.target.dataset.packagePrice;
+                if (e.target.closest('.select-package-btn')) {
+                    const button = e.target.closest('.select-package-btn');
+                    const packageType = button.dataset.packageType;
+                    const packagePrice = button.dataset.packagePrice;
                     handlePackageSelection(packageType, packagePrice);
                     if (elements.bookingFormSection) elements.bookingFormSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 } else if (e.target.classList.contains('see-whats-included-btn')) {
@@ -849,9 +870,25 @@
                 renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, todayFormatted, elements.finalBookAppointmentBtn, pageLoadTimeCST);
             }
 
+            // --- MODIFICATION: Updated handleBooking function ---
             async function handleBooking(e, endpoint, messageEl, selectedTimeInputId) { 
                 e.preventDefault();
-                console.log("Form submission intercepted.");
+                const submitButton = elements.finalBookAppointmentBtn;
+
+                // Disable button and show processing state
+                submitButton.disabled = true;
+                submitButton.innerHTML = `
+                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Processing...
+                `;
+
+                const restoreButton = () => {
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = 'Book Appointment';
+                };
 
                 try {
                     const fullName = document.getElementById('full-name').value;
@@ -869,14 +906,17 @@
 
                     if (!fullName || !email || !phone || !address || !zipCode || !vehicleYear || !vehicleMake || !vehicleModel || !bookingDate || !selectedTime || !packageType || !packagePrice) {
                         if (messageEl) { messageEl.textContent = 'Please fill in all required fields.'; messageEl.style.color = 'red'; }
+                        restoreButton();
                         return;
                     }
                     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
                         if (messageEl) { messageEl.textContent = 'Please enter a valid email address.'; messageEl.style.color = 'red'; }
+                        restoreButton();
                         return;
                     }
                     if (!/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(phone)) {
                         if (messageEl) { messageEl.textContent = 'Please enter a valid 10-digit phone number.'; messageEl.style.color = 'red'; }
+                        restoreButton();
                         return;
                     }
 
@@ -886,6 +926,7 @@
                         password = elements.passwordInput ? elements.passwordInput.value : '';
                         if (!validatePassword() || !checkPasswordsMatch()) {
                             if (messageEl) { messageEl.textContent = 'Please fix password errors.'; messageEl.style.color = 'red'; }
+                            restoreButton();
                             return;
                         }
                     }
@@ -898,7 +939,6 @@
                         offer_code: "OnlineBooking", create_account: createAccount, password: password 
                     };
 
-                    console.log("Sending payload:", payload);
                     const { ok, data } = await apiCall(endpoint, 'POST', payload);
 
                     if (ok) {
@@ -916,8 +956,10 @@
                             }
                         }
                         if (elements.stickyBookNowFooter) elements.stickyBookNowFooter.style.display = 'none';
+                        // On success, we don't restore the button because the view changes.
                     } else {
                         if (messageEl) { messageEl.textContent = data.message || 'An error occurred during booking.'; messageEl.style.color = 'red'; }
+                        restoreButton();
                     }
                 } catch (error) {
                     console.error("An unexpected JavaScript error occurred:", error);
@@ -925,8 +967,10 @@
                         elements.bookingMessage.textContent = 'An unexpected error occurred. Please try again.';
                         elements.bookingMessage.style.color = 'red';
                     }
+                    restoreButton();
                 }
             }
+            // --- END MODIFICATION ---
             
             // --- REVISED TIME BUTTON LOGIC ---
             function renderTimeButtons(container, hiddenInput, selectedDateStr, finalBookButton, now) {
