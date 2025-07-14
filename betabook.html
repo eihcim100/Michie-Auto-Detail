@@ -745,10 +745,7 @@
                 "Level 3 Detail": { "349": "https://pay.michieauto.com/lvl3sedan", "399": "https://pay.michieauto.com/lvl3suv" },
             };
             
-            // --- TIME LOGIC IMPROVEMENT ---
-            // Fetch the current time in CST only ONCE when the page loads.
             const pageLoadTimeCST = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
-            // --- END IMPROVEMENT ---
 
             async function apiCall(endpoint, method, payload = null) {
                 const headers = { 'Content-Type': 'application/json' };
@@ -822,20 +819,16 @@
                     if (elements.bookingMessage) elements.bookingMessage.textContent = '';
                     if (elements.stickyBookNowFooter) elements.stickyBookNowFooter.style.display = 'block';
                     
-                    // --- MODIFICATION ---
-                    // Reset the submit button's state when starting a new booking
                     if (elements.finalBookAppointmentBtn) {
                         elements.finalBookAppointmentBtn.disabled = false;
                         elements.finalBookAppointmentBtn.innerHTML = 'Book Appointment';
                     }
-                    // --- END MODIFICATION ---
 
                     showInitialPage();
                 });
             }
 
             if (elements.bookingDateInput) {
-                // Pass the single fetched time to the render function
                 elements.bookingDateInput.addEventListener('change', (e) => renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, e.target.value, elements.finalBookAppointmentBtn, pageLoadTimeCST));
             }
 
@@ -904,18 +897,14 @@
                 if (elements.selectedPackageDisplay) elements.selectedPackageDisplay.textContent = packageType;
                 if (elements.selectedPackageTypeInput) elements.selectedPackageTypeInput.value = packageType;
                 if (elements.selectedPackagePriceInput) elements.selectedPackagePriceInput.value = packagePrice;
-                showBookingForm(); 
-                const todayFormatted = new Date().toISOString().split('T')[0];
-                if (elements.bookingDateInput) elements.bookingDateInput.value = todayFormatted;
-                renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, todayFormatted, elements.finalBookAppointmentBtn, pageLoadTimeCST);
+                showBookingForm();
+                checkAndSetInitialDate();
             }
 
-            // --- MODIFICATION: Updated handleBooking function ---
             async function handleBooking(e, endpoint, messageEl, selectedTimeInputId) { 
                 e.preventDefault();
                 const submitButton = elements.finalBookAppointmentBtn;
 
-                // Disable button and show processing state
                 submitButton.disabled = true;
                 submitButton.innerHTML = `
                     <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -991,17 +980,14 @@
                             if (paymentLinks[packageType] && paymentLinks[packageType][priceKey]) {
                                 paymentRedirectLink = paymentLinks[packageType][priceKey];
                             }
-                            // Pay in Full button
                             if (elements.payNowButton) {
                                 elements.payNowButton.onclick = () => { window.open(paymentRedirectLink, '_blank'); };
                             }
-                            // Pay Deposit button
                             if (elements.payDepositButton) {
                                 elements.payDepositButton.onclick = () => { window.open('https://pay.michieauto.com/deposit', '_blank'); };
                             }
                         }
                         if (elements.stickyBookNowFooter) elements.stickyBookNowFooter.style.display = 'none';
-                        // On success, we don't restore the button because the view changes.
                     } else {
                         if (messageEl) { messageEl.textContent = data.message || 'An error occurred during booking.'; messageEl.style.color = 'red'; }
                         restoreButton();
@@ -1015,21 +1001,17 @@
                     restoreButton();
                 }
             }
-            // --- END MODIFICATION ---
             
-            // --- REVISED TIME BUTTON LOGIC ---
             function renderTimeButtons(container, hiddenInput, selectedDateStr, finalBookButton, now) {
-                if (!container) return;
+                if (!container) return false;
                 container.innerHTML = '';
             
-                // The time to compare against (with a 2-hour buffer)
+                let hasAvailableSlots = false;
                 const twoHoursInMs = 2 * 60 * 60 * 1000;
                 const comparisonTime = new Date(now.getTime() + twoHoursInMs);
             
-                // Get the selected date and today's date, ignoring the time part for accurate day-to-day comparison.
-                const selectedDate = new Date(selectedDateStr + 'T00:00:00');
-                const today = new Date();
-                today.setHours(0, 0, 0, 0); // Normalize today to the start of the day
+                const selectedDate = new Date(selectedDateStr + 'T00:00:00-05:00'); // Assuming CST/CDT
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
             
                 const isToday = selectedDate.getTime() === today.getTime();
             
@@ -1039,19 +1021,17 @@
                     button.textContent = formatTimeDisplay(time);
                     button.dataset.time = time;
             
-                    // Create a full Date object for the appointment slot
                     const [hour, minute] = time.split(':').map(Number);
                     const appointmentDateTime = new Date(selectedDate);
                     appointmentDateTime.setHours(hour, minute);
             
-                    // A slot is disabled if it's for today AND it's earlier than the 2-hour buffer time.
-                    // For any future date, no slots are disabled.
                     const isDisabled = isToday && (appointmentDateTime < comparisonTime);
             
                     if (isDisabled) {
                         button.className = 'time-button disabled';
                         button.disabled = true;
                     } else {
+                        hasAvailableSlots = true;
                         button.className = 'time-button';
                         button.addEventListener('click', () => {
                             const currentlySelected = container.querySelector('.time-button.selected');
@@ -1066,6 +1046,29 @@
             
                 if (hiddenInput) hiddenInput.value = '';
                 if (finalBookButton) finalBookButton.style.display = 'none';
+                return hasAvailableSlots;
+            }
+
+            function checkAndSetInitialDate() {
+                const today = new Date(pageLoadTimeCST);
+                const todayFormatted = today.toISOString().split('T')[0];
+
+                const todayHasSlots = renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, todayFormatted, elements.finalBookAppointmentBtn, pageLoadTimeCST);
+
+                if (todayHasSlots) {
+                    if (elements.bookingDateInput) {
+                        elements.bookingDateInput.value = todayFormatted;
+                    }
+                } else {
+                    const tomorrow = new Date(today);
+                    tomorrow.setDate(today.getDate() + 1);
+                    const tomorrowFormatted = tomorrow.toISOString().split('T')[0];
+                    
+                    if (elements.bookingDateInput) {
+                        elements.bookingDateInput.value = tomorrowFormatted;
+                    }
+                    renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, tomorrowFormatted, elements.finalBookAppointmentBtn, pageLoadTimeCST);
+                }
             }
 
             function formatTimeDisplay(time24hr) {
@@ -1077,14 +1080,10 @@
             
             const todayFormatted = new Date().toISOString().split('T')[0];
             if (elements.bookingDateInput) {
-                elements.bookingDateInput.value = todayFormatted;
-                elements.bookingDateInput.min = todayFormatted; // Prevent selecting past dates
+                elements.bookingDateInput.min = todayFormatted;
             }
-            // Initial render of time buttons using the single fetched time
-            renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, todayFormatted, elements.finalBookAppointmentBtn, pageLoadTimeCST);
         }
 
-        // Run the main app logic when the page is ready.
         document.addEventListener('DOMContentLoaded', initializeApp);
     </script>
 </body>
