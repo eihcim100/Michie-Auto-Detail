@@ -625,9 +625,28 @@
             <div id="confirmation-message" class="bg-green-100 border-l-4 border-green-500 text-green-700 p-6 rounded-lg text-center hidden">
                 <p class="text-2xl font-bold mb-2">Thank you! Your booking is confirmed!</p>
                 <p class="text-xl">Your total is: <span id="total-price-display" class="font-extrabold">$0</span></p>
-                <p class="text-md mt-4">You will receive a confirmation email shortly.</p>
-                <button id="pay-now-button" class="btn-success mt-6">Pay Now</button>
-                <button id="book-another-btn" class="btn-primary mt-6 ml-4">Book Another Appointment</button>
+                <p class="text-md mt-4">A $50 deposit is required to secure your appointment time.</p>
+                
+                <div class="mt-6 flex flex-wrap justify-center items-center gap-4">
+                    <button id="pay-deposit-button" class="btn-success">Pay $50 Deposit (Required)</button>
+                    <span class="text-gray-600 font-semibold hidden sm:inline">OR</span>
+                    <button id="pay-now-button" class="btn-secondary">Pay in Full (Optional)</button>
+                </div>
+
+                <div class="text-xs text-gray-600 mt-6 max-w-lg mx-auto text-left space-y-3 bg-white p-4 rounded-lg shadow-inner">
+                    <div>
+                        <p class="font-bold text-gray-700">Deposit Policy:</p>
+                        <p>Paying in full is optional before the detail is completed, however, if you choose to not pay in full, a $50 deposit is required to secure your appointment, and this goes towards the cost of your detail service. The remaining balance will be collected after service is completed. In the event that you cancel the appointment, the $50 deposit paid is non-refundable. Reschedules are always free.</p>
+                    </div>
+                    <div class="pt-2 mt-2 border-t border-gray-200">
+                        <p class="font-bold text-gray-700">Paid in Full Policy:</p>
+                        <p>If you paid in full and cancel your appointment, no cancel fee will be charged, instead, 100% of the amount paid will be provided to you as an auto detailing credit, valid for any detail with Michie Auto Detailing LLC in the next 12 months. This is similar to a gift card, no cash refunds are provided. Reschedules are always free of charge.</p>
+                    </div>
+                </div>
+
+                <div class="mt-8">
+                    <button id="book-another-btn" class="btn-primary">Book Another Appointment</button>
+                </div>
             </div>
 
         </div>
@@ -703,6 +722,7 @@
                 stickyBookNowFooter: document.getElementById('sticky-book-now-footer'), 
                 totalPriceDisplay: document.getElementById('total-price-display'),
                 payNowButton: document.getElementById('pay-now-button'),
+                payDepositButton: document.getElementById('pay-deposit-button'), // Added deposit button
                 bookingDateInput: document.getElementById('booking-date'),
                 bookingTimeButtonsContainer: document.getElementById('booking-time-buttons'),
                 selectedBookingTimeInput: document.getElementById('selected-booking-time'),
@@ -970,8 +990,13 @@
                             if (paymentLinks[packageType] && paymentLinks[packageType][priceKey]) {
                                 paymentRedirectLink = paymentLinks[packageType][priceKey];
                             }
+                            // Pay in Full button
                             if (elements.payNowButton) {
                                 elements.payNowButton.onclick = () => { window.open(paymentRedirectLink, '_blank'); };
+                            }
+                            // Pay Deposit button
+                            if (elements.payDepositButton) {
+                                elements.payDepositButton.onclick = () => { window.open('https://pay.michieauto.com/deposit', '_blank'); };
                             }
                         }
                         if (elements.stickyBookNowFooter) elements.stickyBookNowFooter.style.display = 'none';
