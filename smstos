@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMS Terms of Service - Michie Auto Detailing</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+        }
+        h1, h2, h3 {
+            font-weight: 700;
+            color: #1e293b;
+        }
+        .container {
+            max-width: 800px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <header class="text-center mb-10">
+            <img src="https://michieauto.com/logo.jpeg" alt="Michie Auto Detailing Logo" class="mx-auto mb-4 w-48 h-auto rounded-lg shadow-md">
+            <h1 class="text-3xl">SMS/Text Message Terms of Service</h1>
+            <p class="text-sm text-gray-500 mt-2">Last Updated: July 15, 2025</p>
+        </header>
+
+        <main class="bg-white p-8 rounded-xl shadow-lg space-y-6">
+            <section>
+                <h2 class="text-2xl mb-3">Michie Auto Detailing Alerts & Notifications</h2>
+                <p>By providing your mobile phone number and opting in, you consent to receive automated text messages (SMS) from Michie Auto Detailing LLC. These messages may include appointment reminders, account updates, and promotional offers.</p>
+            </section>
+
+            <section>
+                <h2 class="text-2xl mb-3">Opt-Out</h2>
+                <p>You can cancel the SMS service at any time. To stop receiving messages, text "<strong>STOP</strong>" to the short code or phone number from which you are receiving messages. After you send the "<strong>STOP</strong>" message, we will send you an SMS message to confirm that you have been unsubscribed. After this, you will no longer receive SMS messages from us.</p>
+                <p class="mt-2">If you want to join again, just sign up as you did the first time, and we will start sending SMS messages to you again.</p>
+            </section>
+
+            <section>
+                <h2 class="text-2xl mb-3">Help</h2>
+                <p>If you are experiencing issues with the messaging program, you can get help directly by replying with the keyword "<strong>HELP</strong>" for more assistance, or by emailing us at <a href="mailto:support@michieauto.com" class="text-blue-600 hover:underline">support@michieauto.com</a>.</p>
+            </section>
+
+            <section>
+                <h2 class="text-2xl mb-3">Carriers</h2>
+                <p>Carriers are not liable for delayed or undelivered messages.</p>
+            </section>
+
+            <section>
+                <h2 class="text-2xl mb-3">Message and Data Rates</h2>
+                <p>As always, message and data rates may apply for any messages sent to you from us and to us from you. Message frequency will vary depending on your account activity and marketing preferences. If you have any questions about your text plan or data plan, it is best to contact your wireless provider.</p>
+            </section>
+
+            <section>
+                <h2 class="text-2xl mb-3">Privacy</h2>
+                <p>We respect your right to privacy. We will not share or sell your mobile number to third parties for their marketing purposes. You can see our full privacy policy <a href="./privacy-policy.html" class="text-blue-600 hover:underline">[Link to Privacy Policy Page]</a>.</p>
+            </section>
+            
+            <section>
+                <h2 class="text-2xl mb-3">Contact Us</h2>
+                <p>For any questions regarding these terms, please contact us at:</p>
+                <address class="not-italic mt-2">
+                    Michie Auto Detailing LLC<br>
+                    [Your Company Address, City, ZIP]<br>
+                    <a href="mailto:support@michieauto.com" class="text-blue-600 hover:underline">support@michieauto.com</a>
+                </address>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
