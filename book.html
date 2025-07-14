@@ -559,25 +559,6 @@
                         <input type="text" id="vehicle-model" placeholder="e.g., Civic" required>
                     </div>
 
-                    <!-- START: SMS Compliance Section -->
-                    <div class="mt-6 p-4 border border-gray-200 rounded-lg bg-gray-50">
-                        <label class="block text-sm font-medium text-gray-700 mb-3">SMS Notifications & Terms</label>
-                        <div class="space-y-3">
-                            <label class="flex items-center space-x-3 cursor-pointer text-gray-700">
-                                <input type="checkbox" id="sms-consent-transactional" class="rounded h-4 w-4 text-blue-600 focus:ring-blue-500">
-                                <span>Appointment reminders & account updates.</span>
-                            </label>
-                            <label class="flex items-center space-x-3 cursor-pointer text-gray-700">
-                                <input type="checkbox" id="sms-consent-marketing" class="rounded h-4 w-4 text-blue-600 focus:ring-blue-500">
-                                <span>Promotional offers & discounts.</span>
-                            </label>
-                        </div>
-                        <p class="text-xs text-gray-500 mt-4">
-                            By providing your phone number and checking the boxes, you agree to receive text messages from Michie Auto Detailing for the purposes selected. Consent is not a condition of purchase. Message frequency will vary. Msg & data rates may apply. Reply HELP for help or STOP to cancel. View our <a href="#" class="text-blue-600 hover:underline" target="_blank">Terms of Service</a> & <a href="#" class="text-blue-600 hover:underline" target="_blank">Privacy Policy</a>.
-                        </p>
-                    </div>
-                    <!-- END: SMS Compliance Section -->
-
                     <!-- Create Account Option -->
                     <div class="mt-4">
                         <label class="flex items-center space-x-2 cursor-pointer text-gray-700">
@@ -614,6 +595,26 @@
                             <input type="hidden" id="selected-booking-time" name="booking-time" required>
                         </div>
                     </div>
+
+                    <!-- START: SMS Compliance Section -->
+                    <div class="mt-6 p-4 border border-gray-200 rounded-lg bg-gray-50">
+                        <label class="block text-sm font-medium text-gray-700 mb-3">SMS Notifications & Terms</label>
+                        <div class="space-y-3">
+                            <label class="flex items-center space-x-3 cursor-pointer text-gray-700">
+                                <input type="checkbox" id="sms-consent-transactional" class="rounded h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                <span>Appointment reminders & account updates.</span>
+                            </label>
+                            <label class="flex items-center space-x-3 cursor-pointer text-gray-700">
+                                <input type="checkbox" id="sms-consent-marketing" class="rounded h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                <span>Promotional offers & discounts.</span>
+                            </label>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-4">
+                            By providing your phone number and checking the boxes, you agree to receive text messages from Michie Auto Detailing for the purposes selected. Consent is not a condition of purchase. Message frequency will vary. Msg & data rates may apply. Reply HELP for help or STOP to cancel. View our <a href="https://michieauto.com/smstos" class="text-blue-600 hover:underline" target="_blank">Terms of Service</a> & <a href="https://michieauto.com/smsprivacy" class="text-blue-600 hover:underline" target="_blank">Privacy Policy</a>.
+                        </p>
+                    </div>
+                    <!-- END: SMS Compliance Section -->
+
                     <input type="hidden" id="selected-package-type" name="package-type">
                     <input type="hidden" id="selected-package-price" name="package-price">
                     <button type="submit" id="final-book-appointment-btn" class="w-full btn-success hidden">Book Appointment</button>
@@ -622,12 +623,34 @@
             </div>
 
             <!-- Confirmation Message -->
-            <div id="confirmation-message" class="bg-green-100 border-l-4 border-green-500 text-green-700 p-6 rounded-lg text-center hidden">
-                <p class="text-2xl font-bold mb-2">Thank you! Your booking is confirmed!</p>
-                <p class="text-xl">Your total is: <span id="total-price-display" class="font-extrabold">$0</span></p>
-                <p class="text-md mt-4">You will receive a confirmation email shortly.</p>
-                <button id="pay-now-button" class="btn-success mt-6">Pay Now</button>
-                <button id="book-another-btn" class="btn-primary mt-6 ml-4">Book Another Appointment</button>
+            <div id="confirmation-section" class="hidden text-center">
+                <div id="confirmation-message" class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-6 rounded-lg">
+                    <p class="text-2xl font-bold mb-2">⚠️ Action Required: One more step to confirm your booking!</p>
+                    <p class="text-md mt-4">Payment is required to confirm your appointment. Please select an option below to continue.</p>
+                </div>
+                
+                <div class="mt-8 space-y-4">
+                    <!-- Deposit Option -->
+                    <div>
+                        <button id="pay-deposit-button" class="btn-success">Pay $50 deposit</button>
+                        <p class="text-xs text-gray-500 mt-2">(Pay the remaining due after service completion)</p>
+                    </div>
+
+                    <!-- OR Separator -->
+                    <p class="text-xl font-bold text-gray-600">OR</p>
+
+                    <!-- Pay in Full Option -->
+                    <div>
+                        <button id="pay-now-button" class="btn-primary">Pay in full</button>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Policy Text -->
+            <div id="policy-text" class="hidden text-xs text-gray-500 mt-8 space-y-2">
+                <p>* <strong>Deposit Policy:</strong> Paying in full is optional before the detail is completed, however, if you choose to not pay in full, a $50 deposit is required to secure your appointment, and this goes towards the cost of your detail service. The remaining balance will be collected after service is completed. In the event that you cancel the appointment, the $50 deposit paid is non-refundable. Reschedules are always free.</p>
+                <p>* <strong>Paid in Full Policy:</strong> If you paid in full and cancel your appointment, no cancel fee will be charged, instead, 100% of the amount paid will be provided to you as an auto detailing credit, valid for any detail with Michie Auto Detailing LLC in the next 12 months. This is similar to a gift card, no cash refunds are provided. Reschedules are always free of charge.</p>
             </div>
 
         </div>
@@ -697,12 +720,12 @@
                 selectedPackageTypeInput: document.getElementById('selected-package-type'),
                 selectedPackagePriceInput: document.getElementById('selected-package-price'),
                 finalBookAppointmentBtn: document.getElementById('final-book-appointment-btn'),
-                confirmationMessage: document.getElementById('confirmation-message'),
-                bookAnotherBtn: document.getElementById('book-another-btn'),
+                confirmationSection: document.getElementById('confirmation-section'),
                 stickyBookNowBtn: document.getElementById('sticky-book-now-btn'), 
                 stickyBookNowFooter: document.getElementById('sticky-book-now-footer'), 
-                totalPriceDisplay: document.getElementById('total-price-display'),
                 payNowButton: document.getElementById('pay-now-button'),
+                payDepositButton: document.getElementById('pay-deposit-button'),
+                policyText: document.getElementById('policy-text'),
                 bookingDateInput: document.getElementById('booking-date'),
                 bookingTimeButtonsContainer: document.getElementById('booking-time-buttons'),
                 selectedBookingTimeInput: document.getElementById('selected-booking-time'),
@@ -724,10 +747,7 @@
                 "Level 3 Detail": { "349": "https://pay.michieauto.com/lvl3sedan", "399": "https://pay.michieauto.com/lvl3suv" },
             };
             
-            // --- TIME LOGIC IMPROVEMENT ---
-            // Fetch the current time in CST only ONCE when the page loads.
             const pageLoadTimeCST = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
-            // --- END IMPROVEMENT ---
 
             async function apiCall(endpoint, method, payload = null) {
                 const headers = { 'Content-Type': 'application/json' };
@@ -747,12 +767,13 @@
             }
             
             function hideAllMajorSections() {
-                [elements.vehicleTypeSelection, elements.packageSelectionContainer, elements.bookingFormSection, elements.confirmationMessage]
+                [elements.vehicleTypeSelection, elements.packageSelectionContainer, elements.bookingFormSection, elements.confirmationSection, elements.policyText]
                     .forEach(el => el && (el.style.display = 'none'));
             }
 
             function showInitialPage() {
                 hideAllMajorSections();
+                if (elements.bookingFlowContainer) elements.bookingFlowContainer.style.display = 'block';
                 if (elements.vehicleTypeSelection) elements.vehicleTypeSelection.style.display = 'block';
                 document.querySelectorAll('.btn-primary.active').forEach(b => b.classList.remove('active'));
             }
@@ -790,31 +811,7 @@
                 elements.bookingForm.addEventListener('submit', (e) => handleBooking(e, '/public/appointment', elements.bookingMessage, 'selected-booking-time'));
             }
 
-            if (elements.bookAnotherBtn) {
-                elements.bookAnotherBtn.addEventListener('click', () => {
-                    if (elements.bookingForm) elements.bookingForm.reset();
-                    if (elements.createAccountCheckbox) elements.createAccountCheckbox.checked = false;
-                    if (elements.passwordFields) elements.passwordFields.style.display = 'none';
-                    if (elements.passwordInput) elements.passwordInput.value = '';
-                    if (elements.confirmPasswordInput) elements.confirmPasswordInput.value = '';
-                    if (elements.passwordMatchMessage) elements.passwordMatchMessage.classList.add('hidden');
-                    if (elements.bookingMessage) elements.bookingMessage.textContent = '';
-                    if (elements.stickyBookNowFooter) elements.stickyBookNowFooter.style.display = 'block';
-                    
-                    // --- MODIFICATION ---
-                    // Reset the submit button's state when starting a new booking
-                    if (elements.finalBookAppointmentBtn) {
-                        elements.finalBookAppointmentBtn.disabled = false;
-                        elements.finalBookAppointmentBtn.innerHTML = 'Book Appointment';
-                    }
-                    // --- END MODIFICATION ---
-
-                    showInitialPage();
-                });
-            }
-
             if (elements.bookingDateInput) {
-                // Pass the single fetched time to the render function
                 elements.bookingDateInput.addEventListener('change', (e) => renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, e.target.value, elements.finalBookAppointmentBtn, pageLoadTimeCST));
             }
 
@@ -883,18 +880,14 @@
                 if (elements.selectedPackageDisplay) elements.selectedPackageDisplay.textContent = packageType;
                 if (elements.selectedPackageTypeInput) elements.selectedPackageTypeInput.value = packageType;
                 if (elements.selectedPackagePriceInput) elements.selectedPackagePriceInput.value = packagePrice;
-                showBookingForm(); 
-                const todayFormatted = new Date().toISOString().split('T')[0];
-                if (elements.bookingDateInput) elements.bookingDateInput.value = todayFormatted;
-                renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, todayFormatted, elements.finalBookAppointmentBtn, pageLoadTimeCST);
+                showBookingForm();
+                checkAndSetInitialDate();
             }
 
-            // --- MODIFICATION: Updated handleBooking function ---
             async function handleBooking(e, endpoint, messageEl, selectedTimeInputId) { 
                 e.preventDefault();
                 const submitButton = elements.finalBookAppointmentBtn;
 
-                // Disable button and show processing state
                 submitButton.disabled = true;
                 submitButton.innerHTML = `
                     <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -962,20 +955,25 @@
 
                     if (ok) {
                         hideAllMajorSections();
-                        if (elements.confirmationMessage) {
-                            elements.confirmationMessage.style.display = 'block';
-                            if (elements.totalPriceDisplay) elements.totalPriceDisplay.textContent = `$${parseFloat(packagePrice).toFixed(2)}`;
+                        if (elements.confirmationSection) {
+                            elements.confirmationSection.style.display = 'block';
+                            elements.policyText.style.display = 'block';
+
                             let paymentRedirectLink = '#';
                             const priceKey = String(packagePrice); 
                             if (paymentLinks[packageType] && paymentLinks[packageType][priceKey]) {
                                 paymentRedirectLink = paymentLinks[packageType][priceKey];
                             }
+                            
                             if (elements.payNowButton) {
+                                elements.payNowButton.textContent = `Pay in full ($${parseFloat(packagePrice).toFixed(2)})`;
                                 elements.payNowButton.onclick = () => { window.open(paymentRedirectLink, '_blank'); };
+                            }
+                            if (elements.payDepositButton) {
+                                elements.payDepositButton.onclick = () => { window.open('https://pay.michieauto.com/deposit', '_blank'); };
                             }
                         }
                         if (elements.stickyBookNowFooter) elements.stickyBookNowFooter.style.display = 'none';
-                        // On success, we don't restore the button because the view changes.
                     } else {
                         if (messageEl) { messageEl.textContent = data.message || 'An error occurred during booking.'; messageEl.style.color = 'red'; }
                         restoreButton();
@@ -989,21 +987,17 @@
                     restoreButton();
                 }
             }
-            // --- END MODIFICATION ---
             
-            // --- REVISED TIME BUTTON LOGIC ---
             function renderTimeButtons(container, hiddenInput, selectedDateStr, finalBookButton, now) {
-                if (!container) return;
+                if (!container) return false;
                 container.innerHTML = '';
             
-                // The time to compare against (with a 2-hour buffer)
+                let hasAvailableSlots = false;
                 const twoHoursInMs = 2 * 60 * 60 * 1000;
                 const comparisonTime = new Date(now.getTime() + twoHoursInMs);
             
-                // Get the selected date and today's date, ignoring the time part for accurate day-to-day comparison.
-                const selectedDate = new Date(selectedDateStr + 'T00:00:00');
-                const today = new Date();
-                today.setHours(0, 0, 0, 0); // Normalize today to the start of the day
+                const selectedDate = new Date(selectedDateStr + 'T00:00:00-05:00'); // Assuming CST/CDT
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
             
                 const isToday = selectedDate.getTime() === today.getTime();
             
@@ -1013,19 +1007,17 @@
                     button.textContent = formatTimeDisplay(time);
                     button.dataset.time = time;
             
-                    // Create a full Date object for the appointment slot
                     const [hour, minute] = time.split(':').map(Number);
                     const appointmentDateTime = new Date(selectedDate);
                     appointmentDateTime.setHours(hour, minute);
             
-                    // A slot is disabled if it's for today AND it's earlier than the 2-hour buffer time.
-                    // For any future date, no slots are disabled.
                     const isDisabled = isToday && (appointmentDateTime < comparisonTime);
             
                     if (isDisabled) {
                         button.className = 'time-button disabled';
                         button.disabled = true;
                     } else {
+                        hasAvailableSlots = true;
                         button.className = 'time-button';
                         button.addEventListener('click', () => {
                             const currentlySelected = container.querySelector('.time-button.selected');
@@ -1040,6 +1032,29 @@
             
                 if (hiddenInput) hiddenInput.value = '';
                 if (finalBookButton) finalBookButton.style.display = 'none';
+                return hasAvailableSlots;
+            }
+
+            function checkAndSetInitialDate() {
+                const today = new Date(pageLoadTimeCST);
+                const todayFormatted = today.toISOString().split('T')[0];
+
+                const todayHasSlots = renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, todayFormatted, elements.finalBookAppointmentBtn, pageLoadTimeCST);
+
+                if (todayHasSlots) {
+                    if (elements.bookingDateInput) {
+                        elements.bookingDateInput.value = todayFormatted;
+                    }
+                } else {
+                    const tomorrow = new Date(today);
+                    tomorrow.setDate(today.getDate() + 1);
+                    const tomorrowFormatted = tomorrow.toISOString().split('T')[0];
+                    
+                    if (elements.bookingDateInput) {
+                        elements.bookingDateInput.value = tomorrowFormatted;
+                    }
+                    renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, tomorrowFormatted, elements.finalBookAppointmentBtn, pageLoadTimeCST);
+                }
             }
 
             function formatTimeDisplay(time24hr) {
@@ -1051,14 +1066,10 @@
             
             const todayFormatted = new Date().toISOString().split('T')[0];
             if (elements.bookingDateInput) {
-                elements.bookingDateInput.value = todayFormatted;
-                elements.bookingDateInput.min = todayFormatted; // Prevent selecting past dates
+                elements.bookingDateInput.min = todayFormatted;
             }
-            // Initial render of time buttons using the single fetched time
-            renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, todayFormatted, elements.finalBookAppointmentBtn, pageLoadTimeCST);
         }
 
-        // Run the main app logic when the page is ready.
         document.addEventListener('DOMContentLoaded', initializeApp);
     </script>
 </body>
