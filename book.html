@@ -966,7 +966,7 @@
                             }
                             
                             if (elements.payNowButton) {
-                                elements.payNowButton.textContent = `Pay in full ($${parseFloat(packagePrice).toFixed(2)})`;
+                                elements.payNowButton.textContent = 'Pay in full';
                                 elements.payNowButton.onclick = () => { window.open(paymentRedirectLink, '_blank'); };
                             }
                             if (elements.payDepositButton) {
