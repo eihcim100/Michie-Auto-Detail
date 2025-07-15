@@ -495,6 +495,26 @@
                                 <input type="hidden" id="selected-financing-time" name="financing-booking-time" required>
                             </div>
                         </div>
+                        
+                        <!-- START: SMS Compliance Section for Financing -->
+                        <div class="mt-6 p-4 border border-gray-200 rounded-lg bg-gray-50">
+                            <label class="block text-sm font-medium text-gray-700 mb-3">SMS Notifications & Terms</label>
+                            <div class="space-y-3">
+                                <label class="flex items-center space-x-3 cursor-pointer text-gray-700">
+                                    <input type="checkbox" id="financing-sms-consent-transactional" class="rounded h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                    <span>Appointment reminders & account updates.</span>
+                                </label>
+                                <label class="flex items-center space-x-3 cursor-pointer text-gray-700">
+                                    <input type="checkbox" id="financing-sms-consent-marketing" class="rounded h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                    <span>Promotional offers & discounts.</span>
+                                </label>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-4">
+                                By providing your phone number and checking the boxes, you agree to receive text messages from Michie Auto Detailing for the purposes selected. Consent is not a condition of purchase. Message frequency will vary. Msg & data rates may apply. Reply HELP for help or STOP to cancel. View our <a href="https://michieauto.com/smstos" class="text-blue-600 hover:underline" target="_blank">Terms of Service</a> & <a href="https://michieauto.com/smsprivacy" class="text-blue-600 hover:underline" target="_blank">Privacy Policy</a>.
+                            </p>
+                        </div>
+                        <!-- END: SMS Compliance Section for Financing -->
+
                         <input type="hidden" id="financing-selected-package-type" name="package-type" value="Financed auto detail">
                         <input type="hidden" id="financing-selected-package-price" name="package-price" value="297">
                         <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg">Book Financed Appointment</button>
@@ -513,14 +533,12 @@
                         <label for="vehicle-select" class="block text-sm font-medium text-gray-700 mb-1">Select Vehicle</label>
                         <div class="p-3 bg-gray-100 rounded-md">
                             <select id="vehicle-select" name="vehicle-select" class="w-full p-2 border border-gray-300 rounded-lg"></select>
-                            <!-- Removed manage-vehicle-btn as it's now in edit profile -->
                         </div>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Service Address</label>
                          <div class="p-3 bg-gray-100 rounded-md flex justify-between items-center">
                             <span id="primary-address-display"></span>
-                            <!-- Removed edit-address-btn as it's now in edit profile -->
                         </div>
                     </div>
                      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -534,6 +552,26 @@
                             <input type="hidden" id="selected-booking-time" name="booking-time" required>
                         </div>
                     </div>
+
+                    <!-- START: SMS Compliance Section for Standard Booking -->
+                    <div class="mt-6 p-4 border border-gray-200 rounded-lg bg-gray-50">
+                        <label class="block text-sm font-medium text-gray-700 mb-3">SMS Notifications & Terms</label>
+                        <div class="space-y-3">
+                            <label class="flex items-center space-x-3 cursor-pointer text-gray-700">
+                                <input type="checkbox" id="standard-sms-consent-transactional" class="rounded h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                <span>Appointment reminders & account updates.</span>
+                            </label>
+                            <label class="flex items-center space-x-3 cursor-pointer text-gray-700">
+                                <input type="checkbox" id="standard-sms-consent-marketing" class="rounded h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                <span>Promotional offers & discounts.</span>
+                            </label>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-4">
+                            By providing your phone number and checking the boxes, you agree to receive text messages from Michie Auto Detailing for the purposes selected. Consent is not a condition of purchase. Message frequency will vary. Msg & data rates may apply. Reply HELP for help or STOP to cancel. View our <a href="https://michieauto.com/smstos" class="text-blue-600 hover:underline" target="_blank">Terms of Service</a> & <a href="https://michieauto.com/smsprivacy" class="text-blue-600 hover:underline" target="_blank">Privacy Policy</a>.
+                        </p>
+                    </div>
+                    <!-- END: SMS Compliance Section for Standard Booking -->
+
                     <input type="hidden" id="selected-package-type" name="package-type">
                     <input type="hidden" id="selected-package-price" name="package-price">
                     <button type="submit" id="final-book-appointment-btn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg hidden">Book Appointment</button>
@@ -635,18 +673,16 @@
                 loginMessage: document.getElementById('login-message'),
                 customerNameSpan: document.getElementById('customer-name'),
                 primaryAddressDisplay: document.getElementById('primary-address-display'),
-                // Removed manageVehicleBtn and editAddressBtn from here
-                vehicleManagementSection: document.getElementById('vehicle-management-forms-container'), // Renamed ID
-                addressEditSection: document.getElementById('address-edit-section'), // This section is no longer directly used, but kept for reference
+                vehicleManagementSection: document.getElementById('vehicle-management-forms-container'),
+                addressEditSection: document.getElementById('address-edit-section'),
                 vehicleMessage: document.getElementById('vehicle-message'),
-                addressMessage: document.getElementById('address-message'), // This message is for the old address edit section
+                addressMessage: document.getElementById('address-message'),
                 bookingMessage: document.getElementById('booking-message'),
                 bookingForm: document.getElementById('booking-form'),
-                // Removed editAddressForm from here
                 upcomingAppointmentsSection: document.getElementById('upcoming-appointments-section'),
                 upcomingAppointmentsList: document.getElementById('upcoming-appointments-list'),
-                noUpcomingAppointmentsMessage: document.getElementById('no-upcoming-appointments-message'), // New element
-                upcomingAppointmentsHeader: document.getElementById('upcoming-appointments-header'), // New element
+                noUpcomingAppointmentsMessage: document.getElementById('no-upcoming-appointments-message'),
+                upcomingAppointmentsHeader: document.getElementById('upcoming-appointments-header'),
                 viewPastAppointmentsBtn: document.getElementById('view-past-appointments-btn'),
                 pastAppointmentsSection: document.getElementById('past-appointments-section'),
                 pastAppointmentsList: document.getElementById('past-appointments-list'),
@@ -706,24 +742,13 @@
             let customerData = {}; 
             const availableTimes = ['09:00', '11:00', '12:00', '14:00', '16:00', '17:00', '18:00'];
 
-            // Define payment links
             const paymentLinks = {
-                "Level 1 Detail": {
-                    "149": "https://pay.michieauto.com/lvl1sedan",
-                    "199": "https://pay.michieauto.com/lvl1suv" // Covers SUV and Truck for Level 1
-                },
-                "Level 2 Detail": {
-                    "249": "https://pay.michieauto.com/lvl2sedan",
-                    "299": "https://pay.michieauto.com/lvl2suv" // Covers SUV and Truck for Level 2
-                },
-                "Level 3 Detail": {
-                    "349": "https://pay.michieauto.com/lvl3sedan",
-                    "399": "https://pay.michieauto.com/lvl3suv" // Covers SUV and Truck for Level 3
-                },
+                "Level 1 Detail": { "149": "https://pay.michieauto.com/lvl1sedan", "199": "https://pay.michieauto.com/lvl1suv" },
+                "Level 2 Detail": { "249": "https://pay.michieauto.com/lvl2sedan", "299": "https://pay.michieauto.com/lvl2suv" },
+                "Level 3 Detail": { "349": "https://pay.michieauto.com/lvl3sedan", "399": "https://pay.michieauto.com/lvl3suv" },
                 "Financed auto detail": "https://pay.michieauto.com/bnpl1"
             };
 
-            // --- API Call Function ---
             async function apiCall(endpoint, method, payload = null) {
                 const token = localStorage.getItem('customerToken');
                 const headers = { 'Content-Type': 'application/json' };
@@ -745,13 +770,12 @@
                 }
             }
             
-            // --- UI Control Functions ---
             function hideAllMajorSections() {
                 const allSections = [
                     elements.vehicleTypeSelection, elements.packageSelectionContainer, 
                     elements.bookingFormSection, elements.financingFlowContainer, 
                     elements.confirmationMessage, elements.pastAppointmentsSection, 
-                    elements.editProfileSection // Include the new edit profile section
+                    elements.editProfileSection
                 ];
                 allSections.forEach(el => {
                     if (el) el.style.display = 'none';
@@ -760,7 +784,6 @@
 
             function showStartPage() {
                 hideAllMajorSections();
-                // Always show the upcoming appointments section, its content will be conditional
                 elements.upcomingAppointmentsSection.style.display = 'block'; 
                 elements.vehicleTypeSelection.style.display = 'block';
                 document.querySelectorAll('.vehicle-type-button.active').forEach(b => b.classList.remove('active'));
@@ -769,7 +792,6 @@
             function showBookingForm() {
                 hideAllMajorSections();
                 elements.bookingFormSection.style.display = 'block';
-                // Also ensure upcoming appointments are visible when booking form is shown
                 elements.upcomingAppointmentsSection.style.display = 'block'; 
             }
 
@@ -799,24 +821,18 @@
 
             function renderDashboard() {
                 elements.customerNameSpan.textContent = customerData.full_name;
-                
-                // Populate edit profile fields
                 elements.editFullNameInput.value = customerData.full_name || '';
                 elements.editPhoneInput.value = customerData.phone || '';
                 elements.editEmailInput.value = customerData.email || '';
                 elements.editAddressInput.value = customerData.address || '';
-
                 const address = customerData.address || 'No address on file.';
                 elements.primaryAddressDisplay.textContent = address;
                 elements.financingPrimaryAddressDisplay.textContent = address;
-                
                 renderVehicleDropdown(elements.vehicleSelect);
                 renderVehicleDropdown(elements.financingVehicleSelect);
-
-                renderVehicleManagementForms(); // Now called to populate the edit profile section
+                renderVehicleManagementForms();
                 renderUpcomingAppointments();
                 renderPastAppointments();
-
                 const todayFormatted = new Date().toISOString().split('T')[0];
                 elements.bookingDateInput.value = todayFormatted;
                 elements.financingBookingDateInput.value = todayFormatted;
@@ -847,14 +863,12 @@
                 elements.installmentsList.innerHTML = ''; 
                 const today = new Date();
                 const formatter = new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-
                 const createInstallmentDiv = (text, dateText) => {
                     const div = document.createElement('div');
                     div.className = 'flex justify-between items-center bg-white p-4 rounded-md shadow-sm';
                     div.innerHTML = `<span class="font-medium text-gray-800 text-lg">${text}</span><span class="text-gray-600 font-semibold">${dateText}</span>`;
                     return div;
                 };
-                
                 elements.installmentsList.appendChild(createInstallmentDiv('Payment 1: $99', `${formatter.format(today)} (Today)`));
                 const payment2Date = new Date(today);
                 payment2Date.setDate(today.getDate() + 14);
@@ -871,7 +885,6 @@
                 hideAllMajorSections();
             }
 
-            // --- Event Listeners ---
             elements.loginButton.addEventListener('click', async () => {
                 const { ok, data } = await apiCall('/customer/login', 'POST', {
                     email: document.getElementById('login-email').value,
@@ -887,60 +900,45 @@
             });
 
             elements.logoutButton.addEventListener('click', logout);
-            
-            // Main navigation
             elements.selectCarBtn.addEventListener('click', (e) => showPackageSelection('sedan', e.target));
             elements.selectTruckBtn.addEventListener('click', (e) => showPackageSelection('suv-truck', e.target));
             elements.selectSuvBtn.addEventListener('click', (e) => showPackageSelection('suv-truck', e.target));
-
             elements.financeOptionBtn.addEventListener('click', () => {
                 hideAllMajorSections();
                 elements.financingFlowContainer.style.display = 'block';
                 elements.financingPackageDetails.style.display = 'block';
                 elements.financingTerms.style.display = 'none';
                 elements.financingBookingFormSection.style.display = 'none';
-                elements.upcomingAppointmentsSection.style.display = 'none'; // Hide upcoming appointments when in financing flow
+                elements.upcomingAppointmentsSection.style.display = 'none';
             });
-
-            // Financing flow navigation
             elements.financePackageNextBtn.addEventListener('click', () => {
                 elements.financingPackageDetails.style.display = 'none';
                 elements.financingTerms.style.display = 'block';
                 renderPaymentSchedule();
             });
-
             elements.financeTermsNextBtn.addEventListener('click', () => {
                 elements.financingTerms.style.display = 'none';
                 elements.financingBookingFormSection.style.display = 'block';
             });
             
-            // Form Submissions
-            elements.bookingForm.addEventListener('submit', (e) => handleBooking(e, '/customer/appointment', elements.bookingMessage, 'selected-booking-time', 'vehicle-select'));
-            elements.financingBookingForm.addEventListener('submit', (e) => handleBooking(e, '/customer/appointment/financing', elements.financingBookingMessage, 'selected-financing-time', 'financing-vehicle-select'));
+            elements.bookingForm.addEventListener('submit', handleBooking);
+            elements.financingBookingForm.addEventListener('submit', handleBooking);
 
-            // NEW: Edit Profile Button and its done button
             elements.editProfileBtn.addEventListener('click', () => {
                 hideAllMajorSections();
                 elements.editProfileSection.style.display = 'block';
-                elements.upcomingAppointmentsSection.style.display = 'none'; // Hide upcoming appointments when editing profile
-                renderVehicleManagementForms(); // Re-render to ensure forms are up-to-date
+                elements.upcomingAppointmentsSection.style.display = 'none';
+                renderVehicleManagementForms();
             });
-            elements.editProfileDoneBtn.addEventListener('click', showStartPage); // Go back to main dashboard
-
-            // Event listener for updating customer details (name, phone, email, address)
+            elements.editProfileDoneBtn.addEventListener('click', showStartPage);
             elements.editCustomerDetailsForm.addEventListener('submit', handleCustomerDetailsUpdate);
-            // Event listener for changing password
             elements.changePasswordForm.addEventListener('submit', handleChangePassword);
-
             elements.viewPastAppointmentsBtn.addEventListener('click', () => { 
                 elements.pastAppointmentsSection.style.display = elements.pastAppointmentsSection.style.display === 'block' ? 'none' : 'block'; 
             });
-
-            // Date input changes
             elements.bookingDateInput.addEventListener('change', (e) => renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, e.target.value));
             elements.financingBookingDateInput.addEventListener('change', (e) => renderTimeButtons(elements.financingTimeButtonsContainer, elements.selectedFinancingTimeInput, e.target.value));
             
-            // Package selection event delegation
             elements.packageSelectionContainer.addEventListener('click', (e) => {
                 if (e.target.classList.contains('select-package-btn')) {
                     const packageType = e.target.dataset.packageType;
@@ -956,7 +954,6 @@
                 }
             });
 
-            // --- Core Logic Functions ---
             function showPackageSelection(vehicleCategory, clickedButton) {
                 hideAllMajorSections();
                 elements.packageSelectionContainer.style.display = 'block';
@@ -964,7 +961,7 @@
                 clickedButton.classList.add('active');
                 elements.sedanPackagesDisplay.style.display = vehicleCategory === 'sedan' ? 'grid' : 'none';
                 elements.suvTruckPackagesDisplay.style.display = vehicleCategory === 'suv-truck' ? 'grid' : 'none';
-                elements.upcomingAppointmentsSection.style.display = 'none'; // Hide upcoming appointments when selecting package
+                elements.upcomingAppointmentsSection.style.display = 'none';
             }
 
             function handlePackageSelection(packageType, packagePrice) {
@@ -974,10 +971,16 @@
                 showBookingForm();
             }
 
-            async function handleBooking(e, endpoint, messageEl, selectedTimeInputId, vehicleSelectId) {
+            async function handleBooking(e) {
                 e.preventDefault();
                 const form = e.target;
-                const selectedTime = document.getElementById(selectedTimeInputId).value;
+                const isFinancing = form.id === 'financing-booking-form';
+                const endpoint = isFinancing ? '/customer/appointment/financing' : '/customer/appointment';
+                const messageEl = isFinancing ? elements.financingBookingMessage : elements.bookingMessage;
+                const timeInputId = isFinancing ? 'selected-financing-time' : 'selected-booking-time';
+                const vehicleSelectId = isFinancing ? 'financing-vehicle-select' : 'vehicle-select';
+                
+                const selectedTime = document.getElementById(timeInputId).value;
                 if (!selectedTime) {
                     messageEl.textContent = 'Please select an appointment time.';
                     messageEl.style.color = 'red';
@@ -992,13 +995,17 @@
                 const selectedVehicle = customerData.vehicles.find(v => v.id === selectedVehicleId);
                 const packageType = form.querySelector('input[name="package-type"]').value;
                 const dealName = selectedVehicle ? `${packageType} ${selectedVehicle.make} ${selectedVehicle.model}` : `${packageType} Detail`;
+                
                 const payload = {
                     vehicle_id: selectedVehicleId,
                     date: form.querySelector('input[type="date"]').value,
                     time: selectedTime,
                     package_type: packageType,
                     package_price: form.querySelector('input[name="package-price"]').value,
-                    deal_name: dealName
+                    deal_name: dealName,
+                    // Add SMS consent to payload
+                    sms_transactional_opt_in: form.querySelector(isFinancing ? '#financing-sms-consent-transactional' : '#standard-sms-consent-transactional').checked,
+                    sms_marketing_opt_in: form.querySelector(isFinancing ? '#financing-sms-consent-marketing' : '#standard-sms-consent-marketing').checked
                 };
 
                 const { ok, data } = await apiCall(endpoint, 'POST', payload);
@@ -1013,7 +1020,6 @@
                 }
             }
             
-            // --- Helper Functions (Time Buttons, Vehicle/Address Management, etc.) ---
             function renderTimeButtons(container, hiddenInput, selectedDate) {
                 if (!container) return;
                 container.innerHTML = '';
@@ -1030,7 +1036,6 @@
                     button.type = 'button';
                     button.textContent = formatTimeDisplay(time);
                     button.dataset.time = time;
-
                     let isDisabled = false;
                     if (isToday) {
                         const [appointmentHour] = time.split(':').map(Number);
@@ -1040,7 +1045,6 @@
                             isDisabled = true;
                         }
                     }
-
                     if (isDisabled) {
                         button.className = 'px-4 py-2 rounded-lg border-2 font-medium cursor-not-allowed transition-all duration-300 bg-gray-200 text-gray-400 border-gray-300 shadow-inner inline-flex justify-center items-center whitespace-nowrap';
                         button.disabled = true;
@@ -1076,65 +1080,50 @@
             function renderUpcomingAppointments() {
                 elements.upcomingAppointmentsList.innerHTML = '';
                 if (customerData.upcoming_appointments && customerData.upcoming_appointments.length > 0) {
-                    // Filter appointments to only show those associated with the current user's vehicles
                     const userAppointments = customerData.upcoming_appointments.filter(appt =>
                         customerData.vehicles.some(vehicle => vehicle.id === appt.vehicle_id)
                     );
-
                     if (userAppointments.length > 0) {
                         elements.upcomingAppointmentsHeader.textContent = 'Upcoming Appointments';
                         elements.upcomingAppointmentsList.style.display = 'block';
                         elements.noUpcomingAppointmentsMessage.style.display = 'none';
-
-                        userAppointments.forEach(appt => { // Iterate over filtered appointments
+                        userAppointments.forEach(appt => {
                             const apptItem = document.createElement('div');
                             apptItem.className = 'p-3 bg-white rounded-md shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center';
-                            const vehicle = customerData.vehicles.find(v => v.id === appt.vehicle_id); // This will now always find a vehicle
-                            const vehicleInfo = vehicle ? `${vehicle.year} ${vehicle.make} ${vehicle.model}` : 'Vehicle N/A'; // Should not be N/A anymore
+                            const vehicle = customerData.vehicles.find(v => v.id === appt.vehicle_id);
+                            const vehicleInfo = vehicle ? `${vehicle.year} ${vehicle.make} ${vehicle.model}` : 'Vehicle N/A';
                             const apptDateTime = new Date(`${appt.date}T${appt.time}`);
-                            
                             let paymentLink = '#';
                             let buttonText = 'Pay Now';
                             let buttonClass = 'pay-button';
-
                             if (appt.package_type === "Financed auto detail") {
                                 paymentLink = paymentLinks["Financed auto detail"];
                                 buttonText = 'Pay Down Payment';
                                 buttonClass += ' financing';
                             } else {
-                                // Ensure package_price is a string to match keys in paymentLinks
                                 const priceKey = String(appt.package_price); 
                                 if (paymentLinks[appt.package_type] && paymentLinks[appt.package_type][priceKey]) {
                                     paymentLink = paymentLinks[appt.package_type][priceKey];
                                 } else {
-                                    console.warn(`No payment link found for package type: ${appt.package_type} and price: ${appt.package_price}`);
-                                    // Fallback or hide button if link is not found
-                                    paymentLink = '#'; // Or set to null to hide button
+                                    paymentLink = '#';
                                 }
                             }
-
                             apptItem.innerHTML = `
                                 <div>
                                     <p class="font-semibold text-gray-800">${appt.package_type} - ${vehicleInfo}</p>
                                     <p class="text-sm text-gray-600">Date: ${apptDateTime.toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'short' })}</p>
                                     <p class="text-xl font-extrabold text-green-700 mt-1">Price: $${appt.package_price}</p>
                                 </div>
-                                ${paymentLink !== '#' ? `
-                                    <a href="${paymentLink}" target="_blank" class="${buttonClass}">
-                                        ${buttonText}
-                                    </a>
-                                ` : ''}
+                                ${paymentLink !== '#' ? `<a href="${paymentLink}" target="_blank" class="${buttonClass}">${buttonText}</a>` : ''}
                             `;
                             elements.upcomingAppointmentsList.appendChild(apptItem);
                         });
                     } else {
-                        // If after filtering, no appointments are left for this user
                         elements.upcomingAppointmentsHeader.textContent = 'No Upcoming Appointments';
                         elements.upcomingAppointmentsList.style.display = 'none';
                         elements.noUpcomingAppointmentsMessage.style.display = 'block';
                     }
                 } else {
-                    // If initially no appointments are fetched
                     elements.upcomingAppointmentsHeader.textContent = 'No Upcoming Appointments';
                     elements.upcomingAppointmentsList.style.display = 'none';
                     elements.noUpcomingAppointmentsMessage.style.display = 'block';
@@ -1147,13 +1136,12 @@
                     const userPastAppointments = customerData.past_appointments.filter(appt =>
                         customerData.vehicles.some(vehicle => vehicle.id === appt.vehicle_id)
                     );
-
                     if (userPastAppointments.length > 0) {
                         userPastAppointments.forEach(appt => {
                             const apptItem = document.createElement('div');
                             apptItem.className = 'p-3 bg-gray-100 rounded-md';
                             const vehicle = customerData.vehicles.find(v => v.id === appt.vehicle_id);
-                            const vehicleInfo = vehicle ? `${vehicle.year} ${vehicle.make} ${vehicle.model}` : 'Vehicle N/A'; // Should not be N/A anymore
+                            const vehicleInfo = vehicle ? `${vehicle.year} ${vehicle.make} ${vehicle.model}` : 'Vehicle N/A';
                             const apptDateTime = new Date(`${appt.date}T${appt.time}`);
                             apptItem.innerHTML = `<p class="font-semibold">${appt.package_type} - ${vehicleInfo}</p><p>Date: ${apptDateTime.toLocaleString('en-US', { dateStyle: 'long' })}</p><p>Price: $${appt.package_price}</p>`;
                             elements.pastAppointmentsList.appendChild(apptItem);
@@ -1168,11 +1156,9 @@
 
             function renderVehicleManagementForms() {
                 elements.vehicleMessage.textContent = ''; 
-                elements.vehicleManagementSection.innerHTML = ``; // Clear previous forms
-                
+                elements.vehicleManagementSection.innerHTML = ``;
                 const primaryVehicle = customerData.vehicles.find(v => v.is_primary);
                 const secondaryVehicle = customerData.vehicles.find(v => !v.is_primary);
-                
                 if(primaryVehicle) elements.vehicleManagementSection.appendChild(createVehicleForm('edit-primary', primaryVehicle));
                 if(secondaryVehicle) elements.vehicleManagementSection.appendChild(createVehicleForm('edit-secondary', secondaryVehicle));
                 if(customerData.vehicles.length < 2) elements.vehicleManagementSection.appendChild(createVehicleForm('add'));
@@ -1197,20 +1183,18 @@
                     const inputs = e.target.querySelectorAll('input');
                     const payload = { year: inputs[0].value, make: inputs[1].value, model: inputs[2].value };
                     if (isAdd) await handleAddVehicle(payload); else await handleVehicleUpdate(vehicle.id, payload);
-                    // After update/add/delete, re-render the profile section to reflect changes
                     await fetchCustomerData(localStorage.getItem('customerToken'));
-                    elements.customerDetailsMessage.textContent = ''; // Clear other messages
-                    elements.passwordMessage.textContent = ''; // Clear other messages
-                    elements.editProfileSection.style.display = 'block'; // Keep profile section open
+                    elements.customerDetailsMessage.textContent = '';
+                    elements.passwordMessage.textContent = '';
+                    elements.editProfileSection.style.display = 'block';
                 });
                 if (!isAdd) {
                     form.querySelector('button[type="button"]').addEventListener('click', async () => {
                         await handleVehicleDelete(vehicle.id);
-                        // After update/add/delete, re-render the profile section to reflect changes
                         await fetchCustomerData(localStorage.getItem('customerToken'));
-                        elements.customerDetailsMessage.textContent = ''; // Clear other messages
-                        elements.passwordMessage.textContent = ''; // Clear other messages
-                        elements.editProfileSection.style.display = 'block'; // Keep profile section open
+                        elements.customerDetailsMessage.textContent = '';
+                        elements.passwordMessage.textContent = '';
+                        elements.editProfileSection.style.display = 'block';
                     });
                 }
                 return form;
@@ -1242,13 +1226,12 @@
                     email: elements.editEmailInput.value,
                     address: elements.editAddressInput.value
                 };
-
-                const { ok, data } = await apiCall('/customer/data', 'PUT', payload); // Assuming PUT /customer/data updates details
+                const { ok, data } = await apiCall('/customer/data', 'PUT', payload);
                 elements.customerDetailsMessage.textContent = data.message;
                 elements.customerDetailsMessage.style.color = ok ? 'green' : 'red';
                 if (ok) {
-                    await fetchCustomerData(localStorage.getItem('customerToken')); // Re-fetch to update dashboard
-                    elements.editProfileSection.style.display = 'block'; // Keep profile section open
+                    await fetchCustomerData(localStorage.getItem('customerToken'));
+                    elements.editProfileSection.style.display = 'block';
                 }
             }
 
@@ -1256,7 +1239,6 @@
                 e.preventDefault();
                 const newPassword = elements.newPasswordInput.value;
                 const confirmPassword = elements.confirmPasswordInput.value;
-
                 if (newPassword.length < 6) {
                     elements.passwordMessage.textContent = 'Password must be at least 6 characters long.';
                     elements.passwordMessage.style.color = 'red';
@@ -1267,14 +1249,13 @@
                     elements.passwordMessage.style.color = 'red';
                     return;
                 }
-
-                const { ok, data } = await apiCall('/customer/password', 'PUT', { new_password: newPassword }); // Assuming PUT /customer/password
+                const { ok, data } = await apiCall('/customer/password', 'PUT', { new_password: newPassword });
                 elements.passwordMessage.textContent = data.message;
                 elements.passwordMessage.style.color = ok ? 'green' : 'red';
                 if (ok) {
                     elements.newPasswordInput.value = '';
                     elements.confirmPasswordInput.value = '';
-                    elements.editProfileSection.style.display = 'block'; // Keep profile section open
+                    elements.editProfileSection.style.display = 'block';
                 }
             }
 
