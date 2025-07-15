@@ -104,7 +104,7 @@
                         <input type="text" v-model="form.zipCode" placeholder="Enter your zip code" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
                     </div>
 
-                    <!-- NEW: SMS Notifications & Terms -->
+                    <!-- SMS Notifications & Terms -->
                     <div class="space-y-4 mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
                         <h3 class="text-lg font-semibold text-gray-800">SMS Notifications & Terms</h3>
                         <div class="space-y-3">
@@ -161,7 +161,7 @@
                     const autocompleteInput = ref(null);
                     let autocomplete = null;
 
-                    // NEW: SMS Consent state
+                    // SMS Consent state (for UI only)
                     const smsConsent = reactive({
                         transactional: false,
                         promotional: false
@@ -241,12 +241,8 @@
                                 year: form.vehicle2Year,
                                 make: form.vehicle2Make,
                                 model: form.vehicle2Model,
-                            } : null,
-                            // ADDED: SMS consent data
-                            sms_consent: {
-                                transactional: smsConsent.transactional,
-                                promotional: smsConsent.promotional
-                            }
+                            } : null
+                            // REMOVED: The sms_consent object is no longer sent to the backend.
                         };
 
                         console.log("Submitting form data:", submissionData);
