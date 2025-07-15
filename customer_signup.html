@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Your Michie Auto Detailing Account (Vue.js)</title>
+    <title>Create Your Michie Auto Detailing Account</title>
 
     <!-- 1. Load CSS, Fonts, and Vue.js -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -119,8 +119,8 @@
                         </div>
                         <p class="text-sm text-gray-500 pt-2">
                             By providing your phone number and checking the boxes, you agree to receive text messages from Michie Auto Detailing for the purposes selected. Consent is not a condition of purchase. Message frequency will vary. Msg & data rates may apply. Reply HELP for help or STOP to cancel. View our 
-                            <a href="#" class="text-blue-600 hover:underline">Terms of Service</a> & 
-                            <a href="#" class="text-blue-600 hover:underline">Privacy Policy</a>.
+                            <a href="https://michieauto.com/smstos" class="text-blue-600 hover:underline" target="_blank">Terms of Service</a> & 
+                            <a href="https://michieauto.com/smsprivacy" class="text-blue-600 hover:underline" target="_blank">Privacy Policy</a>.
                         </p>
                     </div>
 
@@ -161,7 +161,7 @@
                     const autocompleteInput = ref(null);
                     let autocomplete = null;
 
-                    // SMS Consent state (for UI only)
+                    // SMS Consent state
                     const smsConsent = reactive({
                         transactional: false,
                         promotional: false
@@ -241,11 +241,12 @@
                                 year: form.vehicle2Year,
                                 make: form.vehicle2Make,
                                 model: form.vehicle2Model,
-                            } : null
-                            // REMOVED: The sms_consent object is no longer sent to the backend.
+                            } : null,
+                            // *** ADDED SMS CONSENT TO PAYLOAD ***
+                            sms_transactional_opt_in: smsConsent.transactional,
+                            sms_marketing_opt_in: smsConsent.promotional
                         };
 
-                        console.log("Submitting form data:", submissionData);
                         const API_BASE_URL = 'https://michie-detailing-admin.onrender.com';
 
                         try {
@@ -274,7 +275,7 @@
 
                     return {
                         form, address, showSecondVehicle, isAddressConfirmed, formMessage, isSubmitting,
-                        passwordReqs, handleSubmit, autocompleteInput, smsConsent // Expose smsConsent to the template
+                        passwordReqs, handleSubmit, autocompleteInput, smsConsent
                     };
                 }
             });
