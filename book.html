@@ -948,7 +948,10 @@
                         vehicle_make: vehicleMake, vehicle_model: vehicleModel, date: bookingDate, time: selectedTime,
                         package_type: packageType, package_price: packagePrice,
                         deal_name: `${packageType || 'Unknown Package'} ${vehicleMake || ''} ${vehicleModel || ''}`,
-                        offer_code: "OnlineBooking", create_account: createAccount, password: password 
+                        offer_code: "OnlineBooking", create_account: createAccount, password: password,
+                        // *** ADDED SMS CONSENT TO PAYLOAD ***
+                        sms_transactional_opt_in: document.getElementById('sms-consent-transactional').checked,
+                        sms_marketing_opt_in: document.getElementById('sms-consent-marketing').checked
                     };
 
                     const { ok, data } = await apiCall(endpoint, 'POST', payload);
