@@ -610,7 +610,7 @@
                         <label for="vehicle-make" class="block text-sm font-medium text-gray-700 mb-1">Vehicle Make</label>
                         <select id="vehicle-make" required class="w-full px-3 py-2 border rounded-lg">
                             <option value="">Select Make</option>
-                            <option value="Acura">Acura</option>
+                            <option value="Acura">Aura</option>
                             <option value="Audi">Audi</option>
                             <option value="BMW">BMW</option>
                             <option value="Buick">Buick</option>
@@ -1061,10 +1061,21 @@
 
             // --- Scheduling Flow Functions ---
             function showSchedulingVehicleTypeSelection() {
-                hideAllSections();
+                // Only hide other main sections, not scheduling sub-sections
+                elements.initialScriptSection.style.display = 'none';
+                elements.pricingSection.style.display = 'none';
+                elements.otherCallsSection.style.display = 'none';
+
                 updateScript(scriptContent.schedulingVehicleType);
                 if (elements.schedulingSection) elements.schedulingSection.style.display = 'block';
                 if (elements.schedulingVehicleTypeSelection) elements.schedulingVehicleTypeSelection.style.display = 'block';
+                
+                // Ensure all *other* scheduling sub-sections are hidden
+                elements.schedulingPackageSelectionContainer.style.display = 'none';
+                elements.bookingFormSection.style.display = 'none';
+                elements.confirmationSection.style.display = 'none';
+                elements.policyText.style.display = 'none';
+
                 document.querySelectorAll('#scheduling-vehicle-type-selection .btn-primary.active').forEach(b => b.classList.remove('active'));
                 // Clear any previously selected package/time
                 if (elements.selectedPackageTypeInput) elements.selectedPackageTypeInput.value = '';
@@ -1101,8 +1112,14 @@
                 if (elements.selectedVehicleTypeInput) elements.selectedVehicleTypeInput.value = vehicleType;
 
                 // Hide all other booking steps and pricing recommendation buttons
-                [elements.pricingLevel2Recommendation, elements.pricingLevel1Recommendation,
-                 elements.bookingStepName, elements.bookingStepContact, elements.bookingStepAddress, elements.bookingStepVehicle, elements.bookingStepDatetime, elements.bookingStepSmsConsent]
+                // Ensure pricing section is hidden if coming from pricing flow
+                if (elements.pricingSection) elements.pricingSection.style.display = 'none'; 
+                elements.pricingLevel2Recommendation.style.display = 'none';
+                elements.pricingLevel1Recommendation.style.display = 'none';
+
+                // Hide all individual booking steps initially, then show the first one
+                [elements.bookingStepName, elements.bookingStepContact, elements.bookingStepAddress, 
+                 elements.bookingStepVehicle, elements.bookingStepDatetime, elements.bookingStepSmsConsent]
                     .forEach(el => el && (el.style.display = 'none'));
 
                 if (elements.schedulingPackageSelectionContainer) elements.schedulingPackageSelectionContainer.style.display = 'none';
