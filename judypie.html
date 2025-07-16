@@ -698,27 +698,35 @@
             <!-- Confirmation Message -->
             <div id="confirmation-section" class="hidden text-center">
                 <div id="confirmation-message" class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-6 rounded-lg">
-                    <p class="text-2xl font-bold mb-2">⚠️ Booking Created!</p>
-                    <p class="text-md mt-4">The appointment has been successfully scheduled. Please inform the customer about the payment options.</p>
+                    <!-- Script will be inserted here -->
                 </div>
                 
-                <div class="mt-8 space-y-4">
-                    <!-- Deposit Option -->
-                    <div>
-                        <button id="pay-deposit-button" class="btn-success">Pay $50 deposit</button>
-                        <p class="text-xs text-gray-500 mt-2">(Pay the remaining due after service completion)</p>
-                    </div>
-
-                    <!-- OR Separator -->
-                    <p class="text-xl font-bold text-gray-600">OR</p>
-
-                    <!-- Pay in Full Option -->
-                    <div>
-                        <button id="pay-now-button" class="btn-primary">Pay in full</button>
-                    </div>
+                <div class="mt-8 space-y-4" id="confirmation-buttons">
+                    <button id="btn-confirmation-yes" class="btn-primary">Yes</button>
+                    <button id="btn-confirmation-no" class="btn-secondary">No</button>
                 </div>
                 <button id="back-to-main-from-confirmation" class="btn-secondary mt-8">Back to Main Script</button>
             </div>
+
+            <!-- SMS Re-opt-in Section (NEW) -->
+            <div id="sms-reoptin-section" class="hidden text-center bg-white p-8 rounded-xl shadow-lg space-y-6">
+                <div class="mt-6 p-4 border border-gray-200 rounded-lg bg-gray-50">
+                    <label class="block text-sm font-medium text-gray-700 mb-3">SMS Notifications Consent</label>
+                    <div class="space-y-3">
+                        <label class="flex items-center space-x-3 cursor-pointer text-gray-700">
+                            <input type="checkbox" id="sms-reoptin-consent-transactional" class="rounded h-4 w-4 text-blue-600 focus:ring-blue-500">
+                            <span>I agree to receive appointment reminders & account updates via SMS.</span>
+                        </label>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-4">
+                        By checking this box, you agree to receive text messages from Michie Auto Detailing for transactional purposes. Consent is not a condition of purchase. Message frequency will vary. Msg & data rates may apply. Reply HELP for help or STOP to cancel. View our <a href="https://michieauto.com/smstos" class="text-blue-600 hover:underline" target="_blank">Terms of Service</a> & <a href="https://michieauto.com/smsprivacy" class="text-blue-600 hover:underline" target="_blank">Privacy Policy</a>.
+                    </p>
+                </div>
+                <button id="btn-reoptin-yes" class="btn-success">Yes (Send Text)</button>
+                <button id="btn-reoptin-no" class="btn-secondary">No (Decline)</button>
+                <button id="back-to-confirmation-from-reoptin" class="btn-secondary mt-8">Back to Confirmation</button>
+            </div>
+
 
             <!-- Policy Text -->
             <div id="policy-text" class="hidden text-xs text-gray-500 mt-8 space-y-2">
@@ -803,6 +811,7 @@
                 backToAddressStep: document.getElementById('back-to-address-step'), // From booking-step-vehicle
                 backToVehicleStep: document.getElementById('back-to-vehicle-step'), // From booking-step-datetime
                 backToDatetimeStep: document.getElementById('back-to-datetime-step'), // NEW: From booking-step-sms-consent
+                backToConfirmationFromReoptin: document.getElementById('back-to-confirmation-from-reoptin'), // NEW: Back from SMS re-opt-in
 
                 backToMainFromConfirmation: document.getElementById('back-to-main-from-confirmation'),
                 backToMainFromOther: document.getElementById('back-to-main-from-other'),
@@ -850,17 +859,21 @@
                 bookingStepVehicle: document.getElementById('booking-step-vehicle'),
                 btnNextVehicle: document.getElementById('btn-next-vehicle'),
                 bookingStepDatetime: document.getElementById('booking-step-datetime'),
-                btnNextDatetime: document.getElementById('btn-next-datetime'), // NEW: Next button from datetime to SMS
-                bookingStepSmsConsent: document.getElementById('booking-step-sms-consent'), // NEW: SMS consent step
-                smsConsentTransactional: document.getElementById('sms-consent-transactional'), // NEW: SMS checkbox
+                btnNextDatetime: document.getElementById('btn-next-datetime'), 
+                bookingStepSmsConsent: document.getElementById('booking-step-sms-consent'), 
+                smsConsentTransactional: document.getElementById('sms-consent-transactional'), 
 
-                bookingForm: document.getElementById('booking-form'), // This is now a container for steps
+                bookingForm: document.getElementById('booking-form'), 
                 selectedPackageDisplay: document.getElementById('selected-package-display'),
                 selectedPackageTypeInput: document.getElementById('selected-package-type'),
                 selectedPackagePriceInput: document.getElementById('selected-package-price'),
-                selectedVehicleTypeInput: document.getElementById('selected-vehicle-type'), // Hidden input for vehicle type
+                selectedVehicleTypeInput: document.getElementById('selected-vehicle-type'), 
                 finalBookAppointmentBtn: document.getElementById('final-book-appointment-btn'),
                 confirmationSection: document.getElementById('confirmation-section'),
+                confirmationMessageDiv: document.getElementById('confirmation-message'), // NEW
+                confirmationButtonsDiv: document.getElementById('confirmation-buttons'), // NEW
+                btnConfirmationYes: document.getElementById('btn-confirmation-yes'), // NEW
+                btnConfirmationNo: document.getElementById('btn-confirmation-no'), // NEW
                 payNowButton: document.getElementById('pay-now-button'),
                 payDepositButton: document.getElementById('pay-deposit-button'),
                 policyText: document.getElementById('policy-text'),
@@ -868,13 +881,20 @@
                 bookingTimeButtonsContainer: document.getElementById('booking-time-buttons'),
                 selectedBookingTimeInput: document.getElementById('selected-booking-time'),
                 bookingMessage: document.getElementById('booking-message'),
-                otherCallsNotes: document.getElementById('other-calls-notes') // For the notes section
+                otherCallsNotes: document.getElementById('other-calls-notes'),
+
+                // NEW SMS Re-opt-in elements
+                smsReoptinSection: document.getElementById('sms-reoptin-section'),
+                smsReoptinConsentTransactional: document.getElementById('sms-reoptin-consent-transactional'),
+                btnReoptinYes: document.getElementById('btn-reoptin-yes'),
+                btnReoptinNo: document.getElementById('btn-reoptin-no')
             };
 
             // State variables for the script flow
             let currentVehicleType = '';
             let recommendedPackageType = '';
             let recommendedPackagePrice = 0;
+            let lastBookedCustomerData = null; // NEW: To store customer_id, phone, sms_opt_in for re-send logic
 
             // Package features for script generation
             const packageFeatures = {
@@ -935,7 +955,9 @@
                 bookingStepVehicle: "Almost there! Could you please tell me the year, make, and model of your vehicle?",
                 bookingStepDatetime: "Perfect! Now, let's find a convenient date and time for your appointment. What date works best for you?",
                 bookingStepSmsConsent: "Great! To ensure you receive important updates and reminders about your appointment, can we send you text messages? This would include appointment confirmations and updates. Message and data rates may apply. You can reply STOP to cancel at any time.",
-                bookingConfirmation: "Great! The appointment has been successfully scheduled. Please inform the customer about the payment options.",
+                bookingConfirmation: "Great! Your appointment is almost confirmed. I just sent you a text message with a link to pay a $50 deposit. Just tap that link and pay to confirm your appointment. The remaining balance is paid after service is complete.", // UPDATED
+                confirmationSmsQuestion: "Did you get the link in your text messages?", // NEW
+                smsReoptinScript: "Oh I see why! You have not opted into text messages. I need to send you a text message for important account updates, (say compliant script) may I proceed?", // NEW
                 otherCallsNotes: "Okay, I'm ready to take notes for this call. What is your inquiry?"
             };
 
@@ -968,7 +990,7 @@
             
             function hideAllSections() {
                 // Hide all *major* sections
-                [elements.initialScriptSection, elements.pricingSection, elements.schedulingSection, elements.otherCallsSection]
+                [elements.initialScriptSection, elements.pricingSection, elements.schedulingSection, elements.otherCallsSection, elements.smsReoptinSection] // Added smsReoptinSection
                     .forEach(el => el && (el.style.display = 'none'));
                 
                 // Hide all *sub-sections* within pricing and scheduling, ensuring a clean slate
@@ -977,11 +999,12 @@
                     elements.pricingShampooQuestion, elements.pricingLevel2Recommendation, elements.pricingLevel1Recommendation,
                     elements.pricingFullPackageDetails, elements.sedanPackagesDisplay, elements.suvTruckPackagesDisplay,
                     elements.schedulingVehicleTypeSelection, elements.schedulingPackageSelectionContainer,
-                    elements.bookingFormSection, // Ensure the main booking form container is hidden
+                    elements.bookingFormSection, 
                     elements.bookingStepName, elements.bookingStepContact,
                     elements.bookingStepAddress, elements.bookingStepVehicle, elements.bookingStepDatetime,
                     elements.bookingStepSmsConsent, 
-                    elements.confirmationSection, elements.policyText
+                    elements.confirmationSection, elements.policyText,
+                    elements.confirmationButtonsDiv // Hide confirmation buttons too
                 ].forEach(el => el && (el.style.display = 'none'));
             }
 
@@ -1000,14 +1023,15 @@
                 currentVehicleType = '';
                 recommendedPackageType = '';
                 recommendedPackagePrice = 0;
+                lastBookedCustomerData = null; // NEW: Clear stored customer data
             }
 
             // --- Pricing Flow Functions ---
             function showPricingVehicleTypeSelection() {
-                hideAllSections(); // Hide everything first
+                hideAllSections(); 
                 updateScript(scriptContent.pricingVehicleType);
-                if (elements.pricingSection) elements.pricingSection.style.display = 'block'; // Show pricing section
-                if (elements.pricingVehicleTypeSelection) elements.pricingVehicleTypeSelection.style.display = 'block'; // Show vehicle type selection
+                if (elements.pricingSection) elements.pricingSection.style.display = 'block'; 
+                if (elements.pricingVehicleTypeSelection) elements.pricingVehicleTypeSelection.style.display = 'block'; 
                 document.querySelectorAll('#pricing-vehicle-type-selection .btn-primary.active').forEach(b => b.classList.remove('active'));
                 // Reset recommended package when starting pricing flow
                 recommendedPackageType = '';
@@ -1016,55 +1040,55 @@
 
             function showPricingIntroLevels(vehicleType, clickedButton) {
                 currentVehicleType = vehicleType;
-                hideAllSections(); // Hide everything first
+                hideAllSections(); 
                 updateScript(scriptContent.pricingIntroLevels);
-                if (elements.pricingSection) elements.pricingSection.style.display = 'block'; // Show pricing section
-                if (elements.pricingIntroLevels) elements.pricingIntroLevels.style.display = 'block'; // Show intro levels
+                if (elements.pricingSection) elements.pricingSection.style.display = 'block'; 
+                if (elements.pricingIntroLevels) elements.pricingIntroLevels.style.display = 'block'; 
                 document.querySelectorAll('#pricing-vehicle-type-selection .btn-primary.active').forEach(b => b.classList.remove('active'));
                 if (clickedButton) clickedButton.classList.add('active');
             }
 
             function showPricingPetHairQuestion() {
-                hideAllSections(); // Hide everything first
+                hideAllSections(); 
                 updateScript(scriptContent.pricingPetHairQuestion);
-                if (elements.pricingSection) elements.pricingSection.style.display = 'block'; // Show pricing section
-                if (elements.pricingPetHairQuestion) elements.pricingPetHairQuestion.style.display = 'block'; // Show pet hair question
+                if (elements.pricingSection) elements.pricingSection.style.display = 'block'; 
+                if (elements.pricingPetHairQuestion) elements.pricingPetHairQuestion.style.display = 'block'; 
             }
 
             function showPricingShampooQuestion() {
-                hideAllSections(); // Hide everything first
+                hideAllSections(); 
                 updateScript(scriptContent.pricingShampooQuestion);
-                if (elements.pricingSection) elements.pricingSection.style.display = 'block'; // Show pricing section
-                if (elements.pricingShampooQuestion) elements.pricingShampooQuestion.style.display = 'block'; // Show shampoo question
+                if (elements.pricingSection) elements.pricingSection.style.display = 'block'; 
+                if (elements.pricingShampooQuestion) elements.pricingShampooQuestion.style.display = 'block'; 
             }
 
             function showPricingLevel2Recommendation() {
                 recommendedPackageType = "Level 2 Detail";
                 recommendedPackagePrice = packagePrices[recommendedPackageType][currentVehicleType];
                 console.log('Recommended Level 2:', { recommendedPackageType, recommendedPackagePrice, currentVehicleType });
-                hideAllSections(); // Hide everything first
+                hideAllSections(); 
                 updateScript(scriptContent.pricingLevel2Recommendation(currentVehicleType));
-                if (elements.pricingSection) elements.pricingSection.style.display = 'block'; // Show pricing section
-                if (elements.pricingLevel2Recommendation) elements.pricingLevel2Recommendation.style.display = 'block'; // Show level 2 recommendation
+                if (elements.pricingSection) elements.pricingSection.style.display = 'block'; 
+                if (elements.pricingLevel2Recommendation) elements.pricingLevel2Recommendation.style.display = 'block'; 
             }
 
             function showPricingLevel1Recommendation(isDownsell = false) {
                 recommendedPackageType = "Level 1 Detail";
                 recommendedPackagePrice = packagePrices[recommendedPackageType][currentVehicleType];
                 console.log('Recommended Level 1:', { recommendedPackageType, recommendedPackagePrice, currentVehicleType });
-                hideAllSections(); // Hide everything first
+                hideAllSections(); 
                 if (isDownsell) {
                     updateScript(scriptContent.pricingDownsellLevel1(currentVehicleType));
                 } else {
                     updateScript(scriptContent.pricingLevel1Recommendation(currentVehicleType));
                 }
-                if (elements.pricingSection) elements.pricingSection.style.display = 'block'; // Show pricing section
-                if (elements.pricingLevel1Recommendation) elements.pricingLevel1Recommendation.style.display = 'block'; // Show level 1 recommendation
+                if (elements.pricingSection) elements.pricingSection.style.display = 'block'; 
+                if (elements.pricingLevel1Recommendation) elements.pricingLevel1Recommendation.style.display = 'block'; 
             }
 
             // --- Scheduling Flow Functions ---
             function showSchedulingVehicleTypeSelection() {
-                hideAllSections(); // Hide everything first
+                hideAllSections(); // Start by hiding everything
                 updateScript(scriptContent.schedulingVehicleType);
                 if (elements.schedulingSection) elements.schedulingSection.style.display = 'block'; // Show scheduling section
                 if (elements.schedulingVehicleTypeSelection) elements.schedulingVehicleTypeSelection.style.display = 'block'; // Show vehicle type selection
@@ -1077,15 +1101,15 @@
                 if (elements.finalBookAppointmentBtn) elements.finalBookAppointmentBtn.style.display = 'none';
                 // Reset global state variables for scheduling flow
                 currentVehicleType = '';
-                recommendedPackageType = ''; // Not directly used in scheduling flow, but good to reset
-                recommendedPackagePrice = 0; // Not directly used in scheduling flow, but good to reset
+                recommendedPackageType = ''; 
+                recommendedPackagePrice = 0; 
             }
 
             function showSchedulingPackageSelection(vehicleCategory, clickedButton) {
-                currentVehicleType = vehicleCategory; // Store vehicle type
-                hideAllSections(); // Hide everything first
-                if (elements.schedulingSection) elements.schedulingSection.style.display = 'block'; // Show scheduling section
-                if (elements.schedulingPackageSelectionContainer) elements.schedulingPackageSelectionContainer.style.display = 'block'; // Show package selection
+                currentVehicleType = vehicleCategory; 
+                hideAllSections(); 
+                if (elements.schedulingSection) elements.schedulingSection.style.display = 'block'; 
+                if (elements.schedulingPackageSelectionContainer) elements.schedulingPackageSelectionContainer.style.display = 'block'; 
 
                 updateScript(scriptContent.schedulingPackageInquiry(vehicleCategory));
 
@@ -1105,8 +1129,7 @@
                 if (elements.selectedPackagePriceInput) elements.selectedPackagePriceInput.value = packagePrice;
                 if (elements.selectedVehicleTypeInput) elements.selectedVehicleTypeInput.value = vehicleType;
 
-                // Hide all major sections and all individual booking steps
-                hideAllSections(); 
+                hideAllSections(); // Hide everything first
 
                 // Ensure the main scheduling section and booking form container are visible
                 if (elements.schedulingSection) elements.schedulingSection.style.display = 'block';
@@ -1212,10 +1235,22 @@
 
             function showBookingConfirmationScreen() {
                 hideAllSections(); // Hide everything first
-                if (elements.confirmationSection) elements.confirmationSection.style.display = 'block'; // Show confirmation
-                if (elements.policyText) elements.policyText.style.display = 'block'; // Show policy text
-                updateScript(scriptContent.bookingConfirmation);
+                if (elements.confirmationSection) elements.confirmationSection.style.display = 'block'; 
+                if (elements.policyText) elements.policyText.style.display = 'block'; 
+                
+                // Update confirmation message div content
+                if (elements.confirmationMessageDiv) {
+                    elements.confirmationMessageDiv.innerHTML = `
+                        <p class="text-2xl font-bold mb-2">⚠️ Booking Created!</p>
+                        <p class="text-md mt-4">${scriptContent.bookingConfirmation}</p>
+                    `;
+                }
 
+                // Show confirmation buttons
+                if (elements.confirmationButtonsDiv) {
+                    elements.confirmationButtonsDiv.style.display = 'flex'; // Use flex for button layout
+                }
+                
                 // Set payment button links based on selected package
                 const packageType = elements.selectedPackageTypeInput.value;
                 const packagePrice = elements.selectedPackagePriceInput.value;
@@ -1225,6 +1260,7 @@
                     paymentRedirectLink = paymentLinks[packageType][priceKey];
                 }
                 
+                // The pay buttons are now part of the confirmation section, not separate
                 if (elements.payNowButton) {
                     elements.payNowButton.textContent = `Pay now $${parseFloat(packagePrice).toFixed(0)}`;
                     elements.payNowButton.onclick = () => { window.open(paymentRedirectLink, '_blank'); };
@@ -1232,15 +1268,32 @@
                 if (elements.payDepositButton) {
                     elements.payDepositButton.onclick = () => { window.open('https://pay.michieauto.com/deposit', '_blank'); };
                 }
+                // Hide these payment buttons initially on this screen, they are for reference only
+                elements.payNowButton.style.display = 'none';
+                elements.payDepositButton.style.display = 'none';
+
+                // Update script to ask about SMS
+                updateScript(scriptContent.confirmationSmsQuestion);
+            }
+
+            // NEW: Function to show SMS re-opt-in screen
+            function showSmsReoptinScreen() {
+                hideAllSections();
+                if (elements.smsReoptinSection) elements.smsReoptinSection.style.display = 'block';
+                updateScript(scriptContent.smsReoptinScript);
+                // Ensure checkbox is unchecked by default for new consent
+                if (elements.smsReoptinConsentTransactional) {
+                    elements.smsReoptinConsentTransactional.checked = false;
+                }
             }
 
 
             // --- Other Calls Flow Functions ---
             function showOtherCalls() {
-                hideAllSections(); // Hide everything first
+                hideAllSections(); 
                 updateScript(scriptContent.otherCallsNotes);
-                if (elements.otherCallsSection) elements.otherCallsSection.style.display = 'block'; // Show other calls section
-                if (elements.otherCallsNotes) elements.otherCallsNotes.value = ''; // Clear notes
+                if (elements.otherCallsSection) elements.otherCallsSection.style.display = 'block'; 
+                if (elements.otherCallsNotes) elements.otherCallsNotes.value = ''; 
             }
 
 
@@ -1255,7 +1308,7 @@
             if (elements.backToIntroLevelsFromPetHair) elements.backToIntroLevelsFromPetHair.addEventListener('click', () => showPricingIntroLevels(currentVehicleType));
             if (elements.backToPetHairFromShampoo) elements.backToPetHairFromShampoo.addEventListener('click', showPricingPetHairQuestion);
             if (elements.backToShampooFromLevel2) elements.backToShampooFromLevel2.addEventListener('click', showPricingShampooQuestion);
-            if (elements.backToLevel2FromLevel1) elements.backToLevel2FromLevel1.addEventListener('click', showPricingLevel2Recommendation); // Back from downsell to upsell
+            if (elements.backToLevel2FromLevel1) elements.backToLevel2FromLevel1.addEventListener('click', showPricingLevel2Recommendation); 
             
             if (elements.backToMainFromSchedulingVehicle) elements.backToMainFromSchedulingVehicle.addEventListener('click', showInitialScript);
             if (elements.backToSchedulingVehicleType) elements.backToSchedulingVehicleType.addEventListener('click', showSchedulingVehicleTypeSelection);
@@ -1271,8 +1324,8 @@
                 document.getElementById('vehicle-model').value = '';
                 document.getElementById('booking-date').value = '';
                 elements.selectedBookingTimeInput.value = '';
-                if (elements.bookingMessage) elements.bookingMessage.textContent = ''; // Clear booking message
-                showSchedulingPackageSelection(elements.selectedVehicleTypeInput.value); // Go back to package selection for the current vehicle type
+                if (elements.bookingMessage) elements.bookingMessage.textContent = ''; 
+                showSchedulingPackageSelection(elements.selectedVehicleTypeInput.value); 
             });
             if (elements.backToNameStep) elements.backToNameStep.addEventListener('click', () => {
                 if (elements.bookingStepContact) elements.bookingStepContact.style.display = 'none';
@@ -1294,13 +1347,12 @@
                 if (elements.bookingStepVehicle) elements.bookingStepVehicle.style.display = 'block';
                 updateScript(scriptContent.bookingStepVehicle);
             });
-            // NEW: Back from SMS consent step
             if (elements.backToDatetimeStep) elements.backToDatetimeStep.addEventListener('click', () => {
                 if (elements.bookingStepSmsConsent) elements.bookingStepSmsConsent.style.display = 'none';
                 if (elements.bookingStepDatetime) elements.bookingStepDatetime.style.display = 'block';
                 updateScript(scriptContent.bookingStepDatetime);
             });
-
+            if (elements.backToConfirmationFromReoptin) elements.backToConfirmationFromReoptin.addEventListener('click', showBookingConfirmationScreen); // NEW back button
 
             if (elements.backToMainFromConfirmation) elements.backToMainFromConfirmation.addEventListener('click', showInitialScript);
             if (elements.backToMainFromOther) elements.backToMainFromOther.addEventListener('click', showInitialScript);
@@ -1317,27 +1369,23 @@
             if (elements.btnPetHairNo) elements.btnPetHairNo.addEventListener('click', showPricingShampooQuestion);
 
             if (elements.btnShampooYes) elements.btnShampooYes.addEventListener('click', showPricingLevel2Recommendation);
-            if (elements.btnShampooNo) elements.btnShampooNo.addEventListener('click', () => showPricingLevel1Recommendation(false)); // Direct Level 1
+            if (elements.btnShampooNo) elements.btnShampooNo.addEventListener('click', () => showPricingLevel1Recommendation(false)); 
 
             if (elements.btnLevel2Yes) elements.btnLevel2Yes.addEventListener('click', () => {
                 console.log('btnLevel2Yes clicked. Calling showBookingStepName with:', { recommendedPackageType, recommendedPackagePrice, currentVehicleType });
-                // Ensure pricing recommendation elements are hidden when moving to booking form
                 elements.pricingLevel2Recommendation.style.display = 'none';
                 elements.pricingLevel1Recommendation.style.display = 'none';
-                // Also hide the main pricing section if coming from there
                 elements.pricingSection.style.display = 'none'; 
-                showBookingStepName(recommendedPackageType, recommendedPackagePrice, currentVehicleType); // Go to booking form
+                showBookingStepName(recommendedPackageType, recommendedPackagePrice, currentVehicleType); 
             });
-            if (elements.btnLevel2No) elements.btnLevel2No.addEventListener('click', () => showPricingLevel1Recommendation(true)); // Downsell to Level 1
+            if (elements.btnLevel2No) elements.btnLevel2No.addEventListener('click', () => showPricingLevel1Recommendation(true)); 
 
             if (elements.btnLevel1Yes) elements.btnLevel1Yes.addEventListener('click', () => {
                 console.log('btnLevel1Yes clicked. Calling showBookingStepName with:', { recommendedPackageType, recommendedPackagePrice, currentVehicleType });
-                // Ensure pricing recommendation elements are hidden when moving to booking form
                 elements.pricingLevel2Recommendation.style.display = 'none';
                 elements.pricingLevel1Recommendation.style.display = 'none';
-                // Also hide the main pricing section if coming from there
                 elements.pricingSection.style.display = 'none'; 
-                showBookingStepName(recommendedPackageType, recommendedPackagePrice, currentVehicleType); // Go to booking form
+                showBookingStepName(recommendedPackageType, recommendedPackagePrice, currentVehicleType); 
             });
             if (elements.btnLevel1No) elements.btnLevel1No.addEventListener('click', showOtherCalls);
 
@@ -1379,9 +1427,9 @@
                     const button = e.target.closest('.select-package-btn');
                     const packageType = button.dataset.packageType;
                     const packagePrice = button.dataset.packagePrice;
-                    const vehicleType = button.dataset.vehicleType; // Get vehicle type from button
+                    const vehicleType = button.dataset.vehicleType; 
                     console.log('Scheduling select-package-btn clicked. Calling showBookingStepName with:', { packageType, packagePrice, vehicleType });
-                    showBookingStepName(packageType, packagePrice, vehicleType); // Start the sequential booking form
+                    showBookingStepName(packageType, packagePrice, vehicleType); 
                 }
             });
 
@@ -1390,20 +1438,104 @@
             if (elements.btnNextContact) elements.btnNextContact.addEventListener('click', showBookingStepAddress);
             if (elements.btnNextAddress) elements.btnNextAddress.addEventListener('click', showBookingStepVehicle);
             if (elements.btnNextVehicle) elements.btnNextVehicle.addEventListener('click', showBookingStepDatetime);
-            if (elements.btnNextDatetime) elements.btnNextDatetime.addEventListener('click', showBookingStepSmsConsent);
+            if (elements.btnNextDatetime) elements.btnNextDatetime.addEventListener('click', showBookingStepSmsConsent); 
 
 
             // Final form submission (from booking-step-sms-consent)
-            // The submit button is now directly in booking-step-sms-consent
             if (elements.finalBookAppointmentBtn) {
                 elements.finalBookAppointmentBtn.addEventListener('click', (e) => {
-                    e.preventDefault(); // Prevent default form submission
+                    e.preventDefault(); 
                     handleBooking(e, '/public/appointment', elements.bookingMessage, 'selected-booking-time');
                 });
             }
-            
+
+            // NEW: Confirmation screen buttons logic
+            if (elements.btnConfirmationYes) {
+                elements.btnConfirmationYes.addEventListener('click', () => {
+                    // Customer confirmed they got the text, go back to main script
+                    showInitialScript();
+                });
+            }
+
+            if (elements.btnConfirmationNo) {
+                elements.btnConfirmationNo.addEventListener('click', async () => {
+                    if (!lastBookedCustomerData) {
+                        console.error("No customer data available to resend SMS.");
+                        showInitialScript(); // Fallback to main script
+                        return;
+                    }
+
+                    const { customer_id, customer_phone, sms_transactional_opt_in, deal_id } = lastBookedCustomerData;
+
+                    if (sms_transactional_opt_in) {
+                        // Customer is opted in, try to resend SMS
+                        const resendPayload = {
+                            customer_id: customer_id,
+                            deal_id: deal_id,
+                            package_type: elements.selectedPackageTypeInput.value,
+                            package_price: elements.selectedPackagePriceInput.value,
+                            booking_date: document.getElementById('booking-date').value,
+                            booking_time: elements.selectedBookingTimeInput.value
+                        };
+                        const { ok, data } = await apiCall('/public/resend_sms', 'POST', resendPayload);
+                        if (ok) {
+                            alert("SMS re-sent successfully!"); // Use alert for now, replace with custom modal later
+                            showInitialScript();
+                        } else {
+                            alert(`Failed to resend SMS: ${data.message || 'Unknown error'}`); // Use alert for now
+                        }
+                    } else {
+                        // Customer is NOT opted in, show re-opt-in screen
+                        showSmsReoptinScreen();
+                    }
+                });
+            }
+
+            // NEW: SMS Re-opt-in screen buttons logic
+            if (elements.btnReoptinYes) {
+                elements.btnReoptinYes.addEventListener('click', async () => {
+                    if (!lastBookedCustomerData) {
+                        console.error("No customer data available for re-opt-in.");
+                        showInitialScript(); // Fallback
+                        return;
+                    }
+                    const { customer_id, deal_id } = lastBookedCustomerData;
+                    const consentGiven = elements.smsReoptinConsentTransactional.checked;
+
+                    if (!consentGiven) {
+                        alert("Please check the box to agree to receive text messages."); // Use alert for now
+                        return;
+                    }
+
+                    const reoptinPayload = {
+                        customer_id: customer_id,
+                        sms_transactional_opt_in: true,
+                        deal_id: deal_id, // Pass deal_id to resend SMS after opt-in
+                        package_type: elements.selectedPackageTypeInput.value,
+                        package_price: elements.selectedPackagePriceInput.value,
+                        booking_date: document.getElementById('booking-date').value,
+                        booking_time: elements.selectedBookingTimeInput.value
+                    };
+
+                    const { ok, data } = await apiCall('/public/update_sms_consent_and_send', 'POST', reoptinPayload);
+                    if (ok) {
+                        alert("SMS consent updated and text re-sent successfully!"); // Use alert for now
+                        showInitialScript();
+                    } else {
+                        alert(`Failed to update consent or resend SMS: ${data.message || 'Unknown error'}`); // Use alert for now
+                    }
+                });
+            }
+
+            if (elements.btnReoptinNo) {
+                elements.btnReoptinNo.addEventListener('click', () => {
+                    // Customer declined re-opt-in, go back to main script
+                    showInitialScript();
+                });
+            }
+
+
             async function handleBooking(e, endpoint, messageEl, selectedTimeInputId) { 
-                // e.preventDefault(); // Already prevented by the click listener
                 const submitButton = elements.finalBookAppointmentBtn;
 
                 submitButton.disabled = true;
@@ -1471,6 +1603,12 @@
                     const { ok, data } = await apiCall(endpoint, 'POST', payload);
 
                     if (ok) {
+                        lastBookedCustomerData = { // Store data for re-send logic
+                            customer_id: data.customer_id, // Backend needs to return this
+                            customer_phone: phone, // Use the phone from the form
+                            sms_transactional_opt_in: smsTransactionalOptIn,
+                            deal_id: data.deal_id // Backend needs to return this
+                        };
                         showBookingConfirmationScreen();
                     } else {
                         if (messageEl) { messageEl.textContent = data.message || 'An error occurred during booking.'; messageEl.style.color = 'red'; }
@@ -1522,16 +1660,12 @@
                             if (currentlySelected) currentlySelected.classList.remove('selected');
                             button.classList.add('selected');
                             if (hiddenInput) hiddenInput.value = time;
-                            // The finalBookButton is now in the SMS consent step, so we don't show it here.
-                            // The "Next" button for datetime step will handle progression.
                         });
                     }
                     container.appendChild(button);
                 });
             
                 if (hiddenInput) hiddenInput.value = '';
-                // The finalBookButton is now in the SMS consent step, so we don't manage its display here.
-                // if (finalBookButton) finalBookButton.style.display = 'none';
                 return hasAvailableSlots;
             }
 
@@ -1539,7 +1673,6 @@
                 const today = new Date(pageLoadTimeCST);
                 const todayFormatted = today.toISOString().split('T')[0];
 
-                // Pass null for finalBookAppointmentBtn as it's no longer directly controlled here
                 const todayHasSlots = renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, todayFormatted, null, pageLoadTimeCST);
 
                 if (todayHasSlots) {
@@ -1554,7 +1687,6 @@
                     if (elements.bookingDateInput) {
                         elements.bookingDateInput.value = tomorrowFormatted;
                     }
-                    // Pass null for finalBookAppointmentBtn
                     renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, tomorrowFormatted, null, pageLoadTimeCST);
                 }
             }
