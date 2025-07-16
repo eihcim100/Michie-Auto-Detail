@@ -610,7 +610,7 @@
                         <label for="vehicle-make" class="block text-sm font-medium text-gray-700 mb-1">Vehicle Make</label>
                         <select id="vehicle-make" required class="w-full px-3 py-2 border rounded-lg">
                             <option value="">Select Make</option>
-                            <option value="Acura">Aura</option>
+                            <option value="Acura">Acura</option>
                             <option value="Audi">Audi</option>
                             <option value="BMW">BMW</option>
                             <option value="Buick">Buick</option>
@@ -967,15 +967,18 @@
             }
             
             function hideAllSections() {
+                // Hide all *major* sections
                 [elements.initialScriptSection, elements.pricingSection, elements.schedulingSection, elements.otherCallsSection]
                     .forEach(el => el && (el.style.display = 'none'));
-                // Hide all sub-sections within pricing and scheduling
+                
+                // Hide all *sub-sections* within pricing and scheduling, ensuring a clean slate
                 [
                     elements.pricingVehicleTypeSelection, elements.pricingIntroLevels, elements.pricingPetHairQuestion,
                     elements.pricingShampooQuestion, elements.pricingLevel2Recommendation, elements.pricingLevel1Recommendation,
                     elements.pricingFullPackageDetails, elements.sedanPackagesDisplay, elements.suvTruckPackagesDisplay,
                     elements.schedulingVehicleTypeSelection, elements.schedulingPackageSelectionContainer,
-                    elements.bookingFormSection, elements.bookingStepName, elements.bookingStepContact,
+                    elements.bookingFormSection, // Ensure the main booking form container is hidden
+                    elements.bookingStepName, elements.bookingStepContact,
                     elements.bookingStepAddress, elements.bookingStepVehicle, elements.bookingStepDatetime,
                     elements.bookingStepSmsConsent, 
                     elements.confirmationSection, elements.policyText
@@ -1001,10 +1004,10 @@
 
             // --- Pricing Flow Functions ---
             function showPricingVehicleTypeSelection() {
-                hideAllSections();
+                hideAllSections(); // Hide everything first
                 updateScript(scriptContent.pricingVehicleType);
-                if (elements.pricingSection) elements.pricingSection.style.display = 'block';
-                if (elements.pricingVehicleTypeSelection) elements.pricingVehicleTypeSelection.style.display = 'block';
+                if (elements.pricingSection) elements.pricingSection.style.display = 'block'; // Show pricing section
+                if (elements.pricingVehicleTypeSelection) elements.pricingVehicleTypeSelection.style.display = 'block'; // Show vehicle type selection
                 document.querySelectorAll('#pricing-vehicle-type-selection .btn-primary.active').forEach(b => b.classList.remove('active'));
                 // Reset recommended package when starting pricing flow
                 recommendedPackageType = '';
@@ -1013,68 +1016,58 @@
 
             function showPricingIntroLevels(vehicleType, clickedButton) {
                 currentVehicleType = vehicleType;
-                hideAllSections();
+                hideAllSections(); // Hide everything first
                 updateScript(scriptContent.pricingIntroLevels);
-                if (elements.pricingSection) elements.pricingSection.style.display = 'block';
-                if (elements.pricingIntroLevels) elements.pricingIntroLevels.style.display = 'block';
+                if (elements.pricingSection) elements.pricingSection.style.display = 'block'; // Show pricing section
+                if (elements.pricingIntroLevels) elements.pricingIntroLevels.style.display = 'block'; // Show intro levels
                 document.querySelectorAll('#pricing-vehicle-type-selection .btn-primary.active').forEach(b => b.classList.remove('active'));
                 if (clickedButton) clickedButton.classList.add('active');
             }
 
             function showPricingPetHairQuestion() {
-                hideAllSections();
+                hideAllSections(); // Hide everything first
                 updateScript(scriptContent.pricingPetHairQuestion);
-                if (elements.pricingSection) elements.pricingSection.style.display = 'block';
-                if (elements.pricingPetHairQuestion) elements.pricingPetHairQuestion.style.display = 'block';
+                if (elements.pricingSection) elements.pricingSection.style.display = 'block'; // Show pricing section
+                if (elements.pricingPetHairQuestion) elements.pricingPetHairQuestion.style.display = 'block'; // Show pet hair question
             }
 
             function showPricingShampooQuestion() {
-                hideAllSections();
+                hideAllSections(); // Hide everything first
                 updateScript(scriptContent.pricingShampooQuestion);
-                if (elements.pricingSection) elements.pricingSection.style.display = 'block';
-                if (elements.pricingShampooQuestion) elements.pricingShampooQuestion.style.display = 'block';
+                if (elements.pricingSection) elements.pricingSection.style.display = 'block'; // Show pricing section
+                if (elements.pricingShampooQuestion) elements.pricingShampooQuestion.style.display = 'block'; // Show shampoo question
             }
 
             function showPricingLevel2Recommendation() {
                 recommendedPackageType = "Level 2 Detail";
                 recommendedPackagePrice = packagePrices[recommendedPackageType][currentVehicleType];
                 console.log('Recommended Level 2:', { recommendedPackageType, recommendedPackagePrice, currentVehicleType });
-                hideAllSections();
+                hideAllSections(); // Hide everything first
                 updateScript(scriptContent.pricingLevel2Recommendation(currentVehicleType));
-                if (elements.pricingSection) elements.pricingSection.style.display = 'block';
-                if (elements.pricingLevel2Recommendation) elements.pricingLevel2Recommendation.style.display = 'block';
+                if (elements.pricingSection) elements.pricingSection.style.display = 'block'; // Show pricing section
+                if (elements.pricingLevel2Recommendation) elements.pricingLevel2Recommendation.style.display = 'block'; // Show level 2 recommendation
             }
 
             function showPricingLevel1Recommendation(isDownsell = false) {
                 recommendedPackageType = "Level 1 Detail";
                 recommendedPackagePrice = packagePrices[recommendedPackageType][currentVehicleType];
                 console.log('Recommended Level 1:', { recommendedPackageType, recommendedPackagePrice, currentVehicleType });
-                hideAllSections();
+                hideAllSections(); // Hide everything first
                 if (isDownsell) {
                     updateScript(scriptContent.pricingDownsellLevel1(currentVehicleType));
                 } else {
                     updateScript(scriptContent.pricingLevel1Recommendation(currentVehicleType));
                 }
-                if (elements.pricingSection) elements.pricingSection.style.display = 'block';
-                if (elements.pricingLevel1Recommendation) elements.pricingLevel1Recommendation.style.display = 'block';
+                if (elements.pricingSection) elements.pricingSection.style.display = 'block'; // Show pricing section
+                if (elements.pricingLevel1Recommendation) elements.pricingLevel1Recommendation.style.display = 'block'; // Show level 1 recommendation
             }
 
             // --- Scheduling Flow Functions ---
             function showSchedulingVehicleTypeSelection() {
-                // Only hide other main sections, not scheduling sub-sections
-                elements.initialScriptSection.style.display = 'none';
-                elements.pricingSection.style.display = 'none';
-                elements.otherCallsSection.style.display = 'none';
-
+                hideAllSections(); // Hide everything first
                 updateScript(scriptContent.schedulingVehicleType);
-                if (elements.schedulingSection) elements.schedulingSection.style.display = 'block';
-                if (elements.schedulingVehicleTypeSelection) elements.schedulingVehicleTypeSelection.style.display = 'block';
-                
-                // Ensure all *other* scheduling sub-sections are hidden
-                elements.schedulingPackageSelectionContainer.style.display = 'none';
-                elements.bookingFormSection.style.display = 'none';
-                elements.confirmationSection.style.display = 'none';
-                elements.policyText.style.display = 'none';
+                if (elements.schedulingSection) elements.schedulingSection.style.display = 'block'; // Show scheduling section
+                if (elements.schedulingVehicleTypeSelection) elements.schedulingVehicleTypeSelection.style.display = 'block'; // Show vehicle type selection
 
                 document.querySelectorAll('#scheduling-vehicle-type-selection .btn-primary.active').forEach(b => b.classList.remove('active'));
                 // Clear any previously selected package/time
@@ -1090,9 +1083,10 @@
 
             function showSchedulingPackageSelection(vehicleCategory, clickedButton) {
                 currentVehicleType = vehicleCategory; // Store vehicle type
-                if (elements.schedulingVehicleTypeSelection) elements.schedulingVehicleTypeSelection.style.display = 'none';
-                if (elements.schedulingPackageSelectionContainer) elements.schedulingPackageSelectionContainer.style.display = 'block';
-                
+                hideAllSections(); // Hide everything first
+                if (elements.schedulingSection) elements.schedulingSection.style.display = 'block'; // Show scheduling section
+                if (elements.schedulingPackageSelectionContainer) elements.schedulingPackageSelectionContainer.style.display = 'block'; // Show package selection
+
                 updateScript(scriptContent.schedulingPackageInquiry(vehicleCategory));
 
                 document.querySelectorAll('#scheduling-vehicle-type-selection .btn-primary.active').forEach(b => b.classList.remove('active'));
@@ -1111,19 +1105,14 @@
                 if (elements.selectedPackagePriceInput) elements.selectedPackagePriceInput.value = packagePrice;
                 if (elements.selectedVehicleTypeInput) elements.selectedVehicleTypeInput.value = vehicleType;
 
-                // Hide all other booking steps and pricing recommendation buttons
-                // Ensure pricing section is hidden if coming from pricing flow
-                if (elements.pricingSection) elements.pricingSection.style.display = 'none'; 
-                elements.pricingLevel2Recommendation.style.display = 'none';
-                elements.pricingLevel1Recommendation.style.display = 'none';
+                // Hide all major sections and all individual booking steps
+                hideAllSections(); 
 
-                // Hide all individual booking steps initially, then show the first one
-                [elements.bookingStepName, elements.bookingStepContact, elements.bookingStepAddress, 
-                 elements.bookingStepVehicle, elements.bookingStepDatetime, elements.bookingStepSmsConsent]
-                    .forEach(el => el && (el.style.display = 'none'));
-
-                if (elements.schedulingPackageSelectionContainer) elements.schedulingPackageSelectionContainer.style.display = 'none';
+                // Ensure the main scheduling section and booking form container are visible
+                if (elements.schedulingSection) elements.schedulingSection.style.display = 'block';
                 if (elements.bookingFormSection) elements.bookingFormSection.style.display = 'block';
+                
+                // Show only the current step
                 if (elements.bookingStepName) elements.bookingStepName.style.display = 'block';
                 
                 updateScript(scriptContent.bookingStepName(packageType, vehicleType));
@@ -1222,8 +1211,8 @@
             }
 
             function showBookingConfirmationScreen() {
-                if (elements.bookingFormSection) elements.bookingFormSection.style.display = 'none';
-                if (elements.confirmationSection) elements.confirmationSection.style.display = 'block';
+                hideAllSections(); // Hide everything first
+                if (elements.confirmationSection) elements.confirmationSection.style.display = 'block'; // Show confirmation
                 if (elements.policyText) elements.policyText.style.display = 'block'; // Show policy text
                 updateScript(scriptContent.bookingConfirmation);
 
@@ -1248,9 +1237,9 @@
 
             // --- Other Calls Flow Functions ---
             function showOtherCalls() {
-                hideAllSections();
+                hideAllSections(); // Hide everything first
                 updateScript(scriptContent.otherCallsNotes);
-                if (elements.otherCallsSection) elements.otherCallsSection.style.display = 'block';
+                if (elements.otherCallsSection) elements.otherCallsSection.style.display = 'block'; // Show other calls section
                 if (elements.otherCallsNotes) elements.otherCallsNotes.value = ''; // Clear notes
             }
 
@@ -1335,6 +1324,8 @@
                 // Ensure pricing recommendation elements are hidden when moving to booking form
                 elements.pricingLevel2Recommendation.style.display = 'none';
                 elements.pricingLevel1Recommendation.style.display = 'none';
+                // Also hide the main pricing section if coming from there
+                elements.pricingSection.style.display = 'none'; 
                 showBookingStepName(recommendedPackageType, recommendedPackagePrice, currentVehicleType); // Go to booking form
             });
             if (elements.btnLevel2No) elements.btnLevel2No.addEventListener('click', () => showPricingLevel1Recommendation(true)); // Downsell to Level 1
@@ -1344,6 +1335,8 @@
                 // Ensure pricing recommendation elements are hidden when moving to booking form
                 elements.pricingLevel2Recommendation.style.display = 'none';
                 elements.pricingLevel1Recommendation.style.display = 'none';
+                // Also hide the main pricing section if coming from there
+                elements.pricingSection.style.display = 'none'; 
                 showBookingStepName(recommendedPackageType, recommendedPackagePrice, currentVehicleType); // Go to booking form
             });
             if (elements.btnLevel1No) elements.btnLevel1No.addEventListener('click', showOtherCalls);
@@ -1397,7 +1390,7 @@
             if (elements.btnNextContact) elements.btnNextContact.addEventListener('click', showBookingStepAddress);
             if (elements.btnNextAddress) elements.btnNextAddress.addEventListener('click', showBookingStepVehicle);
             if (elements.btnNextVehicle) elements.btnNextVehicle.addEventListener('click', showBookingStepDatetime);
-            if (elements.btnNextDatetime) elements.btnNextDatetime.addEventListener('click', showBookingStepSmsConsent); // NEW: Next from datetime to SMS
+            if (elements.btnNextDatetime) elements.btnNextDatetime.addEventListener('click', showBookingStepSmsConsent);
 
 
             // Final form submission (from booking-step-sms-consent)
