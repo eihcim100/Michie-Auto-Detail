@@ -944,8 +944,9 @@
 
         // The main application logic, including form event listeners.
         function initializeApp() {
-            // Changed API_BASE_URL to an empty string for relative paths
-            const API_BASE_URL = ''; 
+            // Set API_BASE_URL to the explicit backend URL.
+            // This assumes admin_app.py is running on http://localhost:5001.
+            const API_BASE_URL = 'http://localhost:5001'; 
             
             const elements = {
                 scriptDisplay: document.getElementById('script-display'),
@@ -1198,12 +1199,19 @@
                 }
                 try {
                     const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+                    // Check if the response is OK (status 200-299) before trying to parse JSON
+                    if (!response.ok) {
+                        const errorText = await response.text(); // Get raw text for better debugging
+                        console.error(`API Call failed: ${response.status} ${response.statusText} - ${errorText}`);
+                        throw new Error(`Server error: ${response.status} ${response.statusText}`);
+                    }
                     const responseText = await response.text();
+                    // Attempt to parse JSON only if responseText is not empty
                     const data = responseText ? JSON.parse(responseText) : {};
                     return { ok: response.ok, data: data, status: response.status };
                 } catch (error) {
                     console.error('API Call Error:', error);
-                    return { ok: false, data: { message: 'Network error or invalid JSON response.' } };
+                    return { ok: false, data: { message: error.message || 'Network error or invalid JSON response.' } };
                 }
             }
             
