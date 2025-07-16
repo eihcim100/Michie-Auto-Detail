@@ -919,8 +919,7 @@
             }
         }
 
-        // This function will be called by the Google Maps script.
-        // It is now ONLY responsible for the autocomplete feature.
+        // Define initBookingPage globally so Google Maps API can call it
         window.initBookingPage = function() {
             const addressInput = document.getElementById('address-input');
             if (window.google && window.google.maps && window.google.maps.places && addressInput) {
@@ -929,7 +928,6 @@
                     fields: ["formatted_address", "address_components"],
                     types: ["address"],
                 });
-                // FIX: Changed 'autocomplete' to 'addressAutocomplete'
                 addressAutocomplete.addListener('place_changed', () => {
                     const place = addressAutocomplete.getPlace(); 
                     if (place.formatted_address) {
@@ -940,9 +938,11 @@
             } else {
                 console.warn("Google Maps Autocomplete could not be initialized. The feature will be disabled, but the form will still work.");
             }
+            // Now that Google Maps is initialized (or failed), proceed with the rest of the app setup
+            initializeApp();
         }
 
-        // The main application logic, including form event listeners.
+        // The main application logic, wrapped in a function that will be called by initBookingPage
         function initializeApp() {
             // Changed API_BASE_URL to the absolute URL of your backend
             const API_BASE_URL = 'https://michie-detailing-admin.onrender.com'; 
@@ -1164,7 +1164,7 @@
                 },
                 bookingStepName: (packageName, vehicleType) => `Wonderful! You've selected the ${packageName} for a ${vehicleType}. First, what is your full name?`,
                 bookingStepContact: "And what is your best email address and phone number?",
-                bookingStepAddress: "Great! Where will we be performing the detail service? I'll need your full service address and zip code.",
+                bookingStepAddress: "Great! Where will we be performing the detail service? I'll need your service address and zip code.",
                 bookingStepVehicle: "Almost there! Could you please tell me the year, make, and model of your vehicle?",
                 bookingStepDatetime: "Perfect! Now, let's find a convenient date and time for your appointment. What date works best for you?",
                 bookingStepSmsConsent: "Great! To ensure you receive important updates and reminders about your appointment, can we send you text messages? This would include appointment confirmations and updates. Message and data rates may apply. You can reply STOP to cancel at any time.",
@@ -2139,7 +2139,7 @@
             showInitialScript();
         }
 
-        document.addEventListener('DOMContentLoaded', initializeApp);
+        // document.addEventListener('DOMContentLoaded', initializeApp); // Removed this line
     </script>
 </body>
 </html>
