@@ -929,7 +929,6 @@
                     fields: ["formatted_address", "address_components"],
                     types: ["address"],
                 });
-                // FIX: Changed 'autocomplete' to 'addressAutocomplete'
                 addressAutocomplete.addListener('place_changed', () => {
                     const place = addressAutocomplete.getPlace(); 
                     if (place.formatted_address) {
@@ -944,1206 +943,1230 @@
 
         // The main application logic, including form event listeners.
         function initializeApp() {
-            // Set API_BASE_URL to the explicit backend URL for michieauto.com deployment.
-            const API_BASE_URL = 'https://michieauto.com'; 
-            
-            const elements = {
-                scriptDisplay: document.getElementById('script-display'),
-                initialScriptSection: document.getElementById('initial-script-section'),
-                btnPricing: document.getElementById('btn-pricing'),
-                btnScheduling: document.getElementById('btn-scheduling'),
-                btnOtherCalls: document.getElementById('btn-other-calls'),
-                pricingSection: document.getElementById('pricing-section'),
-                schedulingSection: document.getElementById('scheduling-section'),
-                otherCallsSection: document.getElementById('other-calls-section'),
-
-                // Back buttons
-                backToMainFromPricingVehicle: document.getElementById('back-to-main-from-pricing-vehicle'),
-                backToPricingVehicleTypeFromIntro: document.getElementById('back-to-pricing-vehicle-type-from-intro'),
-                backToIntroLevelsFromPetHair: document.getElementById('back-to-intro-levels-from-pet-hair'),
-                backToPetHairFromShampoo: document.getElementById('back-to-pet-hair-from-shampoo'),
-                backToShampooFromLevel2: document.getElementById('back-to-shampoo-from-level2'),
-                backToLevel2FromLevel1: document.getElementById('back-to-level2-from-level1'),
+            try {
+                // Set API_BASE_URL to the explicit backend URL for michieauto.com deployment.
+                const API_BASE_URL = 'https://michieauto.com'; 
                 
-                backToMainFromSchedulingVehicle: document.getElementById('back-to-main-from-scheduling-vehicle'),
-                backToSchedulingVehicleType: document.getElementById('back-to-scheduling-vehicle-type'),
-                backToPackageSelection: document.getElementById('back-to-package-selection'), // From booking-step-name
-                backToNameStep: document.getElementById('back-to-name-step'), // From booking-step-contact
-                backToContactStep: document.getElementById('back-to-contact-step'), // From booking-step-address
-                backToAddressStep: document.getElementById('back-to-address-step'), // From booking-step-vehicle
-                backToVehicleStep: document.getElementById('back-to-vehicle-step'), // From booking-step-datetime
-                backToDatetimeStep: document.getElementById('back-to-datetime-step'), // NEW: From booking-step-sms-consent
+                const elements = {
+                    scriptDisplay: document.getElementById('script-display'),
+                    initialScriptSection: document.getElementById('initial-script-section'),
+                    btnPricing: document.getElementById('btn-pricing'),
+                    btnScheduling: document.getElementById('btn-scheduling'),
+                    btnOtherCalls: document.getElementById('btn-other-calls'),
+                    pricingSection: document.getElementById('pricing-section'),
+                    schedulingSection: document.getElementById('scheduling-section'),
+                    otherCallsSection: document.getElementById('other-calls-section'),
 
-                backToMainFromConfirmation: document.getElementById('back-to-main-from-confirmation'),
-                backToMainFromOther: document.getElementById('back-to-main-from-other'),
+                    // Back buttons
+                    backToMainFromPricingVehicle: document.getElementById('back-to-main-from-pricing-vehicle'),
+                    backToPricingVehicleTypeFromIntro: document.getElementById('back-to-pricing-vehicle-type-from-intro'),
+                    backToIntroLevelsFromPetHair: document.getElementById('back-to-intro-levels-from-pet-hair'),
+                    backToPetHairFromShampoo: document.getElementById('back-to-pet-hair-from-shampoo'),
+                    backToShampooFromLevel2: document.getElementById('back-to-shampoo-from-level2'),
+                    backToLevel2FromLevel1: document.getElementById('back-to-level2-from-level1'),
+                    
+                    backToMainFromSchedulingVehicle: document.getElementById('back-to-main-from-scheduling-vehicle'),
+                    backToSchedulingVehicleType: document.getElementById('back-to-scheduling-vehicle-type'),
+                    backToPackageSelection: document.getElementById('back-to-package-selection'), // From booking-step-name
+                    backToNameStep: document.getElementById('back-to-name-step'), // From booking-step-contact
+                    backToContactStep: document.getElementById('back-to-contact-step'), // From booking-step-address
+                    backToAddressStep: document.getElementById('back-to-address-step'), // From booking-step-vehicle
+                    backToVehicleStep: document.getElementById('back-to-vehicle-step'), // From booking-step-datetime
+                    backToDatetimeStep: document.getElementById('back-to-datetime-step'), // NEW: From booking-step-sms-consent
 
-                // Pricing specific elements
-                pricingVehicleTypeSelection: document.getElementById('pricing-vehicle-type-selection'),
-                pricingSelectCarBtn: document.getElementById('pricing-select-car-type'), 
-                pricingSelectTruckBtn: document.getElementById('pricing-select-truck-type'), 
-                pricingSelectSuvBtn: document.getElementById('pricing-select-suv-type'), 
-                pricingIntroLevels: document.getElementById('pricing-intro-levels'),
-                btnOkIntroLevels: document.getElementById('btn-ok-intro-levels'),
-                pricingPetHairQuestion: document.getElementById('pricing-pet-hair-question'),
-                btnPetHairYes: document.getElementById('btn-pet-hair-yes'),
-                btnPetHairNo: document.getElementById('btn-pet-hair-no'),
-                pricingShampooQuestion: document.getElementById('pricing-shampoo-question'),
-                btnShampooYes: document.getElementById('btn-shampoo-yes'),
-                btnShampooNo: document.getElementById('btn-shampoo-no'),
-                pricingLevel2Recommendation: document.getElementById('pricing-level2-recommendation'),
-                btnLevel2Yes: document.getElementById('btn-level2-yes'),
-                btnLevel2No: document.getElementById('btn-level2-no'),
-                pricingLevel1Recommendation: document.getElementById('pricing-level1-recommendation'),
-                btnLevel1Yes: document.getElementById('btn-level1-yes'),
-                btnLevel1No: document.getElementById('btn-level1-no'),
-                pricingFullPackageDetails: document.getElementById('pricing-full-package-details'), // For reference
-                togglePricingSedan: document.getElementById('toggle-pricing-sedan'),
-                togglePricingSuvTruck: document.getElementById('toggle-pricing-suv-truck'),
-                sedanPackagesDisplay: document.getElementById('sedan-packages-display'), 
-                suvTruckPackagesDisplay: document.getElementById('suv-truck-packages-display'), 
+                    backToMainFromConfirmation: document.getElementById('back-to-main-from-confirmation'),
+                    backToMainFromOther: document.getElementById('back-to-main-from-other'),
 
-                // Scheduling specific elements (from original booking flow)
-                schedulingVehicleTypeSelection: document.getElementById('scheduling-vehicle-type-selection'),
-                schedulingSelectCarBtn: document.getElementById('scheduling-select-car-type'), 
-                schedulingSelectTruckBtn: document.getElementById('scheduling-select-truck-type'), 
-                schedulingSelectSuvBtn: document.getElementById('scheduling-select-suv-type'), 
-                schedulingPackageSelectionContainer: document.getElementById('scheduling-package-selection-container'),
-                sedanPackagesBookingDisplay: document.getElementById('sedan-packages-booking-display'), 
-                suvTruckPackagesBookingDisplay: document.getElementById('suv-truck-packages-booking-display'), 
-                bookingFormSection: document.getElementById('booking-form-section'),
-                bookingStepName: document.getElementById('booking-step-name'),
-                btnNextName: document.getElementById('btn-next-name'),
-                bookingStepContact: document.getElementById('booking-step-contact'),
-                btnNextContact: document.getElementById('btn-next-contact'),
-                bookingStepAddress: document.getElementById('booking-step-address'),
-                btnNextAddress: document.getElementById('btn-next-address'),
-                bookingStepVehicle: document.getElementById('booking-step-vehicle'),
-                btnNextVehicle: document.getElementById('btn-next-vehicle'),
-                bookingStepDatetime: document.getElementById('booking-step-datetime'),
-                btnNextDatetime: document.getElementById('btn-next-datetime'), 
-                bookingStepSmsConsent: document.getElementById('booking-step-sms-consent'), 
-                smsConsentTransactional: document.getElementById('sms-consent-transactional'), 
+                    // Pricing specific elements
+                    pricingVehicleTypeSelection: document.getElementById('pricing-vehicle-type-selection'),
+                    pricingSelectCarBtn: document.getElementById('pricing-select-car-type'), 
+                    pricingSelectTruckBtn: document.getElementById('pricing-select-truck-type'), 
+                    pricingSelectSuvBtn: document.getElementById('pricing-select-suv-type'), 
+                    pricingIntroLevels: document.getElementById('pricing-intro-levels'),
+                    btnOkIntroLevels: document.getElementById('btn-ok-intro-levels'),
+                    pricingPetHairQuestion: document.getElementById('pricing-pet-hair-question'),
+                    btnPetHairYes: document.getElementById('btn-pet-hair-yes'),
+                    btnPetHairNo: document.getElementById('btn-pet-hair-no'),
+                    pricingShampooQuestion: document.getElementById('pricing-shampoo-question'),
+                    btnShampooYes: document.getElementById('btn-shampoo-yes'),
+                    btnShampooNo: document.getElementById('btn-shampoo-no'),
+                    pricingLevel2Recommendation: document.getElementById('pricing-level2-recommendation'),
+                    btnLevel2Yes: document.getElementById('btn-level2-yes'),
+                    btnLevel2No: document.getElementById('btn-level2-no'),
+                    pricingLevel1Recommendation: document.getElementById('pricing-level1-recommendation'),
+                    btnLevel1Yes: document.getElementById('btn-level1-yes'),
+                    btnLevel1No: document.getElementById('btn-level1-no'),
+                    pricingFullPackageDetails: document.getElementById('pricing-full-package-details'), // For reference
+                    togglePricingSedan: document.getElementById('toggle-pricing-sedan'),
+                    togglePricingSuvTruck: document.getElementById('toggle-pricing-suv-truck'),
+                    sedanPackagesDisplay: document.getElementById('sedan-packages-display'), 
+                    suvTruckPackagesDisplay: document.getElementById('suv-truck-packages-display'), 
 
-                bookingForm: document.getElementById('booking-form'), 
-                selectedPackageDisplay: document.getElementById('selected-package-display'),
-                selectedPackageTypeInput: document.getElementById('selected-package-type'),
-                selectedPackagePriceInput: document.getElementById('selected-package-price'),
-                selectedVehicleTypeInput: document.getElementById('selected-vehicle-type'), 
-                finalBookAppointmentBtn: document.getElementById('final-book-appointment-btn'),
-                confirmationSection: document.getElementById('confirmation-section'),
-                confirmationMessageDiv: document.getElementById('confirmation-message'), 
-                paymentOptionsButtons: document.getElementById('payment-options-buttons'), // NEW
-                btnPayInFull: document.getElementById('btn-pay-in-full'), // NEW
-                btnPayDeposit: document.getElementById('btn-pay-deposit'), // NEW
+                    // Scheduling specific elements (from original booking flow)
+                    schedulingVehicleTypeSelection: document.getElementById('scheduling-vehicle-type-selection'),
+                    schedulingSelectCarBtn: document.getElementById('scheduling-select-car-type'), 
+                    schedulingSelectTruckBtn: document.getElementById('scheduling-select-truck-type'), 
+                    schedulingSelectSuvBtn: document.getElementById('scheduling-select-suv-type'), 
+                    schedulingPackageSelectionContainer: document.getElementById('scheduling-package-selection-container'),
+                    sedanPackagesBookingDisplay: document.getElementById('sedan-packages-booking-display'), 
+                    suvTruckPackagesBookingDisplay: document.getElementById('suv-truck-packages-booking-display'), 
+                    bookingFormSection: document.getElementById('booking-form-section'),
+                    bookingStepName: document.getElementById('booking-step-name'),
+                    btnNextName: document.getElementById('btn-next-name'),
+                    bookingStepContact: document.getElementById('booking-step-contact'),
+                    btnNextContact: document.getElementById('btn-next-contact'),
+                    bookingStepAddress: document.getElementById('booking-step-address'),
+                    btnNextAddress: document.getElementById('btn-next-address'),
+                    bookingStepVehicle: document.getElementById('booking-step-vehicle'),
+                    btnNextVehicle: document.getElementById('btn-next-vehicle'),
+                    bookingStepDatetime: document.getElementById('booking-step-datetime'),
+                    btnNextDatetime: document.getElementById('btn-next-datetime'), 
+                    bookingStepSmsConsent: document.getElementById('booking-step-sms-consent'), 
+                    smsConsentTransactional: document.getElementById('sms-consent-transactional'), 
 
-                smsReceivedQuestionSection: document.getElementById('sms-received-question-section'), // NEW
-                smsReceivedQuestionMessage: document.getElementById('sms-received-question-message'), // NEW
-                btnSmsReceivedYes: document.getElementById('btn-sms-received-yes'), // NEW
-                btnSmsReceivedNo: document.getElementById('btn-sms-received-no'), // NEW
+                    bookingForm: document.getElementById('booking-form'), 
+                    selectedPackageDisplay: document.getElementById('selected-package-display'),
+                    selectedPackageTypeInput: document.getElementById('selected-package-type'),
+                    selectedPackagePriceInput: document.getElementById('selected-package-price'),
+                    selectedVehicleTypeInput: document.getElementById('selected-vehicle-type'), 
+                    finalBookAppointmentBtn: document.getElementById('final-book-appointment-btn'),
+                    confirmationSection: document.getElementById('confirmation-section'),
+                    confirmationMessageDiv: document.getElementById('confirmation-message'), 
+                    paymentOptionsButtons: document.getElementById('payment-options-buttons'), // NEW
+                    btnPayInFull: document.getElementById('btn-pay-in-full'), // NEW
+                    btnPayDeposit: document.getElementById('btn-pay-deposit'), // NEW
 
-                waitingForPaymentSection: document.getElementById('waiting-for-payment-section'), // NEW
-                waitingForPaymentMessage: document.getElementById('waiting-for-payment-message'), // NEW
-                btnPaymentDone: document.getElementById('btn-payment-done'), // NEW
+                    smsReceivedQuestionSection: document.getElementById('sms-received-question-section'), // NEW
+                    smsReceivedQuestionMessage: document.getElementById('sms-received-question-message'), // NEW
+                    btnSmsReceivedYes: document.getElementById('btn-sms-received-yes'), // NEW
+                    btnSmsReceivedNo: document.getElementById('btn-sms-received-no'), // NEW
 
-                finalConfirmationSection: document.getElementById('final-confirmation-section'), // NEW
-                finalConfirmationMessage: document.getElementById('final-confirmation-message'), // NEW
-                btnEndCall: document.getElementById('btn-end-call'), // NEW
+                    waitingForPaymentSection: document.getElementById('waiting-for-payment-section'), // NEW
+                    waitingForPaymentMessage: document.getElementById('waiting-for-payment-message'), // NEW
+                    btnPaymentDone: document.getElementById('btn-payment-done'), // NEW
 
-                policyText: document.getElementById('policy-text'),
-                bookingDateInput: document.getElementById('booking-date'),
-                bookingTimeButtonsContainer: document.getElementById('booking-time-buttons'),
-                selectedBookingTimeInput: document.getElementById('selected-booking-time'),
-                bookingMessage: document.getElementById('booking-message'),
-                otherCallsNotes: document.getElementById('other-calls-notes'),
+                    finalConfirmationSection: document.getElementById('final-confirmation-section'), // NEW
+                    finalConfirmationMessage: document.getElementById('final-confirmation-message'), // NEW
+                    btnEndCall: document.getElementById('btn-end-call'), // NEW
 
-                // NEW SMS Re-opt-in elements
-                smsReoptinSection: document.getElementById('sms-reoptin-section'),
-                smsReoptinConsentTransactional: document.getElementById('sms-reoptin-consent-transactional'),
-                btnReoptinYes: document.getElementById('btn-reoptin-yes'),
-                btnReoptinNo: document.getElementById('btn-reoptin-no'),
-                reoptinPhoneNumberInput: document.getElementById('reoptin-phone-number') // NEW
-            };
+                    policyText: document.getElementById('policy-text'),
+                    bookingDateInput: document.getElementById('booking-date'),
+                    bookingTimeButtonsContainer: document.getElementById('booking-time-buttons'),
+                    selectedBookingTimeInput: document.getElementById('selected-booking-time'),
+                    bookingMessage: document.getElementById('booking-message'),
+                    otherCallsNotes: document.getElementById('other-calls-notes'),
 
-            // State variables for the script flow
-            let currentVehicleType = '';
-            let recommendedPackageType = '';
-            let recommendedPackagePrice = 0;
-            let lastBookedCustomerData = null; // NEW: To store customer_id, phone, sms_opt_in, deal_id, vehicle_details, booking_details for re-send logic
+                    // NEW SMS Re-opt-in elements
+                    smsReoptinSection: document.getElementById('sms-reoptin-section'),
+                    smsReoptinConsentTransactional: document.getElementById('sms-reoptin-consent-transactional'),
+                    btnReoptinYes: document.getElementById('btn-reoptin-yes'),
+                    btnReoptinNo: document.getElementById('btn-reoptin-no'),
+                    reoptinPhoneNumberInput: document.getElementById('reoptin-phone-number') // NEW
+                };
 
-            // Package features for script generation
-            const packageFeatures = {
-                "Level 1 Detail": {
-                    "car": [
-                        "External high pressure wash", "Tire cleaner", "Window cleaning inside and out",
-                        "Deep vaccuming", "Display controls and panels wipedown", "Mirror cleaning",
-                        "Seat vaccum", "Surface protectent for the dash and display/controls", "Steering wheel and dash clean"
-                    ],
-                    "suv-truck": [
-                        "External high pressure wash", "Tire cleaner", "Window cleaning inside and out",
-                        "Deep vaccuming", "Display controls and panels wipedown", "Mirror cleaning",
-                        "Seat vaccum", "Surface protectent for the dash and display/controls", "Steering wheel and dash clean"
-                    ]
-                },
-                "Level 2 Detail": {
-                    "car": [
-                        "External high pressure wash", "Tire cleaner", "Window cleaning inside and out",
-                        "Deep vaccuming", "Display controls and panels wipedown", "Mirror cleaning",
-                        "Seat vaccum", "Surface protectent for the dash and display/controls", "Steering wheel and dash clean",
-                        "Shampoo carpets and seats", "Premium Leather treatment", "Door jam cleaning",
-                        "Rims and tires cleaned and wiped down", "Console scrub down", "Pet hair removal", "Odor removal"
-                    ],
-                    "suv-truck": [
-                        "External high pressure wash", "Tire cleaner", "Window cleaning inside and out",
-                        "Deep vaccuming", "Display controls and panels wipedown", "Mirror cleaning",
-                        "Seat vaccum", "Surface protectent for the dash and display/controls", "Steering wheel and dash clean",
-                        "Shampoo carpets and seats", "Premium Leather treatment", "Door jam cleaning",
-                        "Rims and tires cleaned and wiped down", "Console scrub down", "Pet hair removal", "Odor removal"
-                    ]
-                },
-                "Level 3 Detail": {
-                    "car": [
-                        "External high pressure wash", "Tire cleaner", "Window cleaning inside and out",
-                        "Deep vaccuming", "Display controls and panels wipedown", "Mirror cleaning",
-                        "Seat vaccum", "Surface protectent for the dash and display/controls", "Steering wheel and dash clean",
-                        "Shampoo carpets and seats", "Premium Leather treatment", "Door jam cleaning",
-                        "Rims and tires cleaned and wiped down", "Console scrub down", "Pet hair removal", "Odor removal",
-                        "FINE TOOTH COMB in between seats cleaning", "Glove compartment cleaning", "Trunk shampoo and vaccum",
-                        "Door controls cleaning", "Hard to reach areas deep level shampoo",
-                        "Meticulous cleaning of all frequently touched surfaces", "External bug removal",
-                        "Free microfiber cloth", "Protection plan (complimentary maintenance clean within 15 days)"
-                    ],
-                    "suv-truck": [
-                        "External high pressure wash", "Tire cleaner", "Window cleaning inside and out",
-                        "Deep vaccuming", "Display controls and panels wipedown", "Mirror cleaning",
-                        "Seat vaccum", "Surface protectent for the dash and display/controls", "Steering wheel and dash clean",
-                        "Shampoo carpets and seats", "Premium Leather treatment", "Door jam cleaning",
-                        "Rims and tires cleaned and wiped down", "Console scrub down", "Pet hair removal", "Odor removal",
-                        "FINE TOOTH COMB in between seats cleaning", "Glove compartment cleaning", "Trunk shampoo and vaccum",
-                        "Door controls cleaning", "Hard to reach areas deep level shampoo",
-                        "Meticulous cleaning of all frequently touched surfaces", "External bug removal",
-                        "Free microfiber cloth", "Protection plan (complimentary maintenance clean within 15 days)"
-                    ]
-                }
-            };
+                // State variables for the script flow
+                let currentVehicleType = '';
+                let recommendedPackageType = '';
+                let recommendedPackagePrice = 0;
+                let lastBookedCustomerData = null; // NEW: To store customer_id, phone, sms_opt_in, deal_id, vehicle_details, booking_details for re-send logic
 
-
-            const packagePrices = {
-                "Level 1 Detail": { "car": 149, "suv-truck": 199 },
-                "Level 2 Detail": { "car": 249, "suv-truck": 299 },
-                "Level 3 Detail": { "car": 349, "suv-truck": 399 }
-            };
-
-            // Script content definitions (updated to first person)
-            const scriptContent = {
-                initial: "Thank you for calling Michie Auto Detail, are you calling to schedule an appointment?",
-                pricingVehicleType: "Absolutely! I'd love to get you some information on pricing. Are you calling about a car, truck, or SUV?",
-                pricingIntroLevels: "We have 3 levels of service to choose from. I'll just ask you a couple of questions to see which option is right for you, sound good?",
-                pricingPetHairQuestion: "Do you have any pet hair in your vehicle?",
-                pricingShampooQuestion: "Would you like your seats and carpets shampooed and renewed?",
-                pricingLevel2Recommendation: (vehicleType) => {
-                    const features = packageFeatures["Level 2 Detail"][vehicleType].join(', ');
-                    const price = packagePrices[recommendedPackageType][vehicleType];
-                    return `Based on the information you've provided me, I'm going to recommend our most popular option, it's called level 2 detail service. It includes ${features}. The price is $${price}, does that sound good?`;
-                },
-                pricingLevel1Recommendation: (vehicleType) => {
-                    const features = packageFeatures["Level 1 Detail"][vehicleType].join(', ');
-                    const price = packagePrices[recommendedPackageType][vehicleType];
-                    return `Based on the information you've provided me, I'm going to recommend our most affordable option, it's called level 1 detail service. It. It includes ${features}. The price is $${price}, does that sound good?`;
-                },
-                pricingDownsellLevel1: (vehicleType) => {
-                    const features = packageFeatures["Level 1 Detail"][vehicleType].join(', ');
-                    const price = packagePrices[recommendedPackageType][vehicleType];
-                    return `I completely understand! We have another option that will fit your budget and your needs. I'm going to recommend our most affordable option, it's called level 1 detail service. It includes ${features}. The price is $${price}, does that sound good?`;
-                },
-                schedulingVehicleType: "Excellent! To help me find the best appointment for you, what type of vehicle are we scheduling for? Is it a car, truck, or SUV?",
-                schedulingPackageInquiry: (vehicleType) => {
-                    const carPrices = `Level 1 Detail at $${packagePrices["Level 1 Detail"].car}, Level 2 at $${packagePrices["Level 2 Detail"].car}, and Level 3 at $${packagePrices["Level 3 Detail"].car}`;
-                    const suvTruckPrices = `Level 1 at $${packagePrices["Level 1 Detail"]["suv-truck"]}, Level 2 at $${packagePrices["Level 2 Detail"]["suv-truck"]}, and Level 3 at $${packagePrices["Level 3 Detail"]["suv-truck"]}`;
-                    const prices = vehicleType === 'car' ? carPrices : suvTruckPrices;
-                    return `Perfect. For a ${vehicleType}, we have our ${prices}. Which package are you interested in today?`;
-                },
-                bookingStepName: (packageName, vehicleType) => `Wonderful! You've selected the ${packageName} for a ${vehicleType}. First, what is your full name?`,
-                bookingStepContact: "And what is your best email address and phone number?",
-                bookingStepAddress: "Great! Where will we be performing the detail service? I'll need your full service address and zip code.",
-                bookingStepVehicle: "Almost there! Could you please tell me the year, make, and model of your vehicle?",
-                bookingStepDatetime: "Perfect! Now, let's find a convenient date and time for your appointment. What date works best for you?",
-                bookingStepSmsConsent: "Great! To ensure you receive important updates and reminders about your appointment, can we send you text messages? This would include appointment confirmations and updates. Message and data rates may apply. You can reply STOP to cancel at any time.",
-                // UPDATED CONFIRMATION MESSAGE
-                paymentOptionsQuestion: (packagePrice) => `Great! Your appointment is almost confirmed. We have two payment options, you can pay a $50 deposit now and the balance after service is complete, or you can pay the $${packagePrice} dollars in full. What do you prefer?`,
-                // UPDATED PAY IN FULL SMS MESSAGE
-                payInFullSmsSent: (carDetails) => `Michie Auto Detail: Thanks for choosing to book with us! You can make your payment in full for your ${carDetails} auto detail by going to (payment link based on package selected, you can see the list in book.html file, there is a pay in full button there) Questions? Call (405) 295-5189`,
-                payDepositSmsSent: `Ok perfect! I'm sending you a text message for you to pay the $50 deposit. Did you get the text?`,
-                smsReceivedQuestion: "Did you get the text message?", // General question for both payment types
-                waitingForPayment: "Ok great! I'll wait here while you make payment, just let me know when you're done.",
-                finalConfirmation: "Ok got it! I just sent you a confirmation text for your appointment, thank you for calling Michie Auto Detail! Have a great day!",
-                smsReoptinScript: "Got it! I see we didn't actually opt you in for text message notifications about your appointment, do you agree to receive text messages regarding your appointment? Message and data rates may apply, text STOP to stop.", // NEW
-                otherCallsNotes: "Okay, I'm ready to take notes for this call. What is your inquiry?"
-            };
-
-            const availableTimes = ['09:00', '11:00', '12:00', '14:00', '16:00', '17:00', '18:00'];
-
-            const paymentLinks = {
-                "Level 1 Detail": { "149": "https://pay.michieauto.com/lvl1sedan", "199": "https://pay.michieauto.com/lvl1suv" },
-                "Level 2 Detail": { "249": "https://pay.michieauto.com/lvl2sedan", "299": "https://pay.michieauto.com/lvl2suv" },
-                "Level 3 Detail": { "349": "https://pay.michieauto.com/lvl3sedan", "399": "https://pay.michieauto.com/lvl3suv" },
-            };
-            
-            const pageLoadTimeCST = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
-
-            async function apiCall(endpoint, method, payload = null) {
-                const headers = { 'Content-Type': 'application/json' };
-                const options = { method, headers };
-                if (payload) {
-                    options.body = JSON.stringify(payload);
-                }
-                try {
-                    const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
-                    // Check if the response is OK (status 200-299) before trying to parse JSON
-                    if (!response.ok) {
-                        const errorText = await response.text(); // Get raw text for better debugging
-                        console.error(`API Call failed: ${response.status} ${response.statusText} - ${errorText}`);
-                        throw new Error(`Server error: ${response.status} ${response.statusText}`);
+                // Package features for script generation
+                const packageFeatures = {
+                    "Level 1 Detail": {
+                        "car": [
+                            "External high pressure wash", "Tire cleaner", "Window cleaning inside and out",
+                            "Deep vaccuming", "Display controls and panels wipedown", "Mirror cleaning",
+                            "Seat vaccum", "Surface protectent for the dash and display/controls", "Steering wheel and dash clean"
+                        ],
+                        "suv-truck": [
+                            "External high pressure wash", "Tire cleaner", "Window cleaning inside and out",
+                            "Deep vaccuming", "Display controls and panels wipedown", "Mirror cleaning",
+                            "Seat vaccum", "Surface protectent for the dash and display/controls", "Steering wheel and dash clean"
+                        ]
+                    },
+                    "Level 2 Detail": {
+                        "car": [
+                            "External high pressure wash", "Tire cleaner", "Window cleaning inside and out",
+                            "Deep vaccuming", "Display controls and panels wipedown", "Mirror cleaning",
+                            "Seat vaccum", "Surface protectent for the dash and display/controls", "Steering wheel and dash clean",
+                            "Shampoo carpets and seats", "Premium Leather treatment", "Door jam cleaning",
+                            "Rims and tires cleaned and wiped down", "Console scrub down", "Pet hair removal", "Odor removal"
+                        ],
+                        "suv-truck": [
+                            "External high pressure wash", "Tire cleaner", "Window cleaning inside and out",
+                            "Deep vaccuming", "Display controls and panels wipedown", "Mirror cleaning",
+                            "Seat vaccum", "Surface protectent for the dash and display/controls", "Steering wheel and dash clean",
+                            "Shampoo carpets and seats", "Premium Leather treatment", "Door jam cleaning",
+                            "Rims and tires cleaned and wiped down", "Console scrub down", "Pet hair removal", "Odor removal"
+                        ]
+                    },
+                    "Level 3 Detail": {
+                        "car": [
+                            "External high pressure wash", "Tire cleaner", "Window cleaning inside and out",
+                            "Deep vaccuming", "Display controls and panels wipedown", "Mirror cleaning",
+                            "Seat vaccum", "Surface protectent for the dash and display/controls", "Steering wheel and dash clean",
+                            "Shampoo carpets and seats", "Premium Leather treatment", "Door jam cleaning",
+                            "Rims and tires cleaned and wiped down", "Console scrub down", "Pet hair removal", "Odor removal",
+                            "FINE TOOTH COMB in between seats cleaning", "Glove compartment cleaning", "Trunk shampoo and vaccum",
+                            "Door controls cleaning", "Hard to reach areas deep level shampoo",
+                            "Meticulous cleaning of all frequently touched surfaces", "External bug removal",
+                            "Free microfiber cloth", "Protection plan (complimentary maintenance clean within 15 days)"
+                        ],
+                        "suv-truck": [
+                            "External high pressure wash", "Tire cleaner", "Window cleaning inside and out",
+                            "Deep vaccuming", "Display controls and panels wipedown", "Mirror cleaning",
+                            "Seat vaccum", "Surface protectent for the dash and display/controls", "Steering wheel and dash clean",
+                            "Shampoo carpets and seats", "Premium Leather treatment", "Door jam cleaning",
+                            "Rims and tires cleaned and wiped down", "Console scrub down", "Pet hair removal", "Odor removal",
+                            "FINE TOOTH COMB in between seats cleaning", "Glove compartment cleaning", "Trunk shampoo and vaccum",
+                            "Door controls cleaning", "Hard to reach areas deep level shampoo",
+                            "Meticulous cleaning of all frequently touched surfaces", "External bug removal",
+                            "Free microfiber cloth", "Protection plan (complimentary maintenance clean within 15 days)"
+                        ]
                     }
-                    const responseText = await response.text();
-                    // Attempt to parse JSON only if responseText is not empty
-                    const data = responseText ? JSON.parse(responseText) : {};
-                    return { ok: response.ok, data: data, status: response.status };
-                } catch (error) {
-                    console.error('API Call Error:', error);
-                    return { ok: false, data: { message: error.message || 'Network error or invalid JSON response.' } };
-                }
-            }
-            
-            function hideAllSections() {
-                // Hide all *major* sections
-                [elements.initialScriptSection, elements.pricingSection, elements.schedulingSection, elements.otherCallsSection, 
-                 elements.confirmationSection, elements.smsReceivedQuestionSection, elements.waitingForPaymentSection, 
-                 elements.finalConfirmationSection, elements.smsReoptinSection] // Added new sections
-                    .forEach(el => el && (el.style.display = 'none'));
+                };
+
+
+                const packagePrices = {
+                    "Level 1 Detail": { "car": 149, "suv-truck": 199 },
+                    "Level 2 Detail": { "car": 249, "suv-truck": 299 },
+                    "Level 3 Detail": { "car": 349, "suv-truck": 399 }
+                };
+
+                // Script content definitions (updated to first person)
+                const scriptContent = {
+                    initial: "Thank you for calling Michie Auto Detail, are you calling to schedule an appointment?",
+                    pricingVehicleType: "Absolutely! I'd love to get you some information on pricing. Are you calling about a car, truck, or SUV?",
+                    pricingIntroLevels: "We have 3 levels of service to choose from. I'll just ask you a couple of questions to see which option is right for you, sound good?",
+                    pricingPetHairQuestion: "Do you have any pet hair in your vehicle?",
+                    pricingShampooQuestion: "Would you like your seats and carpets shampooed and renewed?",
+                    pricingLevel2Recommendation: (vehicleType) => {
+                        const features = packageFeatures["Level 2 Detail"][vehicleType].join(', ');
+                        const price = packagePrices[recommendedPackageType][vehicleType];
+                        return `Based on the information you've provided me, I'm going to recommend our most popular option, it's called level 2 detail service. It includes ${features}. The price is $${price}, does that sound good?`;
+                    },
+                    pricingLevel1Recommendation: (vehicleType) => {
+                        const features = packageFeatures["Level 1 Detail"][vehicleType].join(', ');
+                        const price = packagePrices[recommendedPackageType][vehicleType];
+                        return `Based on the information you've provided me, I'm going to recommend our most affordable option, it's called level 1 detail service. It. It includes ${features}. The price is $${price}, does that sound good?`;
+                    },
+                    pricingDownsellLevel1: (vehicleType) => {
+                        const features = packageFeatures["Level 1 Detail"][vehicleType].join(', ');
+                        const price = packagePrices[recommendedPackageType][vehicleType];
+                        return `I completely understand! We have another option that will fit your budget and your needs. I'm going to recommend our most affordable option, it's called level 1 detail service. It includes ${features}. The price is $${price}, does that sound good?`;
+                    },
+                    schedulingVehicleType: "Excellent! To help me find the best appointment for you, what type of vehicle are we scheduling for? Is it a car, truck, or SUV?",
+                    schedulingPackageInquiry: (vehicleType) => {
+                        const carPrices = `Level 1 Detail at $${packagePrices["Level 1 Detail"].car}, Level 2 at $${packagePrices["Level 2 Detail"].car}, and Level 3 at $${packagePrices["Level 3 Detail"].car}`;
+                        const suvTruckPrices = `Level 1 at $${packagePrices["Level 1 Detail"]["suv-truck"]}, Level 2 at $${packagePrices["Level 2 Detail"]["suv-truck"]}, and Level 3 at $${packagePrices["Level 3 Detail"]["suv-truck"]}`;
+                        const prices = vehicleType === 'car' ? carPrices : suvTruckPrices;
+                        return `Perfect. For a ${vehicleType}, we have our ${prices}. Which package are you interested in today?`;
+                    },
+                    bookingStepName: (packageName, vehicleType) => `Wonderful! You've selected the ${packageName} for a ${vehicleType}. First, what is your full name?`,
+                    bookingStepContact: "And what is your best email address and phone number?",
+                    bookingStepAddress: "Great! Where will we be performing the detail service? I'll need your full service address and zip code.",
+                    bookingStepVehicle: "Almost there! Could you please tell me the year, make, and model of your vehicle?",
+                    bookingStepDatetime: "Perfect! Now, let's find a convenient date and time for your appointment. What date works best for you?",
+                    bookingStepSmsConsent: "Great! To ensure you receive important updates and reminders about your appointment, can we send you text messages? This would include appointment confirmations and updates. Message and data rates may apply. You can reply STOP to cancel at any time.",
+                    // UPDATED CONFIRMATION MESSAGE
+                    paymentOptionsQuestion: (packagePrice) => `Great! Your appointment is almost confirmed. We have two payment options, you can pay a $50 deposit now and the balance after service is complete, or you can pay the $${packagePrice} dollars in full. What do you prefer?`,
+                    // UPDATED PAY IN FULL SMS MESSAGE
+                    payInFullSmsSent: (carDetails) => `Michie Auto Detail: Thanks for choosing to book with us! You can make your payment in full for your ${carDetails} auto detail by going to (payment link based on package selected, you can see the list in book.html file, there is a pay in full button there) Questions? Call (405) 295-5189`,
+                    payDepositSmsSent: `Ok perfect! I'm sending you a text message for you to pay the $50 deposit. Did you get the text?`,
+                    smsReceivedQuestion: "Did you get the text message?", // General question for both payment types
+                    waitingForPayment: "Ok great! I'll wait here while you make payment, just let me know when you're done.",
+                    finalConfirmation: "Ok got it! I just sent you a confirmation text for your appointment, thank you for calling Michie Auto Detail! Have a great day!",
+                    smsReoptinScript: "Got it! I see we didn't actually opt you in for text message notifications about your appointment, do you agree to receive text messages regarding your appointment? Message and data rates may apply, text STOP to stop.", // NEW
+                    otherCallsNotes: "Okay, I'm ready to take notes for this call. What is your inquiry?"
+                };
+
+                const availableTimes = ['09:00', '11:00', '12:00', '14:00', '16:00', '17:00', '18:00'];
+
+                const paymentLinks = {
+                    "Level 1 Detail": { "149": "https://pay.michieauto.com/lvl1sedan", "199": "https://pay.michieauto.com/lvl1suv" },
+                    "Level 2 Detail": { "249": "https://pay.michieauto.com/lvl2sedan", "299": "https://pay.michieauto.com/lvl2suv" },
+                    "Level 3 Detail": { "349": "https://pay.michieauto.com/lvl3sedan", "399": "https://pay.michieauto.com/lvl3suv" },
+                };
                 
-                // Hide all *sub-sections* within pricing and scheduling, ensuring a clean slate
-                [
-                    elements.pricingVehicleTypeSelection, elements.pricingIntroLevels, elements.pricingPetHairQuestion,
-                    elements.pricingShampooQuestion, elements.pricingLevel2Recommendation, elements.pricingLevel1Recommendation,
-                    elements.pricingFullPackageDetails, elements.sedanPackagesDisplay, elements.suvTruckPackagesDisplay,
-                    elements.schedulingVehicleTypeSelection, elements.schedulingPackageSelectionContainer,
-                    elements.bookingFormSection, 
-                    elements.bookingStepName, elements.bookingStepContact,
-                    elements.bookingStepAddress, elements.bookingStepVehicle, elements.bookingStepDatetime,
-                    elements.bookingStepSmsConsent, // Ensure this is hidden when other sections are active
-                    elements.policyText
-                ].forEach(el => el && (el.style.display = 'none'));
+                const pageLoadTimeCST = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
 
-                // Explicitly hide payment options buttons div as well
-                if (elements.paymentOptionsButtons) elements.paymentOptionsButtons.style.display = 'none';
-            }
+                async function apiCall(endpoint, method, payload = null) {
+                    const headers = { 'Content-Type': 'application/json' };
+                    const options = { method, headers };
+                    if (payload) {
+                        options.body = JSON.stringify(payload);
+                    }
+                    try {
+                        const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+                        const responseText = await response.text(); // Always get text first
 
-            function updateScript(text) {
-                if (elements.scriptDisplay) {
-                    elements.scriptDisplay.innerHTML = text;
-                }
-            }
-
-            // --- Main Script Navigation ---
-            function showInitialScript() {
-                hideAllSections();
-                updateScript(scriptContent.initial);
-                if (elements.initialScriptSection) elements.initialScriptSection.style.display = 'block';
-                // Reset global state variables when returning to initial script
-                currentVehicleType = '';
-                recommendedPackageType = '';
-                recommendedPackagePrice = 0;
-                lastBookedCustomerData = null; // NEW: Clear stored customer data
-            }
-
-            // --- Pricing Flow Functions ---
-            function showPricingVehicleTypeSelection() {
-                hideAllSections(); 
-                updateScript(scriptContent.pricingVehicleType);
-                if (elements.pricingSection) elements.pricingSection.style.display = 'block'; 
-                if (elements.pricingVehicleTypeSelection) elements.pricingVehicleTypeSelection.style.display = 'block'; 
-                document.querySelectorAll('#pricing-vehicle-type-selection .btn-primary.active').forEach(b => b.classList.remove('active'));
-                // Reset recommended package when starting pricing flow
-                recommendedPackageType = '';
-                recommendedPackagePrice = 0;
-            }
-
-            function showPricingIntroLevels(vehicleType, clickedButton) {
-                currentVehicleType = vehicleType;
-                hideAllSections(); 
-                updateScript(scriptContent.pricingIntroLevels);
-                if (elements.pricingSection) elements.pricingSection.style.display = 'block'; 
-                if (elements.pricingIntroLevels) elements.pricingIntroLevels.style.display = 'block'; 
-                document.querySelectorAll('#pricing-vehicle-type-selection .btn-primary.active').forEach(b => b.classList.remove('active'));
-                if (clickedButton) clickedButton.classList.add('active');
-            }
-
-            function showPricingPetHairQuestion() {
-                hideAllSections(); 
-                updateScript(scriptContent.pricingPetHairQuestion);
-                if (elements.pricingSection) elements.pricingSection.style.display = 'block'; 
-                if (elements.pricingPetHairQuestion) elements.pricingPetHairQuestion.style.display = 'block'; 
-            }
-
-            function showPricingShampooQuestion() {
-                hideAllSections(); 
-                updateScript(scriptContent.pricingShampooQuestion);
-                if (elements.pricingSection) elements.pricingSection.style.display = 'block'; 
-                if (elements.pricingShampooQuestion) elements.pricingShampooQuestion.style.display = 'block'; 
-            }
-
-            function showPricingLevel2Recommendation() {
-                recommendedPackageType = "Level 2 Detail";
-                recommendedPackagePrice = packagePrices[recommendedPackageType][currentVehicleType];
-                console.log('Recommended Level 2:', { recommendedPackageType, recommendedPackagePrice, currentVehicleType });
-                hideAllSections(); 
-                updateScript(scriptContent.pricingLevel2Recommendation(currentVehicleType));
-                if (elements.pricingSection) elements.pricingSection.style.display = 'block'; 
-                if (elements.pricingLevel2Recommendation) elements.pricingLevel2Recommendation.style.display = 'block'; 
-            }
-
-            function showPricingLevel1Recommendation(isDownsell = false) {
-                recommendedPackageType = "Level 1 Detail";
-                recommendedPackagePrice = packagePrices[recommendedPackageType][currentVehicleType];
-                console.log('Recommended Level 1:', { recommendedPackageType, recommendedPackagePrice, currentVehicleType });
-                hideAllSections(); 
-                if (isDownsell) {
-                    updateScript(scriptContent.pricingDownsellLevel1(currentVehicleType));
-                } else {
-                    updateScript(scriptContent.pricingLevel1Recommendation(currentVehicleType));
-                }
-                if (elements.pricingSection) elements.pricingSection.style.display = 'block'; 
-                if (elements.pricingLevel1Recommendation) elements.pricingLevel1Recommendation.style.display = 'block'; 
-            }
-
-            // --- Scheduling Flow Functions ---
-            function showSchedulingVehicleTypeSelection() {
-                hideAllSections(); // Start by hiding everything
-                updateScript(scriptContent.schedulingVehicleType);
-                if (elements.schedulingSection) elements.schedulingSection.style.display = 'block'; // Show scheduling section
-                if (elements.schedulingVehicleTypeSelection) elements.schedulingVehicleTypeSelection.style.display = 'block'; // Show vehicle type selection
-
-                document.querySelectorAll('#scheduling-vehicle-type-selection .btn-primary.active').forEach(b => b.classList.remove('active'));
-                // Clear any previously selected package/time
-                if (elements.selectedPackageTypeInput) elements.selectedPackageTypeInput.value = '';
-                if (elements.selectedPackagePriceInput) elements.selectedPackagePriceInput.value = '';
-                if (elements.selectedBookingTimeInput) elements.selectedBookingTimeInput.value = '';
-                if (elements.finalBookAppointmentBtn) elements.finalBookAppointmentBtn.style.display = 'none';
-                // Reset global state variables for scheduling flow
-                currentVehicleType = '';
-                recommendedPackageType = ''; 
-                recommendedPackagePrice = 0; 
-            }
-
-            function showSchedulingPackageSelection(vehicleCategory, clickedButton) {
-                currentVehicleType = vehicleCategory; 
-                hideAllSections(); 
-                if (elements.schedulingSection) elements.schedulingSection.style.display = 'block'; 
-                if (elements.schedulingPackageSelectionContainer) elements.schedulingPackageSelectionContainer.style.display = 'block'; 
-
-                updateScript(scriptContent.schedulingPackageInquiry(vehicleCategory));
-
-                document.querySelectorAll('#scheduling-vehicle-type-selection .btn-primary.active').forEach(b => b.classList.remove('active'));
-                if (clickedButton) clickedButton.classList.add('active');
-
-                if (elements.sedanPackagesBookingDisplay) elements.sedanPackagesBookingDisplay.style.display = vehicleCategory === 'car' ? 'grid' : 'none';
-                if (elements.suvTruckPackagesBookingDisplay) elements.suvTruckPackagesBookingDisplay.style.display = vehicleCategory === 'suv-truck' ? 'grid' : 'none';
-            }
-
-            // Functions for sequential booking form steps
-            function showBookingStepName(packageType, packagePrice, vehicleType) {
-                console.log('Entering showBookingStepName with:', { packageType, packagePrice, vehicleType });
-                // Set package and vehicle type in hidden inputs
-                if (elements.selectedPackageDisplay) elements.selectedPackageDisplay.textContent = packageType;
-                if (elements.selectedPackageTypeInput) elements.selectedPackageTypeInput.value = packageType;
-                if (elements.selectedPackagePriceInput) elements.selectedPackagePriceInput.value = packagePrice;
-                if (elements.selectedVehicleTypeInput) elements.selectedVehicleTypeInput.value = vehicleType;
-
-                hideAllSections(); // Hide everything first
-
-                // Ensure the main scheduling section and booking form container are visible
-                if (elements.schedulingSection) elements.schedulingSection.style.display = 'block';
-                if (elements.bookingFormSection) elements.bookingFormSection.style.display = 'block';
-                
-                // Show only the current step
-                if (elements.bookingStepName) elements.bookingStepName.style.display = 'block';
-                
-                updateScript(scriptContent.bookingStepName(packageType, vehicleType));
-            }
-
-            function showBookingStepContact() {
-                // Validate name before proceeding
-                const fullName = document.getElementById('full-name').value;
-                if (!fullName) {
-                    elements.bookingMessage.textContent = 'Please enter the full name.';
-                    elements.bookingMessage.style.color = 'red';
-                    return;
-                }
-                elements.bookingMessage.textContent = ''; // Clear previous message
-
-                if (elements.bookingStepName) elements.bookingStepName.style.display = 'none';
-                if (elements.bookingStepContact) elements.bookingStepContact.style.display = 'block';
-                updateScript(scriptContent.bookingStepContact);
-            }
-
-            function showBookingStepAddress() {
-                // Validate email and phone before proceeding
-                const email = document.getElementById('email').value;
-                const phone = document.getElementById('phone').value;
-                
-                // Email validation
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!email) {
-                    elements.bookingMessage.textContent = 'Please enter your email address.';
-                    elements.bookingMessage.style.color = 'red';
-                    return;
-                }
-                if (!emailRegex.test(email)) {
-                    elements.bookingMessage.textContent = 'Please enter a valid email address.';
-                    elements.bookingMessage.style.color = 'red';
-                    return;
-                }
-
-                // Phone number validation (10 digits, optional hyphens/spaces/parentheses)
-                const phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
-                if (!phone) {
-                    elements.bookingMessage.textContent = 'Please enter your phone number.';
-                    elements.bookingMessage.style.color = 'red';
-                    return;
-                }
-                if (!phoneRegex.test(phone)) {
-                    elements.bookingMessage.textContent = 'Please enter a valid 10-digit phone number.';
-                    elements.bookingMessage.style.color = 'red';
-                    return;
-                }
-
-                elements.bookingMessage.textContent = ''; // Clear previous message
-
-                if (elements.bookingStepContact) elements.bookingStepContact.style.display = 'none';
-                if (elements.bookingStepAddress) elements.bookingStepAddress.style.display = 'block';
-                updateScript(scriptContent.bookingStepAddress);
-            }
-
-            function showBookingStepVehicle() {
-                // Validate address and zip before proceeding
-                const address = document.getElementById('address-input').value;
-                const zipCode = document.getElementById('zip-code').value;
-                if (!address || !zipCode) {
-                    elements.bookingMessage.textContent = 'Please enter both address and zip code.';
-                    elements.bookingMessage.style.color = 'red';
-                    return;
-                }
-                elements.bookingMessage.textContent = ''; // Clear previous message
-
-                if (elements.bookingStepAddress) elements.bookingStepAddress.style.display = 'none';
-                if (elements.bookingStepVehicle) elements.bookingStepVehicle.style.display = 'block';
-                updateScript(scriptContent.bookingStepVehicle);
-            }
-
-            function showBookingStepDatetime() {
-                // Validate vehicle details before proceeding
-                const vehicleYear = document.getElementById('vehicle-year').value;
-                const vehicleMake = document.getElementById('vehicle-make').value;
-                const vehicleModel = document.getElementById('vehicle-model').value;
-                if (!vehicleYear || !vehicleMake || !vehicleModel) {
-                    elements.bookingMessage.textContent = 'Please enter vehicle year, make, and model.';
-                    elements.bookingMessage.style.color = 'red';
-                    return;
-                }
-                elements.bookingMessage.textContent = ''; // Clear previous message
-
-                if (elements.bookingStepVehicle) elements.bookingStepVehicle.style.display = 'none';
-                if (elements.bookingStepDatetime) elements.bookingStepDatetime.style.display = 'block';
-                updateScript(scriptContent.bookingStepDatetime);
-                checkAndSetInitialDate(); // Populate date and time slots
-            }
-
-            // NEW: Function to show SMS consent step
-            function showBookingStepSmsConsent() {
-                // Validate date and time before proceeding
-                const bookingDate = document.getElementById('booking-date').value;
-                const selectedTime = elements.selectedBookingTimeInput.value;
-                if (!bookingDate || !selectedTime) {
-                    elements.bookingMessage.textContent = 'Please select a date and time.';
-                    elements.bookingMessage.style.color = 'red';
-                    return;
-                }
-                elements.bookingMessage.textContent = ''; // Clear previous message
-
-                // Ensure the form section is visible before showing the consent step
-                if (elements.schedulingSection) elements.schedulingSection.style.display = 'block';
-                if (elements.bookingFormSection) elements.bookingFormSection.style.display = 'block';
-
-                if (elements.bookingStepDatetime) elements.bookingStepDatetime.style.display = 'none';
-                if (elements.bookingStepSmsConsent) elements.bookingStepSmsConsent.style.display = 'block';
-                
-                // Ensure the final book appointment button is visible on this step
-                if (elements.finalBookAppointmentBtn) elements.finalBookAppointmentBtn.style.display = 'block';
-                // Ensure the back button is visible on this step
-                if (elements.backToDatetimeStep) elements.backToDatetimeStep.style.display = 'block';
-
-                updateScript(scriptContent.bookingStepSmsConsent);
-            }
-
-            // NEW: Function to show payment options screen
-            function showPaymentOptionsScreen() {
-                console.log("Entering showPaymentOptionsScreen.");
-                hideAllSections(); // Hide everything first
-                
-                if (elements.confirmationSection) {
-                    elements.confirmationSection.style.display = 'block';
-                    console.log("confirmationSection display set to block.");
-                }
-                if (elements.policyText) {
-                    elements.policyText.style.display = 'block';
-                    console.log("policyText display set to block.");
-                }
-                
-                const packagePrice = elements.selectedPackagePriceInput.value;
-                // Update confirmation message div content
-                if (elements.confirmationMessageDiv) {
-                    elements.confirmationMessageDiv.innerHTML = `
-                        <p class="text-2xl font-bold mb-2">⚠️ Booking Created!</p>
-                        <p class="text-md mt-4">${scriptContent.paymentOptionsQuestion(packagePrice)}</p>
-                    `;
-                    console.log("confirmationMessageDiv content updated.");
-                }
-
-                // Show payment options buttons
-                if (elements.paymentOptionsButtons) {
-                    elements.paymentOptionsButtons.style.display = 'flex'; // This is the key line
-                    // Add a class for flexbox layout if not already present
-                    elements.paymentOptionsButtons.classList.add('flex', 'flex-col', 'sm:flex-row', 'justify-center', 'gap-4');
-                    console.log("paymentOptionsButtons display set to flex and flex classes added.");
-                } else {
-                    console.error("Error: paymentOptionsButtons element not found!");
-                }
-                
-                // Set payment button links based on selected package
-                const packageType = elements.selectedPackageTypeInput.value;
-                const packagePriceVal = elements.selectedPackagePriceInput.value; // Get the actual price value
-                const priceKey = String(packagePriceVal); 
-                let paymentRedirectLink = '#';
-                if (paymentLinks[packageType] && paymentLinks[packageType][priceKey]) {
-                    paymentRedirectLink = paymentLinks[packageType][priceKey];
-                }
-                
-                // Set click handlers for the new payment buttons
-                if (elements.btnPayInFull) {
-                    elements.btnPayInFull.onclick = async () => {
-                        // Simulate sending SMS for pay in full
-                        const payload = {
-                            customer_id: lastBookedCustomerData.customer_id,
-                            deal_id: lastBookedCustomerData.deal_id,
-                            phone: lastBookedCustomerData.customer_phone,
-                            sms_type: "pay_in_full",
-                            payment_link: paymentRedirectLink,
-                            amount_due: packagePriceVal, // Pass the actual package price
-                            car_details: `${lastBookedCustomerData.vehicle_year} ${lastBookedCustomerData.vehicle_make} ${lastBookedCustomerData.vehicle_model}`
-                        };
-                        const { ok, data } = await apiCall('/public/send_payment_link_sms', 'POST', payload);
-                        if (ok) {
-                            // Store the SMS type for potential re-send logic
-                            lastBookedCustomerData.sms_type = "pay_in_full";
-                            lastBookedCustomerData.payment_link = paymentRedirectLink; // Store the link for re-send
-                            showPayInFullSmsQuestion(`${lastBookedCustomerData.vehicle_year} ${lastBookedCustomerData.vehicle_make} ${lastBookedCustomerData.vehicle_model}`); // Pass car details
-                        } else {
-                            // Use a message box for errors instead of alert
-                            elements.bookingMessage.textContent = `Failed to send pay in full SMS: ${data.message || 'Unknown error'}`;
-                            elements.bookingMessage.style.color = 'red';
+                        if (!response.ok) {
+                            // If response is not OK, it's an HTTP error.
+                            // The body might still be HTML (like a 404 page).
+                            console.error(`API Call failed: ${response.status} ${response.statusText}`);
+                            console.error('Response body:', responseText); // Log the actual response body
+                            let errorMessage = `Server responded with status ${response.status}: ${response.statusText}.`;
+                            try {
+                                const errorData = JSON.parse(responseText);
+                                errorMessage = errorData.message || errorMessage;
+                            } catch (e) {
+                                // If it's not JSON, use the generic message or the HTML content if useful
+                                errorMessage = `Unexpected server response. Expected JSON, got HTML/text. Status: ${response.status}. Content: ${responseText.substring(0, 200)}...`;
+                            }
+                            throw new Error(errorMessage);
                         }
-                    };
-                }
-                if (elements.btnPayDeposit) {
-                    elements.btnPayDeposit.onclick = async () => {
-                        // Simulate sending SMS for deposit
-                        const payload = {
-                            customer_id: lastBookedCustomerData.customer_id,
-                            deal_id: lastBookedCustomerData.deal_id,
-                            phone: lastBookedCustomerData.customer_phone,
-                            sms_type: "deposit",
-                            payment_link: "https://pay.michieauto.com/deposit",
-                            car_details: `${lastBookedCustomerData.vehicle_year} ${lastBookedCustomerData.vehicle_make} ${lastBookedCustomerData.vehicle_model}`
-                        };
-                        const { ok, data } = await apiCall('/public/send_payment_link_sms', 'POST', payload);
-                        if (ok) {
-                            // Store the SMS type for potential re-send logic
-                            lastBookedCustomerData.sms_type = "deposit";
-                            lastBookedCustomerData.payment_link = "https://pay.michieauto.com/deposit"; // Store the link for re-send
-                            showPayDepositSmsQuestion();
-                        } else {
-                            // Use a message box for errors instead of alert
-                            elements.bookingMessage.textContent = `Failed to send deposit SMS: ${data.message || 'Unknown error'}`;
-                            elements.bookingMessage.style.color = 'red';
-                        }
-                    };
-                }
-            }
 
-            // NEW: Show "Did you get the text message?" screen for Pay in Full
-            function showPayInFullSmsQuestion(carDetails) {
-                hideAllSections();
-                if (elements.smsReceivedQuestionSection) elements.smsReceivedQuestionSection.style.display = 'block';
-                if (elements.smsReceivedQuestionMessage) {
-                    // Updated message to reflect the new "Pay in full" SMS text
-                    elements.smsReceivedQuestionMessage.innerHTML = `<p>Ok perfect! I'm sending you a text message for you to pay the balance of (amount due based on package selected) dollars. Did you get the text?</p>`;
-                }
-                updateScript(scriptContent.payInFullSmsSent(carDetails)); // Pass carDetails to the script content
-            }
-
-            // NEW: Show "Did you get the text message?" screen for Deposit
-            function showPayDepositSmsQuestion() {
-                hideAllSections();
-                if (elements.smsReceivedQuestionSection) elements.smsReceivedQuestionSection.style.display = 'block';
-                if (elements.smsReceivedQuestionMessage) {
-                    elements.smsReceivedQuestionMessage.innerHTML = `<p>${scriptContent.payDepositSmsSent}</p>`;
-                }
-                updateScript(scriptContent.smsReceivedQuestion);
-            }
-
-            // NEW: Show waiting for payment screen
-            function showWaitingForPaymentScreen() {
-                hideAllSections();
-                if (elements.waitingForPaymentSection) elements.waitingForPaymentSection.style.display = 'block';
-                if (elements.waitingForPaymentMessage) {
-                    elements.waitingForPaymentMessage.innerHTML = `<p>${scriptContent.waitingForPayment}</p>`;
-                }
-                updateScript(scriptContent.waitingForPayment);
-            }
-
-            // NEW: Show final confirmation screen
-            function showFinalConfirmationScreen() {
-                hideAllSections();
-                if (elements.finalConfirmationSection) elements.finalConfirmationSection.style.display = 'block';
-                if (elements.finalConfirmationMessage) {
-                    const { vehicle_year, vehicle_make, vehicle_model, booking_date, booking_time } = lastBookedCustomerData;
-                    const formattedDate = new Date(booking_date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-                    const formattedTime = formatTimeDisplay(booking_time);
-                    elements.finalConfirmationMessage.innerHTML = `
-                        <p>Thanks for choosing Michie Auto Detail! Your appointment for ${vehicle_year} ${vehicle_make} ${vehicle_model} is confirmed on ${formattedDate} at ${formattedTime}! Questions? Call (405) 295-5189 we'll see you soon!</p>
-                        <p class="mt-4">${scriptContent.finalConfirmation}</p>
-                    `;
-                }
-                updateScript(scriptContent.finalConfirmation);
-            }
-
-            // NEW: Function to show SMS re-opt-in screen
-            function showSmsReoptinScreen() {
-                hideAllSections();
-                if (elements.smsReoptinSection) elements.smsReoptinSection.style.display = 'block';
-                updateScript(scriptContent.smsReoptinScript);
-                // Ensure checkbox is unchecked by default for new consent
-                if (elements.smsReoptinConsentTransactional) {
-                    elements.smsReoptinConsentTransactional.checked = false;
-                }
-                // Pre-fill phone number if available
-                if (elements.reoptinPhoneNumberInput && lastBookedCustomerData && lastBookedCustomerData.customer_phone) {
-                    elements.reoptinPhoneNumberInput.value = lastBookedCustomerData.customer_phone;
-                }
-            }
-
-
-            // --- Other Calls Flow Functions ---
-            function showOtherCalls() {
-                hideAllSections(); 
-                updateScript(scriptContent.otherCallsNotes);
-                if (elements.otherCallsSection) elements.otherCallsSection.style.display = 'block'; 
-                if (elements.otherCallsNotes) elements.otherCallsNotes.value = ''; 
-            }
-
-
-            // --- Event Listeners for Main Script Buttons ---
-            if (elements.btnPricing) elements.btnPricing.addEventListener('click', showPricingVehicleTypeSelection);
-            if (elements.btnScheduling) elements.btnScheduling.addEventListener('click', showSchedulingVehicleTypeSelection);
-            if (elements.btnOtherCalls) elements.btnOtherCalls.addEventListener('click', showOtherCalls);
-
-            // --- Back Buttons Event Listeners ---
-            if (elements.backToMainFromPricingVehicle) elements.backToMainFromPricingVehicle.addEventListener('click', showInitialScript);
-            if (elements.backToPricingVehicleTypeFromIntro) elements.backToPricingVehicleTypeFromIntro.addEventListener('click', showPricingVehicleTypeSelection);
-            if (elements.backToIntroLevelsFromPetHair) elements.backToIntroLevelsFromPetHair.addEventListener('click', () => showPricingIntroLevels(currentVehicleType));
-            if (elements.backToPetHairFromShampoo) elements.backToPetHairFromShampoo.addEventListener('click', showPricingShampooQuestion);
-            if (elements.backToShampooFromLevel2) elements.backToShampooFromLevel2.addEventListener('click', showPricingShampooQuestion);
-            if (elements.backToLevel2FromLevel1) elements.backToLevel2FromLevel1.addEventListener('click', showPricingLevel2Recommendation); 
-            
-            if (elements.backToMainFromSchedulingVehicle) elements.backToMainFromSchedulingVehicle.addEventListener('click', showInitialScript);
-            if (elements.backToSchedulingVehicleType) elements.backToSchedulingVehicleType.addEventListener('click', showSchedulingVehicleTypeSelection);
-            if (elements.backToPackageSelection) elements.backToPackageSelection.addEventListener('click', () => {
-                // Reset form fields when going back from booking steps
-                document.getElementById('full-name').value = '';
-                document.getElementById('email').value = '';
-                document.getElementById('phone').value = '';
-                document.getElementById('address-input').value = '';
-                document.getElementById('zip-code').value = '';
-                document.getElementById('vehicle-year').value = '';
-                document.getElementById('vehicle-make').value = '';
-                document.getElementById('vehicle-model').value = '';
-                document.getElementById('booking-date').value = '';
-                elements.selectedBookingTimeInput.value = '';
-                if (elements.bookingMessage) elements.bookingMessage.textContent = ''; 
-                showSchedulingPackageSelection(elements.selectedVehicleTypeInput.value); 
-            });
-            if (elements.backToNameStep) elements.backToNameStep.addEventListener('click', () => {
-                if (elements.bookingStepContact) elements.bookingStepContact.style.display = 'none';
-                if (elements.bookingStepName) elements.bookingStepName.style.display = 'block';
-                updateScript(scriptContent.bookingStepName(elements.selectedPackageTypeInput.value, elements.selectedVehicleTypeInput.value));
-            });
-            if (elements.backToContactStep) elements.backToContactStep.addEventListener('click', () => {
-                if (elements.bookingStepAddress) elements.bookingStepAddress.style.display = 'none';
-                if (elements.bookingStepContact) elements.bookingStepContact.style.display = 'block';
-                updateScript(scriptContent.bookingStepContact);
-            });
-            if (elements.backToAddressStep) elements.backToAddressStep.addEventListener('click', () => {
-                if (elements.bookingStepVehicle) elements.bookingStepVehicle.style.display = 'none';
-                if (elements.bookingStepAddress) elements.bookingStepAddress.style.display = 'block';
-                updateScript(scriptContent.bookingStepAddress);
-            });
-            if (elements.backToVehicleStep) elements.backToVehicleStep.addEventListener('click', () => {
-                if (elements.bookingStepDatetime) elements.bookingStepDatetime.style.display = 'none';
-                if (elements.bookingStepVehicle) elements.bookingStepVehicle.style.display = 'block';
-                updateScript(scriptContent.bookingStepVehicle);
-            });
-            if (elements.backToDatetimeStep) elements.backToDatetimeStep.addEventListener('click', () => {
-                if (elements.bookingStepSmsConsent) elements.bookingStepSmsConsent.style.display = 'none';
-                if (elements.bookingStepDatetime) elements.bookingStepDatetime.style.display = 'block';
-                updateScript(scriptContent.bookingStepDatetime);
-            });
-
-            if (elements.backToMainFromConfirmation) elements.backToMainFromConfirmation.addEventListener('click', showInitialScript);
-            if (elements.backToMainFromOther) elements.backToMainFromOther.addEventListener('click', showInitialScript);
-
-
-            // --- Pricing Section Specific Event Listeners ---
-            if (elements.pricingSelectCarBtn) elements.pricingSelectCarBtn.addEventListener('click', (e) => showPricingIntroLevels('car', e.target));
-            if (elements.pricingSelectTruckBtn) elements.pricingSelectTruckBtn.addEventListener('click', (e) => showPricingIntroLevels('suv-truck', e.target));
-            if (elements.pricingSelectSuvBtn) elements.pricingSelectSuvBtn.addEventListener('click', (e) => showPricingIntroLevels('suv-truck', e.target));
-
-            if (elements.btnOkIntroLevels) elements.btnOkIntroLevels.addEventListener('click', showPricingPetHairQuestion);
-            
-            if (elements.btnPetHairYes) elements.btnPetHairYes.addEventListener('click', showPricingLevel2Recommendation);
-            if (elements.btnPetHairNo) elements.btnPetHairNo.addEventListener('click', showPricingShampooQuestion);
-
-            if (elements.btnShampooYes) elements.btnShampooYes.addEventListener('click', showPricingLevel2Recommendation);
-            if (elements.btnShampooNo) elements.btnShampooNo.addEventListener('click', () => showPricingLevel1Recommendation(false)); 
-
-            if (elements.btnLevel2Yes) elements.btnLevel2Yes.addEventListener('click', () => {
-                console.log('btnLevel2Yes clicked. Calling showBookingStepName with:', { recommendedPackageType, recommendedPackagePrice, currentVehicleType });
-                elements.pricingLevel2Recommendation.style.display = 'none';
-                elements.pricingLevel1Recommendation.style.display = 'none';
-                elements.pricingSection.style.display = 'none'; 
-                showBookingStepName(recommendedPackageType, recommendedPackagePrice, currentVehicleType); 
-            });
-            if (elements.btnLevel2No) elements.btnLevel2No.addEventListener('click', () => showPricingLevel1Recommendation(true)); 
-
-            if (elements.btnLevel1Yes) elements.btnLevel1Yes.addEventListener('click', () => {
-                console.log('btnLevel1Yes clicked. Calling showBookingStepName with:', { recommendedPackageType, recommendedPackagePrice, currentVehicleType });
-                elements.pricingLevel2Recommendation.style.display = 'none';
-                elements.pricingLevel1Recommendation.style.display = 'none';
-                elements.pricingSection.style.display = 'none'; 
-                showBookingStepName(recommendedPackageType, recommendedPackagePrice, currentVehicleType); 
-            });
-            if (elements.btnLevel1No) elements.btnLevel1No.addEventListener('click', showOtherCalls);
-
-
-            // Package dropdown toggles in pricing section (for reference details)
-            if (elements.pricingSection) elements.pricingSection.addEventListener('click', (e) => {
-                if (e.target.classList.contains('see-whats-included-btn')) {
-                    const targetId = e.target.dataset.target;
-                    const dropdown = document.getElementById(targetId);
-                    if (dropdown) {
-                        dropdown.classList.toggle('show');
-                        e.target.textContent = dropdown.classList.contains('show') ? 'Hide details' : "See what's included";
+                        // If response is OK, try to parse as JSON. Handle empty responses.
+                        const data = responseText ? JSON.parse(responseText) : {};
+                        return { ok: response.ok, data: data, status: response.status };
+                    } catch (error) {
+                        console.error('API Call Error:', error);
+                        // This is where the 'Network error or invalid JSON response.' comes from
+                        return { ok: false, data: { message: error.message || 'Network error or invalid JSON response.' } };
                     }
                 }
-            });
-            if (elements.togglePricingSedan) elements.togglePricingSedan.addEventListener('click', () => {
-                if (elements.sedanPackagesDisplay) elements.sedanPackagesDisplay.style.display = 'grid';
-                if (elements.suvTruckPackagesDisplay) elements.suvTruckPackagesDisplay.style.display = 'none';
-            });
-            if (elements.togglePricingSuvTruck) elements.togglePricingSuvTruck.addEventListener('click', () => {
-                if (elements.sedanPackagesDisplay) elements.sedanPackagesDisplay.style.display = 'none';
-                if (elements.suvTruckPackagesDisplay) elements.suvTruckPackagesDisplay.style.display = 'grid';
-            });
+                
+                function hideAllSections() {
+                    // Hide all *major* sections
+                    [elements.initialScriptSection, elements.pricingSection, elements.schedulingSection, elements.otherCallsSection, 
+                    elements.confirmationSection, elements.smsReceivedQuestionSection, elements.waitingForPaymentSection, 
+                    elements.finalConfirmationSection, elements.smsReoptinSection] // Added new sections
+                        .forEach(el => el && (el.style.display = 'none'));
+                    
+                    // Hide all *sub-sections* within pricing and scheduling, ensuring a clean slate
+                    [
+                        elements.pricingVehicleTypeSelection, elements.pricingIntroLevels, elements.pricingPetHairQuestion,
+                        elements.pricingShampooQuestion, elements.pricingLevel2Recommendation, elements.pricingLevel1Recommendation,
+                        elements.pricingFullPackageDetails, elements.sedanPackagesDisplay, elements.suvTruckPackagesDisplay,
+                        elements.schedulingVehicleTypeSelection, elements.schedulingPackageSelectionContainer,
+                        elements.bookingFormSection, 
+                        elements.bookingStepName, elements.bookingStepContact,
+                        elements.bookingStepAddress, elements.bookingStepVehicle, elements.bookingStepDatetime,
+                        elements.bookingStepSmsConsent, // Ensure this is hidden when other sections are active
+                        elements.policyText
+                    ].forEach(el => el && (el.style.display = 'none'));
 
-
-            // --- Scheduling Flow Logic (unchanged from previous version, but integrated) ---
-            if (elements.schedulingSelectCarBtn) elements.schedulingSelectCarBtn.addEventListener('click', (e) => {
-                showSchedulingPackageSelection('car', e.target);
-            });
-            if (elements.schedulingSelectTruckBtn) elements.schedulingSelectTruckBtn.addEventListener('click', (e) => {
-                showSchedulingPackageSelection('suv-truck', e.target);
-            });
-            if (elements.schedulingSelectSuvBtn) elements.schedulingSelectSuvBtn.addEventListener('click', (e) => {
-                showSchedulingPackageSelection('suv-truck', e.target);
-            });
-
-            if (elements.schedulingSection) elements.schedulingSection.addEventListener('click', (e) => {
-                if (e.target.closest('.select-package-btn')) {
-                    const button = e.target.closest('.select-package-btn');
-                    const packageType = button.dataset.packageType;
-                    const packagePrice = button.dataset.packagePrice;
-                    const vehicleType = button.dataset.vehicleType; 
-                    console.log('Scheduling select-package-btn clicked. Calling showBookingStepName with:', { packageType, packagePrice, vehicleType });
-                    showBookingStepName(packageType, packagePrice, vehicleType); 
+                    // Explicitly hide payment options buttons div as well
+                    if (elements.paymentOptionsButtons) elements.paymentOptionsButtons.style.display = 'none';
                 }
-            });
 
-            // Universal event listener for "See what's included" buttons
-            document.addEventListener('click', (e) => {
-                if (e.target.classList.contains('see-whats-included-btn')) {
-                    const targetId = e.target.dataset.target;
-                    const dropdown = document.getElementById(targetId);
-                    if (dropdown) {
-                        dropdown.classList.toggle('show');
-                        e.target.textContent = dropdown.classList.contains('show') ? 'Hide details' : "See what's included";
+                function updateScript(text) {
+                    if (elements.scriptDisplay) {
+                        elements.scriptDisplay.innerHTML = text;
                     }
                 }
-            });
 
+                // --- Main Script Navigation ---
+                function showInitialScript() {
+                    hideAllSections();
+                    updateScript(scriptContent.initial);
+                    if (elements.initialScriptSection) elements.initialScriptSection.style.display = 'block';
+                    // Reset global state variables when returning to initial script
+                    currentVehicleType = '';
+                    recommendedPackageType = '';
+                    recommendedPackagePrice = 0;
+                    lastBookedCustomerData = null; // NEW: Clear stored customer data
+                }
 
-            // Event listeners for "Next" buttons in booking steps
-            if (elements.btnNextName) elements.btnNextName.addEventListener('click', showBookingStepContact);
-            if (elements.btnNextContact) elements.btnNextContact.addEventListener('click', showBookingStepAddress);
-            if (elements.btnNextAddress) elements.btnNextAddress.addEventListener('click', showBookingStepVehicle);
-            if (elements.btnNextVehicle) elements.btnNextVehicle.addEventListener('click', showBookingStepDatetime);
-            if (elements.btnNextDatetime) elements.btnNextDatetime.addEventListener('click', showBookingStepSmsConsent); 
+                // --- Pricing Flow Functions ---
+                function showPricingVehicleTypeSelection() {
+                    hideAllSections(); 
+                    updateScript(scriptContent.pricingVehicleType);
+                    if (elements.pricingSection) elements.pricingSection.style.display = 'block'; 
+                    if (elements.pricingVehicleTypeSelection) elements.pricingVehicleTypeSelection.style.display = 'block'; 
+                    document.querySelectorAll('#pricing-vehicle-type-selection .btn-primary.active').forEach(b => b.classList.remove('active'));
+                    // Reset recommended package when starting pricing flow
+                    recommendedPackageType = '';
+                    recommendedPackagePrice = 0;
+                }
 
+                function showPricingIntroLevels(vehicleType, clickedButton) {
+                    currentVehicleType = vehicleType;
+                    hideAllSections(); 
+                    updateScript(scriptContent.pricingIntroLevels);
+                    if (elements.pricingSection) elements.pricingSection.style.display = 'block'; 
+                    if (elements.pricingIntroLevels) elements.pricingIntroLevels.style.display = 'block'; 
+                    document.querySelectorAll('#pricing-vehicle-type-selection .btn-primary.active').forEach(b => b.classList.remove('active'));
+                    if (clickedButton) clickedButton.classList.add('active');
+                }
 
-            // Final form submission (from booking-step-sms-consent)
-            if (elements.finalBookAppointmentBtn) {
-                elements.finalBookAppointmentBtn.addEventListener('click', (e) => {
-                    e.preventDefault(); 
-                    handleBooking(e, '/public/appointment', elements.bookingMessage, 'selected-booking-time');
-                });
-            }
+                function showPricingPetHairQuestion() {
+                    hideAllSections(); 
+                    updateScript(scriptContent.pricingPetHairQuestion);
+                    if (elements.pricingSection) elements.pricingSection.style.display = 'block'; 
+                    if (elements.pricingPetHairQuestion) elements.pricingPetHairQuestion.style.display = 'block'; 
+                }
 
-            // NEW: Payment options buttons logic
-            if (elements.btnPayInFull) {
-                elements.btnPayInFull.addEventListener('click', () => {
-                    // This is handled in showPaymentOptionsScreen to dynamically set the link and trigger SMS
-                });
-            }
-            if (elements.btnPayDeposit) {
-                elements.btnPayDeposit.addEventListener('click', () => {
-                    // This is handled in showPaymentOptionsScreen to dynamically set the link and trigger SMS
-                });
-            }
+                function showPricingShampooQuestion() {
+                    hideAllSections(); 
+                    updateScript(scriptContent.pricingShampooQuestion);
+                    if (elements.pricingSection) elements.pricingSection.style.display = 'block'; 
+                    if (elements.pricingShampooQuestion) elements.pricingShampooQuestion.style.display = 'block'; 
+                }
 
-            // NEW: SMS Received Question buttons logic
-            if (elements.btnSmsReceivedYes) {
-                elements.btnSmsReceivedYes.addEventListener('click', () => {
-                    showWaitingForPaymentScreen();
-                });
-            }
+                function showPricingLevel2Recommendation() {
+                    recommendedPackageType = "Level 2 Detail";
+                    recommendedPackagePrice = packagePrices[recommendedPackageType][currentVehicleType];
+                    console.log('Recommended Level 2:', { recommendedPackageType, recommendedPackagePrice, currentVehicleType });
+                    hideAllSections(); 
+                    updateScript(scriptContent.pricingLevel2Recommendation(currentVehicleType));
+                    if (elements.pricingSection) elements.pricingSection.style.display = 'block'; 
+                    if (elements.pricingLevel2Recommendation) elements.pricingLevel2Recommendation.style.display = 'block'; 
+                }
 
-            if (elements.btnSmsReceivedNo) {
-                elements.btnSmsReceivedNo.addEventListener('click', async () => {
-                    if (!lastBookedCustomerData) {
-                        console.error("No customer data available to check SMS opt-in.");
-                        showInitialScript(); // Fallback to main script
-                        return;
-                    }
-
-                    const { sms_transactional_opt_in } = lastBookedCustomerData;
-
-                    if (sms_transactional_opt_in) {
-                        // Customer is opted in, try to resend SMS (same as initial send)
-                        const resendPayload = {
-                            customer_id: lastBookedCustomerData.customer_id,
-                            deal_id: lastBookedCustomerData.deal_id,
-                            phone: lastBookedCustomerData.customer_phone,
-                            sms_type: lastBookedCustomerData.sms_type, // 'pay_in_full' or 'deposit'
-                            payment_link: lastBookedCustomerData.payment_link,
-                            amount_due: lastBookedCustomerData.package_price, // Only relevant for pay_in_full
-                            car_details: `${lastBookedCustomerData.vehicle_year} ${lastBookedCustomerData.vehicle_make} ${lastBookedCustomerData.vehicle_model}`
-                        };
-                        const { ok, data } = await apiCall('/public/send_payment_link_sms', 'POST', resendPayload);
-                        if (ok) {
-                            // Use a more user-friendly message box instead of alert
-                            // alert("SMS re-sent successfully!");
-                            showWaitingForPaymentScreen(); // Assume they will get it this time
-                        } else {
-                            // alert(`Failed to resend SMS: ${data.message || 'Unknown error'}`);
-                            console.error(`Failed to resend SMS: ${data.message || 'Unknown error'}`);
-                        }
+                function showPricingLevel1Recommendation(isDownsell = false) {
+                    recommendedPackageType = "Level 1 Detail";
+                    recommendedPackagePrice = packagePrices[recommendedPackageType][currentVehicleType];
+                    console.log('Recommended Level 1:', { recommendedPackageType, recommendedPackagePrice, currentVehicleType });
+                    hideAllSections(); 
+                    if (isDownsell) {
+                        updateScript(scriptContent.pricingDownsellLevel1(currentVehicleType));
                     } else {
-                        // Customer is NOT opted in, show re-opt-in screen
-                        showSmsReoptinScreen();
+                        updateScript(scriptContent.pricingLevel1Recommendation(currentVehicleType));
                     }
-                });
-            }
+                    if (elements.pricingSection) elements.pricingSection.style.display = 'block'; 
+                    if (elements.pricingLevel1Recommendation) elements.pricingLevel1Recommendation.style.display = 'block'; 
+                }
 
-            // NEW: Waiting for payment "Done" button logic
-            if (elements.btnPaymentDone) {
-                elements.btnPaymentDone.addEventListener('click', async () => {
-                    // Simulate sending final confirmation SMS
-                    const payload = {
-                        customer_id: lastBookedCustomerData.customer_id,
-                        deal_id: lastBookedCustomerData.deal_id,
-                        phone: lastBookedCustomerData.customer_phone,
-                        car_details: `${lastBookedCustomerData.vehicle_year} ${lastBookedCustomerData.vehicle_make} ${lastBookedCustomerData.vehicle_model}`,
-                        booking_date: lastBookedCustomerData.booking_date,
-                        booking_time: lastBookedCustomerData.booking_time
-                    };
-                    const { ok, data } = await apiCall('/public/send_confirmation_sms', 'POST', payload);
-                    if (ok) {
-                        showFinalConfirmationScreen();
-                    } else {
-                        // alert(`Failed to send confirmation SMS: ${data.message || 'Unknown error'}`);
-                        console.error(`Failed to send confirmation SMS: ${data.message || 'Unknown error'}`);
-                        showInitialScript(); // Fallback
-                    }
-                });
-            }
+                // --- Scheduling Flow Functions ---
+                function showSchedulingVehicleTypeSelection() {
+                    hideAllSections(); // Start by hiding everything
+                    updateScript(scriptContent.schedulingVehicleType);
+                    if (elements.schedulingSection) elements.schedulingSection.style.display = 'block'; // Show scheduling section
+                    if (elements.schedulingVehicleTypeSelection) elements.schedulingVehicleTypeSelection.style.display = 'block'; // Show vehicle type selection
 
-            // NEW: Final confirmation "End Call" button logic
-            if (elements.btnEndCall) {
-                elements.btnEndCall.addEventListener('click', showInitialScript);
-            }
+                    document.querySelectorAll('#scheduling-vehicle-type-selection .btn-primary.active').forEach(b => b.classList.remove('active'));
+                    // Clear any previously selected package/time
+                    if (elements.selectedPackageTypeInput) elements.selectedPackageTypeInput.value = '';
+                    if (elements.selectedPackagePriceInput) elements.selectedPackagePriceInput.value = '';
+                    if (elements.selectedBookingTimeInput) elements.selectedBookingTimeInput.value = '';
+                    if (elements.finalBookAppointmentBtn) elements.finalBookAppointmentBtn.style.display = 'none';
+                    // Reset global state variables for scheduling flow
+                    currentVehicleType = '';
+                    recommendedPackageType = ''; 
+                    recommendedPackagePrice = 0; 
+                }
 
-            // NEW: SMS Re-opt-in screen buttons logic
-            if (elements.btnReoptinYes) {
-                elements.btnReoptinYes.addEventListener('click', async () => {
-                    if (!lastBookedCustomerData) {
-                        console.error("No customer data available for re-opt-in.");
-                        showInitialScript(); // Fallback
-                        return;
-                    }
-                    const { customer_id, deal_id } = lastBookedCustomerData;
-                    const consentGiven = elements.smsReoptinConsentTransactional.checked;
-                    const reoptinPhoneNumber = elements.reoptinPhoneNumberInput.value;
+                function showSchedulingPackageSelection(vehicleCategory, clickedButton) {
+                    currentVehicleType = vehicleCategory; 
+                    hideAllSections(); 
+                    if (elements.schedulingSection) elements.schedulingSection.style.display = 'block'; 
+                    if (elements.schedulingPackageSelectionContainer) elements.schedulingPackageSelectionContainer.style.display = 'block'; 
 
-                    if (!consentGiven) {
-                        // alert("Please check the box to agree to receive text messages.");
-                        elements.bookingMessage.textContent = 'Please check the box to agree to receive text messages.';
+                    updateScript(scriptContent.schedulingPackageInquiry(vehicleCategory));
+
+                    document.querySelectorAll('#scheduling-vehicle-type-selection .btn-primary.active').forEach(b => b.classList.remove('active'));
+                    if (clickedButton) clickedButton.classList.add('active');
+
+                    if (elements.sedanPackagesBookingDisplay) elements.sedanPackagesBookingDisplay.style.display = vehicleCategory === 'car' ? 'grid' : 'none';
+                    if (elements.suvTruckPackagesBookingDisplay) elements.suvTruckPackagesBookingDisplay.style.display = vehicleCategory === 'suv-truck' ? 'grid' : 'none';
+                }
+
+                // Functions for sequential booking form steps
+                function showBookingStepName(packageType, packagePrice, vehicleType) {
+                    console.log('Entering showBookingStepName with:', { packageType, packagePrice, vehicleType });
+                    // Set package and vehicle type in hidden inputs
+                    if (elements.selectedPackageDisplay) elements.selectedPackageDisplay.textContent = packageType;
+                    if (elements.selectedPackageTypeInput) elements.selectedPackageTypeInput.value = packageType;
+                    if (elements.selectedPackagePriceInput) elements.selectedPackagePriceInput.value = packagePrice;
+                    if (elements.selectedVehicleTypeInput) elements.selectedVehicleTypeInput.value = vehicleType;
+
+                    hideAllSections(); // Hide everything first
+
+                    // Ensure the main scheduling section and booking form container are visible
+                    if (elements.schedulingSection) elements.schedulingSection.style.display = 'block';
+                    if (elements.bookingFormSection) elements.bookingFormSection.style.display = 'block';
+                    
+                    // Show only the current step
+                    if (elements.bookingStepName) elements.bookingStepName.style.display = 'block';
+                    
+                    updateScript(scriptContent.bookingStepName(packageType, vehicleType));
+                }
+
+                function showBookingStepContact() {
+                    // Validate name before proceeding
+                    const fullName = document.getElementById('full-name').value;
+                    if (!fullName) {
+                        elements.bookingMessage.textContent = 'Please enter the full name.';
                         elements.bookingMessage.style.color = 'red';
                         return;
                     }
-                    // Phone number validation for re-opt-in
+                    elements.bookingMessage.textContent = ''; // Clear previous message
+
+                    if (elements.bookingStepName) elements.bookingStepName.style.display = 'none';
+                    if (elements.bookingStepContact) elements.bookingStepContact.style.display = 'block';
+                    updateScript(scriptContent.bookingStepContact);
+                }
+
+                function showBookingStepAddress() {
+                    // Validate email and phone before proceeding
+                    const email = document.getElementById('email').value;
+                    const phone = document.getElementById('phone').value;
+                    
+                    // Email validation
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!email) {
+                        elements.bookingMessage.textContent = 'Please enter your email address.';
+                        elements.bookingMessage.style.color = 'red';
+                        return;
+                    }
+                    if (!emailRegex.test(email)) {
+                        elements.bookingMessage.textContent = 'Please enter a valid email address.';
+                        elements.bookingMessage.style.color = 'red';
+                        return;
+                    }
+
+                    // Phone number validation (10 digits, optional hyphens/spaces/parentheses)
                     const phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
-                    if (!reoptinPhoneNumber || !phoneRegex.test(reoptinPhoneNumber)) {
+                    if (!phone) {
+                        elements.bookingMessage.textContent = 'Please enter your phone number.';
+                        elements.bookingMessage.style.color = 'red';
+                        return;
+                    }
+                    if (!phoneRegex.test(phone)) {
                         elements.bookingMessage.textContent = 'Please enter a valid 10-digit phone number.';
                         elements.bookingMessage.style.color = 'red';
                         return;
                     }
 
-                    const reoptinPayload = {
-                        customer_id: customer_id,
-                        sms_transactional_opt_in: true,
-                        deal_id: deal_id, // Pass deal_id to resend SMS after opt-in
-                        phone: reoptinPhoneNumber, // Use the potentially updated phone number
-                        package_type: elements.selectedPackageTypeInput.value,
-                        package_price: elements.selectedPackagePriceInput.value,
-                        booking_date: document.getElementById('booking-date').value,
-                        booking_time: elements.selectedBookingTimeInput.value,
-                        sms_type: lastBookedCustomerData.sms_type, // 'pay_in_full' or 'deposit'
-                        payment_link: lastBookedCustomerData.payment_link, // Re-use the payment link
-                        amount_due: lastBookedCustomerData.package_price, // Only relevant for pay_in_full
-                        car_details: `${lastBookedCustomerData.vehicle_year} ${lastBookedCustomerData.vehicle_make} ${lastBookedCustomerData.vehicle_model}`
-                    };
+                    elements.bookingMessage.textContent = ''; // Clear previous message
 
-                    const { ok, data } = await apiCall('/public/update_sms_consent_and_send', 'POST', reoptinPayload);
-                    if (ok) {
-                        lastBookedCustomerData.sms_transactional_opt_in = true; // Update local state
-                        lastBookedCustomerData.customer_phone = reoptinPhoneNumber; // Update phone if changed
-                        // alert("SMS consent updated and text re-sent successfully!");
-                        showWaitingForPaymentScreen(); // Proceed as if they got the text
-                    } else {
-                        // alert(`Failed to update consent or resend SMS: ${data.message || 'Unknown error'}`);
-                        elements.bookingMessage.textContent = `Failed to update consent or resend SMS: ${data.message || 'Unknown error'}`;
-                        elements.bookingMessage.style.color = 'red';
-                    }
-                });
-            }
+                    if (elements.bookingStepContact) elements.bookingStepContact.style.display = 'none';
+                    if (elements.bookingStepAddress) elements.bookingStepAddress.style.display = 'block';
+                    updateScript(scriptContent.bookingStepAddress);
+                }
 
-            if (elements.btnReoptinNo) {
-                elements.btnReoptinNo.addEventListener('click', () => {
-                    // Customer declined re-opt-in, go back to main script
-                    showInitialScript();
-                });
-            }
-
-
-            async function handleBooking(e, endpoint, messageEl, selectedTimeInputId) { 
-                const submitButton = elements.finalBookAppointmentBtn;
-
-                submitButton.disabled = true;
-                submitButton.innerHTML = `
-                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Processing...
-                `;
-
-                const restoreButton = () => {
-                    submitButton.disabled = false;
-                    submitButton.innerHTML = 'Book Appointment';
-                };
-
-                try {
-                    // Collect all data from the various steps
-                    const fullName = document.getElementById('full-name').value;
-                    const email = document.getElementById('email').value;
-                    const phone = document.getElementById('phone').value;
+                function showBookingStepVehicle() {
+                    // Validate address and zip before proceeding
                     const address = document.getElementById('address-input').value;
                     const zipCode = document.getElementById('zip-code').value;
+                    if (!address || !zipCode) {
+                        elements.bookingMessage.textContent = 'Please enter both address and zip code.';
+                        elements.bookingMessage.style.color = 'red';
+                        return;
+                    }
+                    elements.bookingMessage.textContent = ''; // Clear previous message
+
+                    if (elements.bookingStepAddress) elements.bookingStepAddress.style.display = 'none';
+                    if (elements.bookingStepVehicle) elements.bookingStepVehicle.style.display = 'block';
+                    updateScript(scriptContent.bookingStepVehicle);
+                }
+
+                function showBookingStepDatetime() {
+                    // Validate vehicle details before proceeding
                     const vehicleYear = document.getElementById('vehicle-year').value;
                     const vehicleMake = document.getElementById('vehicle-make').value;
                     const vehicleModel = document.getElementById('vehicle-model').value;
+                    if (!vehicleYear || !vehicleMake || !vehicleModel) {
+                        elements.bookingMessage.textContent = 'Please enter vehicle year, make, and model.';
+                        elements.bookingMessage.style.color = 'red';
+                        return;
+                    }
+                    elements.bookingMessage.textContent = ''; // Clear previous message
+
+                    if (elements.bookingStepVehicle) elements.bookingStepVehicle.style.display = 'none';
+                    if (elements.bookingStepDatetime) elements.bookingStepDatetime.style.display = 'block';
+                    updateScript(scriptContent.bookingStepDatetime);
+                    checkAndSetInitialDate(); // Populate date and time slots
+                }
+
+                // NEW: Function to show SMS consent step
+                function showBookingStepSmsConsent() {
+                    // Validate date and time before proceeding
                     const bookingDate = document.getElementById('booking-date').value;
-                    const selectedTime = document.getElementById(selectedTimeInputId).value; 
-                    const packageType = elements.selectedPackageTypeInput.value; 
-                    const packagePrice = elements.selectedPackagePriceInput.value; 
-                    const selectedVehicleType = elements.selectedVehicleTypeInput.value; 
-                    const smsTransactionalOptIn = elements.smsConsentTransactional ? elements.smsConsentTransactional.checked : false; 
-
-                    // Basic validation (more robust validation could be added per step)
-                    if (!fullName || !email || !phone || !address || !zipCode || !vehicleYear || !vehicleMake || !vehicleModel || !bookingDate || !selectedTime || !packageType || !packagePrice || !selectedVehicleType) {
-                        if (messageEl) { messageEl.textContent = 'Please complete all required fields.'; messageEl.style.color = 'red'; }
-                        restoreButton();
+                    const selectedTime = elements.selectedBookingTimeInput.value;
+                    if (!bookingDate || !selectedTime) {
+                        elements.bookingMessage.textContent = 'Please select a date and time.';
+                        elements.bookingMessage.style.color = 'red';
                         return;
                     }
-                    // Email validation
-                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                    if (!emailRegex.test(email)) {
-                        if (messageEl) { messageEl.textContent = 'Please enter a valid email address.'; messageEl.style.color = 'red'; }
-                        restoreButton();
-                        return;
+                    elements.bookingMessage.textContent = ''; // Clear previous message
+
+                    // Ensure the form section is visible before showing the consent step
+                    if (elements.schedulingSection) elements.schedulingSection.style.display = 'block';
+                    if (elements.bookingFormSection) elements.bookingFormSection.style.display = 'block';
+
+                    if (elements.bookingStepDatetime) elements.bookingStepDatetime.style.display = 'none';
+                    if (elements.bookingStepSmsConsent) elements.bookingStepSmsConsent.style.display = 'block';
+                    
+                    // Ensure the final book appointment button is visible on this step
+                    if (elements.finalBookAppointmentBtn) elements.finalBookAppointmentBtn.style.display = 'block';
+                    // Ensure the back button is visible on this step
+                    if (elements.backToDatetimeStep) elements.backToDatetimeStep.style.display = 'block';
+
+                    updateScript(scriptContent.bookingStepSmsConsent);
+                }
+
+                // NEW: Function to show payment options screen
+                function showPaymentOptionsScreen() {
+                    console.log("Entering showPaymentOptionsScreen.");
+                    hideAllSections(); // Hide everything first
+                    
+                    if (elements.confirmationSection) {
+                        elements.confirmationSection.style.display = 'block';
+                        console.log("confirmationSection display set to block.");
                     }
-                    // Phone number validation (10 digits, optional hyphens/spaces/parentheses)
-                    const phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
-                    if (!phoneRegex.test(phone)) {
-                        if (messageEl) { messageEl.textContent = 'Please enter a valid 10-digit phone number.';
-                         messageEl.style.color = 'red'; }
-                        restoreButton();
-                        return;
+                    if (elements.policyText) {
+                        elements.policyText.style.display = 'block';
+                        console.log("policyText display set to block.");
+                    }
+                    
+                    const packagePrice = elements.selectedPackagePriceInput.value;
+                    // Update confirmation message div content
+                    if (elements.confirmationMessageDiv) {
+                        elements.confirmationMessageDiv.innerHTML = `
+                            <p class="text-2xl font-bold mb-2">⚠️ Booking Created!</p>
+                            <p class="text-md mt-4">${scriptContent.paymentOptionsQuestion(packagePrice)}</p>
+                        `;
+                        console.log("confirmationMessageDiv content updated.");
                     }
 
+                    // Show payment options buttons
+                    if (elements.paymentOptionsButtons) {
+                        elements.paymentOptionsButtons.style.display = 'flex'; // This is the key line
+                        // Add a class for flexbox layout if not already present
+                        elements.paymentOptionsButtons.classList.add('flex', 'flex-col', 'sm:flex-row', 'justify-center', 'gap-4');
+                        console.log("paymentOptionsButtons display set to flex and flex classes added.");
+                    } else {
+                        console.error("Error: paymentOptionsButtons element not found!");
+                    }
+                    
+                    // Set payment button links based on selected package
+                    const packageType = elements.selectedPackageTypeInput.value;
+                    const packagePriceVal = elements.selectedPackagePriceInput.value; // Get the actual price value
+                    const priceKey = String(packagePriceVal); 
+                    let paymentRedirectLink = '#';
+                    if (paymentLinks[packageType] && paymentLinks[packageType][priceKey]) {
+                        paymentRedirectLink = paymentLinks[packageType][priceKey];
+                    }
+                    
+                    // Set click handlers for the new payment buttons
+                    if (elements.btnPayInFull) {
+                        elements.btnPayInFull.onclick = async () => {
+                            // Simulate sending SMS for pay in full
+                            const payload = {
+                                customer_id: lastBookedCustomerData.customer_id,
+                                deal_id: lastBookedCustomerData.deal_id,
+                                phone: lastBookedCustomerData.customer_phone,
+                                sms_type: "pay_in_full",
+                                payment_link: paymentRedirectLink,
+                                amount_due: packagePriceVal, // Pass the actual package price
+                                car_details: `${lastBookedCustomerData.vehicle_year} ${lastBookedCustomerData.vehicle_make} ${lastBookedCustomerData.vehicle_model}`
+                            };
+                            const { ok, data } = await apiCall('/public/send_payment_link_sms', 'POST', payload);
+                            if (ok) {
+                                // Store the SMS type for potential re-send logic
+                                lastBookedCustomerData.sms_type = "pay_in_full";
+                                lastBookedCustomerData.payment_link = paymentRedirectLink; // Store the link for re-send
+                                showPayInFullSmsQuestion(`${lastBookedCustomerData.vehicle_year} ${lastBookedCustomerData.vehicle_make} ${lastBookedCustomerData.vehicle_model}`); // Pass car details
+                            } else {
+                                // Use a message box for errors instead of alert
+                                elements.bookingMessage.textContent = `Failed to send pay in full SMS: ${data.message || 'Unknown error'}`;
+                                elements.bookingMessage.style.color = 'red';
+                            }
+                        };
+                    }
+                    if (elements.btnPayDeposit) {
+                        elements.btnPayDeposit.onclick = async () => {
+                            // Simulate sending SMS for deposit
+                            const payload = {
+                                customer_id: lastBookedCustomerData.customer_id,
+                                deal_id: lastBookedCustomerData.deal_id,
+                                phone: lastBookedCustomerData.customer_phone,
+                                sms_type: "deposit",
+                                payment_link: "https://pay.michieauto.com/deposit",
+                                car_details: `${lastBookedCustomerData.vehicle_year} ${lastBookedCustomerData.vehicle_make} ${lastBookedCustomerData.vehicle_model}`
+                            };
+                            const { ok, data } = await apiCall('/public/send_payment_link_sms', 'POST', payload);
+                            if (ok) {
+                                // Store the SMS type for potential re-send logic
+                                lastBookedCustomerData.sms_type = "deposit";
+                                lastBookedCustomerData.payment_link = "https://pay.michieauto.com/deposit"; // Store the link for re-send
+                                showPayDepositSmsQuestion();
+                            } else {
+                                // Use a message box for errors instead of alert
+                                elements.bookingMessage.textContent = `Failed to send deposit SMS: ${data.message || 'Unknown error'}`;
+                                elements.bookingMessage.style.color = 'red';
+                            }
+                        };
+                    }
+                }
 
-                    const payload = {
-                        full_name: fullName, email, phone, address, zip_code: zipCode, vehicle_year: vehicleYear,
-                        vehicle_make: vehicleMake, vehicle_model: vehicleModel, date: bookingDate, time: selectedTime,
-                        package_type: packageType, package_price: packagePrice, vehicle_type: selectedVehicleType, 
-                        deal_name: `${packageType || 'Unknown Package'} ${vehicleMake || ''} ${vehicleModel || ''}`,
-                        offer_code: "CallCenterBooking", 
-                        create_account: false, 
-                        password: "", 
-                        sms_transactional_opt_in: smsTransactionalOptIn, 
-                        sms_marketing_opt_in: false 
+                // NEW: Show "Did you get the text message?" screen for Pay in Full
+                function showPayInFullSmsQuestion(carDetails) {
+                    hideAllSections();
+                    if (elements.smsReceivedQuestionSection) elements.smsReceivedQuestionSection.style.display = 'block';
+                    if (elements.smsReceivedQuestionMessage) {
+                        // Updated message to reflect the new "Pay in full" SMS text
+                        elements.smsReceivedQuestionMessage.innerHTML = `<p>Ok perfect! I'm sending you a text message for you to pay the balance of (amount due based on package selected) dollars. Did you get the text?</p>`;
+                    }
+                    updateScript(scriptContent.payInFullSmsSent(carDetails)); // Pass carDetails to the script content
+                }
+
+                // NEW: Show "Did you get the text message?" screen for Deposit
+                function showPayDepositSmsQuestion() {
+                    hideAllSections();
+                    if (elements.smsReceivedQuestionSection) elements.smsReceivedQuestionSection.style.display = 'block';
+                    if (elements.smsReceivedQuestionMessage) {
+                        elements.smsReceivedQuestionMessage.innerHTML = `<p>${scriptContent.payDepositSmsSent}</p>`;
+                    }
+                    updateScript(scriptContent.smsReceivedQuestion);
+                }
+
+                // NEW: Show waiting for payment screen
+                function showWaitingForPaymentScreen() {
+                    hideAllSections();
+                    if (elements.waitingForPaymentSection) elements.waitingForPaymentSection.style.display = 'block';
+                    if (elements.waitingForPaymentMessage) {
+                        elements.waitingForPaymentMessage.innerHTML = `<p>${scriptContent.waitingForPayment}</p>`;
+                    }
+                    updateScript(scriptContent.waitingForPayment);
+                }
+
+                // NEW: Show final confirmation screen
+                function showFinalConfirmationScreen() {
+                    hideAllSections();
+                    if (elements.finalConfirmationSection) elements.finalConfirmationSection.style.display = 'block';
+                    if (elements.finalConfirmationMessage) {
+                        const { vehicle_year, vehicle_make, vehicle_model, booking_date, booking_time } = lastBookedCustomerData;
+                        const formattedDate = new Date(booking_date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                        const formattedTime = formatTimeDisplay(booking_time);
+                        elements.finalConfirmationMessage.innerHTML = `
+                            <p>Thanks for choosing Michie Auto Detail! Your appointment for ${vehicle_year} ${vehicle_make} ${vehicle_model} is confirmed on ${formattedDate} at ${formattedTime}! Questions? Call (405) 295-5189 we'll see you soon!</p>
+                            <p class="mt-4">${scriptContent.finalConfirmation}</p>
+                        `;
+                    }
+                    updateScript(scriptContent.finalConfirmation);
+                }
+
+                // NEW: Function to show SMS re-opt-in screen
+                function showSmsReoptinScreen() {
+                    hideAllSections();
+                    if (elements.smsReoptinSection) elements.smsReoptinSection.style.display = 'block';
+                    updateScript(scriptContent.smsReoptinScript);
+                    // Ensure checkbox is unchecked by default for new consent
+                    if (elements.smsReoptinConsentTransactional) {
+                        elements.smsReoptinConsentTransactional.checked = false;
+                    }
+                    // Pre-fill phone number if available
+                    if (elements.reoptinPhoneNumberInput && lastBookedCustomerData && lastBookedCustomerData.customer_phone) {
+                        elements.reoptinPhoneNumberInput.value = lastBookedCustomerData.customer_phone;
+                    }
+                }
+
+
+                // --- Other Calls Flow Functions ---
+                function showOtherCalls() {
+                    hideAllSections(); 
+                    updateScript(scriptContent.otherCallsNotes);
+                    if (elements.otherCallsSection) elements.otherCallsSection.style.display = 'block'; 
+                    if (elements.otherCallsNotes) elements.otherCallsNotes.value = ''; 
+                }
+
+
+                // --- Event Listeners for Main Script Buttons ---
+                if (elements.btnPricing) elements.btnPricing.addEventListener('click', showPricingVehicleTypeSelection);
+                if (elements.btnScheduling) elements.btnScheduling.addEventListener('click', showSchedulingVehicleTypeSelection);
+                if (elements.btnOtherCalls) elements.btnOtherCalls.addEventListener('click', showOtherCalls);
+
+                // --- Back Buttons Event Listeners ---
+                if (elements.backToMainFromPricingVehicle) elements.backToMainFromPricingVehicle.addEventListener('click', showInitialScript);
+                if (elements.backToPricingVehicleTypeFromIntro) elements.backToPricingVehicleTypeFromIntro.addEventListener('click', showPricingVehicleTypeSelection);
+                if (elements.backToIntroLevelsFromPetHair) elements.backToIntroLevelsFromPetHair.addEventListener('click', () => showPricingIntroLevels(currentVehicleType));
+                if (elements.backToPetHairFromShampoo) elements.backToPetHairFromShampoo.addEventListener('click', showPricingShampooQuestion);
+                if (elements.backToShampooFromLevel2) elements.backToShampooFromLevel2.addEventListener('click', showPricingShampooQuestion);
+                if (elements.backToLevel2FromLevel1) elements.backToLevel2FromLevel1.addEventListener('click', showPricingLevel2Recommendation); 
+                
+                if (elements.backToMainFromSchedulingVehicle) elements.backToMainFromSchedulingVehicle.addEventListener('click', showInitialScript);
+                if (elements.backToSchedulingVehicleType) elements.backToSchedulingVehicleType.addEventListener('click', showSchedulingVehicleTypeSelection);
+                if (elements.backToPackageSelection) elements.backToPackageSelection.addEventListener('click', () => {
+                    // Reset form fields when going back from booking steps
+                    document.getElementById('full-name').value = '';
+                    document.getElementById('email').value = '';
+                    document.getElementById('phone').value = '';
+                    document.getElementById('address-input').value = '';
+                    document.getElementById('zip-code').value = '';
+                    document.getElementById('vehicle-year').value = '';
+                    document.getElementById('vehicle-make').value = '';
+                    document.getElementById('vehicle-model').value = '';
+                    document.getElementById('booking-date').value = '';
+                    elements.selectedBookingTimeInput.value = '';
+                    if (elements.bookingMessage) elements.bookingMessage.textContent = ''; 
+                    showSchedulingPackageSelection(elements.selectedVehicleTypeInput.value); 
+                });
+                if (elements.backToNameStep) elements.backToNameStep.addEventListener('click', () => {
+                    if (elements.bookingStepContact) elements.bookingStepContact.style.display = 'none';
+                    if (elements.bookingStepName) elements.bookingStepName.style.display = 'block';
+                    updateScript(scriptContent.bookingStepName(elements.selectedPackageTypeInput.value, elements.selectedVehicleTypeInput.value));
+                });
+                if (elements.backToContactStep) elements.backToContactStep.addEventListener('click', () => {
+                    if (elements.bookingStepAddress) elements.bookingStepAddress.style.display = 'none';
+                    if (elements.bookingStepContact) elements.bookingStepContact.style.display = 'block';
+                    updateScript(scriptContent.bookingStepContact);
+                });
+                if (elements.backToAddressStep) elements.backToAddressStep.addEventListener('click', () => {
+                    if (elements.bookingStepVehicle) elements.bookingStepVehicle.style.display = 'none';
+                    if (elements.bookingStepAddress) elements.bookingStepAddress.style.display = 'block';
+                    updateScript(scriptContent.bookingStepAddress);
+                });
+                if (elements.backToVehicleStep) elements.backToVehicleStep.addEventListener('click', () => {
+                    if (elements.bookingStepDatetime) elements.bookingStepDatetime.style.display = 'none';
+                    if (elements.bookingStepVehicle) elements.bookingStepVehicle.style.display = 'block';
+                    updateScript(scriptContent.bookingStepVehicle);
+                });
+                if (elements.backToDatetimeStep) elements.backToDatetimeStep.addEventListener('click', () => {
+                    if (elements.bookingStepSmsConsent) elements.bookingStepSmsConsent.style.display = 'none';
+                    if (elements.bookingStepDatetime) elements.bookingStepDatetime.style.display = 'block';
+                    updateScript(scriptContent.bookingStepDatetime);
+                });
+
+                if (elements.backToMainFromConfirmation) elements.backToMainFromConfirmation.addEventListener('click', showInitialScript);
+                if (elements.backToMainFromOther) elements.backToMainFromOther.addEventListener('click', showInitialScript);
+
+
+                // --- Pricing Section Specific Event Listeners ---
+                if (elements.pricingSelectCarBtn) elements.pricingSelectCarBtn.addEventListener('click', (e) => showPricingIntroLevels('car', e.target));
+                if (elements.pricingSelectTruckBtn) elements.pricingSelectTruckBtn.addEventListener('click', (e) => showPricingIntroLevels('suv-truck', e.target));
+                if (elements.pricingSelectSuvBtn) elements.pricingSelectSuvBtn.addEventListener('click', (e) => showPricingIntroLevels('suv-truck', e.target));
+
+                if (elements.btnOkIntroLevels) elements.btnOkIntroLevels.addEventListener('click', showPricingPetHairQuestion);
+                
+                if (elements.btnPetHairYes) elements.btnPetHairYes.addEventListener('click', showPricingLevel2Recommendation);
+                if (elements.btnPetHairNo) elements.btnPetHairNo.addEventListener('click', showPricingShampooQuestion);
+
+                if (elements.btnShampooYes) elements.btnShampooYes.addEventListener('click', showPricingLevel2Recommendation);
+                if (elements.btnShampooNo) elements.btnShampooNo.addEventListener('click', () => showPricingLevel1Recommendation(false)); 
+
+                if (elements.btnLevel2Yes) elements.btnLevel2Yes.addEventListener('click', () => {
+                    console.log('btnLevel2Yes clicked. Calling showBookingStepName with:', { recommendedPackageType, recommendedPackagePrice, currentVehicleType });
+                    elements.pricingLevel2Recommendation.style.display = 'none';
+                    elements.pricingLevel1Recommendation.style.display = 'none';
+                    elements.pricingSection.style.display = 'none'; 
+                    showBookingStepName(recommendedPackageType, recommendedPackagePrice, currentVehicleType); 
+                });
+                if (elements.btnLevel2No) elements.btnLevel2No.addEventListener('click', () => showPricingLevel1Recommendation(true)); 
+
+                if (elements.btnLevel1Yes) elements.btnLevel1Yes.addEventListener('click', () => {
+                    console.log('btnLevel1Yes clicked. Calling showBookingStepName with:', { recommendedPackageType, recommendedPackagePrice, currentVehicleType });
+                    elements.pricingLevel2Recommendation.style.display = 'none';
+                    elements.pricingLevel1Recommendation.style.display = 'none';
+                    elements.pricingSection.style.display = 'none'; 
+                    showBookingStepName(recommendedPackageType, recommendedPackagePrice, currentVehicleType); 
+                });
+                if (elements.btnLevel1No) elements.btnLevel1No.addEventListener('click', showOtherCalls);
+
+
+                // Package dropdown toggles in pricing section (for reference details)
+                if (elements.pricingSection) elements.pricingSection.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('see-whats-included-btn')) {
+                        const targetId = e.target.dataset.target;
+                        const dropdown = document.getElementById(targetId);
+                        if (dropdown) {
+                            dropdown.classList.toggle('show');
+                            e.target.textContent = dropdown.classList.contains('show') ? 'Hide details' : "See what's included";
+                        }
+                    }
+                });
+                if (elements.togglePricingSedan) elements.togglePricingSedan.addEventListener('click', () => {
+                    if (elements.sedanPackagesDisplay) elements.sedanPackagesDisplay.style.display = 'grid';
+                    if (elements.suvTruckPackagesDisplay) elements.suvTruckPackagesDisplay.style.display = 'none';
+                });
+                if (elements.togglePricingSuvTruck) elements.togglePricingSuvTruck.addEventListener('click', () => {
+                    if (elements.sedanPackagesDisplay) elements.sedanPackagesDisplay.style.display = 'none';
+                    if (elements.suvTruckPackagesDisplay) elements.suvTruckPackagesDisplay.style.display = 'grid';
+                });
+
+
+                // --- Scheduling Flow Logic (unchanged from previous version, but integrated) ---
+                if (elements.schedulingSelectCarBtn) elements.schedulingSelectCarBtn.addEventListener('click', (e) => {
+                    showSchedulingPackageSelection('car', e.target);
+                });
+                if (elements.schedulingSelectTruckBtn) elements.schedulingSelectTruckBtn.addEventListener('click', (e) => {
+                    showSchedulingPackageSelection('suv-truck', e.target);
+                });
+                if (elements.schedulingSelectSuvBtn) elements.schedulingSelectSuvBtn.addEventListener('click', (e) => {
+                    showSchedulingPackageSelection('suv-truck', e.target);
+                });
+
+                if (elements.schedulingSection) elements.schedulingSection.addEventListener('click', (e) => {
+                    if (e.target.closest('.select-package-btn')) {
+                        const button = e.target.closest('.select-package-btn');
+                        const packageType = button.dataset.packageType;
+                        const packagePrice = button.dataset.packagePrice;
+                        const vehicleType = button.dataset.vehicleType; 
+                        console.log('Scheduling select-package-btn clicked. Calling showBookingStepName with:', { packageType, packagePrice, vehicleType });
+                        showBookingStepName(packageType, packagePrice, vehicleType); 
+                    }
+                });
+
+                // Universal event listener for "See what's included" buttons
+                document.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('see-whats-included-btn')) {
+                        const targetId = e.target.dataset.target;
+                        const dropdown = document.getElementById(targetId);
+                        if (dropdown) {
+                            dropdown.classList.toggle('show');
+                            e.target.textContent = dropdown.classList.contains('show') ? 'Hide details' : "See what's included";
+                        }
+                    }
+                });
+
+
+                // Event listeners for "Next" buttons in booking steps
+                if (elements.btnNextName) elements.btnNextName.addEventListener('click', showBookingStepContact);
+                if (elements.btnNextContact) elements.btnNextContact.addEventListener('click', showBookingStepAddress);
+                if (elements.btnNextAddress) elements.btnNextAddress.addEventListener('click', showBookingStepVehicle);
+                if (elements.btnNextVehicle) elements.btnNextVehicle.addEventListener('click', showBookingStepDatetime);
+                if (elements.btnNextDatetime) elements.btnNextDatetime.addEventListener('click', showBookingStepSmsConsent); 
+
+
+                // Final form submission (from booking-step-sms-consent)
+                if (elements.finalBookAppointmentBtn) {
+                    elements.finalBookAppointmentBtn.addEventListener('click', (e) => {
+                        e.preventDefault(); 
+                        handleBooking(e, '/public/appointment', elements.bookingMessage, 'selected-booking-time');
+                    });
+                }
+
+                // NEW: Payment options buttons logic
+                if (elements.btnPayInFull) {
+                    elements.btnPayInFull.addEventListener('click', () => {
+                        // This is handled in showPaymentOptionsScreen to dynamically set the link and trigger SMS
+                    });
+                }
+                if (elements.btnPayDeposit) {
+                    elements.btnPayDeposit.addEventListener('click', () => {
+                        // This is handled in showPaymentOptionsScreen to dynamically set the link and trigger SMS
+                    });
+                }
+
+                // NEW: SMS Received Question buttons logic
+                if (elements.btnSmsReceivedYes) {
+                    elements.btnSmsReceivedYes.addEventListener('click', () => {
+                        showWaitingForPaymentScreen();
+                    });
+                }
+
+                if (elements.btnSmsReceivedNo) {
+                    elements.btnSmsReceivedNo.addEventListener('click', async () => {
+                        if (!lastBookedCustomerData) {
+                            console.error("No customer data available to check SMS opt-in.");
+                            showInitialScript(); // Fallback to main script
+                            return;
+                        }
+
+                        const { sms_transactional_opt_in } = lastBookedCustomerData;
+
+                        if (sms_transactional_opt_in) {
+                            // Customer is opted in, try to resend SMS (same as initial send)
+                            const resendPayload = {
+                                customer_id: lastBookedCustomerData.customer_id,
+                                deal_id: lastBookedCustomerData.deal_id,
+                                phone: lastBookedCustomerData.customer_phone,
+                                sms_type: lastBookedCustomerData.sms_type, // 'pay_in_full' or 'deposit'
+                                payment_link: lastBookedCustomerData.payment_link,
+                                amount_due: lastBookedCustomerData.package_price, // Only relevant for pay_in_full
+                                car_details: `${lastBookedCustomerData.vehicle_year} ${lastBookedCustomerData.vehicle_make} ${lastBookedCustomerData.vehicle_model}`
+                            };
+                            const { ok, data } = await apiCall('/public/send_payment_link_sms', 'POST', resendPayload);
+                            if (ok) {
+                                // Use a more user-friendly message box instead of alert
+                                // alert("SMS re-sent successfully!");
+                                showWaitingForPaymentScreen(); // Assume they will get it this time
+                            } else {
+                                // alert(`Failed to resend SMS: ${data.message || 'Unknown error'}`);
+                                console.error(`Failed to resend SMS: ${data.message || 'Unknown error'}`);
+                            }
+                        } else {
+                            // Customer is NOT opted in, show re-opt-in screen
+                            showSmsReoptinScreen();
+                        }
+                    });
+                }
+
+                // NEW: Waiting for payment "Done" button logic
+                if (elements.btnPaymentDone) {
+                    elements.btnPaymentDone.addEventListener('click', async () => {
+                        // Simulate sending final confirmation SMS
+                        const payload = {
+                            customer_id: lastBookedCustomerData.customer_id,
+                            deal_id: lastBookedCustomerData.deal_id,
+                            phone: lastBookedCustomerData.customer_phone,
+                            car_details: `${lastBookedCustomerData.vehicle_year} ${lastBookedCustomerData.vehicle_make} ${lastBookedCustomerData.vehicle_model}`,
+                            booking_date: lastBookedCustomerData.booking_date,
+                            booking_time: lastBookedCustomerData.booking_time
+                        };
+                        const { ok, data } = await apiCall('/public/send_confirmation_sms', 'POST', payload);
+                        if (ok) {
+                            showFinalConfirmationScreen();
+                        } else {
+                            // alert(`Failed to send confirmation SMS: ${data.message || 'Unknown error'}`);
+                            console.error(`Failed to send confirmation SMS: ${data.message || 'Unknown error'}`);
+                            showInitialScript(); // Fallback
+                        }
+                    });
+                }
+
+                // NEW: Final confirmation "End Call" button logic
+                if (elements.btnEndCall) {
+                    elements.btnEndCall.addEventListener('click', showInitialScript);
+                }
+
+                // NEW: SMS Re-opt-in screen buttons logic
+                if (elements.btnReoptinYes) {
+                    elements.btnReoptinYes.addEventListener('click', async () => {
+                        if (!lastBookedCustomerData) {
+                            console.error("No customer data available for re-opt-in.");
+                            showInitialScript(); // Fallback
+                            return;
+                        }
+                        const { customer_id, deal_id } = lastBookedCustomerData;
+                        const consentGiven = elements.smsReoptinConsentTransactional.checked;
+                        const reoptinPhoneNumber = elements.reoptinPhoneNumberInput.value;
+
+                        if (!consentGiven) {
+                            elements.bookingMessage.textContent = 'Please check the box to agree to receive text messages.';
+                            elements.bookingMessage.style.color = 'red';
+                            return;
+                        }
+                        // Phone number validation for re-opt-in
+                        const phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+                        if (!reoptinPhoneNumber || !phoneRegex.test(reoptinPhoneNumber)) {
+                            elements.bookingMessage.textContent = 'Please enter a valid 10-digit phone number.';
+                            elements.bookingMessage.style.color = 'red';
+                            return;
+                        }
+
+                        const reoptinPayload = {
+                            customer_id: customer_id,
+                            sms_transactional_opt_in: true,
+                            deal_id: deal_id, // Pass deal_id to resend SMS after opt-in
+                            phone: reoptinPhoneNumber, // Use the potentially updated phone number
+                            package_type: elements.selectedPackageTypeInput.value,
+                            package_price: elements.selectedPackagePriceInput.value,
+                            booking_date: document.getElementById('booking-date').value,
+                            booking_time: elements.selectedBookingTimeInput.value,
+                            sms_type: lastBookedCustomerData.sms_type, // 'pay_in_full' or 'deposit'
+                            payment_link: lastBookedCustomerData.payment_link, // Re-use the payment link
+                            amount_due: lastBookedCustomerData.package_price, // Only relevant for pay_in_full
+                            car_details: `${lastBookedCustomerData.vehicle_year} ${lastBookedCustomerData.vehicle_make} ${lastBookedCustomerData.vehicle_model}`
+                        };
+
+                        const { ok, data } = await apiCall('/public/update_sms_consent_and_send', 'POST', reoptinPayload);
+                        if (ok) {
+                            lastBookedCustomerData.sms_transactional_opt_in = true; // Update local state
+                            lastBookedCustomerData.customer_phone = reoptinPhoneNumber; // Update phone if changed
+                            showWaitingForPaymentScreen(); // Proceed as if they got the text
+                        } else {
+                            elements.bookingMessage.textContent = `Failed to update consent or resend SMS: ${data.message || 'Unknown error'}`;
+                            elements.bookingMessage.style.color = 'red';
+                        }
+                    });
+                }
+
+                if (elements.btnReoptinNo) {
+                    elements.btnReoptinNo.addEventListener('click', () => {
+                        // Customer declined re-opt-in, go back to main script
+                        showInitialScript();
+                    });
+                }
+
+
+                async function handleBooking(e, endpoint, messageEl, selectedTimeInputId) { 
+                    const submitButton = elements.finalBookAppointmentBtn;
+
+                    submitButton.disabled = true;
+                    submitButton.innerHTML = `
+                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Processing...
+                    `;
+
+                    const restoreButton = () => {
+                        submitButton.disabled = false;
+                        submitButton.innerHTML = 'Book Appointment';
                     };
 
-                    const { ok, data } = await apiCall(endpoint, 'POST', payload);
+                    try {
+                        // Collect all data from the various steps
+                        const fullName = document.getElementById('full-name').value;
+                        const email = document.getElementById('email').value;
+                        const phone = document.getElementById('phone').value;
+                        const address = document.getElementById('address-input').value;
+                        const zipCode = document.getElementById('zip-code').value;
+                        const vehicleYear = document.getElementById('vehicle-year').value;
+                        const vehicleMake = document.getElementById('vehicle-make').value;
+                        const vehicleModel = document.getElementById('vehicle-model').value;
+                        const bookingDate = document.getElementById('booking-date').value;
+                        const selectedTime = document.getElementById(selectedTimeInputId).value; 
+                        const packageType = elements.selectedPackageTypeInput.value; 
+                        const packagePrice = elements.selectedPackagePriceInput.value; 
+                        const selectedVehicleType = elements.selectedVehicleTypeInput.value; 
+                        const smsTransactionalOptIn = elements.smsConsentTransactional ? elements.smsConsentTransactional.checked : false; 
 
-                    if (ok) {
-                        lastBookedCustomerData = { // Store data for re-send logic
-                            customer_id: data.customer_id, // Backend needs to return this
-                            customer_phone: phone, // Use the phone from the form
-                            sms_transactional_opt_in: smsTransactionalOptIn,
-                            deal_id: data.deal_id, // Backend needs to return this
-                            package_type: packageType,
-                            package_price: packagePrice,
-                            vehicle_year: vehicleYear,
-                            vehicle_make: vehicleMake,
-                            vehicle_model: vehicleModel,
-                            booking_date: bookingDate,
-                            booking_time: selectedTime
+                        // Basic validation (more robust validation could be added per step)
+                        if (!fullName || !email || !phone || !address || !zipCode || !vehicleYear || !vehicleMake || !vehicleModel || !bookingDate || !selectedTime || !packageType || !packagePrice || !selectedVehicleType) {
+                            if (messageEl) { messageEl.textContent = 'Please complete all required fields.'; messageEl.style.color = 'red'; }
+                            restoreButton();
+                            return;
+                        }
+                        // Email validation
+                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                        if (!emailRegex.test(email)) {
+                            if (messageEl) { messageEl.textContent = 'Please enter a valid email address.'; messageEl.style.color = 'red'; }
+                            restoreButton();
+                            return;
+                        }
+                        // Phone number validation (10 digits, optional hyphens/spaces/parentheses)
+                        const phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+                        if (!phoneRegex.test(phone)) {
+                            if (messageEl) { messageEl.textContent = 'Please enter a valid 10-digit phone number.';
+                            messageEl.style.color = 'red'; }
+                            restoreButton();
+                            return;
+                        }
+
+
+                        const payload = {
+                            full_name: fullName, email, phone, address, zip_code: zipCode, vehicle_year: vehicleYear,
+                            vehicle_make: vehicleMake, vehicle_model: vehicleModel, date: bookingDate, time: selectedTime,
+                            package_type: packageType, package_price: packagePrice, vehicle_type: selectedVehicleType, 
+                            deal_name: `${packageType || 'Unknown Package'} ${vehicleMake || ''} ${vehicleModel || ''}`,
+                            offer_code: "CallCenterBooking", 
+                            create_account: false, 
+                            password: "", 
+                            sms_transactional_opt_in: smsTransactionalOptIn, 
+                            sms_marketing_opt_in: false 
                         };
-                        showPaymentOptionsScreen(); // Transition to the new payment options screen
-                    } else {
-                        if (messageEl) { messageEl.textContent = data.message || 'An error occurred during booking.'; messageEl.style.color = 'red'; }
+
+                        const { ok, data } = await apiCall(endpoint, 'POST', payload);
+
+                        if (ok) {
+                            lastBookedCustomerData = { // Store data for re-send logic
+                                customer_id: data.customer_id, // Backend needs to return this
+                                customer_phone: phone, // Use the phone from the form
+                                sms_transactional_opt_in: smsTransactionalOptIn,
+                                deal_id: data.deal_id, // Backend needs to return this
+                                package_type: packageType,
+                                package_price: packagePrice,
+                                vehicle_year: vehicleYear,
+                                vehicle_make: vehicleMake,
+                                vehicle_model: vehicleModel,
+                                booking_date: bookingDate,
+                                booking_time: selectedTime
+                            };
+                            showPaymentOptionsScreen(); // Transition to the new payment options screen
+                        } else {
+                            if (messageEl) { messageEl.textContent = data.message || 'An error occurred during booking.'; messageEl.style.color = 'red'; }
+                            restoreButton();
+                        }
+                    } catch (error) {
+                        console.error("An unexpected JavaScript error occurred:", error);
+                        if (elements.bookingMessage) {
+                            elements.bookingMessage.textContent = 'An unexpected error occurred. Please try again.';
+                            elements.bookingMessage.style.color = 'red';
+                        }
                         restoreButton();
                     }
-                } catch (error) {
-                    console.error("An unexpected JavaScript error occurred:", error);
-                    if (elements.bookingMessage) {
-                        elements.bookingMessage.textContent = 'An unexpected error occurred. Please try again.';
-                        elements.bookingMessage.style.color = 'red';
-                    }
-                    restoreButton();
                 }
-            }
-            
-            function renderTimeButtons(container, hiddenInput, selectedDateStr, finalBookButton, now) {
-                if (!container) return false;
-                container.innerHTML = '';
-            
-                let hasAvailableSlots = false;
-                const twoHoursInMs = 2 * 60 * 60 * 1000;
-                const comparisonTime = new Date(now.getTime() + twoHoursInMs);
-            
-                const selectedDate = new Date(selectedDateStr + 'T00:00:00-05:00'); // Assuming CST/CDT
-                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            
-                const isToday = selectedDate.getTime() === today.getTime();
-            
-                availableTimes.forEach(time => {
-                    const button = document.createElement('button');
-                    button.type = 'button';
-                    button.textContent = formatTimeDisplay(time);
-                    button.dataset.time = time;
-            
-                    const [hour, minute] = time.split(':').map(Number);
-                    const appointmentDateTime = new Date(selectedDate);
-                    appointmentDateTime.setHours(hour, minute);
-            
-                    const isDisabled = isToday && (appointmentDateTime < comparisonTime);
-            
-                    if (isDisabled) {
-                        button.className = 'time-button disabled';
-                        button.disabled = true;
+                
+                function renderTimeButtons(container, hiddenInput, selectedDateStr, finalBookButton, now) {
+                    if (!container) return false;
+                    container.innerHTML = '';
+                
+                    let hasAvailableSlots = false;
+                    const twoHoursInMs = 2 * 60 * 60 * 1000;
+                    const comparisonTime = new Date(now.getTime() + twoHoursInMs);
+                
+                    const selectedDate = new Date(selectedDateStr + 'T00:00:00-05:00'); // Assuming CST/CDT
+                    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                
+                    const isToday = selectedDate.getTime() === today.getTime();
+                
+                    availableTimes.forEach(time => {
+                        const button = document.createElement('button');
+                        button.type = 'button';
+                        button.textContent = formatTimeDisplay(time);
+                        button.dataset.time = time;
+                
+                        const [hour, minute] = time.split(':').map(Number);
+                        const appointmentDateTime = new Date(selectedDate);
+                        appointmentDateTime.setHours(hour, minute);
+                
+                        const isDisabled = isToday && (appointmentDateTime < comparisonTime);
+                
+                        if (isDisabled) {
+                            button.className = 'time-button disabled';
+                            button.disabled = true;
+                        } else {
+                            hasAvailableSlots = true;
+                            button.className = 'time-button';
+                            button.addEventListener('click', () => {
+                                const currentlySelected = container.querySelector('.time-button.selected');
+                                if (currentlySelected) currentlySelected.classList.remove('selected');
+                                button.classList.add('selected');
+                                if (hiddenInput) hiddenInput.value = time;
+                            });
+                        }
+                        container.appendChild(button);
+                    });
+                
+                    if (hiddenInput) hiddenInput.value = '';
+                    return hasAvailableSlots;
+                }
+
+                function checkAndSetInitialDate() {
+                    const today = new Date(pageLoadTimeCST);
+                    const todayFormatted = today.toISOString().split('T')[0];
+
+                    const todayHasSlots = renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, todayFormatted, null, pageLoadTimeCST);
+
+                    if (todayHasSlots) {
+                        if (elements.bookingDateInput) {
+                            elements.bookingDateInput.value = todayFormatted;
+                        }
                     } else {
-                        hasAvailableSlots = true;
-                        button.className = 'time-button';
-                        button.addEventListener('click', () => {
-                            const currentlySelected = container.querySelector('.time-button.selected');
-                            if (currentlySelected) currentlySelected.classList.remove('selected');
-                            button.classList.add('selected');
-                            if (hiddenInput) hiddenInput.value = time;
-                        });
+                        const tomorrow = new Date(today);
+                        tomorrow.setDate(today.getDate() + 1);
+                        const tomorrowFormatted = tomorrow.toISOString().split('T')[0];
+                        
+                        if (elements.bookingDateInput) {
+                            elements.bookingDateInput.value = tomorrowFormatted;
+                        }
+                        renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, tomorrowFormatted, null, pageLoadTimeCST);
                     }
-                    container.appendChild(button);
-                });
-            
-                if (hiddenInput) hiddenInput.value = '';
-                return hasAvailableSlots;
-            }
+                }
 
-            function checkAndSetInitialDate() {
-                const today = new Date(pageLoadTimeCST);
-                const todayFormatted = today.toISOString().split('T')[0];
+                function formatTimeDisplay(time24hr) {
+                    const [hours, minutes] = time24hr.split(':').map(Number); 
+                    const date = new Date();
+                    date.setHours(hours, minutes);
+                    return date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+                }
+                
+                const todayFormatted = new Date().toISOString().split('T')[0];
+                if (elements.bookingDateInput) {
+                    elements.bookingDateInput.min = todayFormatted;
+                }
 
-                const todayHasSlots = renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, todayFormatted, null, pageLoadTimeCST);
+                // Initial display: show only the script section
+                showInitialScript();
 
-                if (todayHasSlots) {
-                    if (elements.bookingDateInput) {
-                        elements.bookingDateInput.value = todayFormatted;
-                    }
-                } else {
-                    const tomorrow = new Date(today);
-                    tomorrow.setDate(today.getDate() + 1);
-                    const tomorrowFormatted = tomorrow.toISOString().split('T')[0];
-                    
-                    if (elements.bookingDateInput) {
-                        elements.bookingDateInput.value = tomorrowFormatted;
-                    }
-                    renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, tomorrowFormatted, null, pageLoadTimeCST);
+            } catch (e) {
+                console.error("Error during application initialization:", e);
+                // Display a user-friendly error message on the page itself
+                const scriptDisplay = document.getElementById('script-display');
+                if (scriptDisplay) {
+                    scriptDisplay.innerHTML = `<p class="text-red-600">An error occurred during startup. Please try refreshing the page. Error: ${e.message}</p>`;
+                }
+                // Also ensure initial buttons are hidden if app failed to start
+                const initialScriptSection = document.getElementById('initial-script-section');
+                if (initialScriptSection) {
+                    initialScriptSection.style.display = 'none';
                 }
             }
-
-            function formatTimeDisplay(time24hr) {
-                const [hours, minutes] = time24hr.split(':').map(Number); 
-                const date = new Date();
-                date.setHours(hours, minutes);
-                return date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
-            }
-            
-            const todayFormatted = new Date().toISOString().split('T')[0];
-            if (elements.bookingDateInput) {
-                elements.bookingDateInput.min = todayFormatted;
-            }
-
-            // Initial display: show only the script section
-            showInitialScript();
         }
 
         document.addEventListener('DOMContentLoaded', initializeApp);
