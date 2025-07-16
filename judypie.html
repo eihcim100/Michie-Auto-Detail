@@ -919,7 +919,8 @@
             }
         }
 
-        // Define initBookingPage globally so Google Maps API can call it
+        // This function will be called by the Google Maps script.
+        // It is now ONLY responsible for the autocomplete feature.
         window.initBookingPage = function() {
             const addressInput = document.getElementById('address-input');
             if (window.google && window.google.maps && window.google.maps.places && addressInput) {
@@ -928,6 +929,7 @@
                     fields: ["formatted_address", "address_components"],
                     types: ["address"],
                 });
+                // FIX: Changed 'autocomplete' to 'addressAutocomplete'
                 addressAutocomplete.addListener('place_changed', () => {
                     const place = addressAutocomplete.getPlace(); 
                     if (place.formatted_address) {
@@ -938,14 +940,12 @@
             } else {
                 console.warn("Google Maps Autocomplete could not be initialized. The feature will be disabled, but the form will still work.");
             }
-            // Now that Google Maps is initialized (or failed), proceed with the rest of the app setup
-            initializeApp();
         }
 
-        // The main application logic, wrapped in a function that will be called by initBookingPage
+        // The main application logic, including form event listeners.
         function initializeApp() {
-            // Changed API_BASE_URL to the absolute URL of your backend
-            const API_BASE_URL = 'https://michie-detailing-admin.onrender.com'; 
+            // Set API_BASE_URL to the explicit backend URL for michieauto.com deployment.
+            const API_BASE_URL = 'https://michieauto.com'; 
             
             const elements = {
                 scriptDisplay: document.getElementById('script-display'),
@@ -1148,7 +1148,7 @@
                 pricingLevel1Recommendation: (vehicleType) => {
                     const features = packageFeatures["Level 1 Detail"][vehicleType].join(', ');
                     const price = packagePrices[recommendedPackageType][vehicleType];
-                    return `Based on the information you've provided me, I'm going to recommend our most affordable option, it's called level 1 detail service. It includes ${features}. The price is $${price}, does that sound good?`;
+                    return `Based on the information you've provided me, I'm going to recommend our most affordable option, it's called level 1 detail service. It. It includes ${features}. The price is $${price}, does that sound good?`;
                 },
                 pricingDownsellLevel1: (vehicleType) => {
                     const features = packageFeatures["Level 1 Detail"][vehicleType].join(', ');
@@ -1164,7 +1164,7 @@
                 },
                 bookingStepName: (packageName, vehicleType) => `Wonderful! You've selected the ${packageName} for a ${vehicleType}. First, what is your full name?`,
                 bookingStepContact: "And what is your best email address and phone number?",
-                bookingStepAddress: "Great! Where will we be performing the detail service? I'll need your service address and zip code.",
+                bookingStepAddress: "Great! Where will we be performing the detail service? I'll need your full service address and zip code.",
                 bookingStepVehicle: "Almost there! Could you please tell me the year, make, and model of your vehicle?",
                 bookingStepDatetime: "Perfect! Now, let's find a convenient date and time for your appointment. What date works best for you?",
                 bookingStepSmsConsent: "Great! To ensure you receive important updates and reminders about your appointment, can we send you text messages? This would include appointment confirmations and updates. Message and data rates may apply. You can reply STOP to cancel at any time.",
@@ -1198,12 +1198,19 @@
                 }
                 try {
                     const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+                    // Check if the response is OK (status 200-299) before trying to parse JSON
+                    if (!response.ok) {
+                        const errorText = await response.text(); // Get raw text for better debugging
+                        console.error(`API Call failed: ${response.status} ${response.statusText} - ${errorText}`);
+                        throw new Error(`Server error: ${response.status} ${response.statusText}`);
+                    }
                     const responseText = await response.text();
+                    // Attempt to parse JSON only if responseText is not empty
                     const data = responseText ? JSON.parse(responseText) : {};
                     return { ok: response.ok, data: data, status: response.status };
                 } catch (error) {
                     console.error('API Call Error:', error);
-                    return { ok: false, data: { message: 'Network error or invalid JSON response.' } };
+                    return { ok: false, data: { message: error.message || 'Network error or invalid JSON response.' } };
                 }
             }
             
@@ -2139,7 +2146,7 @@
             showInitialScript();
         }
 
-        // document.addEventListener('DOMContentLoaded', initializeApp); // Removed this line
+        document.addEventListener('DOMContentLoaded', initializeApp);
     </script>
 </body>
 </html>
