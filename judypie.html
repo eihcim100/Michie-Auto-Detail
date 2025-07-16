@@ -1000,7 +1000,7 @@
                 // UPDATED CONFIRMATION MESSAGE
                 paymentOptionsQuestion: (packagePrice) => `Great! Your appointment is almost confirmed. We have two payment options, you can pay a $50 deposit now and the balance after service is complete, or you can pay the $${packagePrice} dollars in full. What do you prefer?`,
                 // UPDATED PAY IN FULL SMS MESSAGE
-                payInFullSmsSent: (carDetails) => `Ok perfect! I'm sending you a text message for you to pay the balance of (amount due based on package selected) dollars. Did you get the text?`,
+                payInFullSmsSent: (carDetails) => `Michie Auto Detail: Thanks for choosing to book with us! You can make your payment in full for your ${carDetails} auto detail by going to (payment link based on package selected, you can see the list in book.html file, there is a pay in full button there) Questions? Call (405) 295-5189`,
                 payDepositSmsSent: `Ok perfect! I'm sending you a text message for you to pay the $50 deposit. Did you get the text?`,
                 smsReceivedQuestion: "Did you get the text message?", // General question for both payment types
                 waitingForPayment: "Ok great! I'll wait here while you make payment, just let me know when you're done.",
@@ -1330,7 +1330,7 @@
                             // Store the SMS type for potential re-send logic
                             lastBookedCustomerData.sms_type = "pay_in_full";
                             lastBookedCustomerData.payment_link = paymentRedirectLink; // Store the link for re-send
-                            showPayInFullSmsQuestion(lastBookedCustomerData.car_details); // Pass car details
+                            showPayInFullSmsQuestion(`${lastBookedCustomerData.vehicle_year} ${lastBookedCustomerData.vehicle_make} ${lastBookedCustomerData.vehicle_model}`); // Pass car details
                         } else {
                             alert(`Failed to send pay in full SMS: ${data.message || 'Unknown error'}`);
                         }
