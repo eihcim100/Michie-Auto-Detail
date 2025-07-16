@@ -977,7 +977,7 @@
                     elements.schedulingVehicleTypeSelection, elements.schedulingPackageSelectionContainer,
                     elements.bookingFormSection, elements.bookingStepName, elements.bookingStepContact,
                     elements.bookingStepAddress, elements.bookingStepVehicle, elements.bookingStepDatetime,
-                    elements.bookingStepSmsConsent, // NEW: Hide SMS consent step
+                    elements.bookingStepSmsConsent, 
                     elements.confirmationSection, elements.policyText
                 ].forEach(el => el && (el.style.display = 'none'));
             }
@@ -1100,8 +1100,9 @@
                 if (elements.selectedPackagePriceInput) elements.selectedPackagePriceInput.value = packagePrice;
                 if (elements.selectedVehicleTypeInput) elements.selectedVehicleTypeInput.value = vehicleType;
 
-                // Hide all other booking steps first
-                [elements.bookingStepName, elements.bookingStepContact, elements.bookingStepAddress, elements.bookingStepVehicle, elements.bookingStepDatetime, elements.bookingStepSmsConsent]
+                // Hide all other booking steps and pricing recommendation buttons
+                [elements.pricingLevel2Recommendation, elements.pricingLevel1Recommendation,
+                 elements.bookingStepName, elements.bookingStepContact, elements.bookingStepAddress, elements.bookingStepVehicle, elements.bookingStepDatetime, elements.bookingStepSmsConsent]
                     .forEach(el => el && (el.style.display = 'none'));
 
                 if (elements.schedulingPackageSelectionContainer) elements.schedulingPackageSelectionContainer.style.display = 'none';
@@ -1314,12 +1315,18 @@
 
             if (elements.btnLevel2Yes) elements.btnLevel2Yes.addEventListener('click', () => {
                 console.log('btnLevel2Yes clicked. Calling showBookingStepName with:', { recommendedPackageType, recommendedPackagePrice, currentVehicleType });
+                // Ensure pricing recommendation elements are hidden when moving to booking form
+                elements.pricingLevel2Recommendation.style.display = 'none';
+                elements.pricingLevel1Recommendation.style.display = 'none';
                 showBookingStepName(recommendedPackageType, recommendedPackagePrice, currentVehicleType); // Go to booking form
             });
             if (elements.btnLevel2No) elements.btnLevel2No.addEventListener('click', () => showPricingLevel1Recommendation(true)); // Downsell to Level 1
 
             if (elements.btnLevel1Yes) elements.btnLevel1Yes.addEventListener('click', () => {
                 console.log('btnLevel1Yes clicked. Calling showBookingStepName with:', { recommendedPackageType, recommendedPackagePrice, currentVehicleType });
+                // Ensure pricing recommendation elements are hidden when moving to booking form
+                elements.pricingLevel2Recommendation.style.display = 'none';
+                elements.pricingLevel1Recommendation.style.display = 'none';
                 showBookingStepName(recommendedPackageType, recommendedPackagePrice, currentVehicleType); // Go to booking form
             });
             if (elements.btnLevel1No) elements.btnLevel1No.addEventListener('click', showOtherCalls);
@@ -1418,7 +1425,7 @@
                     const packageType = elements.selectedPackageTypeInput.value; 
                     const packagePrice = elements.selectedPackagePriceInput.value; 
                     const selectedVehicleType = elements.selectedVehicleTypeInput.value; 
-                    const smsTransactionalOptIn = elements.smsConsentTransactional ? elements.smsConsentTransactional.checked : false; // NEW: Get SMS consent state
+                    const smsTransactionalOptIn = elements.smsConsentTransactional ? elements.smsConsentTransactional.checked : false; 
 
                     // Basic validation (more robust validation could be added per step)
                     if (!fullName || !email || !phone || !address || !zipCode || !vehicleYear || !vehicleMake || !vehicleModel || !bookingDate || !selectedTime || !packageType || !packagePrice || !selectedVehicleType) {
@@ -1447,8 +1454,8 @@
                         offer_code: "CallCenterBooking", 
                         create_account: false, 
                         password: "", 
-                        sms_transactional_opt_in: smsTransactionalOptIn, // NEW: Include transactional SMS consent
-                        sms_marketing_opt_in: false // Ensure marketing is false
+                        sms_transactional_opt_in: smsTransactionalOptIn, 
+                        sms_marketing_opt_in: false 
                     };
 
                     const { ok, data } = await apiCall(endpoint, 'POST', payload);
@@ -1543,7 +1550,7 @@
             }
 
             function formatTimeDisplay(time24hr) {
-                const [hours, minutes] = time24hr.split(':').map(Number);
+                const [hours, minutes] = time24hr.split(':').map(Number); 
                 const date = new Date();
                 date.setHours(hours, minutes);
                 return date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
