@@ -695,17 +695,44 @@
                 <input type="hidden" id="selected-vehicle-type" name="vehicle-type">
             </div>
 
-            <!-- Confirmation Message -->
+            <!-- Confirmation Message - Updated to include payment options -->
             <div id="confirmation-section" class="hidden text-center">
                 <div id="confirmation-message" class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-6 rounded-lg">
                     <!-- Script will be inserted here -->
                 </div>
                 
-                <div class="mt-8 space-y-4" id="confirmation-buttons">
-                    <button id="btn-confirmation-yes" class="btn-primary">Yes</button>
-                    <button id="btn-confirmation-no" class="btn-secondary">No</button>
+                <div class="mt-8 space-y-4" id="payment-options-buttons">
+                    <button id="btn-pay-in-full" class="btn-primary">Pay in full</button>
+                    <button id="btn-pay-deposit" class="btn-success">Pay $50 deposit</button>
                 </div>
                 <button id="back-to-main-from-confirmation" class="btn-secondary mt-8">Back to Main Script</button>
+            </div>
+
+            <!-- NEW: Did you get the text message? screen -->
+            <div id="sms-received-question-section" class="hidden text-center bg-white p-8 rounded-xl shadow-lg space-y-6">
+                <div id="sms-received-question-message" class="bg-blue-100 border-l-4 border-blue-500 text-blue-800 p-6 rounded-lg">
+                    <!-- Message will be inserted here -->
+                </div>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <button id="btn-sms-received-yes" class="btn-primary">Yes</button>
+                    <button id="btn-sms-received-no" class="btn-secondary">No</button>
+                </div>
+            </div>
+
+            <!-- NEW: Waiting for payment screen -->
+            <div id="waiting-for-payment-section" class="hidden text-center bg-white p-8 rounded-xl shadow-lg space-y-6">
+                <div id="waiting-for-payment-message" class="bg-green-100 border-l-4 border-green-500 text-green-800 p-6 rounded-lg">
+                    <!-- Message will be inserted here -->
+                </div>
+                <button id="btn-payment-done" class="btn-success">Done</button>
+            </div>
+
+            <!-- NEW: Final confirmation screen -->
+            <div id="final-confirmation-section" class="hidden text-center bg-white p-8 rounded-xl shadow-lg space-y-6">
+                <div id="final-confirmation-message" class="bg-green-100 border-l-4 border-green-500 text-green-800 p-6 rounded-lg">
+                    <!-- Message will be inserted here -->
+                </div>
+                <button id="btn-end-call" class="btn-primary">End Call</button>
             </div>
 
             <!-- SMS Re-opt-in Section (NEW) -->
@@ -721,10 +748,13 @@
                     <p class="text-xs text-gray-500 mt-4">
                         By checking this box, you agree to receive text messages from Michie Auto Detailing for transactional purposes. Consent is not a condition of purchase. Message frequency will vary. Msg & data rates may apply. Reply HELP for help or STOP to cancel. View our <a href="https://michieauto.com/smstos" class="text-blue-600 hover:underline" target="_blank">Terms of Service</a> & <a href="https://michieauto.com/smsprivacy" class="text-blue-600 hover:underline" target="_blank">Privacy Policy</a>.
                     </p>
+                    <div>
+                        <label for="reoptin-phone-number" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                        <input type="tel" id="reoptin-phone-number" placeholder="Customer's Phone Number" required>
+                    </div>
                 </div>
-                <button id="btn-reoptin-yes" class="btn-success">Yes (Send Text)</button>
-                <button id="btn-reoptin-no" class="btn-secondary">No (Decline)</button>
-                <button id="back-to-confirmation-from-reoptin" class="btn-secondary mt-8">Back to Confirmation</button>
+                <button id="btn-reoptin-yes" class="btn-success">Opt-in & Resend Text</button>
+                <button id="btn-reoptin-no" class="btn-secondary">Decline & End Call</button>
             </div>
 
 
@@ -811,7 +841,6 @@
                 backToAddressStep: document.getElementById('back-to-address-step'), // From booking-step-vehicle
                 backToVehicleStep: document.getElementById('back-to-vehicle-step'), // From booking-step-datetime
                 backToDatetimeStep: document.getElementById('back-to-datetime-step'), // NEW: From booking-step-sms-consent
-                backToConfirmationFromReoptin: document.getElementById('back-to-confirmation-from-reoptin'), // NEW: Back from SMS re-opt-in
 
                 backToMainFromConfirmation: document.getElementById('back-to-main-from-confirmation'),
                 backToMainFromOther: document.getElementById('back-to-main-from-other'),
@@ -870,12 +899,24 @@
                 selectedVehicleTypeInput: document.getElementById('selected-vehicle-type'), 
                 finalBookAppointmentBtn: document.getElementById('final-book-appointment-btn'),
                 confirmationSection: document.getElementById('confirmation-section'),
-                confirmationMessageDiv: document.getElementById('confirmation-message'), // NEW
-                confirmationButtonsDiv: document.getElementById('confirmation-buttons'), // NEW
-                btnConfirmationYes: document.getElementById('btn-confirmation-yes'), // NEW
-                btnConfirmationNo: document.getElementById('btn-confirmation-no'), // NEW
-                payNowButton: document.getElementById('pay-now-button'),
-                payDepositButton: document.getElementById('pay-deposit-button'),
+                confirmationMessageDiv: document.getElementById('confirmation-message'), 
+                paymentOptionsButtons: document.getElementById('payment-options-buttons'), // NEW
+                btnPayInFull: document.getElementById('btn-pay-in-full'), // NEW
+                btnPayDeposit: document.getElementById('btn-pay-deposit'), // NEW
+
+                smsReceivedQuestionSection: document.getElementById('sms-received-question-section'), // NEW
+                smsReceivedQuestionMessage: document.getElementById('sms-received-question-message'), // NEW
+                btnSmsReceivedYes: document.getElementById('btn-sms-received-yes'), // NEW
+                btnSmsReceivedNo: document.getElementById('btn-sms-received-no'), // NEW
+
+                waitingForPaymentSection: document.getElementById('waiting-for-payment-section'), // NEW
+                waitingForPaymentMessage: document.getElementById('waiting-for-payment-message'), // NEW
+                btnPaymentDone: document.getElementById('btn-payment-done'), // NEW
+
+                finalConfirmationSection: document.getElementById('final-confirmation-section'), // NEW
+                finalConfirmationMessage: document.getElementById('final-confirmation-message'), // NEW
+                btnEndCall: document.getElementById('btn-end-call'), // NEW
+
                 policyText: document.getElementById('policy-text'),
                 bookingDateInput: document.getElementById('booking-date'),
                 bookingTimeButtonsContainer: document.getElementById('booking-time-buttons'),
@@ -887,14 +928,15 @@
                 smsReoptinSection: document.getElementById('sms-reoptin-section'),
                 smsReoptinConsentTransactional: document.getElementById('sms-reoptin-consent-transactional'),
                 btnReoptinYes: document.getElementById('btn-reoptin-yes'),
-                btnReoptinNo: document.getElementById('btn-reoptin-no')
+                btnReoptinNo: document.getElementById('btn-reoptin-no'),
+                reoptinPhoneNumberInput: document.getElementById('reoptin-phone-number') // NEW
             };
 
             // State variables for the script flow
             let currentVehicleType = '';
             let recommendedPackageType = '';
             let recommendedPackagePrice = 0;
-            let lastBookedCustomerData = null; // NEW: To store customer_id, phone, sms_opt_in for re-send logic
+            let lastBookedCustomerData = null; // NEW: To store customer_id, phone, sms_opt_in, deal_id, vehicle_details, booking_details for re-send logic
 
             // Package features for script generation
             const packageFeatures = {
@@ -955,9 +997,15 @@
                 bookingStepVehicle: "Almost there! Could you please tell me the year, make, and model of your vehicle?",
                 bookingStepDatetime: "Perfect! Now, let's find a convenient date and time for your appointment. What date works best for you?",
                 bookingStepSmsConsent: "Great! To ensure you receive important updates and reminders about your appointment, can we send you text messages? This would include appointment confirmations and updates. Message and data rates may apply. You can reply STOP to cancel at any time.",
-                bookingConfirmation: "Great! Your appointment is almost confirmed. I just sent you a text message with a link to pay a $50 deposit. Just tap that link and pay to confirm your appointment. The remaining balance is paid after service is complete.", // UPDATED
-                confirmationSmsQuestion: "Did you get the link in your text messages?", // NEW
-                smsReoptinScript: "Oh I see why! You have not opted into text messages. I need to send you a text message for important account updates, (say compliant script) may I proceed?", // NEW
+                // UPDATED CONFIRMATION MESSAGE
+                paymentOptionsQuestion: (packagePrice) => `Great! Your appointment is almost confirmed. We have two payment options, you can pay a $50 deposit now and the balance after service is complete, or you can pay the $${packagePrice} dollars in full. What do you prefer?`,
+                // UPDATED PAY IN FULL SMS MESSAGE
+                payInFullSmsSent: (carDetails) => `Ok perfect! I'm sending you a text message for you to pay the balance of (amount due based on package selected) dollars. Did you get the text?`,
+                payDepositSmsSent: `Ok perfect! I'm sending you a text message for you to pay the $50 deposit. Did you get the text?`,
+                smsReceivedQuestion: "Did you get the text message?", // General question for both payment types
+                waitingForPayment: "Ok great! I'll wait here while you make payment, just let me know when you're done.",
+                finalConfirmation: "Ok got it! I just sent you a confirmation text for your appointment, thank you for calling Michie Auto Detail! Have a great day!",
+                smsReoptinScript: "Got it! I see we didn't actually opt you in for text message notifications about your appointment, do you agree to receive text messages regarding your appointment? Message and data rates may apply, text STOP to stop.", // NEW
                 otherCallsNotes: "Okay, I'm ready to take notes for this call. What is your inquiry?"
             };
 
@@ -990,7 +1038,9 @@
             
             function hideAllSections() {
                 // Hide all *major* sections
-                [elements.initialScriptSection, elements.pricingSection, elements.schedulingSection, elements.otherCallsSection, elements.smsReoptinSection] // Added smsReoptinSection
+                [elements.initialScriptSection, elements.pricingSection, elements.schedulingSection, elements.otherCallsSection, 
+                 elements.confirmationSection, elements.smsReceivedQuestionSection, elements.waitingForPaymentSection, 
+                 elements.finalConfirmationSection, elements.smsReoptinSection] // Added new sections
                     .forEach(el => el && (el.style.display = 'none'));
                 
                 // Hide all *sub-sections* within pricing and scheduling, ensuring a clean slate
@@ -1003,8 +1053,8 @@
                     elements.bookingStepName, elements.bookingStepContact,
                     elements.bookingStepAddress, elements.bookingStepVehicle, elements.bookingStepDatetime,
                     elements.bookingStepSmsConsent, 
-                    elements.confirmationSection, elements.policyText,
-                    elements.confirmationButtonsDiv // Hide confirmation buttons too
+                    elements.policyText,
+                    elements.paymentOptionsButtons // Hide payment options buttons too
                 ].forEach(el => el && (el.style.display = 'none'));
             }
 
@@ -1233,47 +1283,128 @@
                 updateScript(scriptContent.bookingStepSmsConsent);
             }
 
-            function showBookingConfirmationScreen() {
+            // NEW: Function to show payment options screen
+            function showPaymentOptionsScreen() {
                 hideAllSections(); // Hide everything first
                 if (elements.confirmationSection) elements.confirmationSection.style.display = 'block'; 
                 if (elements.policyText) elements.policyText.style.display = 'block'; 
                 
+                const packagePrice = elements.selectedPackagePriceInput.value;
                 // Update confirmation message div content
                 if (elements.confirmationMessageDiv) {
                     elements.confirmationMessageDiv.innerHTML = `
                         <p class="text-2xl font-bold mb-2">⚠️ Booking Created!</p>
-                        <p class="text-md mt-4">${scriptContent.bookingConfirmation}</p>
+                        <p class="text-md mt-4">${scriptContent.paymentOptionsQuestion(packagePrice)}</p>
                     `;
                 }
 
-                // Show confirmation buttons
-                if (elements.confirmationButtonsDiv) {
-                    elements.confirmationButtonsDiv.style.display = 'flex'; // Use flex for button layout
+                // Show payment options buttons
+                if (elements.paymentOptionsButtons) {
+                    elements.paymentOptionsButtons.style.display = 'flex'; // Use flex for button layout
                 }
                 
                 // Set payment button links based on selected package
                 const packageType = elements.selectedPackageTypeInput.value;
-                const packagePrice = elements.selectedPackagePriceInput.value;
-                const priceKey = String(packagePrice); 
+                const packagePriceVal = elements.selectedPackagePriceInput.value; // Get the actual price value
+                const priceKey = String(packagePriceVal); 
                 let paymentRedirectLink = '#';
                 if (paymentLinks[packageType] && paymentLinks[packageType][priceKey]) {
                     paymentRedirectLink = paymentLinks[packageType][priceKey];
                 }
                 
-                // The pay buttons are now part of the confirmation section, not separate
-                if (elements.payNowButton) {
-                    elements.payNowButton.textContent = `Pay now $${parseFloat(packagePrice).toFixed(0)}`;
-                    elements.payNowButton.onclick = () => { window.open(paymentRedirectLink, '_blank'); };
+                // Set click handlers for the new payment buttons
+                if (elements.btnPayInFull) {
+                    elements.btnPayInFull.onclick = async () => {
+                        // Simulate sending SMS for pay in full
+                        const payload = {
+                            customer_id: lastBookedCustomerData.customer_id,
+                            deal_id: lastBookedCustomerData.deal_id,
+                            phone: lastBookedCustomerData.customer_phone,
+                            sms_type: "pay_in_full",
+                            payment_link: paymentRedirectLink,
+                            amount_due: packagePriceVal, // Pass the actual package price
+                            car_details: `${lastBookedCustomerData.vehicle_year} ${lastBookedCustomerData.vehicle_make} ${lastBookedCustomerData.vehicle_model}`
+                        };
+                        const { ok, data } = await apiCall('/public/send_payment_link_sms', 'POST', payload);
+                        if (ok) {
+                            // Store the SMS type for potential re-send logic
+                            lastBookedCustomerData.sms_type = "pay_in_full";
+                            lastBookedCustomerData.payment_link = paymentRedirectLink; // Store the link for re-send
+                            showPayInFullSmsQuestion(lastBookedCustomerData.car_details); // Pass car details
+                        } else {
+                            alert(`Failed to send pay in full SMS: ${data.message || 'Unknown error'}`);
+                        }
+                    };
                 }
-                if (elements.payDepositButton) {
-                    elements.payDepositButton.onclick = () => { window.open('https://pay.michieauto.com/deposit', '_blank'); };
+                if (elements.btnPayDeposit) {
+                    elements.btnPayDeposit.onclick = async () => {
+                        // Simulate sending SMS for deposit
+                        const payload = {
+                            customer_id: lastBookedCustomerData.customer_id,
+                            deal_id: lastBookedCustomerData.deal_id,
+                            phone: lastBookedCustomerData.customer_phone,
+                            sms_type: "deposit",
+                            payment_link: "https://pay.michieauto.com/deposit",
+                            car_details: `${lastBookedCustomerData.vehicle_year} ${lastBookedCustomerData.vehicle_make} ${lastBookedCustomerData.vehicle_model}`
+                        };
+                        const { ok, data } = await apiCall('/public/send_payment_link_sms', 'POST', payload);
+                        if (ok) {
+                            // Store the SMS type for potential re-send logic
+                            lastBookedCustomerData.sms_type = "deposit";
+                            lastBookedCustomerData.payment_link = "https://pay.michieauto.com/deposit"; // Store the link for re-send
+                            showPayDepositSmsQuestion();
+                        } else {
+                            alert(`Failed to send deposit SMS: ${data.message || 'Unknown error'}`);
+                        }
+                    };
                 }
-                // Hide these payment buttons initially on this screen, they are for reference only
-                elements.payNowButton.style.display = 'none';
-                elements.payDepositButton.style.display = 'none';
+            }
 
-                // Update script to ask about SMS
-                updateScript(scriptContent.confirmationSmsQuestion);
+            // NEW: Show "Did you get the text message?" screen for Pay in Full
+            function showPayInFullSmsQuestion(carDetails) {
+                hideAllSections();
+                if (elements.smsReceivedQuestionSection) elements.smsReceivedQuestionSection.style.display = 'block';
+                if (elements.smsReceivedQuestionMessage) {
+                    // Updated message to reflect the new "Pay in full" SMS text
+                    elements.smsReceivedQuestionMessage.innerHTML = `<p>Ok perfect! I'm sending you a text message for you to pay the balance of (amount due based on package selected) dollars. Did you get the text?</p>`;
+                }
+                updateScript(scriptContent.payInFullSmsSent(carDetails)); // Pass carDetails to the script content
+            }
+
+            // NEW: Show "Did you get the text message?" screen for Deposit
+            function showPayDepositSmsQuestion() {
+                hideAllSections();
+                if (elements.smsReceivedQuestionSection) elements.smsReceivedQuestionSection.style.display = 'block';
+                if (elements.smsReceivedQuestionMessage) {
+                    elements.smsReceivedQuestionMessage.innerHTML = `<p>${scriptContent.payDepositSmsSent}</p>`;
+                }
+                updateScript(scriptContent.smsReceivedQuestion);
+            }
+
+            // NEW: Show waiting for payment screen
+            function showWaitingForPaymentScreen() {
+                hideAllSections();
+                if (elements.waitingForPaymentSection) elements.waitingForPaymentSection.style.display = 'block';
+                if (elements.waitingForPaymentMessage) {
+                    elements.waitingForPaymentMessage.innerHTML = `<p>${scriptContent.waitingForPayment}</p>`;
+                }
+                updateScript(scriptContent.waitingForPayment);
+            }
+
+            // NEW: Show final confirmation screen
+            function showFinalConfirmationScreen() {
+                hideAllSections();
+                if (elements.finalConfirmationSection) elements.finalConfirmationSection.style.display = 'block';
+                if (elements.finalConfirmationMessage) {
+                    const { vehicle_year, vehicle_make, vehicle_model, booking_date, booking_time } = lastBookedCustomerData;
+                    const formattedDate = new Date(booking_date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                    const formattedTime = formatTimeDisplay(booking_time);
+                    elements.finalConfirmationMessage.innerHTML = `
+                        <p>Thanks for choosing Michie Auto Detail! Your appointment for ${vehicle_year} ${vehicle_make} ${vehicle_model} is confirmed on ${formattedDate} at ${formattedTime}! Questions? Call (405) 295-5189 we'll see you soon!</p>
+                        <p class="mt-4">${scriptContent.finalConfirmation}</p>
+                    `;
+                }
+                updateScript(scriptContent.finalConfirmation);
             }
 
             // NEW: Function to show SMS re-opt-in screen
@@ -1284,6 +1415,10 @@
                 // Ensure checkbox is unchecked by default for new consent
                 if (elements.smsReoptinConsentTransactional) {
                     elements.smsReoptinConsentTransactional.checked = false;
+                }
+                // Pre-fill phone number if available
+                if (elements.reoptinPhoneNumberInput && lastBookedCustomerData && lastBookedCustomerData.customer_phone) {
+                    elements.reoptinPhoneNumberInput.value = lastBookedCustomerData.customer_phone;
                 }
             }
 
@@ -1352,7 +1487,6 @@
                 if (elements.bookingStepDatetime) elements.bookingStepDatetime.style.display = 'block';
                 updateScript(scriptContent.bookingStepDatetime);
             });
-            if (elements.backToConfirmationFromReoptin) elements.backToConfirmationFromReoptin.addEventListener('click', showBookingConfirmationScreen); // NEW back button
 
             if (elements.backToMainFromConfirmation) elements.backToMainFromConfirmation.addEventListener('click', showInitialScript);
             if (elements.backToMainFromOther) elements.backToMainFromOther.addEventListener('click', showInitialScript);
@@ -1449,38 +1583,50 @@
                 });
             }
 
-            // NEW: Confirmation screen buttons logic
-            if (elements.btnConfirmationYes) {
-                elements.btnConfirmationYes.addEventListener('click', () => {
-                    // Customer confirmed they got the text, go back to main script
-                    showInitialScript();
+            // NEW: Payment options buttons logic
+            if (elements.btnPayInFull) {
+                elements.btnPayInFull.addEventListener('click', () => {
+                    // This is handled in showPaymentOptionsScreen to dynamically set the link and trigger SMS
+                });
+            }
+            if (elements.btnPayDeposit) {
+                elements.btnPayDeposit.addEventListener('click', () => {
+                    // This is handled in showPaymentOptionsScreen to dynamically set the link and trigger SMS
                 });
             }
 
-            if (elements.btnConfirmationNo) {
-                elements.btnConfirmationNo.addEventListener('click', async () => {
+            // NEW: SMS Received Question buttons logic
+            if (elements.btnSmsReceivedYes) {
+                elements.btnSmsReceivedYes.addEventListener('click', () => {
+                    showWaitingForPaymentScreen();
+                });
+            }
+
+            if (elements.btnSmsReceivedNo) {
+                elements.btnSmsReceivedNo.addEventListener('click', async () => {
                     if (!lastBookedCustomerData) {
-                        console.error("No customer data available to resend SMS.");
+                        console.error("No customer data available to check SMS opt-in.");
                         showInitialScript(); // Fallback to main script
                         return;
                     }
 
-                    const { customer_id, customer_phone, sms_transactional_opt_in, deal_id } = lastBookedCustomerData;
+                    const { sms_transactional_opt_in } = lastBookedCustomerData;
 
                     if (sms_transactional_opt_in) {
-                        // Customer is opted in, try to resend SMS
+                        // Customer is opted in, try to resend SMS (same as initial send)
                         const resendPayload = {
-                            customer_id: customer_id,
-                            deal_id: deal_id,
-                            package_type: elements.selectedPackageTypeInput.value,
-                            package_price: elements.selectedPackagePriceInput.value,
-                            booking_date: document.getElementById('booking-date').value,
-                            booking_time: elements.selectedBookingTimeInput.value
+                            customer_id: lastBookedCustomerData.customer_id,
+                            deal_id: lastBookedCustomerData.deal_id,
+                            phone: lastBookedCustomerData.customer_phone,
+                            sms_type: lastBookedCustomerData.sms_type, // 'pay_in_full' or 'deposit'
+                            payment_link: lastBookedCustomerData.payment_link,
+                            amount_due: lastBookedCustomerData.package_price, // Only relevant for pay_in_full
+                            car_details: `${lastBookedCustomerData.vehicle_year} ${lastBookedCustomerData.vehicle_make} ${lastBookedCustomerData.vehicle_model}`
                         };
-                        const { ok, data } = await apiCall('/public/resend_sms', 'POST', resendPayload);
+                        const { ok, data } = await apiCall('/public/send_payment_link_sms', 'POST', resendPayload);
                         if (ok) {
                             alert("SMS re-sent successfully!"); // Use alert for now, replace with custom modal later
-                            showInitialScript();
+                            showWaitingForPaymentScreen(); // Assume they will get it this time
                         } else {
                             alert(`Failed to resend SMS: ${data.message || 'Unknown error'}`); // Use alert for now
                         }
@@ -1489,6 +1635,33 @@
                         showSmsReoptinScreen();
                     }
                 });
+            }
+
+            // NEW: Waiting for payment "Done" button logic
+            if (elements.btnPaymentDone) {
+                elements.btnPaymentDone.addEventListener('click', async () => {
+                    // Simulate sending final confirmation SMS
+                    const payload = {
+                        customer_id: lastBookedCustomerData.customer_id,
+                        deal_id: lastBookedCustomerData.deal_id,
+                        phone: lastBookedCustomerData.customer_phone,
+                        car_details: `${lastBookedCustomerData.vehicle_year} ${lastBookedCustomerData.vehicle_make} ${lastBookedCustomerData.vehicle_model}`,
+                        booking_date: lastBookedCustomerData.booking_date,
+                        booking_time: lastBookedCustomerData.booking_time
+                    };
+                    const { ok, data } = await apiCall('/public/send_confirmation_sms', 'POST', payload);
+                    if (ok) {
+                        showFinalConfirmationScreen();
+                    } else {
+                        alert(`Failed to send confirmation SMS: ${data.message || 'Unknown error'}`);
+                        showInitialScript(); // Fallback
+                    }
+                });
+            }
+
+            // NEW: Final confirmation "End Call" button logic
+            if (elements.btnEndCall) {
+                elements.btnEndCall.addEventListener('click', showInitialScript);
             }
 
             // NEW: SMS Re-opt-in screen buttons logic
@@ -1501,9 +1674,14 @@
                     }
                     const { customer_id, deal_id } = lastBookedCustomerData;
                     const consentGiven = elements.smsReoptinConsentTransactional.checked;
+                    const reoptinPhoneNumber = elements.reoptinPhoneNumberInput.value;
 
                     if (!consentGiven) {
                         alert("Please check the box to agree to receive text messages."); // Use alert for now
+                        return;
+                    }
+                    if (!reoptinPhoneNumber || !/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(reoptinPhoneNumber)) {
+                        alert("Please enter a valid 10-digit phone number.");
                         return;
                     }
 
@@ -1511,16 +1689,23 @@
                         customer_id: customer_id,
                         sms_transactional_opt_in: true,
                         deal_id: deal_id, // Pass deal_id to resend SMS after opt-in
+                        phone: reoptinPhoneNumber, // Use the potentially updated phone number
                         package_type: elements.selectedPackageTypeInput.value,
                         package_price: elements.selectedPackagePriceInput.value,
                         booking_date: document.getElementById('booking-date').value,
-                        booking_time: elements.selectedBookingTimeInput.value
+                        booking_time: elements.selectedBookingTimeInput.value,
+                        sms_type: lastBookedCustomerData.sms_type, // 'pay_in_full' or 'deposit'
+                        payment_link: lastBookedCustomerData.payment_link, // Re-use the payment link
+                        amount_due: lastBookedCustomerData.package_price, // Only relevant for pay_in_full
+                        car_details: `${lastBookedCustomerData.vehicle_year} ${lastBookedCustomerData.vehicle_make} ${lastBookedCustomerData.vehicle_model}`
                     };
 
                     const { ok, data } = await apiCall('/public/update_sms_consent_and_send', 'POST', reoptinPayload);
                     if (ok) {
+                        lastBookedCustomerData.sms_transactional_opt_in = true; // Update local state
+                        lastBookedCustomerData.customer_phone = reoptinPhoneNumber; // Update phone if changed
                         alert("SMS consent updated and text re-sent successfully!"); // Use alert for now
-                        showInitialScript();
+                        showWaitingForPaymentScreen(); // Proceed as if they got the text
                     } else {
                         alert(`Failed to update consent or resend SMS: ${data.message || 'Unknown error'}`); // Use alert for now
                     }
@@ -1607,9 +1792,16 @@
                             customer_id: data.customer_id, // Backend needs to return this
                             customer_phone: phone, // Use the phone from the form
                             sms_transactional_opt_in: smsTransactionalOptIn,
-                            deal_id: data.deal_id // Backend needs to return this
+                            deal_id: data.deal_id, // Backend needs to return this
+                            package_type: packageType,
+                            package_price: packagePrice,
+                            vehicle_year: vehicleYear,
+                            vehicle_make: vehicleMake,
+                            vehicle_model: vehicleModel,
+                            booking_date: bookingDate,
+                            booking_time: selectedTime
                         };
-                        showBookingConfirmationScreen();
+                        showPaymentOptionsScreen(); // Transition to the new payment options screen
                     } else {
                         if (messageEl) { messageEl.textContent = data.message || 'An error occurred during booking.'; messageEl.style.color = 'red'; }
                         restoreButton();
