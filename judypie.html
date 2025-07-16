@@ -1323,7 +1323,9 @@
                 // Show payment options buttons
                 if (elements.paymentOptionsButtons) {
                     elements.paymentOptionsButtons.style.display = 'flex'; // This is the key line
-                    console.log("paymentOptionsButtons display set to flex.");
+                    // Add a class for flexbox layout if not already present
+                    elements.paymentOptionsButtons.classList.add('flex', 'flex-col', 'sm:flex-row', 'justify-center', 'gap-4');
+                    console.log("paymentOptionsButtons display set to flex and flex classes added.");
                 } else {
                     console.error("Error: paymentOptionsButtons element not found!");
                 }
@@ -1458,6 +1460,186 @@
 
 
             // --- Event Listeners for Main Script Buttons ---
+            if (elements.btnPricing) elements.btnPricing.addEventListener('click', showPricingVehicleTypeSelection);
+            if (elements.btnScheduling) elements.btnScheduling.addEventListener('click', showSchedulingVehicleTypeSelection);
+            if (elements.btnOtherCalls) elements.btnOtherCalls.addEventListener('click', showOtherCalls);
+
+            // --- Back Buttons Event Listeners ---
+            if (elements.backToMainFromPricingVehicle) elements.backToMainFromPricingVehicle.addEventListener('click', showInitialScript);
+            if (elements.backToPricingVehicleTypeFromIntro) elements.backToPricingVehicleTypeFromIntro.addEventListener('click', showPricingVehicleTypeSelection);
+            if (elements.backToIntroLevelsFromPetHair) elements.backToIntroLevelsFromPetHair.addEventListener('click', () => showPricingIntroLevels(currentVehicleType));
+            if (elements.backToPetHairFromShampoo) elements.backToPetHairFromShampoo.addEventListener('click', showPricingPetHairQuestion);
+            if (elements.backToShampooFromLevel2) elements.backToShampooFromLevel2.addEventListener('click', showPricingShampooQuestion);
+            if (elements.backToLevel2FromLevel1) elements.backToLevel2FromLevel1.addEventListener('click', showPricingLevel2Recommendation); 
+            
+            if (elements.backToMainFromSchedulingVehicle) elements.backToMainFromSchedulingVehicle.addEventListener('click', showInitialScript);
+            if (elements.backToSchedulingVehicleType) elements.backToSchedulingVehicleType.addEventListener('click', showSchedulingVehicleTypeSelection);
+            if (elements.backToPackageSelection) elements.backToPackageSelection.addEventListener('click', () => {
+                // Reset form fields when going back from booking steps
+                document.getElementById('full-name').value = '';
+                document.getElementById('email').value = '';
+                document.getElementById('phone').value = '';
+                document.getElementById('address-input').value = '';
+                document.getElementById('zip-code').value = '';
+                document.getElementById('vehicle-year').value = '';
+                document.getElementById('vehicle-make').value = '';
+                document.getElementById('vehicle-model').value = '';
+                document.getElementById('booking-date').value = '';
+                elements.selectedBookingTimeInput.value = '';
+                if (elements.bookingMessage) elements.bookingMessage.textContent = ''; 
+                showSchedulingPackageSelection(elements.selectedVehicleTypeInput.value); 
+            });
+            if (elements.backToNameStep) elements.backToNameStep.addEventListener('click', () => {
+                if (elements.bookingStepContact) elements.bookingStepContact.style.display = 'none';
+                if (elements.bookingStepName) elements.bookingStepName.style.display = 'block';
+                updateScript(scriptContent.bookingStepName(elements.selectedPackageTypeInput.value, elements.selectedVehicleTypeInput.value));
+            });
+            if (elements.backToContactStep) elements.backToContactStep.addEventListener('click', () => {
+                if (elements.bookingStepAddress) elements.bookingStepAddress.style.display = 'none';
+                if (elements.bookingStepContact) elements.bookingStepContact.style.display = 'block';
+                updateScript(scriptContent.bookingStepContact);
+            });
+            if (elements.backToAddressStep) elements.backToAddressStep.addEventListener('click', () => {
+                if (elements.bookingStepVehicle) elements.bookingStepVehicle.style.display = 'none';
+                if (elements.bookingStepAddress) elements.bookingStepAddress.style.display = 'block';
+                updateScript(scriptContent.bookingStepAddress);
+            });
+            if (elements.backToVehicleStep) elements.backToVehicleStep.addEventListener('click', () => {
+                if (elements.bookingStepDatetime) elements.bookingStepDatetime.style.display = 'none';
+                if (elements.bookingStepVehicle) elements.bookingStepVehicle.style.display = 'block';
+                updateScript(scriptContent.bookingStepVehicle);
+            });
+            if (elements.backToDatetimeStep) elements.backToDatetimeStep.addEventListener('click', () => {
+                if (elements.bookingStepSmsConsent) elements.bookingStepSmsConsent.style.display = 'none';
+                if (elements.bookingStepDatetime) elements.bookingStepDatetime.style.display = 'block';
+                updateScript(scriptContent.bookingStepDatetime);
+            });
+
+            if (elements.backToMainFromConfirmation) elements.backToMainFromConfirmation.addEventListener('click', showInitialScript);
+            if (elements.backToMainFromOther) elements.backToMainFromOther.addEventListener('click', showInitialScript);
+
+
+            // --- Pricing Section Specific Event Listeners ---
+            if (elements.btnPricing) elements.btnPricing.addEventListener('click', showPricingVehicleTypeSelection);
+            if (elements.btnScheduling) elements.btnScheduling.addEventListener('click', showSchedulingVehicleTypeSelection);
+            if (elements.btnOtherCalls) elements.btnOtherCalls.addEventListener('click', showOtherCalls);
+
+            // --- Back Buttons Event Listeners ---
+            if (elements.backToMainFromPricingVehicle) elements.backToMainFromPricingVehicle.addEventListener('click', showInitialScript);
+            if (elements.backToPricingVehicleTypeFromIntro) elements.backToPricingVehicleTypeFromIntro.addEventListener('click', showPricingVehicleTypeSelection);
+            if (elements.backToIntroLevelsFromPetHair) elements.backToIntroLevelsFromPetHair.addEventListener('click', () => showPricingIntroLevels(currentVehicleType));
+            if (elements.backToPetHairFromShampoo) elements.backToPetHairFromShampoo.addEventListener('click', showPricingPetHairQuestion);
+            if (elements.backToShampooFromLevel2) elements.backToShampooFromLevel2.addEventListener('click', showPricingShampooQuestion);
+            if (elements.backToLevel2FromLevel1) elements.backToLevel2FromLevel1.addEventListener('click', showPricingLevel2Recommendation); 
+            
+            if (elements.backToMainFromSchedulingVehicle) elements.backToMainFromSchedulingVehicle.addEventListener('click', showInitialScript);
+            if (elements.backToSchedulingVehicleType) elements.backToSchedulingVehicleType.addEventListener('click', showSchedulingVehicleTypeSelection);
+            if (elements.backToPackageSelection) elements.backToPackageSelection.addEventListener('click', () => {
+                // Reset form fields when going back from booking steps
+                document.getElementById('full-name').value = '';
+                document.getElementById('email').value = '';
+                document.getElementById('phone').value = '';
+                document.getElementById('address-input').value = '';
+                document.getElementById('zip-code').value = '';
+                document.getElementById('vehicle-year').value = '';
+                document.getElementById('vehicle-make').value = '';
+                document.getElementById('vehicle-model').value = '';
+                document.getElementById('booking-date').value = '';
+                elements.selectedBookingTimeInput.value = '';
+                if (elements.bookingMessage) elements.bookingMessage.textContent = ''; 
+                showSchedulingPackageSelection(elements.selectedVehicleTypeInput.value); 
+            });
+            if (elements.backToNameStep) elements.backToNameStep.addEventListener('click', () => {
+                if (elements.bookingStepContact) elements.bookingStepContact.style.display = 'none';
+                if (elements.bookingStepName) elements.bookingStepName.style.display = 'block';
+                updateScript(scriptContent.bookingStepName(elements.selectedPackageTypeInput.value, elements.selectedVehicleTypeInput.value));
+            });
+            if (elements.backToContactStep) elements.backToContactStep.addEventListener('click', () => {
+                if (elements.bookingStepAddress) elements.bookingStepAddress.style.display = 'none';
+                if (elements.bookingStepContact) elements.bookingStepContact.style.display = 'block';
+                updateScript(scriptContent.bookingStepContact);
+            });
+            if (elements.backToAddressStep) elements.backToAddressStep.addEventListener('click', () => {
+                if (elements.bookingStepVehicle) elements.bookingStepVehicle.style.display = 'none';
+                if (elements.bookingStepAddress) elements.bookingStepAddress.style.display = 'block';
+                updateScript(scriptContent.bookingStepAddress);
+            });
+            if (elements.backToVehicleStep) elements.backToVehicleStep.addEventListener('click', () => {
+                if (elements.bookingStepDatetime) elements.bookingStepDatetime.style.display = 'none';
+                if (elements.bookingStepVehicle) elements.bookingStepVehicle.style.display = 'block';
+                updateScript(scriptContent.bookingStepVehicle);
+            });
+            if (elements.backToDatetimeStep) elements.backToDatetimeStep.addEventListener('click', () => {
+                if (elements.bookingStepSmsConsent) elements.bookingStepSmsConsent.style.display = 'none';
+                if (elements.bookingStepDatetime) elements.bookingStepDatetime.style.display = 'block';
+                updateScript(scriptContent.bookingStepDatetime);
+            });
+
+            if (elements.backToMainFromConfirmation) elements.backToMainFromConfirmation.addEventListener('click', showInitialScript);
+            if (elements.backToMainFromOther) elements.backToMainFromOther.addEventListener('click', showInitialScript);
+
+
+            // --- Pricing Section Specific Event Listeners ---
+            if (elements.btnPricing) elements.btnPricing.addEventListener('click', showPricingVehicleTypeSelection);
+            if (elements.btnScheduling) elements.btnScheduling.addEventListener('click', showSchedulingVehicleTypeSelection);
+            if (elements.btnOtherCalls) elements.btnOtherCalls.addEventListener('click', showOtherCalls);
+
+            // --- Back Buttons Event Listeners ---
+            if (elements.backToMainFromPricingVehicle) elements.backToMainFromPricingVehicle.addEventListener('click', showInitialScript);
+            if (elements.backToPricingVehicleTypeFromIntro) elements.backToPricingVehicleTypeFromIntro.addEventListener('click', showPricingVehicleTypeSelection);
+            if (elements.backToIntroLevelsFromPetHair) elements.backToIntroLevelsFromPetHair.addEventListener('click', () => showPricingIntroLevels(currentVehicleType));
+            if (elements.backToPetHairFromShampoo) elements.backToPetHairFromShampoo.addEventListener('click', showPricingPetHairQuestion);
+            if (elements.backToShampooFromLevel2) elements.backToShampooFromLevel2.addEventListener('click', showPricingShampooQuestion);
+            if (elements.backToLevel2FromLevel1) elements.backToLevel2FromLevel1.addEventListener('click', showPricingLevel2Recommendation); 
+            
+            if (elements.backToMainFromSchedulingVehicle) elements.backToMainFromSchedulingVehicle.addEventListener('click', showInitialScript);
+            if (elements.backToSchedulingVehicleType) elements.backToSchedulingVehicleType.addEventListener('click', showSchedulingVehicleTypeSelection);
+            if (elements.backToPackageSelection) elements.backToPackageSelection.addEventListener('click', () => {
+                // Reset form fields when going back from booking steps
+                document.getElementById('full-name').value = '';
+                document.getElementById('email').value = '';
+                document.getElementById('phone').value = '';
+                document.getElementById('address-input').value = '';
+                document.getElementById('zip-code').value = '';
+                document.getElementById('vehicle-year').value = '';
+                document.getElementById('vehicle-make').value = '';
+                document.getElementById('vehicle-model').value = '';
+                document.getElementById('booking-date').value = '';
+                elements.selectedBookingTimeInput.value = '';
+                if (elements.bookingMessage) elements.bookingMessage.textContent = ''; 
+                showSchedulingPackageSelection(elements.selectedVehicleTypeInput.value); 
+            });
+            if (elements.backToNameStep) elements.backToNameStep.addEventListener('click', () => {
+                if (elements.bookingStepContact) elements.bookingStepContact.style.display = 'none';
+                if (elements.bookingStepName) elements.bookingStepName.style.display = 'block';
+                updateScript(scriptContent.bookingStepName(elements.selectedPackageTypeInput.value, elements.selectedVehicleTypeInput.value));
+            });
+            if (elements.backToContactStep) elements.backToContactStep.addEventListener('click', () => {
+                if (elements.bookingStepAddress) elements.bookingStepAddress.style.display = 'none';
+                if (elements.bookingStepContact) elements.bookingStepContact.style.display = 'block';
+                updateScript(scriptContent.bookingStepContact);
+            });
+            if (elements.backToAddressStep) elements.backToAddressStep.addEventListener('click', () => {
+                if (elements.bookingStepVehicle) elements.bookingStepVehicle.style.display = 'none';
+                if (elements.bookingStepAddress) elements.bookingStepAddress.style.display = 'block';
+                updateScript(scriptContent.bookingStepAddress);
+            });
+            if (elements.backToVehicleStep) elements.backToVehicleStep.addEventListener('click', () => {
+                if (elements.bookingStepDatetime) elements.bookingStepDatetime.style.display = 'none';
+                if (elements.bookingStepVehicle) elements.bookingStepVehicle.style.display = 'block';
+                updateScript(scriptContent.bookingStepVehicle);
+            });
+            if (elements.backToDatetimeStep) elements.backToDatetimeStep.addEventListener('click', () => {
+                if (elements.bookingStepSmsConsent) elements.bookingStepSmsConsent.style.display = 'none';
+                if (elements.bookingStepDatetime) elements.bookingStepDatetime.style.display = 'block';
+                updateScript(scriptContent.bookingStepDatetime);
+            });
+
+            if (elements.backToMainFromConfirmation) elements.backToMainFromConfirmation.addEventListener('click', showInitialScript);
+            if (elements.backToMainFromOther) elements.backToMainFromOther.addEventListener('click', showInitialScript);
+
+
+            // --- Pricing Section Specific Event Listeners ---
             if (elements.btnPricing) elements.btnPricing.addEventListener('click', showPricingVehicleTypeSelection);
             if (elements.btnScheduling) elements.btnScheduling.addEventListener('click', showSchedulingVehicleTypeSelection);
             if (elements.btnOtherCalls) elements.btnOtherCalls.addEventListener('click', showOtherCalls);
