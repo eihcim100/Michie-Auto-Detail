@@ -800,7 +800,7 @@
                     types: ["address"],
                 });
                 addressAutocomplete.addListener('place_changed', () => {
-                    const place = addressAutocomplete.getPlace();
+                    const place = autocomplete.getPlace();
                     if (place.formatted_address) {
                         addressInput.value = place.formatted_address;
                         fillAddressFields(place, 'zip-code');
@@ -1053,9 +1053,11 @@
                     elements.bookingStepName, elements.bookingStepContact,
                     elements.bookingStepAddress, elements.bookingStepVehicle, elements.bookingStepDatetime,
                     elements.bookingStepSmsConsent, // Ensure this is hidden when other sections are active
-                    elements.policyText,
-                    elements.paymentOptionsButtons // Hide payment options buttons too
+                    elements.policyText
                 ].forEach(el => el && (el.style.display = 'none'));
+
+                // Explicitly hide payment options buttons div as well
+                if (elements.paymentOptionsButtons) elements.paymentOptionsButtons.style.display = 'none';
             }
 
             function updateScript(text) {
@@ -1284,14 +1286,28 @@
 
                 if (elements.bookingStepDatetime) elements.bookingStepDatetime.style.display = 'none';
                 if (elements.bookingStepSmsConsent) elements.bookingStepSmsConsent.style.display = 'block';
+                
+                // Ensure the final book appointment button is visible on this step
+                if (elements.finalBookAppointmentBtn) elements.finalBookAppointmentBtn.style.display = 'block';
+                // Ensure the back button is visible on this step
+                if (elements.backToDatetimeStep) elements.backToDatetimeStep.style.display = 'block';
+
                 updateScript(scriptContent.bookingStepSmsConsent);
             }
 
             // NEW: Function to show payment options screen
             function showPaymentOptionsScreen() {
+                console.log("Entering showPaymentOptionsScreen.");
                 hideAllSections(); // Hide everything first
-                if (elements.confirmationSection) elements.confirmationSection.style.display = 'block'; 
-                if (elements.policyText) elements.policyText.style.display = 'block'; 
+                
+                if (elements.confirmationSection) {
+                    elements.confirmationSection.style.display = 'block';
+                    console.log("confirmationSection display set to block.");
+                }
+                if (elements.policyText) {
+                    elements.policyText.style.display = 'block';
+                    console.log("policyText display set to block.");
+                }
                 
                 const packagePrice = elements.selectedPackagePriceInput.value;
                 // Update confirmation message div content
@@ -1300,11 +1316,15 @@
                         <p class="text-2xl font-bold mb-2">⚠️ Booking Created!</p>
                         <p class="text-md mt-4">${scriptContent.paymentOptionsQuestion(packagePrice)}</p>
                     `;
+                    console.log("confirmationMessageDiv content updated.");
                 }
 
                 // Show payment options buttons
                 if (elements.paymentOptionsButtons) {
-                    elements.paymentOptionsButtons.style.display = 'flex'; // Use flex for button layout
+                    elements.paymentOptionsButtons.style.display = 'flex'; // This is the key line
+                    console.log("paymentOptionsButtons display set to flex.");
+                } else {
+                    console.error("Error: paymentOptionsButtons element not found!");
                 }
                 
                 // Set payment button links based on selected package
