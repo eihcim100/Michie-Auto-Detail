@@ -1052,7 +1052,7 @@
                     elements.bookingFormSection, 
                     elements.bookingStepName, elements.bookingStepContact,
                     elements.bookingStepAddress, elements.bookingStepVehicle, elements.bookingStepDatetime,
-                    elements.bookingStepSmsConsent, 
+                    elements.bookingStepSmsConsent, // Ensure this is hidden when other sections are active
                     elements.policyText,
                     elements.paymentOptionsButtons // Hide payment options buttons too
                 ].forEach(el => el && (el.style.display = 'none'));
@@ -1277,6 +1277,10 @@
                     return;
                 }
                 elements.bookingMessage.textContent = ''; // Clear previous message
+
+                // Ensure the form section is visible before showing the consent step
+                if (elements.schedulingSection) elements.schedulingSection.style.display = 'block';
+                if (elements.bookingFormSection) elements.bookingFormSection.style.display = 'block';
 
                 if (elements.bookingStepDatetime) elements.bookingStepDatetime.style.display = 'none';
                 if (elements.bookingStepSmsConsent) elements.bookingStepSmsConsent.style.display = 'block';
