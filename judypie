@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Michie Auto Detailing - Call Center Tool</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* Light background */
+            color: #334155; /* Darker text for contrast */
+            padding-bottom: 2rem; /* Some space at the bottom */
+        }
+        .pac-container { z-index: 1050 !important; } /* Ensure Google Autocomplete is above other elements */
+
+        /* General button styling for a light, stylish look */
+        .btn-primary {
+            background-color: #3b82f6; /* Blue-500 */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #2563eb; /* Blue-600 */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px -1px rgba(0, 0, 0, 0.15), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+        }
+        .btn-secondary {
+            background-color: #e2e8f0; /* Gray-200 */
+            color: #475569; /* Gray-700 */
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid #cbd5e1; /* Gray-300 */
+        }
+        .btn-secondary:hover {
+            background-color: #cbd5e1; /* Gray-300 */
+            transform: translateY(-1px);
+        }
+        .btn-success {
+            background-color: #22c55e; /* Green-500 */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-success:hover:not(:disabled) {
+            background-color: #16a34a; /* Green-600 */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px -1px rgba(0, 0, 0, 0.15), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+        }
+        .btn-success:disabled {
+            background-color: #16a34a;
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        /* Package card styles - adapted for this page */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            justify-content: center;
+            align-items: stretch;
+        }
+        @media (min-width: 768px) {
+            .pricing-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        .pricing-card {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0; /* Light gray border */
+            border-radius: 1rem; /* More rounded corners */
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05); /* Softer shadow */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+        }
+        .pricing-card:hover {
+            transform: translateY(-8px); /* More pronounced lift */
+            box-shadow: 0 15px 30px rgba(0, 123, 255, 0.1); /* Softer blue shadow on hover */
+        }
+        .pricing-level {
+            font-size: 1.5rem; /* Larger title */
+            font-weight: 700; /* Semibold */
+            color: #1e293b; /* Darker text */
+            margin-bottom: 0.75rem;
+        }
+        .pricing-price {
+            font-size: 2.5rem; /* Larger price */
+            font-weight: 800; /* Extra bold */
+            color: #059669; /* Green-600 */
+            margin-bottom: 1.5rem;
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            flex-grow: 1;
+            margin-bottom: 1.5rem;
+        }
+        .feature-list li {
+            position: relative;
+            padding-left: 2rem; /* More space for checkmark */
+            margin-bottom: 0.8rem; /* More line spacing */
+            color: #475569; /* Gray-700 */
+            font-size: 0.95rem;
+        }
+        .feature-list li::before {
+            content: '✓';
+            color: #059669; /* Green checkmark */
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        .select-package-btn {
+            width: 100%;
+            margin-top: auto; /* Push button to bottom */
+        }
+        .see-whats-included-btn {
+            background-color: #eff6ff; /* Blue-50 */
+            color: #1e40af; /* Blue-800 */
+            font-weight: 500;
+            padding: 0.6rem 1.2rem;
+            border-radius: 0.75rem;
+            width: 100%;
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+            transition: background-color 0.2s;
+            cursor: pointer;
+            text-align: center;
+            border: none;
+        }
+        .see-whats-included-btn:hover { background-color: #dbeafe; } /* Blue-100 */
+        .feature-dropdown {
+            display: none;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            max-height: 0;
+            padding-bottom: 1rem;
+        }
+        .feature-dropdown.show {
+            max-height: 1000px; /* Arbitrarily large to show content */
+            display: block;
+        }
+
+        /* Time slot buttons */
+        .time-button {
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border: 2px solid #cbd5e1; /* Gray-300 */
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background-color: #e0f2fe; /* Light Blue-100 */
+            color: #1e40af; /* Dark Blue-800 */
+            text-align: center;
+        }
+        .time-button:hover:not(:disabled) {
+            background-color: #bfdbfe; /* Blue-200 */
+            border-color: #60a5fa; /* Blue-400 */
+        }
+        .time-button.selected {
+            background-color: #2563eb; /* Blue-600 */
+            color: white;
+            border-color: #2563eb;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .time-button:disabled {
+            background-color: #e2e8f0; /* Gray-200 */
+            color: #94a3b8; /* Gray-400 */
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        /* Form input styling */
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="date"],
+        select,
+        textarea { /* Added textarea styling */
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 0.5rem;
+            background-color: #ffffff;
+            font-size: 1rem;
+            color: #334155;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="tel"]:focus,
+        input[type="date"]:focus,
+        select:focus,
+        textarea:focus { /* Added textarea focus styling */
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #475569;
+        }
+
+        /* Vehicle Type Buttons Layout */
+        .vehicle-type-buttons-container {
+            display: flex;
+            flex-wrap: wrap; /* Allows wrapping on smaller screens */
+            justify-content: center; /* Center buttons horizontally */
+            gap: 1rem; /* Space between buttons */
+        }
+        @media (min-width: 640px) { /* On small screens and up */
+            .vehicle-type-buttons-container {
+                justify-content: space-evenly; /* Evenly distribute space */
+            }
+        }
+        @media (min-width: 768px) { /* On medium screens and up */
+            .vehicle-type-buttons-container {
+                justify-content: space-around; /* Spread out more */
+            }
+        }
+
+        /* Script Display Area */
+        #script-display {
+            background-color: #e0f2fe; /* Light blue background */
+            border: 1px solid #90cdf4; /* Blue border */
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.125rem; /* text-lg */
+            font-weight: 500;
+            color: #1e40af; /* Dark blue text */
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-4xl">
+        <header class="text-center mb-10">
+            <img src="https://michieauto.com/logo.jpeg" alt="Michie Auto Detailing Logo" class="mx-auto mb-4 w-64 h-auto rounded-lg shadow-md">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">Michie Auto Detailing - Call Center Tool</h1>
+        </header>
+
+        <!-- Dynamic Script Display -->
+        <div id="script-display">
+            <!-- Script text will be injected here by JavaScript -->
+        </div>
+
+        <!-- Initial Script Section -->
+        <div id="initial-script-section" class="bg-white p-8 rounded-xl shadow-lg text-center mb-8">
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <button id="btn-pricing" class="btn-primary">Calling about pricing</button>
+                <button id="btn-scheduling" class="btn-primary">Calling about scheduling</button>
+                <button id="btn-other-calls" class="btn-primary">All other calls</button>
+            </div>
+        </div>
+
+        <!-- Pricing Section -->
+        <div id="pricing-section" class="hidden bg-white p-8 rounded-xl shadow-lg space-y-8 mb-8">
+            <!-- Pricing: Vehicle Type Selection -->
+            <div id="pricing-vehicle-type-selection">
+                <div class="vehicle-type-buttons-container">
+                    <button id="pricing-select-car-type" class="btn-primary">Car</button>
+                    <button id="pricing-select-truck-type" class="btn-primary">Truck</button>
+                    <button id="pricing-select-suv-type" class="btn-primary">SUV</button>
+                </div>
+                <button id="back-to-main-from-pricing-vehicle" class="btn-secondary mt-8">Back to Main Script</button>
+            </div>
+
+            <!-- Pricing: Intro to Levels -->
+            <div id="pricing-intro-levels" class="hidden text-center">
+                <button id="btn-ok-intro-levels" class="btn-primary">OK</button>
+                <button id="back-to-pricing-vehicle-type-from-intro" class="btn-secondary mt-8">Back to Vehicle Type</button>
+            </div>
+
+            <!-- Pricing: Pet Hair Question -->
+            <div id="pricing-pet-hair-question" class="hidden text-center">
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <button id="btn-pet-hair-yes" class="btn-primary">Yes</button>
+                    <button id="btn-pet-hair-no" class="btn-primary">No</button>
+                </div>
+                <button id="back-to-intro-levels-from-pet-hair" class="btn-secondary mt-8">Back to Intro</button>
+            </div>
+
+            <!-- Pricing: Shampoo Question -->
+            <div id="pricing-shampoo-question" class="hidden text-center">
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <button id="btn-shampoo-yes" class="btn-primary">Yes</button>
+                    <button id="btn-shampoo-no" class="btn-primary">No</button>
+                </div>
+                <button id="back-to-pet-hair-from-shampoo" class="btn-secondary mt-8">Back to Pet Hair</button>
+            </div>
+
+            <!-- Pricing: Level 2 Recommendation -->
+            <div id="pricing-level2-recommendation" class="hidden text-center">
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <button id="btn-level2-yes" class="btn-success">Yes (Schedule Service)</button>
+                    <button id="btn-level2-no" class="btn-secondary">No (Downsell)</button>
+                </div>
+                <button id="back-to-shampoo-from-level2" class="btn-secondary mt-8">Back to Shampoo</button>
+            </div>
+
+            <!-- Pricing: Level 1 Recommendation (Downsell or Direct) -->
+            <div id="pricing-level1-recommendation" class="hidden text-center">
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <button id="btn-level1-yes" class="btn-success">Yes (Schedule Service)</button>
+                    <button id="btn-level1-no" class="btn-secondary">No (Other Calls)</button>
+                </div>
+                <button id="back-to-level2-from-level1" class="btn-secondary mt-8">Back to Level 2</button>
+            </div>
+
+            <!-- Pricing: Full Package Details (Hidden by default, shown when needed for reference) -->
+            <div id="pricing-full-package-details" class="hidden">
+                <h3 class="col-span-full text-xl font-semibold text-gray-700 mb-4 text-center">Full Package Details for Reference</h3>
+                <div class="text-center mb-6">
+                    <button id="toggle-pricing-sedan" class="btn-secondary mr-2">Show Sedan Pricing</button>
+                    <button id="toggle-pricing-suv-truck" class="btn-secondary">Show SUV/Truck Pricing</button>
+                </div>
+                <div id="sedan-packages-display" class="pricing-grid hidden">
+                    <!-- Sedan Package Cards -->
+                    <div class="pricing-card">
+                        <h4 class="pricing-level">Level 1 Detail</h4>
+                        <p class="pricing-price">$149</p>
+                        <button class="see-whats-included-btn" data-target="sedan-level1-features">See what's included</button>
+                        <div id="sedan-level1-features" class="feature-dropdown">
+                            <ul class="feature-list">
+                                <li>External high pressure wash</li>
+                                <li>Tire cleaner</li>
+                                <li>Window cleaning inside and out</li>
+                                <li>Deep vaccuming</li>
+                                <li>Display controls and panels wipedown</li>
+                                <li>Mirror cleaning</li>
+                                <li>Seat vaccum</li>
+                                <li>Surface protectent for the dash and display/controls</li>
+                                <li>Steering wheel and dash clean</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pricing-card">
+                        <h4 class="pricing-level">Level 2 Detail</h4>
+                        <p class="pricing-price">$249</p>
+                        <button class="see-whats-included-btn" data-target="sedan-level2-features">See what's included</button>
+                        <div id="sedan-level2-features" class="feature-dropdown">
+                            <ul class="feature-list">
+                                <li>External high pressure wash</li>
+                                <li>Tire cleaner</li>
+                                <li>Window cleaning inside and out</li>
+                                <li>Deep vaccuming</li>
+                                <li>Display controls and panels wipedown</li>
+                                <li>Mirror cleaning</li>
+                                <li>Seat vaccum</li>
+                                <li>Surface protectent for the dash and display/controls</li>
+                                <li>Steering wheel and dash clean</li>
+                                <li>Shampoo carpets and seats</li>
+                                <li>Premium Leather treatment</li>
+                                <li>Door jam cleaning</li>
+                                <li>Rims and tires cleaned and wiped down</li>
+                                <li>Console scrub down</li>
+                                <li>Pet hair removal</li>
+                                <li>Odor removal</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pricing-card">
+                        <h4 class="pricing-level">Level 3 Detail</h4>
+                        <p class="pricing-price">$349</p>
+                        <button class="see-whats-included-btn" data-target="sedan-level3-features">See what's included</button>
+                        <div id="sedan-level3-features" class="feature-dropdown">
+                            <ul class="feature-list">
+                                <li>External high pressure wash</li>
+                                <li>Tire cleaner</li>
+                                <li>Window cleaning inside and out</li>
+                                <li>Deep vaccuming</li>
+                                <li>Display controls and panels wipedown</li>
+                                <li>Mirror cleaning</li>
+                                <li>Seat vaccum</li>
+                                <li>Surface protectent for the dash and display/controls</li>
+                                <li>Steering wheel and dash clean</li>
+                                <li>Shampoo carpets and seats</li>
+                                <li>Premium Leather treatment</li>
+                                <li>Door jam cleaning</li>
+                                <li>Rims and tires cleaned and wiped down</li>
+                                <li>Console scrub down</li>
+                                <li>Pet hair removal</li>
+                                <li>Odor removal</li>
+                                <li>FINE TOOTH COMB in between seats cleaning</li>
+                                <li>Glove compartment cleaning</li>
+                                <li>Trunk shampoo and vaccum</li>
+                                <li>Door controls cleaning</li>
+                                <li>Hard to reach areas deep level shampoo</li>
+                                <li>Meticulous cleaning of all frequently touched surfaces</li>
+                                <li>External bug removal</li>
+                                <li>Free microfiber cloth</li>
+                                <li>Protection plan (complimentary maintenance clean within 15 days)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div id="suv-truck-packages-display" class="pricing-grid hidden">
+                    <h3 class="col-span-full text-xl font-semibold text-gray-700 mb-4 text-center">SUV/Truck Packages</h3>
+                    <!-- SUV/Truck Package Cards -->
+                    <div class="pricing-card">
+                        <h4 class="pricing-level">Level 1 Detail</h4>
+                        <p class="pricing-price">$199</p>
+                        <button class="see-whats-included-btn" data-target="suv-truck-level1-features">See what's included</button>
+                        <div id="suv-truck-level1-features" class="feature-dropdown">
+                            <ul class="feature-list">
+                                <li>External high pressure wash</li>
+                                <li>Tire cleaner</li>
+                                <li>Window cleaning inside and out</li>
+                                <li>Deep vaccuming</li>
+                                <li>Display controls and panels wipedown</li>
+                                <li>Mirror cleaning</li>
+                                <li>Seat vaccum</li>
+                                <li>Surface protectent for the dash and display/controls</li>
+                                <li>Steering wheel and dash clean</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pricing-card">
+                        <h4 class="pricing-level">Level 2 Detail</h4>
+                        <p class="pricing-price">$299</p>
+                        <button class="see-whats-included-btn" data-target="suv-truck-level2-features">See what's included</button>
+                        <div id="suv-truck-level2-features" class="feature-dropdown">
+                            <ul class="feature-list">
+                                <li>External high pressure wash</li>
+                                <li>Tire cleaner</li>
+                                <li>Window cleaning inside and out</li>
+                                <li>Deep vaccuming</li>
+                                <li>Display controls and panels wipedown</li>
+                                <li>Mirror cleaning</li>
+                                <li>Seat vaccum</li>
+                                <li>Surface protectent for the dash and display/controls</li>
+                                <li>Steering wheel and dash clean</li>
+                                <li>Shampoo carpets and seats</li>
+                                <li>Premium Leather treatment</li>
+                                <li>Door jam cleaning</li>
+                                <li>Rims and tires cleaned and wiped down</li>
+                                <li>Console scrub down</li>
+                                <li>Pet hair removal</li>
+                                <li>Odor removal</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="pricing-card">
+                        <h4 class="pricing-level">Level 3 Detail</h4>
+                        <p class="pricing-price">$399</p>
+                        <button class="see-whats-included-btn" data-target="suv-truck-level3-features">See what's included</button>
+                        <div id="suv-truck-level3-features" class="feature-dropdown">
+                            <ul class="feature-list">
+                                <li>External high pressure wash</li>
+                                <li>Tire cleaner</li>
+                                <li>Window cleaning inside and out</li>
+                                <li>Deep vaccuming</li>
+                                <li>Display controls and panels wipedown</li>
+                                <li>Mirror cleaning</li>
+                                <li>Seat vaccum</li>
+                                <li>Surface protectent for the dash and display/controls</li>
+                                <li>Steering wheel and dash clean</li>
+                                <li>Shampoo carpets and seats</li>
+                                <li>Premium Leather treatment</li>
+                                <li>Door jam cleaning</li>
+                                <li>Rims and tires cleaned and wiped down</li>
+                                <li>Console scrub down</li>
+                                <li>Pet hair removal</li>
+                                <li>Odor removal</li>
+                                <li>FINE TOOTH COMB in between seats cleaning</li>
+                                <li>Glove compartment cleaning</li>
+                                <li>Trunk shampoo and vaccum</li>
+                                <li>Door controls cleaning</li>
+                                <li>Hard to reach areas deep level shampoo</li>
+                                <li>Meticulous cleaning of all frequently touched surfaces</li>
+                                <li>External bug removal</li>
+                                <li>Free microfiber cloth</li>
+                                <li>Protection plan (complimentary maintenance clean within 15 days)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scheduling Section (Booking Flow) -->
+        <div id="scheduling-section" class="hidden bg-white p-8 rounded-xl shadow-lg space-y-8">
+            <div id="scheduling-vehicle-type-selection">
+                <div class="vehicle-type-buttons-container">
+                    <button id="scheduling-select-car-type" class="btn-primary">Car</button>
+                    <button id="scheduling-select-truck-type" class="btn-primary">Truck</button>
+                    <button id="scheduling-select-suv-type" class="btn-primary">SUV</button>
+                </div>
+                <button id="back-to-main-from-scheduling-vehicle" class="btn-secondary mt-8">Back to Main Script</button>
+            </div>
+
+            <div id="scheduling-package-selection-container" class="hidden">
+                <div id="sedan-packages-booking-display" class="pricing-grid hidden">
+                    <!-- Sedan Package Cards for Booking -->
+                    <div class="pricing-card">
+                        <h4 class="pricing-level">Level 1 Detail</h4>
+                        <p class="pricing-price">$149</p>
+                        <button class="select-package-btn btn-success" data-package-type="Level 1 Detail" data-package-price="149" data-vehicle-type="car">Select Package</button>
+                    </div>
+                    <div class="pricing-card">
+                        <h4 class="pricing-level">Level 2 Detail</h4>
+                        <p class="pricing-price">$249</p>
+                        <button class="select-package-btn btn-success" data-package-type="Level 2 Detail" data-package-price="249" data-vehicle-type="car">Select Package</button>
+                    </div>
+                    <div class="pricing-card">
+                        <h4 class="pricing-level">Level 3 Detail</h4>
+                        <p class="pricing-price">$349</p>
+                        <button class="select-package-btn btn-success" data-package-type="Level 3 Detail" data-package-price="349" data-vehicle-type="car">Select Package</button>
+                    </div>
+                </div>
+                <div id="suv-truck-packages-booking-display" class="pricing-grid hidden">
+                    <!-- SUV/Truck Package Cards for Booking -->
+                    <div class="pricing-card">
+                        <h4 class="pricing-level">Level 1 Detail</h4>
+                        <p class="pricing-price">$199</p>
+                        <button class="select-package-btn btn-success" data-package-type="Level 1 Detail" data-package-price="199" data-vehicle-type="suv-truck">Select Package</button>
+                    </div>
+                    <div class="pricing-card">
+                        <h4 class="pricing-level">Level 2 Detail</h4>
+                        <p class="pricing-price">$299</p>
+                        <button class="select-package-btn btn-success" data-package-type="Level 2 Detail" data-package-price="299" data-vehicle-type="suv-truck">Select Package</button>
+                    </div>
+                    <div class="pricing-card">
+                        <h4 class="pricing-level">Level 3 Detail</h4>
+                        <p class="pricing-price">$399</p>
+                        <button class="select-package-btn btn-success" data-package-type="Level 3 Detail" data-package-price="399" data-vehicle-type="suv-truck">Select Package</button>
+                    </div>
+                </div>
+                <button id="back-to-scheduling-vehicle-type" class="btn-secondary mt-8">Back to Vehicle Type</button>
+            </div>
+
+            <!-- Main Booking Form -->
+            <div id="booking-form-section" class="hidden">
+                <p class="text-lg font-semibold text-gray-800 mb-4">Selected Package: <span id="selected-package-display" class="text-blue-600"></span></p>
+                <form id="booking-form" class="space-y-6">
+                    <div>
+                        <label for="full-name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                        <input type="text" id="full-name" placeholder="Customer's Full Name" required>
+                    </div>
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                        <input type="email" id="email" placeholder="Customer's Email Address" required>
+                    </div>
+                    <div>
+                        <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                        <input type="tel" id="phone" placeholder="Customer's Phone Number" required>
+                    </div>
+                    <div>
+                        <label for="address-input" class="block text-sm font-medium text-gray-700 mb-1">Service Address</label>
+                        <input type="text" id="address-input" placeholder="Start typing customer's address..." required>
+                    </div>
+                    <div>
+                        <label for="zip-code" class="block text-sm font-medium text-gray-700 mb-1">Zip Code</label>
+                        <input type="text" id="zip-code" placeholder="Customer's Zip Code" required>
+                    </div>
+                    <div>
+                        <label for="vehicle-year" class="block text-sm font-medium text-gray-700 mb-1">Vehicle Year</label>
+                        <input type="text" id="vehicle-year" placeholder="e.g., 2020" required>
+                    </div>
+                    <div>
+                        <label for="vehicle-make" class="block text-sm font-medium text-gray-700 mb-1">Vehicle Make</label>
+                        <select id="vehicle-make" required class="w-full px-3 py-2 border rounded-lg">
+                            <option value="">Select Make</option>
+                            <option value="Acura">Acura</option>
+                            <option value="Audi">Audi</option>
+                            <option value="BMW">BMW</option>
+                            <option value="Buick">Buick</option>
+                            <option value="Cadillac">Cadillac</option>
+                            <option value="Chevrolet">Chevrolet</option>
+                            <option value="Chrysler">Chrysler</option>
+                            <option value="Dodge">Dodge</option>
+                            <option value="Ford">Ford</option>
+                            <option value="GMC">GMC</option>
+                            <option value="Honda">Honda</option>
+                            <option value="Hyundai">Hyundai</option>
+                            <option value="Infiniti">Infiniti</option>
+                            <option value="Jaguar">Jaguar</option>
+                            <option value="Jeep">Jeep</option>
+                            <option value="Kia">Kia</option>
+                            <option value="Land Rover">Land Rover</option>
+                            <option value="Lexus">Lexus</option>
+                            <option value="Lincoln">Lincoln</option>
+                            <option value="Mazda">Mazda</option>
+                            <option value="Mercedes-Benz">Mercedes-Benz</option>
+                            <option value="Mini">Mini</option>
+                            <option value="Mitsubishi">Mitsubishi</option>
+                            <option value="Nissan">Nissan</option>
+                            <option value="Ram">Ram</option>
+                            <option value="Subaru">Subaru</option>
+                            <option value="Tesla">Tesla</option>
+                            <option value="Toyota">Toyota</option>
+                            <option value="Volkswagen">Volkswagen</option>
+                            <option value="Volvo">Volvo</option>
+                            <option value="Smart">Smart</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="vehicle-model" class="block text-sm font-medium text-gray-700 mb-1">Vehicle Model</label>
+                        <input type="text" id="vehicle-model" placeholder="e.g., Civic" required>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="booking-date" class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                            <input type="date" id="booking-date" required>
+                        </div>
+                        <div>
+                            <label for="selected-booking-time" class="block text-sm font-medium text-gray-700 mb-1">Time</label>
+                            <div id="booking-time-buttons" class="grid grid-cols-3 gap-2"></div>
+                            <input type="hidden" id="selected-booking-time" name="booking-time" required>
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="selected-package-type" name="package-type">
+                    <input type="hidden" id="selected-package-price" name="package-price">
+                    <input type="hidden" id="selected-vehicle-type" name="vehicle-type"> <!-- New hidden input for vehicle type -->
+                    <button type="submit" id="final-book-appointment-btn" class="w-full btn-success hidden">Book Appointment</button>
+                    <p id="booking-message" class="text-center mt-2"></p>
+                </form>
+                <button id="back-to-package-selection" class="btn-secondary mt-8">Back to Package Selection</button>
+            </div>
+
+            <!-- Confirmation Message -->
+            <div id="confirmation-section" class="hidden text-center">
+                <div id="confirmation-message" class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-6 rounded-lg">
+                    <p class="text-2xl font-bold mb-2">⚠️ Booking Created!</p>
+                    <p class="text-md mt-4">The appointment has been successfully scheduled. Please inform the customer about the payment options.</p>
+                </div>
+                
+                <div class="mt-8 space-y-4">
+                    <!-- Deposit Option -->
+                    <div>
+                        <button id="pay-deposit-button" class="btn-success">Pay $50 deposit</button>
+                        <p class="text-xs text-gray-500 mt-2">(Pay the remaining due after service completion)</p>
+                    </div>
+
+                    <!-- OR Separator -->
+                    <p class="text-xl font-bold text-gray-600">OR</p>
+
+                    <!-- Pay in Full Option -->
+                    <div>
+                        <button id="pay-now-button" class="btn-primary">Pay in full</button>
+                    </div>
+                </div>
+                <button id="back-to-main-from-confirmation" class="btn-secondary mt-8">Back to Main Script</button>
+            </div>
+
+            <!-- Policy Text -->
+            <div id="policy-text" class="hidden text-xs text-gray-500 mt-8 space-y-2">
+                <p>* <strong>Deposit Policy:</strong> Paying in full is optional before the detail is completed, however, if you choose to not pay in full, a $50 deposit is required to secure your appointment, and this goes towards the cost of your detail service. The remaining balance will be collected after service is completed. In the event that you cancel the appointment, the $50 deposit paid is non-refundable. Reschedules are always free.</p>
+                <p>* <strong>Paid in Full Policy:</strong> If you paid in full and cancel your appointment, no cancel fee will be charged, instead, 100% of the amount paid will be provided to you as an auto detailing credit, valid for any detail with Michie Auto Detailing LLC in the next 12 months. This is similar to a gift card, no cash refunds are provided. Reschedules are always free of charge.</p>
+            </div>
+        </div>
+
+        <!-- Other Calls Section -->
+        <div id="other-calls-section" class="hidden bg-white p-8 rounded-xl shadow-lg mb-8">
+            <textarea id="other-calls-notes" rows="10" placeholder="Enter notes for this call here..." class="w-full"></textarea>
+            <button id="back-to-main-from-other" class="btn-secondary mt-4">Back to Main Script</button>
+        </div>
+
+    </div>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk&libraries=places&callback=initBookingPage" async defer></script>
+    <script>
+        // This function needs to be available for the autocomplete callback
+        function fillAddressFields(place, zipCodeInputId) {
+            let zipCode = '';
+            for (const component of place.address_components) {
+                if (component.types.includes('postal_code')) {
+                    zipCode = component.long_name;
+                }
+            }
+            const zipCodeInput = document.getElementById(zipCodeInputId);
+            if(zipCodeInput) {
+                zipCodeInput.value = zipCode;
+            }
+        }
+
+        // This function will be called by the Google Maps script.
+        // It is now ONLY responsible for the autocomplete feature.
+        window.initBookingPage = function() {
+            const addressInput = document.getElementById('address-input');
+            if (window.google && window.google.maps && window.google.maps.places && addressInput) {
+                let addressAutocomplete = new google.maps.places.Autocomplete(addressInput, {
+                    componentRestrictions: { country: "us" },
+                    fields: ["formatted_address", "address_components"],
+                    types: ["address"],
+                });
+                addressAutocomplete.addListener('place_changed', () => {
+                    const place = addressAutocomplete.getPlace();
+                    if (place.formatted_address) {
+                        addressInput.value = place.formatted_address;
+                        fillAddressFields(place, 'zip-code');
+                    }
+                });
+            } else {
+                console.warn("Google Maps Autocomplete could not be initialized. The feature will be disabled, but the form will still work.");
+            }
+        }
+
+        // The main application logic, including form event listeners.
+        function initializeApp() {
+            const API_BASE_URL = 'https://michie-detailing-admin.onrender.com';
+            
+            const elements = {
+                scriptDisplay: document.getElementById('script-display'),
+                initialScriptSection: document.getElementById('initial-script-section'),
+                btnPricing: document.getElementById('btn-pricing'),
+                btnScheduling: document.getElementById('btn-scheduling'),
+                btnOtherCalls: document.getElementById('btn-other-calls'),
+                pricingSection: document.getElementById('pricing-section'),
+                schedulingSection: document.getElementById('scheduling-section'),
+                otherCallsSection: document.getElementById('other-calls-section'),
+
+                // Back buttons
+                backToMainFromPricingVehicle: document.getElementById('back-to-main-from-pricing-vehicle'),
+                backToPricingVehicleTypeFromIntro: document.getElementById('back-to-pricing-vehicle-type-from-intro'),
+                backToIntroLevelsFromPetHair: document.getElementById('back-to-intro-levels-from-pet-hair'),
+                backToPetHairFromShampoo: document.getElementById('back-to-pet-hair-from-shampoo'),
+                backToShampooFromLevel2: document.getElementById('back-to-shampoo-from-level2'),
+                backToLevel2FromLevel1: document.getElementById('back-to-level2-from-level1'),
+                backToMainFromSchedulingVehicle: document.getElementById('back-to-main-from-scheduling-vehicle'),
+                backToSchedulingVehicleType: document.getElementById('back-to-scheduling-vehicle-type'),
+                backToPackageSelection: document.getElementById('back-to-package-selection'),
+                backToMainFromConfirmation: document.getElementById('back-to-main-from-confirmation'),
+                backToMainFromOther: document.getElementById('back-to-main-from-other'),
+
+                // Pricing specific elements
+                pricingVehicleTypeSelection: document.getElementById('pricing-vehicle-type-selection'),
+                pricingSelectCarBtn: document.getElementById('pricing-select-car-type'), 
+                pricingSelectTruckBtn: document.getElementById('pricing-select-truck-type'), 
+                pricingSelectSuvBtn: document.getElementById('pricing-select-suv-type'), 
+                pricingIntroLevels: document.getElementById('pricing-intro-levels'),
+                btnOkIntroLevels: document.getElementById('btn-ok-intro-levels'),
+                pricingPetHairQuestion: document.getElementById('pricing-pet-hair-question'),
+                btnPetHairYes: document.getElementById('btn-pet-hair-yes'),
+                btnPetHairNo: document.getElementById('btn-pet-hair-no'),
+                pricingShampooQuestion: document.getElementById('pricing-shampoo-question'),
+                btnShampooYes: document.getElementById('btn-shampoo-yes'),
+                btnShampooNo: document.getElementById('btn-shampoo-no'),
+                pricingLevel2Recommendation: document.getElementById('pricing-level2-recommendation'),
+                btnLevel2Yes: document.getElementById('btn-level2-yes'),
+                btnLevel2No: document.getElementById('btn-level2-no'),
+                pricingLevel1Recommendation: document.getElementById('pricing-level1-recommendation'),
+                btnLevel1Yes: document.getElementById('btn-level1-yes'),
+                btnLevel1No: document.getElementById('btn-level1-no'),
+                pricingFullPackageDetails: document.getElementById('pricing-full-package-details'), // For reference
+                togglePricingSedan: document.getElementById('toggle-pricing-sedan'),
+                togglePricingSuvTruck: document.getElementById('toggle-pricing-suv-truck'),
+                sedanPackagesDisplay: document.getElementById('sedan-packages-display'), 
+                suvTruckPackagesDisplay: document.getElementById('suv-truck-packages-display'), 
+
+                // Scheduling specific elements (from original booking flow)
+                schedulingVehicleTypeSelection: document.getElementById('scheduling-vehicle-type-selection'),
+                schedulingSelectCarBtn: document.getElementById('scheduling-select-car-type'), 
+                schedulingSelectTruckBtn: document.getElementById('scheduling-select-truck-type'), 
+                schedulingSelectSuvBtn: document.getElementById('scheduling-select-suv-type'), 
+                schedulingPackageSelectionContainer: document.getElementById('scheduling-package-selection-container'),
+                sedanPackagesBookingDisplay: document.getElementById('sedan-packages-booking-display'), 
+                suvTruckPackagesBookingDisplay: document.getElementById('suv-truck-packages-booking-display'), 
+                bookingFormSection: document.getElementById('booking-form-section'),
+                bookingForm: document.getElementById('booking-form'),
+                selectedPackageDisplay: document.getElementById('selected-package-display'),
+                selectedPackageTypeInput: document.getElementById('selected-package-type'),
+                selectedPackagePriceInput: document.getElementById('selected-package-price'),
+                selectedVehicleTypeInput: document.getElementById('selected-vehicle-type'), // Hidden input for vehicle type
+                finalBookAppointmentBtn: document.getElementById('final-book-appointment-btn'),
+                confirmationSection: document.getElementById('confirmation-section'),
+                payNowButton: document.getElementById('pay-now-button'),
+                payDepositButton: document.getElementById('pay-deposit-button'),
+                policyText: document.getElementById('policy-text'),
+                bookingDateInput: document.getElementById('booking-date'),
+                bookingTimeButtonsContainer: document.getElementById('booking-time-buttons'),
+                selectedBookingTimeInput: document.getElementById('selected-booking-time'),
+                bookingMessage: document.getElementById('booking-message'),
+                otherCallsNotes: document.getElementById('other-calls-notes') // For the notes section
+            };
+
+            // State variables for the script flow
+            let currentVehicleType = '';
+            let recommendedPackageType = '';
+            let recommendedPackagePrice = 0;
+
+            // Package features for script generation
+            const packageFeatures = {
+                "Level 1 Detail": {
+                    "car": ["external and internal wash", "deep clean vacuuming", "doors and panels cleaning"],
+                    "suv-truck": ["external and internal wash", "deep clean vacuuming", "doors and panels cleaning"]
+                },
+                "Level 2 Detail": {
+                    "car": [
+                        "external and internal wash", "deep clean vacuuming", "shampooing of carpets",
+                        "pet hair removal if you have any", "doors and panels cleaning"
+                    ],
+                    "suv-truck": [
+                        "external and internal wash", "deep clean vacuuming", "shampooing of carpets",
+                        "pet hair removal if you have any", "doors and panels cleaning"
+                    ]
+                }
+            };
+
+            const packagePrices = {
+                "Level 1 Detail": { "car": 149, "suv-truck": 199 },
+                "Level 2 Detail": { "car": 249, "suv-truck": 299 },
+                "Level 3 Detail": { "car": 349, "suv-truck": 399 }
+            };
+
+            // Script content definitions
+            const scriptContent = {
+                initial: "Thank you for calling Michie Auto Detail, are you calling to schedule an appointment?",
+                pricingVehicleType: "Absolutely! I'd love to get you some information on pricing. Are you calling about a car, truck, or SUV?",
+                pricingIntroLevels: "We have 3 levels of service to choose from. I'll just ask you a couple of questions to see which option is right for you, sound good?",
+                pricingPetHairQuestion: "Do you have any pet hair in your vehicle?",
+                pricingShampooQuestion: "Would you like your seats and carpets shampooed and renewed?",
+                pricingLevel2Recommendation: (vehicleType) => {
+                    const features = packageFeatures["Level 2 Detail"][vehicleType].join(', ');
+                    const price = packagePrices["Level 2 Detail"][vehicleType];
+                    return `Based on the information you've provided me, I'm going to recommend our most popular option, it's called level 2 detail service. It includes ${features}. The price is $${price}, does that sound good?`;
+                },
+                pricingLevel1Recommendation: (vehicleType) => {
+                    const features = packageFeatures["Level 1 Detail"][vehicleType].join(', ');
+                    const price = packagePrices["Level 1 Detail"][vehicleType];
+                    return `Based on the information you've provided me, I'm going to recommend our most affordable option, it's called level 1 detail service. It includes ${features}. The price is $${price}, does that sound good?`;
+                },
+                pricingDownsellLevel1: (vehicleType) => {
+                    const features = packageFeatures["Level 1 Detail"][vehicleType].join(', ');
+                    const price = packagePrices["Level 1 Detail"][vehicleType];
+                    return `I completely understand! We have another option that will fit your budget and your needs. I'm going to recommend our most affordable option, it's called level 1 detail service. It includes ${features}. The price is $${price}, does that sound good?`;
+                },
+                schedulingVehicleType: "Excellent! To help me find the best appointment for them, what type of vehicle are we scheduling for? Is it a car, truck, or SUV?",
+                schedulingPackageInquiry: (vehicleType) => {
+                    const carPrices = `Level 1 Detail at $${packagePrices["Level 1 Detail"].car}, Level 2 at $${packagePrices["Level 2 Detail"].car}, and Level 3 at $${packagePrices["Level 3 Detail"].car}`;
+                    const suvTruckPrices = `Level 1 at $${packagePrices["Level 1 Detail"]["suv-truck"]}, Level 2 at $${packagePrices["Level 2 Detail"]["suv-truck"]}, and Level 3 at $${packagePrices["Level 3 Detail"]["suv-truck"]}`;
+                    const prices = vehicleType === 'car' ? carPrices : suvTruckPrices;
+                    return `Perfect. For a ${vehicleType}, we have our ${prices}. Which package are they interested in today?`;
+                },
+                customerInfoInquiry: (packageName, vehicleType) => `Wonderful! You've selected the ${packageName} for a ${vehicleType}. Now, I'll just need a few details to finalize the booking. Could I get their full name, email, and phone number?`,
+                bookingConfirmation: "Great! The appointment has been successfully scheduled. Please inform the customer about the payment options.",
+                otherCallsNotes: "Okay, I'm ready to take notes for this call. What is the customer's inquiry?"
+            };
+
+            const availableTimes = ['09:00', '11:00', '12:00', '14:00', '16:00', '17:00', '18:00'];
+
+            const paymentLinks = {
+                "Level 1 Detail": { "149": "https://pay.michieauto.com/lvl1sedan", "199": "https://pay.michieauto.com/lvl1suv" },
+                "Level 2 Detail": { "249": "https://pay.michieauto.com/lvl2sedan", "299": "https://pay.michieauto.com/lvl2suv" },
+                "Level 3 Detail": { "349": "https://pay.michieauto.com/lvl3sedan", "399": "https://pay.michieauto.com/lvl3suv" },
+            };
+            
+            const pageLoadTimeCST = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
+
+            async function apiCall(endpoint, method, payload = null) {
+                const headers = { 'Content-Type': 'application/json' };
+                const options = { method, headers };
+                if (payload) {
+                    options.body = JSON.stringify(payload);
+                }
+                try {
+                    const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+                    const responseText = await response.text();
+                    const data = responseText ? JSON.parse(responseText) : {};
+                    return { ok: response.ok, data: data, status: response.status };
+                } catch (error) {
+                    console.error('API Call Error:', error);
+                    return { ok: false, data: { message: 'Network error or invalid JSON response.' } };
+                }
+            }
+            
+            function hideAllSections() {
+                [elements.initialScriptSection, elements.pricingSection, elements.schedulingSection, elements.otherCallsSection]
+                    .forEach(el => el && (el.style.display = 'none'));
+                // Hide all sub-sections within pricing and scheduling
+                [
+                    elements.pricingVehicleTypeSelection, elements.pricingIntroLevels, elements.pricingPetHairQuestion,
+                    elements.pricingShampooQuestion, elements.pricingLevel2Recommendation, elements.pricingLevel1Recommendation,
+                    elements.pricingFullPackageDetails, elements.sedanPackagesDisplay, elements.suvTruckPackagesDisplay,
+                    elements.schedulingVehicleTypeSelection, elements.schedulingPackageSelectionContainer,
+                    elements.sedanPackagesBookingDisplay, elements.suvTruckPackagesBookingDisplay,
+                    elements.bookingFormSection, elements.confirmationSection, elements.policyText
+                ].forEach(el => el && (el.style.display = 'none'));
+            }
+
+            function updateScript(text) {
+                if (elements.scriptDisplay) {
+                    elements.scriptDisplay.innerHTML = text;
+                }
+            }
+
+            // --- Main Script Navigation ---
+            function showInitialScript() {
+                hideAllSections();
+                updateScript(scriptContent.initial);
+                if (elements.initialScriptSection) elements.initialScriptSection.style.display = 'block';
+            }
+
+            // --- Pricing Flow Functions ---
+            function showPricingVehicleTypeSelection() {
+                hideAllSections();
+                updateScript(scriptContent.pricingVehicleType);
+                if (elements.pricingSection) elements.pricingSection.style.display = 'block';
+                if (elements.pricingVehicleTypeSelection) elements.pricingVehicleTypeSelection.style.display = 'block';
+                document.querySelectorAll('#pricing-vehicle-type-selection .btn-primary.active').forEach(b => b.classList.remove('active'));
+            }
+
+            function showPricingIntroLevels(vehicleType, clickedButton) {
+                currentVehicleType = vehicleType;
+                hideAllSections();
+                updateScript(scriptContent.pricingIntroLevels);
+                if (elements.pricingSection) elements.pricingSection.style.display = 'block';
+                if (elements.pricingIntroLevels) elements.pricingIntroLevels.style.display = 'block';
+                document.querySelectorAll('#pricing-vehicle-type-selection .btn-primary.active').forEach(b => b.classList.remove('active'));
+                if (clickedButton) clickedButton.classList.add('active');
+            }
+
+            function showPricingPetHairQuestion() {
+                hideAllSections();
+                updateScript(scriptContent.pricingPetHairQuestion);
+                if (elements.pricingSection) elements.pricingSection.style.display = 'block';
+                if (elements.pricingPetHairQuestion) elements.pricingPetHairQuestion.style.display = 'block';
+            }
+
+            function showPricingShampooQuestion() {
+                hideAllSections();
+                updateScript(scriptContent.pricingShampooQuestion);
+                if (elements.pricingSection) elements.pricingSection.style.display = 'block';
+                if (elements.pricingShampooQuestion) elements.pricingShampooQuestion.style.display = 'block';
+            }
+
+            function showPricingLevel2Recommendation() {
+                recommendedPackageType = "Level 2 Detail";
+                recommendedPackagePrice = packagePrices[recommendedPackageType][currentVehicleType];
+                hideAllSections();
+                updateScript(scriptContent.pricingLevel2Recommendation(currentVehicleType));
+                if (elements.pricingSection) elements.pricingSection.style.display = 'block';
+                if (elements.pricingLevel2Recommendation) elements.pricingLevel2Recommendation.style.display = 'block';
+            }
+
+            function showPricingLevel1Recommendation(isDownsell = false) {
+                recommendedPackageType = "Level 1 Detail";
+                recommendedPackagePrice = packagePrices[recommendedPackageType][currentVehicleType];
+                hideAllSections();
+                if (isDownsell) {
+                    updateScript(scriptContent.pricingDownsellLevel1(currentVehicleType));
+                } else {
+                    updateScript(scriptContent.pricingLevel1Recommendation(currentVehicleType));
+                }
+                if (elements.pricingSection) elements.pricingSection.style.display = 'block';
+                if (elements.pricingLevel1Recommendation) elements.pricingLevel1Recommendation.style.display = 'block';
+            }
+
+            // --- Scheduling Flow Functions ---
+            function showSchedulingVehicleTypeSelection() {
+                hideAllSections();
+                updateScript(scriptContent.schedulingVehicleType);
+                if (elements.schedulingSection) elements.schedulingSection.style.display = 'block';
+                if (elements.schedulingVehicleTypeSelection) elements.schedulingVehicleTypeSelection.style.display = 'block';
+                document.querySelectorAll('#scheduling-vehicle-type-selection .btn-primary.active').forEach(b => b.classList.remove('active'));
+                // Clear any previously selected package/time
+                if (elements.selectedPackageTypeInput) elements.selectedPackageTypeInput.value = '';
+                if (elements.selectedPackagePriceInput) elements.selectedPackagePriceInput.value = '';
+                if (elements.selectedBookingTimeInput) elements.selectedBookingTimeInput.value = '';
+                if (elements.finalBookAppointmentBtn) elements.finalBookAppointmentBtn.style.display = 'none';
+            }
+
+            function showSchedulingPackageSelection(vehicleCategory, clickedButton) {
+                currentVehicleType = vehicleCategory; // Store vehicle type
+                if (elements.schedulingVehicleTypeSelection) elements.schedulingVehicleTypeSelection.style.display = 'none';
+                if (elements.schedulingPackageSelectionContainer) elements.schedulingPackageSelectionContainer.style.display = 'block';
+                
+                updateScript(scriptContent.schedulingPackageInquiry(vehicleCategory));
+
+                document.querySelectorAll('#scheduling-vehicle-type-selection .btn-primary.active').forEach(b => b.classList.remove('active'));
+                if (clickedButton) clickedButton.classList.add('active');
+
+                if (elements.sedanPackagesBookingDisplay) elements.sedanPackagesBookingDisplay.style.display = vehicleCategory === 'car' ? 'grid' : 'none';
+                if (elements.suvTruckPackagesBookingDisplay) elements.suvTruckPackagesBookingDisplay.style.display = vehicleCategory === 'suv-truck' ? 'grid' : 'none';
+            }
+
+            function showBookingForm(packageType, packagePrice, vehicleType) {
+                if (elements.selectedPackageDisplay) elements.selectedPackageDisplay.textContent = packageType;
+                if (elements.selectedPackageTypeInput) elements.selectedPackageTypeInput.value = packageType;
+                if (elements.selectedPackagePriceInput) elements.selectedPackagePriceInput.value = packagePrice;
+                if (elements.selectedVehicleTypeInput) elements.selectedVehicleTypeInput.value = vehicleType; // Set vehicle type in hidden input
+
+                if (elements.schedulingPackageSelectionContainer) elements.schedulingPackageSelectionContainer.style.display = 'none';
+                if (elements.bookingFormSection) elements.bookingFormSection.style.display = 'block';
+                
+                updateScript(scriptContent.customerInfoInquiry(packageType, vehicleType));
+                checkAndSetInitialDate(); // Populate date and time slots
+            }
+
+            function showBookingConfirmation() {
+                if (elements.bookingFormSection) elements.bookingFormSection.style.display = 'none';
+                if (elements.confirmationSection) elements.confirmationSection.style.display = 'block';
+                if (elements.policyText) elements.policyText.style.display = 'block'; // Show policy text
+                updateScript(scriptContent.bookingConfirmation);
+
+                // Set payment button links based on selected package
+                const packageType = elements.selectedPackageTypeInput.value;
+                const packagePrice = elements.selectedPackagePriceInput.value;
+                const priceKey = String(packagePrice); 
+                let paymentRedirectLink = '#';
+                if (paymentLinks[packageType] && paymentLinks[packageType][priceKey]) {
+                    paymentRedirectLink = paymentLinks[packageType][priceKey];
+                }
+                
+                if (elements.payNowButton) {
+                    elements.payNowButton.textContent = `Pay now $${parseFloat(packagePrice).toFixed(0)}`;
+                    elements.payNowButton.onclick = () => { window.open(paymentRedirectLink, '_blank'); };
+                }
+                if (elements.payDepositButton) {
+                    elements.payDepositButton.onclick = () => { window.open('https://pay.michieauto.com/deposit', '_blank'); };
+                }
+            }
+
+
+            // --- Other Calls Flow Functions ---
+            function showOtherCalls() {
+                hideAllSections();
+                updateScript(scriptContent.otherCallsNotes);
+                if (elements.otherCallsSection) elements.otherCallsSection.style.display = 'block';
+                if (elements.otherCallsNotes) elements.otherCallsNotes.value = ''; // Clear notes
+            }
+
+
+            // --- Event Listeners for Main Script Buttons ---
+            if (elements.btnPricing) elements.btnPricing.addEventListener('click', showPricingVehicleTypeSelection);
+            if (elements.btnScheduling) elements.btnScheduling.addEventListener('click', showSchedulingVehicleTypeSelection);
+            if (elements.btnOtherCalls) elements.btnOtherCalls.addEventListener('click', showOtherCalls);
+
+            // --- Back Buttons Event Listeners ---
+            if (elements.backToMainFromPricingVehicle) elements.backToMainFromPricingVehicle.addEventListener('click', showInitialScript);
+            if (elements.backToPricingVehicleTypeFromIntro) elements.backToPricingVehicleTypeFromIntro.addEventListener('click', showPricingVehicleTypeSelection);
+            if (elements.backToIntroLevelsFromPetHair) elements.backToIntroLevelsFromPetHair.addEventListener('click', () => showPricingIntroLevels(currentVehicleType));
+            if (elements.backToPetHairFromShampoo) elements.backToPetHairFromShampoo.addEventListener('click', showPricingPetHairQuestion);
+            if (elements.backToShampooFromLevel2) elements.backToShampooFromLevel2.addEventListener('click', showPricingShampooQuestion);
+            if (elements.backToLevel2FromLevel1) elements.backToLevel2FromLevel1.addEventListener('click', showPricingLevel2Recommendation); // Back from downsell to upsell
+            
+            if (elements.backToMainFromSchedulingVehicle) elements.backToMainFromSchedulingVehicle.addEventListener('click', showInitialScript);
+            if (elements.backToSchedulingVehicleType) elements.backToSchedulingVehicleType.addEventListener('click', showSchedulingVehicleTypeSelection);
+            if (elements.backToPackageSelection) elements.backToPackageSelection.addEventListener('click', () => {
+                showSchedulingPackageSelection(elements.selectedVehicleTypeInput.value); // Go back to package selection for the current vehicle type
+            });
+            if (elements.backToMainFromConfirmation) elements.backToMainFromConfirmation.addEventListener('click', showInitialScript);
+            if (elements.backToMainFromOther) elements.backToMainFromOther.addEventListener('click', showInitialScript);
+
+
+            // --- Pricing Section Specific Event Listeners ---
+            if (elements.pricingSelectCarBtn) elements.pricingSelectCarBtn.addEventListener('click', (e) => showPricingIntroLevels('car', e.target));
+            if (elements.pricingSelectTruckBtn) elements.pricingSelectTruckBtn.addEventListener('click', (e) => showPricingIntroLevels('suv-truck', e.target));
+            if (elements.pricingSelectSuvBtn) elements.pricingSelectSuvBtn.addEventListener('click', (e) => showPricingIntroLevels('suv-truck', e.target));
+
+            if (elements.btnOkIntroLevels) elements.btnOkIntroLevels.addEventListener('click', showPricingPetHairQuestion);
+            
+            if (elements.btnPetHairYes) elements.btnPetHairYes.addEventListener('click', showPricingLevel2Recommendation);
+            if (elements.btnPetHairNo) elements.btnPetHairNo.addEventListener('click', showPricingShampooQuestion);
+
+            if (elements.btnShampooYes) elements.btnShampooYes.addEventListener('click', showPricingLevel2Recommendation);
+            if (elements.btnShampooNo) elements.btnShampooNo.addEventListener('click', () => showPricingLevel1Recommendation(false)); // Direct Level 1
+
+            if (elements.btnLevel2Yes) elements.btnLevel2Yes.addEventListener('click', () => {
+                showBookingForm(recommendedPackageType, recommendedPackagePrice, currentVehicleType);
+            });
+            if (elements.btnLevel2No) elements.btnLevel2No.addEventListener('click', () => showPricingLevel1Recommendation(true)); // Downsell to Level 1
+
+            if (elements.btnLevel1Yes) elements.btnLevel1Yes.addEventListener('click', () => {
+                showBookingForm(recommendedPackageType, recommendedPackagePrice, currentVehicleType);
+            });
+            if (elements.btnLevel1No) elements.btnLevel1No.addEventListener('click', showOtherCalls);
+
+
+            // Package dropdown toggles in pricing section (for reference details)
+            if (elements.pricingSection) elements.pricingSection.addEventListener('click', (e) => {
+                if (e.target.classList.contains('see-whats-included-btn')) {
+                    const targetId = e.target.dataset.target;
+                    const dropdown = document.getElementById(targetId);
+                    if (dropdown) {
+                        dropdown.classList.toggle('show');
+                        e.target.textContent = dropdown.classList.contains('show') ? 'Hide details' : "See what's included";
+                    }
+                }
+            });
+            if (elements.togglePricingSedan) elements.togglePricingSedan.addEventListener('click', () => {
+                if (elements.sedanPackagesDisplay) elements.sedanPackagesDisplay.style.display = 'grid';
+                if (elements.suvTruckPackagesDisplay) elements.suvTruckPackagesDisplay.style.display = 'none';
+            });
+            if (elements.togglePricingSuvTruck) elements.togglePricingSuvTruck.addEventListener('click', () => {
+                if (elements.sedanPackagesDisplay) elements.sedanPackagesDisplay.style.display = 'none';
+                if (elements.suvTruckPackagesDisplay) elements.suvTruckPackagesDisplay.style.display = 'grid';
+            });
+
+
+            // --- Scheduling Flow Logic (unchanged from previous version, but integrated) ---
+            if (elements.schedulingSelectCarBtn) elements.schedulingSelectCarBtn.addEventListener('click', (e) => {
+                showSchedulingPackageSelection('car', e.target);
+            });
+            if (elements.schedulingSelectTruckBtn) elements.schedulingSelectTruckBtn.addEventListener('click', (e) => {
+                showSchedulingPackageSelection('suv-truck', e.target);
+            });
+            if (elements.schedulingSelectSuvBtn) elements.schedulingSelectSuvBtn.addEventListener('click', (e) => {
+                showSchedulingPackageSelection('suv-truck', e.target);
+            });
+
+            if (elements.schedulingSection) elements.schedulingSection.addEventListener('click', (e) => {
+                if (e.target.closest('.select-package-btn')) {
+                    const button = e.target.closest('.select-package-btn');
+                    const packageType = button.dataset.packageType;
+                    const packagePrice = button.dataset.packagePrice;
+                    const vehicleType = button.dataset.vehicleType; // Get vehicle type from button
+                    showBookingForm(packageType, packagePrice, vehicleType);
+                }
+            });
+
+            if (elements.bookingDateInput) {
+                elements.bookingDateInput.addEventListener('change', (e) => renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, e.target.value, elements.finalBookAppointmentBtn, pageLoadTimeCST));
+            }
+
+            if (elements.bookingForm) {
+                elements.bookingForm.addEventListener('submit', (e) => handleBooking(e, '/public/appointment', elements.bookingMessage, 'selected-booking-time'));
+            }
+            
+            async function handleBooking(e, endpoint, messageEl, selectedTimeInputId) { 
+                e.preventDefault();
+                const submitButton = elements.finalBookAppointmentBtn;
+
+                submitButton.disabled = true;
+                submitButton.innerHTML = `
+                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Processing...
+                `;
+
+                const restoreButton = () => {
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = 'Book Appointment';
+                };
+
+                try {
+                    const fullName = document.getElementById('full-name').value;
+                    const email = document.getElementById('email').value;
+                    const phone = document.getElementById('phone').value;
+                    const address = document.getElementById('address-input').value;
+                    const zipCode = document.getElementById('zip-code').value;
+                    const vehicleYear = document.getElementById('vehicle-year').value;
+                    const vehicleMake = document.getElementById('vehicle-make').value;
+                    const vehicleModel = document.getElementById('vehicle-model').value;
+                    const bookingDate = document.getElementById('booking-date').value;
+                    const selectedTime = document.getElementById(selectedTimeInputId).value; 
+                    const packageType = document.getElementById('selected-package-type').value; 
+                    const packagePrice = document.getElementById('selected-package-price').value; 
+                    const selectedVehicleType = document.getElementById('selected-vehicle-type').value; // Get selected vehicle type
+
+                    if (!fullName || !email || !phone || !address || !zipCode || !vehicleYear || !vehicleMake || !vehicleModel || !bookingDate || !selectedTime || !packageType || !packagePrice || !selectedVehicleType) {
+                        if (messageEl) { messageEl.textContent = 'Please fill in all required fields.'; messageEl.style.color = 'red'; }
+                        restoreButton();
+                        return;
+                    }
+                    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                        if (messageEl) { messageEl.textContent = 'Please enter a valid email address.'; messageEl.style.color = 'red'; }
+                        restoreButton();
+                        return;
+                    }
+                    if (!/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(phone)) {
+                        if (messageEl) { messageEl.textContent = 'Please enter a valid 10-digit phone number.'; messageEl.style.color = 'red'; }
+                        restoreButton();
+                        return;
+                    }
+
+                    const payload = {
+                        full_name: fullName, email, phone, address, zip_code: zipCode, vehicle_year: vehicleYear,
+                        vehicle_make: vehicleMake, vehicle_model: vehicleModel, date: bookingDate, time: selectedTime,
+                        package_type: packageType, package_price: packagePrice, vehicle_type: selectedVehicleType, // Include vehicle type
+                        deal_name: `${packageType || 'Unknown Package'} ${vehicleMake || ''} ${vehicleModel || ''}`,
+                        offer_code: "CallCenterBooking", 
+                        create_account: false, 
+                        password: "", 
+                        sms_transactional_opt_in: false, 
+                        sms_marketing_opt_in: false 
+                    };
+
+                    const { ok, data } = await apiCall(endpoint, 'POST', payload);
+
+                    if (ok) {
+                        showBookingConfirmation();
+                    } else {
+                        if (messageEl) { messageEl.textContent = data.message || 'An error occurred during booking.'; messageEl.style.color = 'red'; }
+                        restoreButton();
+                    }
+                } catch (error) {
+                    console.error("An unexpected JavaScript error occurred:", error);
+                    if (elements.bookingMessage) {
+                        elements.bookingMessage.textContent = 'An unexpected error occurred. Please try again.';
+                        elements.bookingMessage.style.color = 'red';
+                    }
+                    restoreButton();
+                }
+            }
+            
+            function renderTimeButtons(container, hiddenInput, selectedDateStr, finalBookButton, now) {
+                if (!container) return false;
+                container.innerHTML = '';
+            
+                let hasAvailableSlots = false;
+                const twoHoursInMs = 2 * 60 * 60 * 1000;
+                const comparisonTime = new Date(now.getTime() + twoHoursInMs);
+            
+                const selectedDate = new Date(selectedDateStr + 'T00:00:00-05:00'); // Assuming CST/CDT
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            
+                const isToday = selectedDate.getTime() === today.getTime();
+            
+                availableTimes.forEach(time => {
+                    const button = document.createElement('button');
+                    button.type = 'button';
+                    button.textContent = formatTimeDisplay(time);
+                    button.dataset.time = time;
+            
+                    const [hour, minute] = time.split(':').map(Number);
+                    const appointmentDateTime = new Date(selectedDate);
+                    appointmentDateTime.setHours(hour, minute);
+            
+                    const isDisabled = isToday && (appointmentDateTime < comparisonTime);
+            
+                    if (isDisabled) {
+                        button.className = 'time-button disabled';
+                        button.disabled = true;
+                    } else {
+                        hasAvailableSlots = true;
+                        button.className = 'time-button';
+                        button.addEventListener('click', () => {
+                            const currentlySelected = container.querySelector('.time-button.selected');
+                            if (currentlySelected) currentlySelected.classList.remove('selected');
+                            button.classList.add('selected');
+                            if (hiddenInput) hiddenInput.value = time;
+                            if (finalBookButton) finalBookButton.style.display = 'block';
+                        });
+                    }
+                    container.appendChild(button);
+                });
+            
+                if (hiddenInput) hiddenInput.value = '';
+                if (finalBookButton) finalBookButton.style.display = 'none';
+                return hasAvailableSlots;
+            }
+
+            function checkAndSetInitialDate() {
+                const today = new Date(pageLoadTimeCST);
+                const todayFormatted = today.toISOString().split('T')[0];
+
+                const todayHasSlots = renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, todayFormatted, elements.finalBookAppointmentBtn, pageLoadTimeCST);
+
+                if (todayHasSlots) {
+                    if (elements.bookingDateInput) {
+                        elements.bookingDateInput.value = todayFormatted;
+                    }
+                } else {
+                    const tomorrow = new Date(today);
+                    tomorrow.setDate(today.getDate() + 1);
+                    const tomorrowFormatted = tomorrow.toISOString().split('T')[0];
+                    
+                    if (elements.bookingDateInput) {
+                        elements.bookingDateInput.value = tomorrowFormatted;
+                    }
+                    renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, tomorrowFormatted, elements.finalBookAppointmentBtn, pageLoadTimeCST);
+                }
+            }
+
+            function formatTimeDisplay(time24hr) {
+                const [hours, minutes] = time24hr.split(':').map(Number);
+                const date = new Date();
+                date.setHours(hours, minutes);
+                return date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+            }
+            
+            const todayFormatted = new Date().toISOString().split('T')[0];
+            if (elements.bookingDateInput) {
+                elements.bookingDateInput.min = todayFormatted;
+            }
+
+            // Initial display: show only the script section
+            showInitialScript();
+        }
+
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
+</body>
+</html>
