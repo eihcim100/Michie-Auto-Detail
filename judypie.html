@@ -480,7 +480,6 @@
                                 <li>Odor removal</li>
                             </ul>
                         </div>
-                        <button class="select-package-btn btn-success" data-package-type="Level 2 Detail" data-package-price="299" data-vehicle-type="suv-truck">Select Package</button>
                     </div>
                     <div class="pricing-card">
                         <h4 class="pricing-level">Level 3 Detail</h4>
@@ -852,8 +851,7 @@
             <!-- Confirmation Message - Updated to include payment options -->
             <div id="confirmation-section" class="hidden text-center">
                 <div id="confirmation-message" class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-6 rounded-lg">
-                    <p class="text-2xl font-bold mb-2">⚠️ Action Required: One more step to confirm your booking!</p>
-                    <p class="text-md mt-4">Payment is required to confirm your appointment. Please select an option below to continue.</p>
+                    <!-- Script will be inserted here -->
                 </div>
                 
                 <div class="mt-8 space-y-4" id="payment-options-buttons">
@@ -873,6 +871,35 @@
                 </div>
                 <button id="back-to-main-from-confirmation" class="btn-secondary mt-8">Back to Main Script</button>
             </div>
+
+            <!-- NEW: Did you make payment? screen -->
+            <div id="payment-confirmation-question-section" class="hidden text-center bg-white p-8 rounded-xl shadow-lg space-y-6">
+                <div id="payment-confirmation-question-message" class="bg-blue-100 border-l-4 border-blue-500 text-blue-800 p-6 rounded-lg">
+                    <!-- Message will be inserted here -->
+                </div>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <button id="btn-payment-confirmed-yes" class="btn-primary">Yes</button>
+                    <button id="btn-payment-confirmed-no" class="btn-secondary">No</button>
+                </div>
+            </div>
+
+            <!-- NEW: Waiting for payment manual screen -->
+            <div id="waiting-for-payment-manual-section" class="hidden text-center bg-white p-8 rounded-xl shadow-lg space-y-6">
+                <div id="waiting-for-payment-manual-message" class="bg-green-100 border-l-4 border-green-500 text-green-800 p-6 rounded-lg">
+                    <!-- Message will be inserted here -->
+                </div>
+                <button id="btn-payment-done-manual" class="btn-success">Payment is Complete</button>
+            </div>
+
+            <!-- NEW: Final confirmation manual screen -->
+            <div id="final-confirmation-manual-section" class="hidden text-center bg-white p-8 rounded-xl shadow-lg space-y-6">
+                <div id="final-confirmation-manual-message" class="bg-green-100 border-l-4 border-green-500 text-green-800 p-6 rounded-lg">
+                    <!-- Message will be inserted here -->
+                </div>
+                <button id="btn-send-confirmation-text" class="btn-primary">Send Confirmation Text</button>
+                <button id="btn-end-call" class="btn-secondary">End Call</button>
+            </div>
+
 
             <!-- Policy Text -->
             <div id="policy-text" class="hidden text-xs text-gray-500 mt-8 space-y-2">
@@ -1018,6 +1045,20 @@
                     payNowButton: document.getElementById('pay-now-button'), 
                     payDepositButton: document.getElementById('pay-deposit-button'), 
 
+                    // NEW Manual SMS Flow Elements
+                    paymentConfirmationQuestionSection: document.getElementById('payment-confirmation-question-section'),
+                    paymentConfirmationQuestionMessage: document.getElementById('payment-confirmation-question-message'),
+                    btnPaymentConfirmedYes: document.getElementById('btn-payment-confirmed-yes'),
+                    btnPaymentConfirmedNo: document.getElementById('btn-payment-confirmed-no'),
+                    waitingForPaymentManualSection: document.getElementById('waiting-for-payment-manual-section'),
+                    waitingForPaymentManualMessage: document.getElementById('waiting-for-payment-manual-message'),
+                    btnPaymentDoneManual: document.getElementById('btn-payment-done-manual'),
+                    finalConfirmationManualSection: document.getElementById('final-confirmation-manual-section'),
+                    finalConfirmationManualMessage: document.getElementById('final-confirmation-manual-message'),
+                    btnSendConfirmationText: document.getElementById('btn-send-confirmation-text'),
+                    btnEndCall: document.getElementById('btn-end-call'),
+
+
                     policyText: document.getElementById('policy-text'),
                     bookingDateInput: document.getElementById('booking-date'),
                     bookingTimeButtonsContainer: document.getElementById('booking-time-buttons'),
@@ -1039,6 +1080,7 @@
                 let currentVehicleType = '';
                 let recommendedPackageType = '';
                 let recommendedPackagePrice = 0;
+                let customerDataForSMS = {}; // Store customer data for manual SMS
 
                 // Package features for script generation
                 const packageFeatures = {
@@ -1137,7 +1179,15 @@
                     bookingStepAddress: "Great! Where will we be performing the detail service? I'll need your full service address and zip code.",
                     bookingStepVehicle: "Almost there! Could you please tell me the year, make, and model of your vehicle?",
                     bookingStepDatetime: "Perfect! Now, let's find a convenient date and time for your appointment. What date works best for you?",
-                    paymentOptionsQuestion: (packagePrice) => `Great! Your appointment is almost confirmed. We have two payment options, you can pay a $50 deposit now and the balance after service is complete, or you can pay the $${packagePrice} dollars in full. What do you prefer?`,
+                    
+                    // Manual SMS flow scripts
+                    paymentOptionsQuestion: (customerName) => `Awesome ${customerName}, your appointment is almost confirmed, we just need to discuss payment options. Would you like to pay a $50 deposit now and the remainder after the service, or pay in full now?`,
+                    payInFullSMS: (customerName, amount, vehicleDetails) => `Hi ${customerName}, it's Judy with Michie Auto Detail! Your appointment is almost confirmed, just make your payment of $${amount} for your auto detail on your ${vehicleDetails} as soon as that's done, you'll be all set!`,
+                    depositSMS: (customerName, vehicleDetails) => `Hi ${customerName}, it's Judy with Michie Auto Detail! Your appointment is almost confirmed, just make your $50 deposit to secure your appointment slot for your auto detail on your ${vehicleDetails} as soon as that's done, you'll be all set!`,
+                    didYouMakePaymentQuestion: (customerName, paymentType) => `${customerName} did you make your ${paymentType} already?`,
+                    waitingForPayment: "Ok take your time. I'll wait while you make your payment.",
+                    finalConfirmationScript: (customerName, date, time, vehicleDetails) => `Alright! You're all set! I'm sending you a confirmation text now for your appointment on ${date} and ${time}. Thank you for calling Michie Auto Detail, have a great day!`,
+                    confirmationSMS: (date, time, vehicleDetails) => `Thank you for choosing Michie Auto Detail! Your appointment is confirmed on ${date} at ${time} for your ${vehicleDetails} Questions? Call (405) 295-5189`,
                     otherCallsNotes: "Okay, I'm ready to take notes for this call. What is your inquiry?"
                 };
 
@@ -1186,7 +1236,8 @@
                 function hideAllSections() {
                     // Hide all *major* sections
                     [elements.initialScriptSection, elements.pricingSection, elements.schedulingSection, elements.otherCallsSection, 
-                    elements.confirmationSection]
+                    elements.confirmationSection, elements.paymentConfirmationQuestionSection, elements.waitingForPaymentManualSection, 
+                    elements.finalConfirmationManualSection]
                         .forEach(el => el && (el.style.display = 'none'));
                     
                     // Hide all *sub-sections* within pricing and scheduling, ensuring a clean slate
@@ -1220,6 +1271,7 @@
                     currentVehicleType = '';
                     recommendedPackageType = '';
                     recommendedPackagePrice = 0;
+                    customerDataForSMS = {}; // Clear stored customer data
                 }
 
                 // --- Pricing Flow Functions ---
@@ -1449,12 +1501,13 @@
                         elements.policyText.style.display = 'block';
                     }
                     
+                    const fullName = document.getElementById('full-name').value;
                     const packagePrice = elements.selectedPackagePriceInput.value;
                     // Update confirmation message div content
                     if (elements.confirmationMessageDiv) {
                         elements.confirmationMessageDiv.innerHTML = `
-                            <p class="text-2xl font-bold mb-2">⚠️ Action Required: One more step to confirm your booking!</p>
-                            <p class="text-md mt-4">Payment is required to confirm your appointment. Please select an option below to continue.</p>
+                            <p class="text-2xl font-bold mb-2">⚠️ IMPORTANT: Send Payment SMS!</p>
+                            <p class="text-md mt-4">${scriptContent.paymentOptionsQuestion(fullName)}</p>
                         `;
                     }
 
@@ -1467,18 +1520,77 @@
                     // Set payment button links based on selected package
                     const packageType = elements.selectedPackageTypeInput.value;
                     const packagePriceVal = elements.selectedPackagePriceInput.value; 
-                    let paymentRedirectLink = '#';
-                    if (paymentLinks[packageType] && paymentLinks[packageType][String(packagePriceVal)]) {
-                        paymentRedirectLink = paymentLinks[packageType][String(packagePriceVal)];
-                    }
+                    const vehicleMake = document.getElementById('vehicle-make').value;
+                    const vehicleModel = document.getElementById('vehicle-model').value;
+                    const vehicleDetails = `${vehicleMake} ${vehicleModel}`;
+                    const customerPhone = document.getElementById('phone').value.replace(/\D/g, ''); // Clean phone number
                     
+                    let payInFullLink = '#';
+                    if (paymentLinks[packageType] && paymentLinks[packageType][String(packagePriceVal)]) {
+                        payInFullLink = paymentLinks[packageType][String(packagePriceVal)];
+                    }
+
+                    // Generate pre-filled SMS messages
+                    const payInFullSMSMessage = scriptContent.payInFullSMS(fullName, packagePriceVal, vehicleDetails);
+                    const depositSMSMessage = scriptContent.depositSMS(fullName, vehicleDetails);
+
+                    // Set onclick handlers for manual SMS sending
                     if (elements.payNowButton) {
                         elements.payNowButton.textContent = `Pay in full $${parseFloat(packagePriceVal).toFixed(0)}`;
-                        elements.payNowButton.onclick = () => { window.open(paymentRedirectLink, '_blank'); };
+                        elements.payNowButton.onclick = () => { 
+                            window.open(`sms:+1${customerPhone}?body=${encodeURIComponent(payInFullSMSMessage)}`, '_blank');
+                            // After opening SMS, transition to payment confirmation question
+                            showPaymentConfirmationQuestion(fullName, "full payment");
+                        };
                     }
                     if (elements.payDepositButton) {
-                        elements.payDepositButton.onclick = () => { window.open('https://pay.michieauto.com/deposit', '_blank'); };
+                        elements.payDepositButton.onclick = () => { 
+                            window.open(`sms:+1${customerPhone}?body=${encodeURIComponent(depositSMSMessage)}`, '_blank');
+                            // After opening SMS, transition to payment confirmation question
+                            showPaymentConfirmationQuestion(fullName, "deposit");
+                        };
                     }
+                }
+
+                // NEW: Function to show "Did you make payment?" screen
+                function showPaymentConfirmationQuestion(customerName, paymentType) {
+                    hideAllSections();
+                    if (elements.paymentConfirmationQuestionSection) elements.paymentConfirmationQuestionSection.style.display = 'block';
+                    if (elements.paymentConfirmationQuestionMessage) {
+                        elements.paymentConfirmationQuestionMessage.innerHTML = `<p>${scriptContent.didYouMakePaymentQuestion(customerName, paymentType)}</p>`;
+                    }
+                    updateScript(scriptContent.didYouMakePaymentQuestion(customerName, paymentType)); // Update main script display
+                }
+
+                // NEW: Function to show "Ok take your time." screen
+                function showWaitingForPaymentManualScreen() {
+                    hideAllSections();
+                    if (elements.waitingForPaymentManualSection) elements.waitingForPaymentManualSection.style.display = 'block';
+                    if (elements.waitingForPaymentManualMessage) {
+                        elements.waitingForPaymentManualMessage.innerHTML = `<p>${scriptContent.waitingForPayment}</p>`;
+                    }
+                    updateScript(scriptContent.waitingForPayment); // Update main script display
+                }
+
+                // NEW: Function to show final confirmation screen before sending last SMS
+                function showFinalConfirmationManualScreen() {
+                    hideAllSections();
+                    if (elements.finalConfirmationManualSection) elements.finalConfirmationManualSection.style.display = 'block';
+                    
+                    const fullName = document.getElementById('full-name').value;
+                    const bookingDate = document.getElementById('booking-date').value;
+                    const bookingTime = elements.selectedBookingTimeInput.value;
+                    const vehicleMake = document.getElementById('vehicle-make').value;
+                    const vehicleModel = document.getElementById('vehicle-model').value;
+                    const vehicleDetails = `${vehicleMake} ${vehicleModel}`;
+
+                    if (elements.finalConfirmationManualMessage) {
+                        elements.finalConfirmationManualMessage.innerHTML = `<p>${scriptContent.finalConfirmationScript(fullName, formatFullDateDisplay(bookingDate), formatTimeDisplay(bookingTime), vehicleDetails)}</p>`;
+                    }
+                    updateScript(scriptContent.finalConfirmationScript(fullName, formatFullDateDisplay(bookingDate), formatTimeDisplay(bookingTime), vehicleDetails)); // Update main script display
+                    // Ensure send confirmation text button is visible, and end call is hidden initially
+                    elements.btnSendConfirmationText.style.display = 'block';
+                    elements.btnEndCall.style.display = 'none';
                 }
 
                 // --- Other Calls Flow Functions ---
@@ -1647,6 +1759,51 @@
                     });
                 }
 
+                // NEW: Payment confirmation question buttons logic
+                if (elements.btnPaymentConfirmedYes) {
+                    elements.btnPaymentConfirmedYes.addEventListener('click', () => {
+                        showFinalConfirmationManualScreen();
+                    });
+                }
+
+                if (elements.btnPaymentConfirmedNo) {
+                    elements.btnPaymentConfirmedNo.addEventListener('click', () => {
+                        showWaitingForPaymentManualScreen();
+                    });
+                }
+
+                // NEW: Waiting for payment "Payment is Complete" button logic
+                if (elements.btnPaymentDoneManual) {
+                    elements.btnPaymentDoneManual.addEventListener('click', () => {
+                        showFinalConfirmationManualScreen();
+                    });
+                }
+
+                // NEW: Final confirmation "Send Confirmation Text" button logic
+                if (elements.btnSendConfirmationText) {
+                    elements.btnSendConfirmationText.addEventListener('click', () => {
+                        const fullName = document.getElementById('full-name').value;
+                        const customerPhone = document.getElementById('phone').value.replace(/\D/g, '');
+                        const bookingDate = document.getElementById('booking-date').value;
+                        const bookingTime = elements.selectedBookingTimeInput.value;
+                        const vehicleMake = document.getElementById('vehicle-make').value;
+                        const vehicleModel = document.getElementById('vehicle-model').value;
+                        const vehicleDetails = `${vehicleMake} ${vehicleModel}`;
+
+                        const confirmationSMSMessage = scriptContent.confirmationSMS(formatFullDateDisplay(bookingDate), formatTimeDisplay(bookingTime), vehicleDetails);
+                        window.open(`sms:+1${customerPhone}?body=${encodeURIComponent(confirmationSMSMessage)}`, '_blank');
+                        // After sending, agent can end call
+                        elements.btnEndCall.style.display = 'block'; // Show end call button
+                        elements.btnSendConfirmationText.style.display = 'none'; // Hide send button
+                        updateScript("Confirmation text sent! You can now end the call.");
+                    });
+                }
+
+                // NEW: Final confirmation "End Call" button logic
+                if (elements.btnEndCall) {
+                    elements.btnEndCall.addEventListener('click', showInitialScript);
+                }
+
                 // Password fields logic
                 if (elements.createAccountCheckbox) {
                     elements.createAccountCheckbox.addEventListener('change', () => {
@@ -1755,6 +1912,18 @@
                             }
                         }
 
+                        // Store customer data for manual SMS sending later
+                        customerDataForSMS = {
+                            fullName: fullName,
+                            phone: phone,
+                            vehicleYear: vehicleYear,
+                            vehicleMake: vehicleMake,
+                            vehicleModel: vehicleModel,
+                            bookingDate: bookingDate,
+                            bookingTime: selectedTime,
+                            packageType: packageType,
+                            packagePrice: packagePrice
+                        };
 
                         const payload = {
                             full_name: fullName, email, phone, address, zip_code: zipCode, vehicle_year: vehicleYear,
@@ -1856,6 +2025,11 @@
                     const date = new Date();
                     date.setHours(hours, minutes);
                     return date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+                }
+
+                function formatFullDateDisplay(dateStr) {
+                    const date = new Date(dateStr + 'T00:00:00-05:00'); // Assuming CST/CDT
+                    return date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
                 }
                 
                 const todayFormatted = new Date().toISOString().split('T')[0];
