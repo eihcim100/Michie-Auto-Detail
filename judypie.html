@@ -27,7 +27,7 @@
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             border: none;
         }
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             background-color: #2563eb; /* Blue-600 */
             transform: translateY(-2px);
             box-shadow: 0 6px 10px -1px rgba(0, 0, 0, 0.15), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
@@ -836,7 +836,8 @@
                             <input type="hidden" id="selected-booking-time" name="booking-time" required>
                         </div>
                     </div>
-                    <button type="submit" id="final-book-appointment-btn" class="w-full btn-success">Book Appointment</button>
+                    <!-- FIX: Added disabled attribute to prevent premature clicks -->
+                    <button type="submit" id="final-book-appointment-btn" class="w-full btn-success" disabled>Book Appointment</button>
                     <p id="booking-message" class="text-center mt-2"></p>
                     <button id="back-to-vehicle-step" class="btn-secondary mt-8">Back</button>
                 </div>
@@ -1061,6 +1062,7 @@
                 let recommendedPackageType = '';
                 let recommendedPackagePrice = 0;
                 let finalBookingPayload = {}; // Store all booking data here until final submission
+                let currentPaymentType = ''; // FIX: Added state for payment type
 
                 // Package features for script generation
                 const packageFeatures = {
@@ -1134,17 +1136,17 @@
                     pricingShampooQuestion: "Would you like your seats and carpets shampooed and renewed?",
                     pricingLevel2Recommendation: (vehicleType) => {
                         const features = packageFeatures["Level 2 Detail"][vehicleType].join(', ');
-                        const price = packagePrices[recommendedPackageType][vehicleType];
+                        const price = packagePrices["Level 2 Detail"][vehicleType];
                         return `Based on the information you've provided me, I'm going to recommend our most popular option, it's called level 2 detail service. It includes ${features}. The price is $${price}, does that sound good?`;
                     },
                     pricingLevel1Recommendation: (vehicleType) => {
                         const features = packageFeatures["Level 1 Detail"][vehicleType].join(', ');
-                        const price = packagePrices[recommendedPackageType][vehicleType];
+                        const price = packagePrices["Level 1 Detail"][vehicleType];
                         return `Based on the information you've provided me, I'm going to recommend our most affordable option, it's called level 1 detail service. It. It includes ${features}. The price is $${price}, does that sound good?`;
                     },
                     pricingDownsellLevel1: (vehicleType) => {
                         const features = packageFeatures["Level 1 Detail"][vehicleType].join(', ');
-                        const price = packagePrices[recommendedPackageType][vehicleType];
+                        const price = packagePrices["Level 1 Detail"][vehicleType];
                         return `I completely understand! We have another option that will fit your budget and your needs. I'm going to recommend our most affordable option, it's called level 1 detail service. It includes ${features}. The price is $${price}, does that sound good?`;
                     },
                     schedulingVehicleType: "Excellent! To help me find the best appointment for you, what type of vehicle are we scheduling for? Is it a car, truck, or SUV?",
@@ -1179,8 +1181,6 @@
                     "Level 3 Detail": { "349": "https://pay.michieauto.com/lvl3sedan", "399": "https://pay.michieauto.com/lvl3suv" },
                 };
                 
-                const pageLoadTimeCST = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
-
                 async function apiCall(endpoint, method, payload = null) {
                     const headers = { 'Content-Type': 'application/json' };
                     const options = { method, headers };
@@ -1252,6 +1252,7 @@
                     recommendedPackageType = '';
                     recommendedPackagePrice = 0;
                     finalBookingPayload = {}; // Clear stored booking data
+                    currentPaymentType = '';
                 }
 
                 // --- Pricing Flow Functions ---
@@ -1293,7 +1294,6 @@
                 function showPricingLevel2Recommendation() {
                     recommendedPackageType = "Level 2 Detail";
                     recommendedPackagePrice = packagePrices[recommendedPackageType][currentVehicleType];
-                    console.log('Recommended Level 2:', { recommendedPackageType, recommendedPackagePrice, currentVehicleType });
                     hideAllSections(); 
                     updateScript(scriptContent.pricingLevel2Recommendation(currentVehicleType));
                     if (elements.pricingSection) elements.pricingSection.style.display = 'block'; 
@@ -1303,7 +1303,6 @@
                 function showPricingLevel1Recommendation(isDownsell = false) {
                     recommendedPackageType = "Level 1 Detail";
                     recommendedPackagePrice = packagePrices[recommendedPackageType][currentVehicleType];
-                    console.log('Recommended Level 1:', { recommendedPackageType, recommendedPackagePrice, currentVehicleType });
                     hideAllSections(); 
                     if (isDownsell) {
                         updateScript(scriptContent.pricingDownsellLevel1(currentVehicleType));
@@ -1350,7 +1349,6 @@
 
                 // Functions for sequential booking form steps
                 function showBookingStepName(packageType, packagePrice, vehicleType) {
-                    console.log('Entering showBookingStepName with:', { packageType, packagePrice, vehicleType });
                     // Set package and vehicle type in hidden inputs
                     if (elements.selectedPackageDisplay) elements.selectedPackageDisplay.textContent = packageType;
                     if (elements.selectedPackageTypeInput) elements.selectedPackageTypeInput.value = packageType;
@@ -1580,8 +1578,6 @@
                             create_account: createAccount, 
                             password: password 
                         };
-
-                        console.log("Booking data collected:", finalBookingPayload); 
                         
                         // Proceed to payment options screen without making API call yet
                         showPaymentOptionsScreen(); 
@@ -1597,46 +1593,36 @@
                     }
                 }
 
-                // This function now performs the actual API call to book the appointment
+                // FIX: Refactored this function to be more generic and handle UI transitions
                 async function finalizeAppointmentBooking() {
-                    const submitButton = elements.btnPaymentDoneManual; // Assuming this is the button triggering finalization
-
-                    submitButton.disabled = true;
-                    submitButton.innerHTML = `
-                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Finalizing Booking...
-                    `;
-
-                    const restoreButton = () => {
-                        submitButton.disabled = false;
-                        submitButton.innerHTML = 'Payment is Complete';
-                    };
+                    updateScript('Finalizing Booking...');
+                    hideAllSections(); // Hide current controls
 
                     try {
                         if (Object.keys(finalBookingPayload).length === 0) {
                             console.error("Error: finalBookingPayload is empty. Cannot finalize booking.");
-                            elements.scriptDisplay.innerHTML = `<p class="text-red-600">Booking data missing. Please restart the process.</p>`;
-                            restoreButton();
+                            showInitialScript(); // Go back to start
+                            updateScript(`<p class="text-red-600">Booking data missing. Please restart the process.</p>`);
                             return;
                         }
 
-                        console.log("Attempting final API call with payload:", finalBookingPayload); 
+                        console.log("Attempting final API call with payload:", finalBookingPayload);
                         const { ok, data } = await apiCall('/public/appointment', 'POST', finalBookingPayload);
-                        console.log("Final API call response:", { ok, data }); 
+                        console.log("Final API call response:", { ok, data });
 
                         if (ok) {
-                            showFinalConfirmationManualScreen(); // Transition to the final confirmation screen
+                            showFinalConfirmationManualScreen(); // Transition on success
                         } else {
-                            elements.scriptDisplay.innerHTML = `<p class="text-red-600">Failed to finalize booking: ${data.message || 'Unknown error'}. Please try again.</p>`;
-                            restoreButton();
+                            // On failure, show an error and return to the previous question
+                            const customerName = finalBookingPayload.full_name || 'customer';
+                            showPaymentConfirmationQuestion(customerName, currentPaymentType || 'payment');
+                            updateScript(`<p class="text-red-600">Failed to finalize booking: ${data.message || 'Unknown error'}. Please try again.</p>`);
                         }
                     } catch (error) {
                         console.error("An unexpected JavaScript error occurred during booking finalization:", error);
-                        elements.scriptDisplay.innerHTML = `<p class="text-red-600">An unexpected error occurred during booking finalization. Please try again.</p>`;
-                        restoreButton();
+                        const customerName = finalBookingPayload.full_name || 'customer';
+                        showPaymentConfirmationQuestion(customerName, currentPaymentType || 'payment');
+                        updateScript(`<p class="text-red-600">An unexpected error occurred. Please try again.</p>`);
                     }
                 }
 
@@ -1653,7 +1639,6 @@
                     }
                     
                     const fullName = finalBookingPayload.full_name; // Use data from stored payload
-                    const packagePrice = finalBookingPayload.package_price; // Use data from stored payload
                     // Update confirmation message div content
                     if (elements.confirmationMessageDiv) {
                         elements.confirmationMessageDiv.innerHTML = `
@@ -1676,11 +1661,6 @@
                     const vehicleDetails = `${vehicleMake} ${vehicleModel}`;
                     const customerPhone = finalBookingPayload.phone.replace(/\D/g, ''); // Clean phone number
                     
-                    let payInFullLink = '#';
-                    if (paymentLinks[packageType] && paymentLinks[packageType][String(packagePriceVal)]) {
-                        payInFullLink = paymentLinks[packageType][String(packagePriceVal)];
-                    }
-
                     // Generate pre-filled SMS messages
                     const payInFullSMSMessage = scriptContent.payInFullSMS(fullName, packagePriceVal, vehicleDetails);
                     const depositSMSMessage = scriptContent.depositSMS(fullName, vehicleDetails);
@@ -1689,16 +1669,18 @@
                     if (elements.payNowButton) {
                         elements.payNowButton.textContent = `Pay in full $${parseFloat(packagePriceVal).toFixed(0)}`;
                         elements.payNowButton.onclick = () => { 
+                            currentPaymentType = "full payment"; // Store payment type
                             window.open(`sms:+1${customerPhone}?body=${encodeURIComponent(payInFullSMSMessage)}`, '_blank');
                             // After opening SMS, transition to payment confirmation question
-                            showPaymentConfirmationQuestion(fullName, "full payment");
+                            showPaymentConfirmationQuestion(fullName, currentPaymentType);
                         };
                     }
                     if (elements.payDepositButton) {
                         elements.payDepositButton.onclick = () => { 
+                            currentPaymentType = "deposit"; // Store payment type
                             window.open(`sms:+1${customerPhone}?body=${encodeURIComponent(depositSMSMessage)}`, '_blank');
                             // After opening SMS, transition to payment confirmation question
-                            showPaymentConfirmationQuestion(fullName, "deposit");
+                            showPaymentConfirmationQuestion(fullName, currentPaymentType);
                         };
                     }
                 }
@@ -1765,14 +1747,13 @@
                 if (elements.backToMainFromPricingVehicle) elements.backToMainFromPricingVehicle.addEventListener('click', showInitialScript);
                 if (elements.backToPricingVehicleTypeFromIntro) elements.backToPricingVehicleTypeFromIntro.addEventListener('click', showPricingVehicleTypeSelection);
                 if (elements.backToIntroLevelsFromPetHair) elements.backToIntroLevelsFromPetHair.addEventListener('click', () => showPricingIntroLevels(currentVehicleType));
-                if (elements.backToPetHairFromShampoo) elements.backToPetHairFromShampoo.addEventListener('click', showPricingShampooQuestion);
+                if (elements.backToPetHairFromShampoo) elements.backToPetHairFromShampoo.addEventListener('click', showPricingPetHairQuestion);
                 if (elements.backToShampooFromLevel2) elements.backToShampooFromLevel2.addEventListener('click', showPricingShampooQuestion);
                 if (elements.backToLevel2FromLevel1) elements.backToLevel2FromLevel1.addEventListener('click', showPricingLevel2Recommendation); 
                 
                 if (elements.backToMainFromSchedulingVehicle) elements.backToMainFromSchedulingVehicle.addEventListener('click', showInitialScript);
-                if (elements.backToSchedulingVehicleType) elements.backToSchedulingVehicleType.addEventListener('click', showSchedulingPackageSelection); // Changed to showPackageSelection
+                if (elements.backToSchedulingVehicleType) elements.backToSchedulingVehicleType.addEventListener('click', () => showSchedulingVehicleTypeSelection());
                 if (elements.backToPackageSelection) elements.backToPackageSelection.addEventListener('click', () => {
-                    // Reset form fields when going back from booking steps
                     document.getElementById('full-name').value = '';
                     document.getElementById('email').value = '';
                     document.getElementById('phone').value = '';
@@ -1825,7 +1806,6 @@
                 if (elements.btnShampooNo) elements.btnShampooNo.addEventListener('click', () => showPricingLevel1Recommendation(false)); 
 
                 if (elements.btnLevel2Yes) elements.btnLevel2Yes.addEventListener('click', () => {
-                    console.log('btnLevel2Yes clicked. Calling showBookingStepName with:', { recommendedPackageType, recommendedPackagePrice, currentVehicleType });
                     elements.pricingLevel2Recommendation.style.display = 'none';
                     elements.pricingLevel1Recommendation.style.display = 'none';
                     elements.pricingSection.style.display = 'none'; 
@@ -1834,7 +1814,6 @@
                 if (elements.btnLevel2No) elements.btnLevel2No.addEventListener('click', () => showPricingLevel1Recommendation(true)); 
 
                 if (elements.btnLevel1Yes) elements.btnLevel1Yes.addEventListener('click', () => {
-                    console.log('btnLevel1Yes clicked. Calling showBookingStepName with:', { recommendedPackageType, recommendedPackagePrice, currentVehicleType });
                     elements.pricingLevel2Recommendation.style.display = 'none';
                     elements.pricingLevel1Recommendation.style.display = 'none';
                     elements.pricingSection.style.display = 'none'; 
@@ -1864,7 +1843,7 @@
                 });
 
 
-                // --- Scheduling Flow Logic (unchanged from previous version, but integrated) ---
+                // --- Scheduling Flow Logic ---
                 if (elements.schedulingSelectCarBtn) elements.schedulingSelectCarBtn.addEventListener('click', (e) => {
                     showSchedulingPackageSelection('car', e.target);
                 });
@@ -1881,7 +1860,6 @@
                         const packageType = button.dataset.packageType;
                         const packagePrice = button.dataset.packagePrice;
                         const vehicleType = button.dataset.vehicleType; 
-                        console.log('Scheduling select-package-btn clicked. Calling showBookingStepName with:', { packageType, packagePrice, vehicleType });
                         showBookingStepName(packageType, packagePrice, vehicleType); 
                     }
                 });
@@ -1906,7 +1884,6 @@
                 if (elements.btnNextVehicle) elements.btnNextVehicle.addEventListener('click', showBookingStepDatetime);
                 
                 // Final form submission (from booking-step-datetime)
-                // This now collects data and transitions, but does NOT book yet.
                 if (elements.finalBookAppointmentBtn) {
                     elements.finalBookAppointmentBtn.addEventListener('click', (e) => {
                         e.preventDefault(); 
@@ -1914,10 +1891,10 @@
                     });
                 }
 
-                // NEW: Payment confirmation question buttons logic
+                // FIX: Corrected logic for payment confirmation buttons
                 if (elements.btnPaymentConfirmedYes) {
                     elements.btnPaymentConfirmedYes.addEventListener('click', () => {
-                        showFinalConfirmationManualScreen();
+                        finalizeAppointmentBooking(); // Book the appointment
                     });
                 }
 
@@ -1927,23 +1904,20 @@
                     });
                 }
 
-                // NEW: Waiting for payment "Payment is Complete" button logic
+                // Waiting for payment "Payment is Complete" button logic
                 if (elements.btnPaymentDoneManual) {
                     elements.btnPaymentDoneManual.addEventListener('click', () => {
                         finalizeAppointmentBooking(); // This is where the actual API call happens
                     });
                 }
 
-                // NEW: Final confirmation "Send Confirmation Text" button logic
+                // Final confirmation "Send Confirmation Text" button logic
                 if (elements.btnSendConfirmationText) {
                     elements.btnSendConfirmationText.addEventListener('click', () => {
-                        const fullName = finalBookingPayload.full_name;
                         const customerPhone = finalBookingPayload.phone.replace(/\D/g, '');
                         const bookingDate = finalBookingPayload.date;
                         const bookingTime = finalBookingPayload.time;
-                        const vehicleMake = finalBookingPayload.vehicle_make;
-                        const vehicleModel = finalBookingPayload.vehicle_model;
-                        const vehicleDetails = `${vehicleMake} ${vehicleModel}`;
+                        const vehicleDetails = `${finalBookingPayload.vehicle_make} ${finalBookingPayload.vehicle_model}`;
 
                         const confirmationSMSMessage = scriptContent.confirmationSMS(formatFullDateDisplay(bookingDate), formatTimeDisplay(bookingTime), vehicleDetails);
                         window.open(`sms:+1${customerPhone}?body=${encodeURIComponent(confirmationSMSMessage)}`, '_blank');
@@ -1954,7 +1928,7 @@
                     });
                 }
 
-                // NEW: Final confirmation "End Call" button logic
+                // Final confirmation "End Call" button logic
                 if (elements.btnEndCall) {
                     elements.btnEndCall.addEventListener('click', showInitialScript);
                 }
@@ -1997,6 +1971,7 @@
                     return password === confirmPassword;
                 }
                 
+                // FIX: Modified to enable the final book button upon time selection
                 function renderTimeButtons(container, hiddenInput, selectedDateStr, finalBookButton, now) {
                     if (!container) return false;
                     container.innerHTML = '';
@@ -2033,6 +2008,8 @@
                                 if (currentlySelected) currentlySelected.classList.remove('selected');
                                 button.classList.add('selected');
                                 if (hiddenInput) hiddenInput.value = time;
+                                // Enable the final book button when a time is selected
+                                if (finalBookButton) finalBookButton.disabled = false;
                             });
                         }
                         container.appendChild(button);
@@ -2043,25 +2020,40 @@
                 }
 
                 function checkAndSetInitialDate() {
-                    const today = new Date(pageLoadTimeCST);
-                    const todayFormatted = today.toISOString().split('T')[0];
+                    const nowCST = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
+                    const todayFormatted = nowCST.toISOString().split('T')[0];
 
-                    const todayHasSlots = renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, todayFormatted, null, pageLoadTimeCST);
+                    // FIX: Disable button initially when showing date/time step
+                    if (elements.finalBookAppointmentBtn) elements.finalBookAppointmentBtn.disabled = true;
+
+                    const todayHasSlots = renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, todayFormatted, elements.finalBookAppointmentBtn, nowCST);
 
                     if (todayHasSlots) {
                         if (elements.bookingDateInput) {
                             elements.bookingDateInput.value = todayFormatted;
                         }
                     } else {
-                        const tomorrow = new Date(today);
-                        tomorrow.setDate(today.getDate() + 1);
+                        const tomorrow = new Date(nowCST);
+                        tomorrow.setDate(nowCST.getDate() + 1);
                         const tomorrowFormatted = tomorrow.toISOString().split('T')[0];
                         
                         if (elements.bookingDateInput) {
                             elements.bookingDateInput.value = tomorrowFormatted;
                         }
-                        renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, tomorrowFormatted, null, pageLoadTimeCST);
+                        renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, tomorrowFormatted, elements.finalBookAppointmentBtn, nowCST);
                     }
+                }
+
+                // FIX: Added event listener to update time slots when date changes
+                if (elements.bookingDateInput) {
+                    elements.bookingDateInput.addEventListener('change', (e) => {
+                        const selectedDateStr = e.target.value;
+                        const nowCST = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
+                        // Disable button when date changes, until a new time is selected
+                        if (elements.finalBookAppointmentBtn) elements.finalBookAppointmentBtn.disabled = true;
+                        elements.selectedBookingTimeInput.value = ''; // Clear selected time
+                        renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, selectedDateStr, elements.finalBookAppointmentBtn, nowCST);
+                    });
                 }
 
                 function formatTimeDisplay(time24hr) {
@@ -2086,22 +2078,16 @@
 
             } catch (e) {
                 console.error("Error during application initialization:", e);
-                // Display a user-friendly error message on the page itself
                 const scriptDisplay = document.getElementById('script-display');
                 if (scriptDisplay) {
                     scriptDisplay.innerHTML = `<p class="text-red-600">An error occurred during startup. Please try refreshing the page. Error: ${e.message}</p>`;
                 }
-                // Also ensure initial buttons are hidden if app failed to start
                 const initialScriptSection = document.getElementById('initial-script-section');
                 if (initialScriptSection) {
                     initialScriptSection.style.display = 'none';
                 }
             }
         }
-
-        // The Google Maps script will call window.initBookingPage, which is now our main app initialization.
-        // No need for document.addEventListener('DOMContentLoaded', initializeApp); anymore.
-        // The script tag for Google Maps should be the last thing loaded in the body to ensure DOM is ready.
     </script>
 </body>
 </html>
