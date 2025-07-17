@@ -698,6 +698,7 @@
                                 <li>Protection plan (complimentary maintenance clean within 15 days)</li>
                             </ul>
                         </div>
+                        <button class="select-package-btn btn-success" data-package-type="Level 3 Detail" data-package-price="399" data-vehicle-type="suv-truck">Select Package</button>
                     </div>
                 </div>
                 <button id="back-to-scheduling-vehicle-type" class="btn-secondary mt-8">Back to Vehicle Type</button>
@@ -915,6 +916,7 @@
 
     </div>
 
+    <!-- IMPORTANT: Replace AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk with your actual Google Cloud API Key -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk&libraries=places&callback=initBookingPage" async defer></script>
     <script>
         // This function needs to be available for the autocomplete callback
@@ -935,6 +937,7 @@
         // It is now ONLY responsible for the autocomplete feature.
         window.initBookingPage = function() {
             const addressInput = document.getElementById('address-input');
+            // Check if google maps and places are loaded before initializing
             if (window.google && window.google.maps && window.google.maps.places && addressInput) {
                 let addressAutocomplete = new google.maps.places.Autocomplete(addressInput, {
                     componentRestrictions: { country: "us" },
@@ -949,7 +952,7 @@
                     }
                 });
             } else {
-                console.warn("Google Maps Autocomplete could not be initialized. The feature will be disabled, but the form will still work.");
+                console.warn("Google Maps Autocomplete could not be initialized. Please check your API key and network connection.");
             }
         }
 
@@ -1935,7 +1938,9 @@
                             password: password 
                         };
 
+                        console.log("Attempting API call with payload:", payload); // Log the payload before sending
                         const { ok, data } = await apiCall(endpoint, 'POST', payload);
+                        console.log("API call response:", { ok, data }); // Log the response
 
                         if (ok) {
                             showPaymentOptionsScreen(); // Transition to the new payment options screen
