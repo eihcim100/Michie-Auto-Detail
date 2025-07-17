@@ -984,7 +984,7 @@
                     pricingLevel2Recommendation: document.getElementById('pricing-level2-recommendation'),
                     btnLevel2Yes: document.getElementById('btn-level2-yes'),
                     btnLevel2No: document.getElementById('btn-level2-no'),
-                    pricingLevel1Recommendation: document.getElementById('pricing-level1-recommendation'),
+                    pricingLevel1Recommendation: document.getElementById('btn-level1-recommendation'),
                     btnLevel1Yes: document.getElementById('btn-level1-yes'),
                     btnLevel1No: document.getElementById('btn-level1-no'),
                     pricingFullPackageDetails: document.getElementById('pricing-full-package-details'), // For reference
@@ -1059,7 +1059,7 @@
                 let currentVehicleType = '';
                 let recommendedPackageType = '';
                 let recommendedPackagePrice = 0;
-                let customerDataForSMS = {}; // Store customer data for manual SMS
+                let finalBookingPayload = {}; // Store all booking data here until final submission
 
                 // Package features for script generation
                 const packageFeatures = {
@@ -1250,7 +1250,7 @@
                     currentVehicleType = '';
                     recommendedPackageType = '';
                     recommendedPackagePrice = 0;
-                    customerDataForSMS = {}; // Clear stored customer data
+                    finalBookingPayload = {}; // Clear stored booking data
                 }
 
                 // --- Pricing Flow Functions ---
@@ -1469,6 +1469,157 @@
                     if (elements.finalBookAppointmentBtn) elements.finalBookAppointmentBtn.style.display = 'block';
                 }
 
+                // This function now collects data and transitions, but DOES NOT book yet.
+                async function collectBookingDataAndProceed(e, messageEl, selectedTimeInputId) { 
+                    const submitButton = elements.finalBookAppointmentBtn;
+
+                    submitButton.disabled = true;
+                    submitButton.innerHTML = `
+                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Collecting Data...
+                    `;
+
+                    const restoreButton = () => {
+                        submitButton.disabled = false;
+                        submitButton.innerHTML = 'Book Appointment';
+                    };
+
+                    try {
+                        // Collect all data from the various steps
+                        const fullName = document.getElementById('full-name').value;
+                        const email = document.getElementById('email').value;
+                        const phone = document.getElementById('phone').value;
+                        const address = document.getElementById('address-input').value;
+                        const zipCode = document.getElementById('zip-code').value;
+                        const vehicleYear = document.getElementById('vehicle-year').value;
+                        const vehicleMake = document.getElementById('vehicle-make').value;
+                        const vehicleModel = document.getElementById('vehicle-model').value;
+                        const bookingDate = document.getElementById('booking-date').value;
+                        const selectedTime = document.getElementById(selectedTimeInputId).value; 
+                        const packageType = elements.selectedPackageTypeInput.value; 
+                        const packagePrice = elements.selectedPackagePriceInput.value; 
+                        const selectedVehicleType = elements.selectedVehicleTypeInput.value; 
+                        
+                        // Get create account and password data
+                        const createAccount = elements.createAccountCheckbox ? elements.createAccountCheckbox.checked : false;
+                        let password = '';
+                        if (createAccount) {
+                            password = elements.passwordInput ? elements.passwordInput.value : '';
+                        }
+
+                        // Basic validation (more robust validation could be added per step)
+                        if (!fullName || !email || !phone || !address || !zipCode || !vehicleYear || !vehicleMake || !vehicleModel || !bookingDate || !selectedTime || !packageType || !packagePrice || !selectedVehicleType) {
+                            if (messageEl) { messageEl.textContent = 'Please complete all required fields.'; messageEl.style.color = 'red'; }
+                            restoreButton();
+                            return;
+                        }
+                        // Email validation
+                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                        if (!emailRegex.test(email)) {
+                            if (messageEl) { messageEl.textContent = 'Please enter a valid email address.'; messageEl.style.color = 'red'; }
+                            restoreButton();
+                            return;
+                        }
+                        // Phone number validation (10 digits, optional hyphens/spaces/parentheses)
+                        const phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+                        if (!phoneRegex.test(phone)) {
+                            if (messageEl) { messageEl.textContent = 'Please enter a valid 10-digit phone number.';
+                            messageEl.style.color = 'red'; }
+                            restoreButton();
+                            return;
+                        }
+                        // Password validation if creating an account
+                        if (createAccount) {
+                            if (!validatePassword() || !checkPasswordsMatch()) {
+                                if (messageEl) { elements.bookingMessage.textContent = 'Please fix password errors.'; elements.bookingMessage.style.color = 'red'; }
+                                restoreButton();
+                                return;
+                            }
+                        }
+
+                        // Store ALL collected data in finalBookingPayload
+                        finalBookingPayload = {
+                            full_name: fullName, 
+                            email: email, 
+                            phone: phone, 
+                            address: address, 
+                            zip_code: zipCode, 
+                            vehicle_year: vehicleYear,
+                            vehicle_make: vehicleMake, 
+                            vehicle_model: vehicleModel, 
+                            date: bookingDate, 
+                            time: selectedTime,
+                            package_type: packageType, 
+                            package_price: packagePrice, 
+                            vehicle_type: selectedVehicleType, 
+                            deal_name: `${packageType || 'Unknown Package'} ${vehicleMake || ''} ${vehicleModel || ''}`,
+                            offer_code: "CallCenterBooking", 
+                            create_account: createAccount, 
+                            password: password 
+                        };
+
+                        console.log("Booking data collected:", finalBookingPayload); 
+                        
+                        // Proceed to payment options screen without making API call yet
+                        showPaymentOptionsScreen(); 
+
+                    } catch (error) {
+                        console.error("An unexpected JavaScript error occurred during data collection:", error);
+                        if (elements.bookingMessage) {
+                            elements.bookingMessage.textContent = 'An unexpected error occurred. Please try again.';
+                            elements.bookingMessage.style.color = 'red';
+                        }
+                        restoreButton();
+                    }
+                }
+
+                // This function now performs the actual API call to book the appointment
+                async function finalizeAppointmentBooking() {
+                    const submitButton = elements.btnPaymentDoneManual; // Assuming this is the button triggering finalization
+
+                    submitButton.disabled = true;
+                    submitButton.innerHTML = `
+                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Finalizing Booking...
+                    `;
+
+                    const restoreButton = () => {
+                        submitButton.disabled = false;
+                        submitButton.innerHTML = 'Payment is Complete';
+                    };
+
+                    try {
+                        if (Object.keys(finalBookingPayload).length === 0) {
+                            console.error("Error: finalBookingPayload is empty. Cannot finalize booking.");
+                            elements.scriptDisplay.innerHTML = `<p class="text-red-600">Booking data missing. Please restart the process.</p>`;
+                            restoreButton();
+                            return;
+                        }
+
+                        console.log("Attempting final API call with payload:", finalBookingPayload); 
+                        const { ok, data } = await apiCall('/public/appointment', 'POST', finalBookingPayload);
+                        console.log("Final API call response:", { ok, data }); 
+
+                        if (ok) {
+                            showFinalConfirmationManualScreen(); // Transition to the final confirmation screen
+                        } else {
+                            elements.scriptDisplay.innerHTML = `<p class="text-red-600">Failed to finalize booking: ${data.message || 'Unknown error'}. Please try again.</p>`;
+                            restoreButton();
+                        }
+                    } catch (error) {
+                        console.error("An unexpected JavaScript error occurred during booking finalization:", error);
+                        elements.scriptDisplay.innerHTML = `<p class="text-red-600">An unexpected error occurred during booking finalization. Please try again.</p>`;
+                        restoreButton();
+                    }
+                }
+
+
                 // Show payment options screen (replaces SMS confirmation flow)
                 function showPaymentOptionsScreen() {
                     hideAllSections(); // Hide everything first
@@ -1480,8 +1631,8 @@
                         elements.policyText.style.display = 'block';
                     }
                     
-                    const fullName = document.getElementById('full-name').value;
-                    const packagePrice = elements.selectedPackagePriceInput.value;
+                    const fullName = finalBookingPayload.full_name; // Use data from stored payload
+                    const packagePrice = finalBookingPayload.package_price; // Use data from stored payload
                     // Update confirmation message div content
                     if (elements.confirmationMessageDiv) {
                         elements.confirmationMessageDiv.innerHTML = `
@@ -1497,12 +1648,12 @@
                     }
                     
                     // Set payment button links based on selected package
-                    const packageType = elements.selectedPackageTypeInput.value;
-                    const packagePriceVal = elements.selectedPackagePriceInput.value; 
-                    const vehicleMake = document.getElementById('vehicle-make').value;
-                    const vehicleModel = document.getElementById('vehicle-model').value;
+                    const packageType = finalBookingPayload.package_type;
+                    const packagePriceVal = finalBookingPayload.package_price; 
+                    const vehicleMake = finalBookingPayload.vehicle_make;
+                    const vehicleModel = finalBookingPayload.vehicle_model;
                     const vehicleDetails = `${vehicleMake} ${vehicleModel}`;
-                    const customerPhone = document.getElementById('phone').value.replace(/\D/g, ''); // Clean phone number
+                    const customerPhone = finalBookingPayload.phone.replace(/\D/g, ''); // Clean phone number
                     
                     let payInFullLink = '#';
                     if (paymentLinks[packageType] && paymentLinks[packageType][String(packagePriceVal)]) {
@@ -1556,15 +1707,18 @@
                     hideAllSections();
                     if (elements.finalConfirmationManualSection) elements.finalConfirmationManualSection.style.display = 'block';
                     
-                    const fullName = document.getElementById('full-name').value;
-                    const bookingDate = document.getElementById('booking-date').value;
-                    const bookingTime = elements.selectedBookingTimeInput.value;
-                    const vehicleMake = document.getElementById('vehicle-make').value;
-                    const vehicleModel = document.getElementById('vehicle-model').value;
+                    const fullName = finalBookingPayload.full_name;
+                    const bookingDate = finalBookingPayload.date;
+                    const bookingTime = finalBookingPayload.time;
+                    const vehicleMake = finalBookingPayload.vehicle_make;
+                    const vehicleModel = finalBookingPayload.vehicle_model;
                     const vehicleDetails = `${vehicleMake} ${vehicleModel}`;
 
                     if (elements.finalConfirmationManualMessage) {
-                        elements.finalConfirmationManualMessage.innerHTML = `<p>${scriptContent.finalConfirmationScript(fullName, formatFullDateDisplay(bookingDate), formatTimeDisplay(bookingTime), vehicleDetails)}</p>`;
+                        elements.finalConfirmationManualMessage.innerHTML = `
+                            <p>${scriptContent.finalConfirmationScript(fullName, formatFullDateDisplay(bookingDate), formatTimeDisplay(bookingTime), vehicleDetails)}</p>
+                            <p class="mt-4 font-bold text-red-700">IMPORTANT: TEXT CUSTOMER THE MESSAGE THROUGH RING CENTRAL, and WAIT until payment is confirmed.</p>
+                        `;
                     }
                     updateScript(scriptContent.finalConfirmationScript(fullName, formatFullDateDisplay(bookingDate), formatTimeDisplay(bookingTime), vehicleDetails)); // Update main script display
                     // Ensure send confirmation text button is visible, and end call is hidden initially
@@ -1731,11 +1885,11 @@
                 if (elements.btnNextVehicle) elements.btnNextVehicle.addEventListener('click', showBookingStepDatetime);
                 
                 // Final form submission (from booking-step-datetime)
+                // This now collects data and transitions, but does NOT book yet.
                 if (elements.finalBookAppointmentBtn) {
                     elements.finalBookAppointmentBtn.addEventListener('click', (e) => {
                         e.preventDefault(); 
-                        // Note: The endpoint is hardcoded as /public/appointment as per previous discussions
-                        handleBooking(e, '/public/appointment', elements.bookingMessage, 'selected-booking-time');
+                        collectBookingDataAndProceed(e, elements.bookingMessage, 'selected-booking-time');
                     });
                 }
 
@@ -1755,19 +1909,19 @@
                 // NEW: Waiting for payment "Payment is Complete" button logic
                 if (elements.btnPaymentDoneManual) {
                     elements.btnPaymentDoneManual.addEventListener('click', () => {
-                        showFinalConfirmationManualScreen();
+                        finalizeAppointmentBooking(); // This is where the actual API call happens
                     });
                 }
 
                 // NEW: Final confirmation "Send Confirmation Text" button logic
                 if (elements.btnSendConfirmationText) {
                     elements.btnSendConfirmationText.addEventListener('click', () => {
-                        const fullName = document.getElementById('full-name').value;
-                        const customerPhone = document.getElementById('phone').value.replace(/\D/g, '');
-                        const bookingDate = document.getElementById('booking-date').value;
-                        const bookingTime = elements.selectedBookingTimeInput.value;
-                        const vehicleMake = document.getElementById('vehicle-make').value;
-                        const vehicleModel = document.getElementById('vehicle-model').value;
+                        const fullName = finalBookingPayload.full_name;
+                        const customerPhone = finalBookingPayload.phone.replace(/\D/g, '');
+                        const bookingDate = finalBookingPayload.date;
+                        const bookingTime = finalBookingPayload.time;
+                        const vehicleMake = finalBookingPayload.vehicle_make;
+                        const vehicleModel = finalBookingPayload.vehicle_model;
                         const vehicleDetails = `${vehicleMake} ${vehicleModel}`;
 
                         const confirmationSMSMessage = scriptContent.confirmationSMS(formatFullDateDisplay(bookingDate), formatTimeDisplay(bookingTime), vehicleDetails);
@@ -1822,117 +1976,10 @@
                     return password === confirmPassword;
                 }
 
-                async function handleBooking(e, endpoint, messageEl, selectedTimeInputId) { 
-                    const submitButton = elements.finalBookAppointmentBtn;
-
-                    submitButton.disabled = true;
-                    submitButton.innerHTML = `
-                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Processing...
-                    `;
-
-                    const restoreButton = () => {
-                        submitButton.disabled = false;
-                        submitButton.innerHTML = 'Book Appointment';
-                    };
-
-                    try {
-                        // Collect all data from the various steps
-                        const fullName = document.getElementById('full-name').value;
-                        const email = document.getElementById('email').value;
-                        const phone = document.getElementById('phone').value;
-                        const address = document.getElementById('address-input').value;
-                        const zipCode = document.getElementById('zip-code').value;
-                        const vehicleYear = document.getElementById('vehicle-year').value;
-                        const vehicleMake = document.getElementById('vehicle-make').value;
-                        const vehicleModel = document.getElementById('vehicle-model').value;
-                        const bookingDate = document.getElementById('booking-date').value;
-                        const selectedTime = document.getElementById(selectedTimeInputId).value; 
-                        const packageType = elements.selectedPackageTypeInput.value; 
-                        const packagePrice = elements.selectedPackagePriceInput.value; 
-                        const selectedVehicleType = elements.selectedVehicleTypeInput.value; 
-                        
-                        // Get create account and password data
-                        const createAccount = elements.createAccountCheckbox ? elements.createAccountCheckbox.checked : false;
-                        let password = '';
-                        if (createAccount) {
-                            password = elements.passwordInput ? elements.passwordInput.value : '';
-                        }
-
-                        // Basic validation (more robust validation could be added per step)
-                        if (!fullName || !email || !phone || !address || !zipCode || !vehicleYear || !vehicleMake || !vehicleModel || !bookingDate || !selectedTime || !packageType || !packagePrice || !selectedVehicleType) {
-                            if (messageEl) { messageEl.textContent = 'Please complete all required fields.'; messageEl.style.color = 'red'; }
-                            restoreButton();
-                            return;
-                        }
-                        // Email validation
-                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                        if (!emailRegex.test(email)) {
-                            if (messageEl) { messageEl.textContent = 'Please enter a valid email address.'; messageEl.style.color = 'red'; }
-                            restoreButton();
-                            return;
-                        }
-                        // Phone number validation (10 digits, optional hyphens/spaces/parentheses)
-                        const phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
-                        if (!phoneRegex.test(phone)) {
-                            if (messageEl) { messageEl.textContent = 'Please enter a valid 10-digit phone number.';
-                            messageEl.style.color = 'red'; }
-                            restoreButton();
-                            return;
-                        }
-                        // Password validation if creating an account
-                        if (createAccount) {
-                            if (!validatePassword() || !checkPasswordsMatch()) {
-                                if (messageEl) { elements.bookingMessage.textContent = 'Please fix password errors.'; elements.bookingMessage.style.color = 'red'; }
-                                restoreButton();
-                                return;
-                            }
-                        }
-
-                        // Store customer data for manual SMS sending later
-                        customerDataForSMS = {
-                            fullName: fullName,
-                            phone: phone,
-                            vehicleYear: vehicleYear,
-                            vehicleMake: vehicleMake,
-                            vehicleModel: vehicleModel,
-                            bookingDate: bookingDate,
-                            bookingTime: selectedTime,
-                            packageType: packageType,
-                            packagePrice: packagePrice
-                        };
-
-                        const payload = {
-                            full_name: fullName, email, phone, address, zip_code: zipCode, vehicle_year: vehicleYear,
-                            vehicle_make: vehicleMake, vehicle_model: vehicleModel, date: bookingDate, time: selectedTime,
-                            package_type: packageType, package_price: packagePrice, vehicle_type: selectedVehicleType, 
-                            deal_name: `${packageType || 'Unknown Package'} ${vehicleMake || ''} ${vehicleModel || ''}`,
-                            offer_code: "CallCenterBooking", 
-                            create_account: createAccount, 
-                            password: password 
-                        };
-
-                        console.log("Attempting API call with payload:", payload); // Log the payload before sending
-                        const { ok, data } = await apiCall(endpoint, 'POST', payload);
-                        console.log("API call response:", { ok, data }); // Log the response
-
-                        if (ok) {
-                            showPaymentOptionsScreen(); // Transition to the new payment options screen
-                        } else {
-                            if (messageEl) { messageEl.textContent = data.message || 'An error occurred during booking.'; messageEl.style.color = 'red'; }
-                            restoreButton();
-                        }
-                    } catch (error) {
-                        console.error("An unexpected JavaScript error occurred:", error);
-                        if (elements.bookingMessage) {
-                            elements.bookingMessage.textContent = 'An unexpected error occurred. Please try again.';
-                            elements.bookingMessage.style.color = 'red';
-                        }
-                        restoreButton();
-                    }
+                async function handleBooking(e, endpoint, messageEl, selectedTimeInputId) {
+                    // This function is now effectively replaced by collectBookingDataAndProceed
+                    // and finalizeAppointmentBooking. It's kept for clarity but its direct
+                    // call from finalBookAppointmentBtn is removed.
                 }
                 
                 function renderTimeButtons(container, hiddenInput, selectedDateStr, finalBookButton, now) {
