@@ -698,7 +698,6 @@
                                 <li>Protection plan (complimentary maintenance clean within 15 days)</li>
                             </ul>
                         </div>
-                        <button class="select-package-btn btn-success" data-package-type="Level 3 Detail" data-package-price="399" data-vehicle-type="suv-truck">Select Package</button>
                     </div>
                 </div>
                 <button id="back-to-scheduling-vehicle-type" class="btn-secondary mt-8">Back to Vehicle Type</button>
@@ -933,31 +932,9 @@
             }
         }
 
-        // This function will be called by the Google Maps script.
-        // It is now ONLY responsible for the autocomplete feature.
-        window.initBookingPage = function() {
-            const addressInput = document.getElementById('address-input');
-            // Check if google maps and places are loaded before initializing
-            if (window.google && window.google.maps && window.google.maps.places && addressInput) {
-                let addressAutocomplete = new google.maps.places.Autocomplete(addressInput, {
-                    componentRestrictions: { country: "us" },
-                    fields: ["formatted_address", "address_components"],
-                    types: ["address"],
-                });
-                addressAutocomplete.addListener('place_changed', () => {
-                    const place = addressAutocomplete.getPlace(); 
-                    if (place.formatted_address) {
-                        addressInput.value = place.formatted_address;
-                        fillAddressFields(place, 'zip-code');
-                    }
-                });
-            } else {
-                console.warn("Google Maps Autocomplete could not be initialized. Please check your API key and network connection.");
-            }
-        }
-
         // The main application logic, including form event listeners.
-        function initializeApp() {
+        // This function will now be called by the Google Maps script as its callback.
+        window.initBookingPage = function() {
             try {
                 // Set API_BASE_URL to match the working book.html's configuration
                 const API_BASE_URL = 'https://michie-detailing-admin.onrender.com'; 
@@ -1909,7 +1886,7 @@
                         // Password validation if creating an account
                         if (createAccount) {
                             if (!validatePassword() || !checkPasswordsMatch()) {
-                                if (messageEl) { messageEl.textContent = 'Please fix password errors.'; messageEl.style.color = 'red'; }
+                                if (messageEl) { elements.bookingMessage.textContent = 'Please fix password errors.'; elements.bookingMessage.style.color = 'red'; }
                                 restoreButton();
                                 return;
                             }
@@ -2060,7 +2037,9 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', initializeApp);
+        // The Google Maps script will call window.initBookingPage, which is now our main app initialization.
+        // No need for document.addEventListener('DOMContentLoaded', initializeApp); anymore.
+        // The script tag for Google Maps should be the last thing loaded in the body to ensure DOM is ready.
     </script>
 </body>
 </html>
