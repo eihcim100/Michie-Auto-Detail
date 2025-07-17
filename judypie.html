@@ -984,7 +984,7 @@
                     pricingLevel2Recommendation: document.getElementById('pricing-level2-recommendation'),
                     btnLevel2Yes: document.getElementById('btn-level2-yes'),
                     btnLevel2No: document.getElementById('btn-level2-no'),
-                    pricingLevel1Recommendation: document.getElementById('btn-level1-recommendation'),
+                    pricingLevel1Recommendation: document.getElementById('pricing-level1-recommendation'),
                     btnLevel1Yes: document.getElementById('btn-level1-yes'),
                     btnLevel1No: document.getElementById('btn-level1-no'),
                     pricingFullPackageDetails: document.getElementById('pricing-full-package-details'), // For reference
@@ -1519,15 +1519,14 @@
                         // Email validation
                         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                         if (!emailRegex.test(email)) {
-                            if (messageEl) { messageEl.textContent = 'Please enter a valid email address.'; messageEl.style.color = 'red'; }
+                            if (messageEl) { elements.bookingMessage.textContent = 'Please enter a valid email address.'; elements.bookingMessage.style.color = 'red'; }
                             restoreButton();
                             return;
                         }
                         // Phone number validation (10 digits, optional hyphens/spaces/parentheses)
                         const phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
                         if (!phoneRegex.test(phone)) {
-                            if (messageEl) { messageEl.textContent = 'Please enter a valid 10-digit phone number.';
-                            messageEl.style.color = 'red'; }
+                            if (messageEl) { elements.bookingMessage.textContent = 'Please enter a valid 10-digit phone number.'; elements.bookingMessage.style.color = 'red'; }
                             restoreButton();
                             return;
                         }
@@ -1565,6 +1564,7 @@
                         
                         // Proceed to payment options screen without making API call yet
                         showPaymentOptionsScreen(); 
+                        restoreButton(); // Restore button state after collecting data and moving on
 
                     } catch (error) {
                         console.error("An unexpected JavaScript error occurred during data collection:", error);
@@ -1974,12 +1974,6 @@
                     const confirmPassword = elements.confirmPasswordInput ? elements.confirmPasswordInput.value : '';
                     if (elements.passwordMatchMessage) elements.passwordMatchMessage.classList.toggle('hidden', password === confirmPassword);
                     return password === confirmPassword;
-                }
-
-                async function handleBooking(e, endpoint, messageEl, selectedTimeInputId) {
-                    // This function is now effectively replaced by collectBookingDataAndProceed
-                    // and finalizeAppointmentBooking. It's kept for clarity but its direct
-                    // call from finalBookAppointmentBtn is removed.
                 }
                 
                 function renderTimeButtons(container, hiddenInput, selectedDateStr, finalBookButton, now) {
