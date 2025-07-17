@@ -698,7 +698,6 @@
                                 <li>Protection plan (complimentary maintenance clean within 15 days)</li>
                             </ul>
                         </div>
-                        <button class="select-package-btn btn-success" data-package-type="Level 3 Detail" data-package-price="399" data-vehicle-type="suv-truck">Select Package</button>
                     </div>
                 </div>
                 <button id="back-to-scheduling-vehicle-type" class="btn-secondary mt-8">Back to Vehicle Type</button>
@@ -957,8 +956,8 @@
         // The main application logic, including form event listeners.
         function initializeApp() {
             try {
-                // Set API_BASE_URL to the explicit backend URL for michieauto.com deployment.
-                const API_BASE_URL = 'https://michieauto.com'; 
+                // Set API_BASE_URL to match the working book.html's configuration
+                const API_BASE_URL = 'https://michie-detailing-admin.onrender.com'; 
                 
                 const elements = {
                     scriptDisplay: document.getElementById('script-display'),
@@ -1755,6 +1754,7 @@
                 if (elements.finalBookAppointmentBtn) {
                     elements.finalBookAppointmentBtn.addEventListener('click', (e) => {
                         e.preventDefault(); 
+                        // Note: The endpoint is hardcoded as /public/appointment as per previous discussions
                         handleBooking(e, '/public/appointment', elements.bookingMessage, 'selected-booking-time');
                     });
                 }
