@@ -916,6 +916,7 @@
     </div>
 
     <!-- IMPORTANT: Replace AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk with your actual Google Cloud API Key -->
+    <!-- This script tag MUST be the last element before the closing </body> tag. -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk&libraries=places&callback=initBookingPage" async defer></script>
     <script>
         // This function needs to be available for the autocomplete callback
@@ -1419,6 +1420,26 @@
                     if (elements.bookingStepContact) elements.bookingStepContact.style.display = 'none';
                     if (elements.bookingStepAddress) elements.bookingStepAddress.style.display = 'block';
                     updateScript(scriptContent.bookingStepAddress);
+
+                    // Initialize Google Places Autocomplete when address input becomes visible
+                    const addressInput = document.getElementById('address-input');
+                    if (window.google && window.google.maps && window.google.maps.places && addressInput) {
+                        console.log("Initializing Google Places Autocomplete for address-input.");
+                        let addressAutocomplete = new google.maps.places.Autocomplete(addressInput, {
+                            componentRestrictions: { country: "us" },
+                            fields: ["formatted_address", "address_components"],
+                            types: ["address"],
+                        });
+                        addressAutocomplete.addListener('place_changed', () => {
+                            const place = addressAutocomplete.getPlace(); 
+                            if (place.formatted_address) {
+                                addressInput.value = place.formatted_address;
+                                fillAddressFields(place, 'zip-code');
+                            }
+                        });
+                    } else {
+                        console.warn("Google Maps Autocomplete could not be initialized for address-input. API not loaded or element not found.");
+                    }
                 }
 
                 function showBookingStepVehicle() {
