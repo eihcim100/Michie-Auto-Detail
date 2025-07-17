@@ -13,8 +13,7 @@
             color: #334155; /* Darker text for contrast */
             padding-bottom: 2rem; /* Some space at the bottom */
         }
-        /* The .pac-container styling might not be needed anymore with PlaceAutocompleteElement */
-        /* .pac-container { z-index: 1050 !important; } */ 
+        .pac-container { z-index: 1050 !important; } /* Ensure Google Autocomplete is above other elements */
 
         /* General button styling for a light, stylish look */
         .btn-primary {
@@ -211,28 +210,6 @@
             color: #334155;
             transition: border-color 0.2s, box-shadow 0.2s;
         }
-        /* Styling for the gmp-place-autocomplete element's internal input */
-        gmp-place-autocomplete {
-            width: 100%;
-            display: block; /* Important for width to apply */
-            /* You might need to target shadow DOM for deeper styling if default isn't enough */
-            /* For example, to style the actual input inside: */
-            /* gmp-place-autocomplete::part(input) {
-                padding: 0.75rem 1rem;
-                border: 1px solid #cbd5e1;
-                border-radius: 0.5rem;
-                background-color: #ffffff;
-                font-size: 1rem;
-                color: #334155;
-                transition: border-color 0.2s, box-shadow 0.2s;
-            } */
-        }
-        gmp-place-autocomplete:focus-within { /* Apply focus style to the host element */
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-        }
-
         input[type="text"]:focus,
         input[type="email"]:focus,
         input[type="tel"]:focus,
@@ -348,7 +325,7 @@
             <div id="pricing-shampoo-question" class="hidden text-center">
                 <div class="flex flex-col sm:flex-row justify-center gap-4">
                     <button id="btn-shampoo-yes" class="btn-primary">Yes</button>
-                    <button id="btn-shampoo-no" class="btn-secondary">No</button>
+                    <button id="btn-shampoo-no" class="btn-primary">No</button>
                 </div>
                 <button id="back-to-pet-hair-from-shampoo" class="btn-secondary mt-8">Back to Pet Hair</button>
             </div>
@@ -692,7 +669,7 @@
                         <h4 class="pricing-level">Level 3 Detail</h4>
                         <p class="pricing-price">$399</p>
                         <button class="see-whats-included-btn" data-target="booking-suv-truck-level3-features">See what's included</button>
-                        <div id="suv-truck-level3-features" class="feature-dropdown">
+                        <div id="booking-suv-truck-level3-features" class="feature-dropdown">
                             <ul class="feature-list">
                                 <li>External high pressure wash</li>
                                 <li>Tire cleaner</li>
@@ -758,8 +735,7 @@
                 <div id="booking-step-address" class="hidden space-y-6">
                     <div>
                         <label for="address-input" class="block text-sm font-medium text-gray-700 mb-1">Service Address</label>
-                        <!-- Changed to gmp-place-autocomplete element -->
-                        <gmp-place-autocomplete id="address-input" class="w-full px-3 py-2 border rounded-lg" placeholder="Start typing your address..." required></gmp-place-autocomplete>
+                        <input type="text" id="address-input" placeholder="Start typing your address..." required>
                     </div>
                     <div>
                         <label for="zip-code" class="block text-sm font-medium text-gray-700 mb-1">Zip Code</label>
@@ -941,8 +917,7 @@
 
     <!-- IMPORTANT: Replace AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk with your actual Google Cloud API Key -->
     <!-- This script tag MUST be the last element before the closing </body> tag. -->
-    <!-- Note: v=beta and libraries=places,marker are required for PlaceAutocompleteElement -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk&v=beta&libraries=places,marker&callback=initBookingPage" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk&libraries=places&callback=initBookingPage" async defer></script>
     <script>
         // This function needs to be available for the autocomplete callback
         function fillAddressFields(place, zipCodeInputId) {
@@ -1010,7 +985,7 @@
                     pricingLevel2Recommendation: document.getElementById('pricing-level2-recommendation'),
                     btnLevel2Yes: document.getElementById('btn-level2-yes'),
                     btnLevel2No: document.getElementById('btn-level2-no'),
-                    pricingLevel1Recommendation: document.getElementById('btn-level1-recommendation'),
+                    pricingLevel1Recommendation: document.getElementById('pricing-level1-recommendation'),
                     btnLevel1Yes: document.getElementById('btn-level1-yes'),
                     btnLevel1No: document.getElementById('btn-level1-no'),
                     pricingFullPackageDetails: document.getElementById('pricing-full-package-details'), // For reference
@@ -1341,16 +1316,18 @@
 
                 // --- Scheduling Flow Functions ---
                 function showSchedulingVehicleTypeSelection() {
-                    hideAllSections(); 
+                    hideAllSections(); // Start by hiding everything
                     updateScript(scriptContent.schedulingVehicleType);
-                    if (elements.schedulingSection) elements.schedulingSection.style.display = 'block'; 
-                    if (elements.schedulingVehicleTypeSelection) elements.schedulingVehicleTypeSelection.style.display = 'block'; 
+                    if (elements.schedulingSection) elements.schedulingSection.style.display = 'block'; // Show scheduling section
+                    if (elements.schedulingVehicleTypeSelection) elements.schedulingVehicleTypeSelection.style.display = 'block'; // Show vehicle type selection
 
                     document.querySelectorAll('#scheduling-vehicle-type-selection .btn-primary.active').forEach(b => b.classList.remove('active'));
+                    // Clear any previously selected package/time
                     if (elements.selectedPackageTypeInput) elements.selectedPackageTypeInput.value = '';
                     if (elements.selectedPackagePriceInput) elements.selectedPackagePriceInput.value = '';
                     if (elements.selectedBookingTimeInput) elements.selectedBookingTimeInput.value = '';
                     if (elements.finalBookAppointmentBtn) elements.finalBookAppointmentBtn.style.display = 'none';
+                    // Reset global state variables for scheduling flow
                     currentVehicleType = '';
                     recommendedPackageType = ''; 
                     recommendedPackagePrice = 0; 
@@ -1374,27 +1351,33 @@
                 // Functions for sequential booking form steps
                 function showBookingStepName(packageType, packagePrice, vehicleType) {
                     console.log('Entering showBookingStepName with:', { packageType, packagePrice, vehicleType });
+                    // Set package and vehicle type in hidden inputs
                     if (elements.selectedPackageDisplay) elements.selectedPackageDisplay.textContent = packageType;
                     if (elements.selectedPackageTypeInput) elements.selectedPackageTypeInput.value = packageType;
                     if (elements.selectedPackagePriceInput) elements.selectedPackagePriceInput.value = packagePrice;
                     if (elements.selectedVehicleTypeInput) elements.selectedVehicleTypeInput.value = vehicleType;
 
-                    hideAllSections(); 
+                    hideAllSections(); // Hide everything first
+
+                    // Ensure the main scheduling section and booking form container are visible
                     if (elements.schedulingSection) elements.schedulingSection.style.display = 'block';
                     if (elements.bookingFormSection) elements.bookingFormSection.style.display = 'block';
+                    
+                    // Show only the current step
                     if (elements.bookingStepName) elements.bookingStepName.style.display = 'block';
                     
                     updateScript(scriptContent.bookingStepName(packageType, vehicleType));
                 }
 
                 function showBookingStepContact() {
+                    // Validate name before proceeding
                     const fullName = document.getElementById('full-name').value;
                     if (!fullName) {
                         elements.bookingMessage.textContent = 'Please enter the full name.';
                         elements.bookingMessage.style.color = 'red';
                         return;
                     }
-                    elements.bookingMessage.textContent = ''; 
+                    elements.bookingMessage.textContent = ''; // Clear previous message
 
                     if (elements.bookingStepName) elements.bookingStepName.style.display = 'none';
                     if (elements.bookingStepContact) elements.bookingStepContact.style.display = 'block';
@@ -1402,9 +1385,11 @@
                 }
 
                 function showBookingStepAddress() {
+                    // Validate email and phone before proceeding
                     const email = document.getElementById('email').value;
                     const phone = document.getElementById('phone').value;
                     
+                    // Email validation
                     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                     if (!email) {
                         elements.bookingMessage.textContent = 'Please enter your email address.';
@@ -1417,6 +1402,7 @@
                         return;
                     }
 
+                    // Phone number validation (10 digits, optional hyphens/spaces/parentheses)
                     const phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
                     if (!phone) {
                         elements.bookingMessage.textContent = 'Please enter your phone number.';
@@ -1429,7 +1415,7 @@
                         return;
                     }
 
-                    elements.bookingMessage.textContent = ''; 
+                    elements.bookingMessage.textContent = ''; // Clear previous message
 
                     if (elements.bookingStepContact) elements.bookingStepContact.style.display = 'none';
                     if (elements.bookingStepAddress) elements.bookingStepAddress.style.display = 'block';
@@ -1437,34 +1423,27 @@
 
                     // Initialize Google Places Autocomplete when address input becomes visible
                     const addressInput = document.getElementById('address-input');
-                    // Check if google.maps.places is defined before trying to use it
                     if (window.google && window.google.maps && window.google.maps.places && addressInput) {
-                        console.log("Initializing Google Places Autocomplete for address-input (PlaceAutocompleteElement).");
-                        // Use PlaceAutocompleteElement
-                        addressInput.addEventListener('gmp-placeselect', (event) => {
-                            const place = event.detail.place;
-                            if (place && place.addressComponents) {
-                                let zipCode = '';
-                                for (const component of place.addressComponents) {
-                                    if (component.types.includes('postal_code')) {
-                                        zipCode = component.longText; // Use longText for full zip code
-                                    }
-                                }
-                                const zipCodeInput = document.getElementById('zip-code');
-                                if(zipCodeInput) {
-                                    zipCodeInput.value = zipCode;
-                                }
+                        console.log("Initializing Google Places Autocomplete for address-input.");
+                        let addressAutocomplete = new google.maps.places.Autocomplete(addressInput, {
+                            componentRestrictions: { country: "us" },
+                            fields: ["formatted_address", "address_components"],
+                            types: ["address"],
+                        });
+                        addressAutocomplete.addListener('place_changed', () => {
+                            const place = addressAutocomplete.getPlace(); 
+                            if (place.formatted_address) {
+                                addressInput.value = place.formatted_address;
+                                fillAddressFields(place, 'zip-code');
                             }
                         });
-                        // Set componentRestrictions and types directly on the element if needed, or via JS properties
-                        addressInput.componentRestrictions = { country: "us" };
-                        addressInput.types = ["address"];
                     } else {
-                        console.warn("Google Maps Places API (or address-input element) not fully loaded for Autocomplete initialization.");
+                        console.warn("Google Maps Autocomplete could not be initialized for address-input. API not loaded or element not found.");
                     }
                 }
 
                 function showBookingStepVehicle() {
+                    // Validate address and zip before proceeding
                     const address = document.getElementById('address-input').value;
                     const zipCode = document.getElementById('zip-code').value;
                     if (!address || !zipCode) {
@@ -1472,7 +1451,7 @@
                         elements.bookingMessage.style.color = 'red';
                         return;
                     }
-                    elements.bookingMessage.textContent = ''; 
+                    elements.bookingMessage.textContent = ''; // Clear previous message
 
                     if (elements.bookingStepAddress) elements.bookingStepAddress.style.display = 'none';
                     if (elements.bookingStepVehicle) elements.bookingStepVehicle.style.display = 'block';
@@ -1480,6 +1459,7 @@
                 }
 
                 function showBookingStepDatetime() {
+                    // Validate vehicle details before proceeding
                     const vehicleYear = document.getElementById('vehicle-year').value;
                     const vehicleMake = document.getElementById('vehicle-make').value;
                     const vehicleModel = document.getElementById('vehicle-model').value;
@@ -1490,6 +1470,7 @@
                         return;
                     }
                     
+                    // Validate password if create account is checked
                     const createAccount = elements.createAccountCheckbox.checked;
                     if (createAccount) {
                         if (!validatePassword() || !checkPasswordsMatch()) {
@@ -1499,12 +1480,13 @@
                         }
                     }
 
-                    elements.bookingMessage.textContent = ''; 
+                    elements.bookingMessage.textContent = ''; // Clear previous message
 
                     if (elements.bookingStepVehicle) elements.bookingStepVehicle.style.display = 'none';
                     if (elements.bookingStepDatetime) elements.bookingStepDatetime.style.display = 'block';
                     updateScript(scriptContent.bookingStepDatetime);
-                    checkAndSetInitialDate(); 
+                    checkAndSetInitialDate(); // Populate date and time slots
+                    // Ensure the final book appointment button is visible on this step
                     if (elements.finalBookAppointmentBtn) elements.finalBookAppointmentBtn.style.display = 'block';
                 }
 
@@ -1527,12 +1509,11 @@
                     };
 
                     try {
-                        console.log("--- Starting collectBookingDataAndProceed ---");
                         // Collect all data from the various steps
                         const fullName = document.getElementById('full-name').value;
                         const email = document.getElementById('email').value;
                         const phone = document.getElementById('phone').value;
-                        const address = document.getElementById('address-input').value.value; // Access value from gmp-place-autocomplete
+                        const address = document.getElementById('address-input').value;
                         const zipCode = document.getElementById('zip-code').value;
                         const vehicleYear = document.getElementById('vehicle-year').value;
                         const vehicleMake = document.getElementById('vehicle-make').value;
@@ -1543,36 +1524,36 @@
                         const packagePrice = elements.selectedPackagePriceInput.value; 
                         const selectedVehicleType = elements.selectedVehicleTypeInput.value; 
                         
+                        // Get create account and password data
                         const createAccount = elements.createAccountCheckbox ? elements.createAccountCheckbox.checked : false;
                         let password = '';
                         if (createAccount) {
                             password = elements.passwordInput ? elements.passwordInput.value : '';
                         }
 
-                        // Basic validation
+                        // Basic validation (more robust validation could be added per step)
                         if (!fullName || !email || !phone || !address || !zipCode || !vehicleYear || !vehicleMake || !vehicleModel || !bookingDate || !selectedTime || !packageType || !packagePrice || !selectedVehicleType) {
-                            console.error("Validation failed: Missing required fields.");
                             if (messageEl) { messageEl.textContent = 'Please complete all required fields.'; messageEl.style.color = 'red'; }
                             restoreButton();
                             return;
                         }
+                        // Email validation
                         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                         if (!emailRegex.test(email)) {
-                            console.error("Validation failed: Invalid email.");
                             if (messageEl) { elements.bookingMessage.textContent = 'Please enter a valid email address.'; elements.bookingMessage.style.color = 'red'; }
                             restoreButton();
                             return;
                         }
+                        // Phone number validation (10 digits, optional hyphens/spaces/parentheses)
                         const phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
                         if (!phoneRegex.test(phone)) {
-                            console.error("Validation failed: Invalid phone number.");
                             if (messageEl) { elements.bookingMessage.textContent = 'Please enter a valid 10-digit phone number.'; elements.bookingMessage.style.color = 'red'; }
                             restoreButton();
                             return;
                         }
+                        // Password validation if creating an account
                         if (createAccount) {
                             if (!validatePassword() || !checkPasswordsMatch()) {
-                                console.error("Validation failed: Password errors.");
                                 if (messageEl) { elements.bookingMessage.textContent = 'Please fix password errors.'; elements.bookingMessage.style.color = 'red'; }
                                 restoreButton();
                                 return;
@@ -1600,17 +1581,17 @@
                             password: password 
                         };
 
-                        console.log("Booking data successfully collected into finalBookingPayload:", finalBookingPayload); 
+                        console.log("Booking data collected:", finalBookingPayload); 
                         
+                        // Proceed to payment options screen without making API call yet
                         showPaymentOptionsScreen(); 
-                        console.log("Called showPaymentOptionsScreen.");
-                        restoreButton(); 
+                        restoreButton(); // Restore button state after collecting data and moving on
 
                     } catch (error) {
                         console.error("An unexpected JavaScript error occurred during data collection:", error);
-                        if (messageEl) {
-                            messageEl.textContent = 'An unexpected error occurred. Please try again. Check console for details.';
-                            messageEl.style.color = 'red';
+                        if (elements.bookingMessage) {
+                            elements.bookingMessage.textContent = 'An unexpected error occurred. Please try again.';
+                            elements.bookingMessage.style.color = 'red';
                         }
                         restoreButton();
                     }
@@ -1618,7 +1599,7 @@
 
                 // This function now performs the actual API call to book the appointment
                 async function finalizeAppointmentBooking() {
-                    const submitButton = elements.btnPaymentDoneManual; 
+                    const submitButton = elements.btnPaymentDoneManual; // Assuming this is the button triggering finalization
 
                     submitButton.disabled = true;
                     submitButton.innerHTML = `
@@ -1635,7 +1616,6 @@
                     };
 
                     try {
-                        console.log("--- Starting finalizeAppointmentBooking ---");
                         if (Object.keys(finalBookingPayload).length === 0) {
                             console.error("Error: finalBookingPayload is empty. Cannot finalize booking.");
                             elements.scriptDisplay.innerHTML = `<p class="text-red-600">Booking data missing. Please restart the process.</p>`;
@@ -1648,16 +1628,14 @@
                         console.log("Final API call response:", { ok, data }); 
 
                         if (ok) {
-                            showFinalConfirmationManualScreen(); 
-                            console.log("Called showFinalConfirmationManualScreen.");
+                            showFinalConfirmationManualScreen(); // Transition to the final confirmation screen
                         } else {
                             elements.scriptDisplay.innerHTML = `<p class="text-red-600">Failed to finalize booking: ${data.message || 'Unknown error'}. Please try again.</p>`;
+                            restoreButton();
                         }
-                        restoreButton(); 
-
                     } catch (error) {
                         console.error("An unexpected JavaScript error occurred during booking finalization:", error);
-                        elements.scriptDisplay.innerHTML = `<p class="text-red-600">An unexpected error occurred during booking finalization. Please try again. Check console for details.</p>`;
+                        elements.scriptDisplay.innerHTML = `<p class="text-red-600">An unexpected error occurred during booking finalization. Please try again.</p>`;
                         restoreButton();
                     }
                 }
@@ -1665,144 +1643,90 @@
 
                 // Show payment options screen (replaces SMS confirmation flow)
                 function showPaymentOptionsScreen() {
-                    console.log("--- Entering showPaymentOptionsScreen ---");
-                    hideAllSections(); 
+                    hideAllSections(); // Hide everything first
                     
                     if (elements.confirmationSection) {
                         elements.confirmationSection.style.display = 'block';
-                    } else {
-                        console.error("Error: elements.confirmationSection not found!");
-                        return; 
                     }
                     if (elements.policyText) {
                         elements.policyText.style.display = 'block';
-                    } else {
-                        console.warn("Warning: elements.policyText not found.");
                     }
                     
-                    const fullName = finalBookingPayload.full_name; 
-                    const packagePrice = finalBookingPayload.package_price; 
-                    console.log("showPaymentOptionsScreen: fullName =", fullName, "packagePrice =", packagePrice);
-
+                    const fullName = finalBookingPayload.full_name; // Use data from stored payload
+                    const packagePrice = finalBookingPayload.package_price; // Use data from stored payload
+                    // Update confirmation message div content
                     if (elements.confirmationMessageDiv) {
                         elements.confirmationMessageDiv.innerHTML = `
                             <p class="text-2xl font-bold mb-2">⚠️ IMPORTANT: Send Payment SMS!</p>
                             <p class="text-md mt-4">${scriptContent.paymentOptionsQuestion(fullName)}</p>
                         `;
-                    } else {
-                        console.error("Error: elements.confirmationMessageDiv not found!");
-                        return; 
                     }
 
+                    // Show payment options buttons
                     if (elements.paymentOptionsButtons) {
                         elements.paymentOptionsButtons.style.display = 'flex'; 
                         elements.paymentOptionsButtons.classList.add('flex', 'flex-col', 'sm:flex-row', 'justify-center', 'gap-4');
-                    } else {
-                        console.error("Error: elements.paymentOptionsButtons not found!");
-                        return; 
                     }
                     
+                    // Set payment button links based on selected package
                     const packageType = finalBookingPayload.package_type;
                     const packagePriceVal = finalBookingPayload.package_price; 
                     const vehicleMake = finalBookingPayload.vehicle_make;
                     const vehicleModel = finalBookingPayload.vehicle_model;
                     const vehicleDetails = `${vehicleMake} ${vehicleModel}`;
-                    const customerPhone = finalBookingPayload.phone ? finalBookingPayload.phone.replace(/\D/g, '') : ''; 
+                    const customerPhone = finalBookingPayload.phone.replace(/\D/g, ''); // Clean phone number
                     
-                    console.log("showPaymentOptionsScreen: packageType =", packageType, "packagePriceVal =", packagePriceVal, "vehicleDetails =", vehicleDetails, "customerPhone =", customerPhone);
-
-                    let payInFullLink = '#'; // This link isn't directly used for opening, but kept for clarity
+                    let payInFullLink = '#';
                     if (paymentLinks[packageType] && paymentLinks[packageType][String(packagePriceVal)]) {
                         payInFullLink = paymentLinks[packageType][String(packagePriceVal)];
                     }
-                    console.log("showPaymentOptionsScreen: payInFullLink =", payInFullLink);
 
+                    // Generate pre-filled SMS messages
                     const payInFullSMSMessage = scriptContent.payInFullSMS(fullName, packagePriceVal, vehicleDetails);
                     const depositSMSMessage = scriptContent.depositSMS(fullName, vehicleDetails);
-                    console.log("showPaymentOptionsScreen: payInFullSMSMessage =", payInFullSMSMessage);
-                    console.log("showPaymentOptionsScreen: depositSMSMessage =", depositSMSMessage);
 
-
+                    // Set onclick handlers for manual SMS sending
                     if (elements.payNowButton) {
                         elements.payNowButton.textContent = `Pay in full $${parseFloat(packagePriceVal).toFixed(0)}`;
                         elements.payNowButton.onclick = () => { 
-                            if (!customerPhone) {
-                                console.error("Customer phone number is missing for SMS link.");
-                                elements.scriptDisplay.innerHTML = `<p class="text-red-600">Cannot generate SMS link: Customer phone number missing.</p>`;
-                                return;
-                            }
-                            console.log("Opening SMS link for Pay in Full:", `sms:+1${customerPhone}?body=${encodeURIComponent(payInFullSMSMessage)}`);
                             window.open(`sms:+1${customerPhone}?body=${encodeURIComponent(payInFullSMSMessage)}`, '_blank');
+                            // After opening SMS, transition to payment confirmation question
                             showPaymentConfirmationQuestion(fullName, "full payment");
                         };
-                    } else {
-                        console.error("Error: elements.payNowButton not found!");
                     }
                     if (elements.payDepositButton) {
                         elements.payDepositButton.onclick = () => { 
-                            if (!customerPhone) {
-                                console.error("Customer phone number is missing for SMS link.");
-                                elements.scriptDisplay.innerHTML = `<p class="text-red-600">Cannot generate SMS link: Customer phone number missing.</p>`;
-                                return;
-                            }
-                            console.log("Opening SMS link for Deposit:", `sms:+1${customerPhone}?body=${encodeURIComponent(depositSMSMessage)}`);
                             window.open(`sms:+1${customerPhone}?body=${encodeURIComponent(depositSMSMessage)}`, '_blank');
+                            // After opening SMS, transition to payment confirmation question
                             showPaymentConfirmationQuestion(fullName, "deposit");
                         };
-                    } else {
-                        console.error("Error: elements.payDepositButton not found!");
                     }
-                    console.log("--- Exiting showPaymentOptionsScreen ---");
                 }
 
                 // NEW: Function to show "Did you make payment?" screen
                 function showPaymentConfirmationQuestion(customerName, paymentType) {
-                    console.log("--- Entering showPaymentConfirmationQuestion ---");
                     hideAllSections();
-                    if (elements.paymentConfirmationQuestionSection) {
-                        elements.paymentConfirmationQuestionSection.style.display = 'block';
-                    } else {
-                        console.error("Error: elements.paymentConfirmationQuestionSection not found!");
-                        return;
-                    }
+                    if (elements.paymentConfirmationQuestionSection) elements.paymentConfirmationQuestionSection.style.display = 'block';
                     if (elements.paymentConfirmationQuestionMessage) {
                         elements.paymentConfirmationQuestionMessage.innerHTML = `<p>${scriptContent.didYouMakePaymentQuestion(customerName, paymentType)}</p>`;
-                    } else {
-                        console.error("Error: elements.paymentConfirmationQuestionMessage not found!");
                     }
-                    updateScript(scriptContent.didYouMakePaymentQuestion(customerName, paymentType)); 
-                    console.log("--- Exiting showPaymentConfirmationQuestion ---");
+                    updateScript(scriptContent.didYouMakePaymentQuestion(customerName, paymentType)); // Update main script display
                 }
 
                 // NEW: Function to show "Ok take your time." screen
                 function showWaitingForPaymentManualScreen() {
-                    console.log("--- Entering showWaitingForPaymentManualScreen ---");
                     hideAllSections();
-                    if (elements.waitingForPaymentManualSection) {
-                        elements.waitingForPaymentManualSection.style.display = 'block';
-                    } else {
-                        console.error("Error: elements.waitingForPaymentManualSection not found!");
-                        return;
-                    }
+                    if (elements.waitingForPaymentManualSection) elements.waitingForPaymentManualSection.style.display = 'block';
                     if (elements.waitingForPaymentManualMessage) {
                         elements.waitingForPaymentManualMessage.innerHTML = `<p>${scriptContent.waitingForPayment}</p>`;
-                    } else {
-                        console.error("Error: elements.waitingForPaymentManualMessage not found!");
                     }
-                    updateScript(scriptContent.waitingForPayment); 
-                    console.log("--- Exiting showWaitingForPaymentManualScreen ---");
+                    updateScript(scriptContent.waitingForPayment); // Update main script display
                 }
 
                 // NEW: Function to show final confirmation screen before sending last SMS
                 function showFinalConfirmationManualScreen() {
-                    console.log("--- Entering showFinalConfirmationManualScreen ---");
                     hideAllSections();
-                    if (elements.finalConfirmationManualSection) {
-                        elements.finalConfirmationManualSection.style.display = 'block';
-                    } else {
-                        console.error("Error: elements.finalConfirmationManualSection not found!");
-                        return;
-                    }
+                    if (elements.finalConfirmationManualSection) elements.finalConfirmationManualSection.style.display = 'block';
                     
                     const fullName = finalBookingPayload.full_name;
                     const bookingDate = finalBookingPayload.date;
@@ -1811,30 +1735,24 @@
                     const vehicleModel = finalBookingPayload.vehicle_model;
                     const vehicleDetails = `${vehicleMake} ${vehicleModel}`;
 
-                    console.log("FinalConfirmation: fullName =", fullName, "bookingDate =", bookingDate, "bookingTime =", bookingTime, "vehicleDetails =", vehicleDetails);
-
                     if (elements.finalConfirmationManualMessage) {
                         elements.finalConfirmationManualMessage.innerHTML = `
                             <p>${scriptContent.finalConfirmationScript(fullName, formatFullDateDisplay(bookingDate), formatTimeDisplay(bookingTime), vehicleDetails)}</p>
                             <p class="mt-4 font-bold text-red-700">IMPORTANT: TEXT CUSTOMER THE MESSAGE THROUGH RING CENTRAL, and WAIT until payment is confirmed.</p>
                         `;
-                    } else {
-                        console.error("Error: elements.finalConfirmationManualMessage not found!");
                     }
-                    updateScript(scriptContent.finalConfirmationScript(fullName, formatFullDateDisplay(bookingDate), formatTimeDisplay(bookingTime), vehicleDetails)); 
+                    updateScript(scriptContent.finalConfirmationScript(fullName, formatFullDateDisplay(bookingDate), formatTimeDisplay(bookingTime), vehicleDetails)); // Update main script display
+                    // Ensure send confirmation text button is visible, and end call is hidden initially
                     elements.btnSendConfirmationText.style.display = 'block';
                     elements.btnEndCall.style.display = 'none';
-                    console.log("--- Exiting showFinalConfirmationManualScreen ---");
                 }
 
                 // --- Other Calls Flow Functions ---
                 function showOtherCalls() {
-                    console.log("--- Entering showOtherCalls ---");
                     hideAllSections(); 
                     updateScript(scriptContent.otherCallsNotes);
                     if (elements.otherCallsSection) elements.otherCallsSection.style.display = 'block'; 
                     if (elements.otherCallsNotes) elements.otherCallsNotes.value = ''; 
-                    console.log("--- Exiting showOtherCalls ---");
                 }
 
 
@@ -1852,14 +1770,13 @@
                 if (elements.backToLevel2FromLevel1) elements.backToLevel2FromLevel1.addEventListener('click', showPricingLevel2Recommendation); 
                 
                 if (elements.backToMainFromSchedulingVehicle) elements.backToMainFromSchedulingVehicle.addEventListener('click', showInitialScript);
-                if (elements.backToSchedulingVehicleType) elements.backToSchedulingVehicleType.addEventListener('click', showSchedulingPackageSelection); 
+                if (elements.backToSchedulingVehicleType) elements.backToSchedulingVehicleType.addEventListener('click', showSchedulingPackageSelection); // Changed to showPackageSelection
                 if (elements.backToPackageSelection) elements.backToPackageSelection.addEventListener('click', () => {
+                    // Reset form fields when going back from booking steps
                     document.getElementById('full-name').value = '';
                     document.getElementById('email').value = '';
                     document.getElementById('phone').value = '';
-                    // Corrected: Access the value of the gmp-place-autocomplete element
-                    const addressInputGmp = document.getElementById('address-input');
-                    if (addressInputGmp) addressInputGmp.value = ''; 
+                    document.getElementById('address-input').value = '';
                     document.getElementById('zip-code').value = '';
                     document.getElementById('vehicle-year').value = '';
                     document.getElementById('vehicle-make').value = '';
@@ -1895,18 +1812,18 @@
 
 
                 // --- Pricing Section Specific Event Listeners ---
-                if (elements.btnPricing) elements.btnPricing.addEventListener('click', showPricingVehicleTypeSelection);
-                if (elements.btnScheduling) elements.btnScheduling.addEventListener('click', showSchedulingVehicleTypeSelection);
-                if (elements.btnOtherCalls) elements.btnOtherCalls.addEventListener('click', showOtherCalls);
+                if (elements.pricingSelectCarBtn) elements.pricingSelectCarBtn.addEventListener('click', (e) => showPricingIntroLevels('car', e.target));
+                if (elements.pricingSelectTruckBtn) elements.pricingSelectTruckBtn.addEventListener('click', (e) => showPricingIntroLevels('suv-truck', e.target));
+                if (elements.pricingSelectSuvBtn) elements.pricingSelectSuvBtn.addEventListener('click', (e) => showPricingIntroLevels('suv-truck', e.target));
 
-                // --- Back Buttons Event Listeners ---
-                if (elements.backToMainFromPricingVehicle) elements.backToMainFromPricingVehicle.addEventListener('click', showInitialScript);
-                if (elements.backToPricingVehicleTypeFromIntro) elements.backToPricingVehicleTypeFromIntro.addEventListener('click', showPricingVehicleTypeSelection);
-                if (elements.backToIntroLevelsFromPetHair) elements.backToIntroLevelsFromPetHair.addEventListener('click', () => showPricingIntroLevels(currentVehicleType));
-                if (elements.backToPetHairFromShampoo) elements.backToPetHairFromShampoo.addEventListener('click', showPricingShampooQuestion);
-                if (elements.backToShampooFromLevel2) elements.backToShampooFromLevel2.addEventListener('click', showPricingShampooQuestion);
-                if (elements.backToLevel2FromLevel1) elements.backToLevel2FromLevel1.addEventListener('click', showPricingLevel2Recommendation); 
+                if (elements.btnOkIntroLevels) elements.btnOkIntroLevels.addEventListener('click', showPricingPetHairQuestion);
                 
+                if (elements.btnPetHairYes) elements.btnPetHairYes.addEventListener('click', showPricingLevel2Recommendation);
+                if (elements.btnPetHairNo) elements.btnPetHairNo.addEventListener('click', showPricingShampooQuestion);
+
+                if (elements.btnShampooYes) elements.btnShampooYes.addEventListener('click', showPricingLevel2Recommendation);
+                if (elements.btnShampooNo) elements.btnShampooNo.addEventListener('click', () => showPricingLevel1Recommendation(false)); 
+
                 if (elements.btnLevel2Yes) elements.btnLevel2Yes.addEventListener('click', () => {
                     console.log('btnLevel2Yes clicked. Calling showBookingStepName with:', { recommendedPackageType, recommendedPackagePrice, currentVehicleType });
                     elements.pricingLevel2Recommendation.style.display = 'none';
@@ -1947,6 +1864,41 @@
                 });
 
 
+                // --- Scheduling Flow Logic (unchanged from previous version, but integrated) ---
+                if (elements.schedulingSelectCarBtn) elements.schedulingSelectCarBtn.addEventListener('click', (e) => {
+                    showSchedulingPackageSelection('car', e.target);
+                });
+                if (elements.schedulingSelectTruckBtn) elements.schedulingSelectTruckBtn.addEventListener('click', (e) => {
+                    showSchedulingPackageSelection('suv-truck', e.target);
+                });
+                if (elements.schedulingSelectSuvBtn) elements.schedulingSelectSuvBtn.addEventListener('click', (e) => {
+                    showSchedulingPackageSelection('suv-truck', e.target);
+                });
+
+                if (elements.schedulingSection) elements.schedulingSection.addEventListener('click', (e) => {
+                    if (e.target.closest('.select-package-btn')) {
+                        const button = e.target.closest('.select-package-btn');
+                        const packageType = button.dataset.packageType;
+                        const packagePrice = button.dataset.packagePrice;
+                        const vehicleType = button.dataset.vehicleType; 
+                        console.log('Scheduling select-package-btn clicked. Calling showBookingStepName with:', { packageType, packagePrice, vehicleType });
+                        showBookingStepName(packageType, packagePrice, vehicleType); 
+                    }
+                });
+
+                // Universal event listener for "See what's included" buttons
+                document.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('see-whats-included-btn')) {
+                        const targetId = e.target.dataset.target;
+                        const dropdown = document.getElementById(targetId);
+                        if (dropdown) {
+                            dropdown.classList.toggle('show');
+                            e.target.textContent = dropdown.classList.contains('show') ? 'Hide details' : "See what's included";
+                        }
+                    }
+                });
+
+
                 // Event listeners for "Next" buttons in booking steps
                 if (elements.btnNextName) elements.btnNextName.addEventListener('click', showBookingStepContact);
                 if (elements.btnNextContact) elements.btnNextContact.addEventListener('click', showBookingStepAddress);
@@ -1954,6 +1906,7 @@
                 if (elements.btnNextVehicle) elements.btnNextVehicle.addEventListener('click', showBookingStepDatetime);
                 
                 // Final form submission (from booking-step-datetime)
+                // This now collects data and transitions, but does NOT book yet.
                 if (elements.finalBookAppointmentBtn) {
                     elements.finalBookAppointmentBtn.addEventListener('click', (e) => {
                         e.preventDefault(); 
@@ -1977,7 +1930,7 @@
                 // NEW: Waiting for payment "Payment is Complete" button logic
                 if (elements.btnPaymentDoneManual) {
                     elements.btnPaymentDoneManual.addEventListener('click', () => {
-                        finalizeAppointmentBooking(); 
+                        finalizeAppointmentBooking(); // This is where the actual API call happens
                     });
                 }
 
@@ -1985,24 +1938,18 @@
                 if (elements.btnSendConfirmationText) {
                     elements.btnSendConfirmationText.addEventListener('click', () => {
                         const fullName = finalBookingPayload.full_name;
-                        const customerPhone = finalBookingPayload.phone ? finalBookingPayload.phone.replace(/\D/g, '') : '';
+                        const customerPhone = finalBookingPayload.phone.replace(/\D/g, '');
                         const bookingDate = finalBookingPayload.date;
                         const bookingTime = finalBookingPayload.time;
                         const vehicleMake = finalBookingPayload.vehicle_make;
                         const vehicleModel = finalBookingPayload.vehicle_model;
                         const vehicleDetails = `${vehicleMake} ${vehicleModel}`;
 
-                        if (!customerPhone) {
-                            console.error("Customer phone number is missing for final confirmation SMS link.");
-                            elements.scriptDisplay.innerHTML = `<p class="text-red-600">Cannot generate confirmation SMS link: Customer phone number missing.</p>`;
-                            return;
-                        }
-
                         const confirmationSMSMessage = scriptContent.confirmationSMS(formatFullDateDisplay(bookingDate), formatTimeDisplay(bookingTime), vehicleDetails);
-                        console.log("Opening SMS link for Confirmation:", `sms:+1${customerPhone}?body=${encodeURIComponent(confirmationSMSMessage)}`);
                         window.open(`sms:+1${customerPhone}?body=${encodeURIComponent(confirmationSMSMessage)}`, '_blank');
-                        elements.btnEndCall.style.display = 'block'; 
-                        elements.btnSendConfirmationText.style.display = 'none'; 
+                        // After sending, agent can end call
+                        elements.btnEndCall.style.display = 'block'; // Show end call button
+                        elements.btnSendConfirmationText.style.display = 'none'; // Hide send button
                         updateScript("Confirmation text sent! You can now end the call.");
                     });
                 }
@@ -2139,10 +2086,12 @@
 
             } catch (e) {
                 console.error("Error during application initialization:", e);
+                // Display a user-friendly error message on the page itself
                 const scriptDisplay = document.getElementById('script-display');
                 if (scriptDisplay) {
                     scriptDisplay.innerHTML = `<p class="text-red-600">An error occurred during startup. Please try refreshing the page. Error: ${e.message}</p>`;
                 }
+                // Also ensure initial buttons are hidden if app failed to start
                 const initialScriptSection = document.getElementById('initial-script-section');
                 if (initialScriptSection) {
                     initialScriptSection.style.display = 'none';
@@ -2151,6 +2100,8 @@
         }
 
         // The Google Maps script will call window.initBookingPage, which is now our main app initialization.
+        // No need for document.addEventListener('DOMContentLoaded', initializeApp); anymore.
+        // The script tag for Google Maps should be the last thing loaded in the body to ensure DOM is ready.
     </script>
 </body>
 </html>
