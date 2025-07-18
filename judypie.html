@@ -26,6 +26,21 @@
         .time-button:hover:not(:disabled) { background-color: #bfdbfe; border-color: #60a5fa; }
         .time-button.selected { background-color: #2563eb; color: white; border-color: #2563eb; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
         .time-button:disabled { background-color: #e2e8f0; color: #94a3b8; cursor: not-allowed; opacity: 0.7; }
+        
+        /* New styles from book.html for package cards */
+        .pricing-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+        @media (min-width: 1024px) { .pricing-grid { grid-template-columns: repeat(3, 1fr); } }
+        .pricing-card { background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 1rem; padding: 1.5rem; display: flex; flex-direction: column; box-shadow: 0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.1); height: 100%;}
+        .pricing-level { font-size: 1.25rem; font-weight: 700; color: #1e293b; margin-bottom: 0.5rem; }
+        .pricing-price { font-size: 2rem; font-weight: 800; color: #059669; margin-bottom: 1rem; }
+        .feature-list { list-style: none; padding: 0; text-align: left; flex-grow: 1; margin-bottom: 1.5rem; }
+        .feature-list li { position: relative; padding-left: 1.75rem; margin-bottom: 0.6rem; color: #475569; font-size: 0.9rem; }
+        .feature-list li::before { content: '✓'; color: #059669; position: absolute; left: 0; font-weight: bold; font-size: 1.1rem; }
+        .see-whats-included-btn { background-color: #eff6ff; color: #1e40af; font-weight: 500; padding: 0.5rem 1rem; border-radius: 0.5rem; width: 100%; margin-top: 0.5rem; margin-bottom: 1rem; transition: background-color 0.2s; cursor: pointer; text-align: center; border: none; }
+        .see-whats-included-btn:hover { background-color: #dbeafe; }
+        .feature-dropdown { display: none; overflow: hidden; }
+        .select-package-btn { width: 100%; margin-top: auto; }
+
     </style>
 </head>
 <body class="bg-gray-50">
@@ -79,11 +94,16 @@
             pricingLevel2Rec: (price) => `Based on your answers, I recommend our most popular option, the Level 2 Detail. It includes a full interior and exterior cleaning with shampoo for just $${price}. Does that sound good?`,
             pricingLevel1Rec: (price) => `Okay, in that case I'd recommend our Level 1 Detail. It's a thorough interior and exterior cleaning for just $${price}. Does that sound good?`,
             schedulingVehicleType: "Excellent! To schedule, what type of vehicle is it?",
+            packageSelection: "Please select a package for the customer.",
             bookingForm: "Perfect. Please provide the customer's details to find an appointment.",
-            otherCalls: "Okay, I'm ready to take notes. What is the call regarding?"
+        };
+        
+        const packageData = {
+            "Level 1 Detail": { prices: { car: 149, truck: 199, suv: 199 }, features: ["External high pressure wash", "Tire cleaner", "Window cleaning inside and out", "Deep vaccuming", "Display controls and panels wipedown", "Mirror cleaning", "Seat vaccum", "Surface protectent for the dash and display/controls", "Steering wheel and dash clean"] },
+            "Level 2 Detail": { prices: { car: 249, truck: 299, suv: 299 }, features: ["Everything in Level 1", "Shampoo carpets and seats", "Premium Leather treatment", "Door jam cleaning", "Rims and tires cleaned and wiped down", "Console scrub down", "Pet hair removal", "Odor removal"] },
+            "Level 3 Detail": { prices: { car: 349, truck: 399, suv: 399 }, features: ["Everything in Level 2", "FINE TOOTH COMB in between seats cleaning", "Glove compartment cleaning", "Trunk shampoo and vaccum", "Door controls cleaning", "Hard to reach areas deep level shampoo", "Meticulous cleaning of all frequently touched surfaces", "External bug removal", "Free microfiber cloth", "Protection plan (complimentary maintenance clean within 15 days)"] }
         };
 
-        const prices = { car: { 1: 149, 2: 249, 3: 349 }, suv_truck: { 1: 199, 2: 299, 3: 399 } };
         const updateScript = (text) => { elements.scriptDisplay.innerHTML = text; };
         const formatTime = (t) => { if (!t) return ''; const [h, m] = t.split(':'); return new Date(0,0,0,h,m).toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'}); };
         const formatDate = (d) => { if (!d) return ''; return new Date(d+'T12:00:00').toLocaleDateString('en-US', {weekday:'long',month:'long',day:'numeric',year:'numeric'}); };
@@ -112,63 +132,59 @@
             switch (view) {
                 case 'initial':
                     updateScript(scripts.initial);
-                    content = createButtonGroup([
-                        createButton('btn-scheduling', 'Schedule Appointment', 'btn-primary'),
-                        createButton('btn-pricing', 'Pricing Question', 'btn-secondary')
-                    ]);
+                    content = createButtonGroup([ createButton('btn-scheduling', 'Schedule Appointment', 'btn-primary'), createButton('btn-pricing', 'Pricing Question', 'btn-secondary') ]);
                     break;
                 
                 case 'pricingVehicleType':
                     updateScript(scripts.pricingVehicleType);
-                    content = createButtonGroup([
-                        createButton('btn-car', 'Car', 'btn-primary'),
-                        createButton('btn-suv', 'SUV / Truck', 'btn-primary'),
-                        createButton('btn-back-initial', 'Back', 'btn-secondary mt-4')
-                    ]);
+                    content = createButtonGroup([ createButton('btn-car', 'Car', 'btn-primary'), createButton('btn-truck', 'Truck', 'btn-primary'), createButton('btn-suv', 'SUV', 'btn-primary'), createButton('btn-back-initial', 'Back', 'btn-secondary mt-4') ]);
                     break;
 
                 case 'pricingIntro':
                     updateScript(scripts.pricingIntro);
-                    content = createButtonGroup([
-                        createButton('btn-ok', 'OK', 'btn-primary'),
-                        createButton('btn-back-pricing-vehicle', 'Back', 'btn-secondary mt-4')
-                    ]);
+                    content = createButtonGroup([ createButton('btn-ok', 'OK', 'btn-primary'), createButton('btn-back-pricing-vehicle', 'Back', 'btn-secondary mt-4') ]);
                     break;
                 
                 case 'pricingPetHair':
                     updateScript(scripts.pricingPetHair);
-                    content = createButtonGroup([
-                        createButton('btn-yes', 'Yes', 'btn-primary'),
-                        createButton('btn-no', 'No', 'btn-primary'),
-                        createButton('btn-back-pricing-intro', 'Back', 'btn-secondary mt-4')
-                    ]);
+                    content = createButtonGroup([ createButton('btn-yes', 'Yes', 'btn-primary'), createButton('btn-no', 'No', 'btn-primary'), createButton('btn-back-pricing-intro', 'Back', 'btn-secondary mt-4') ]);
                     break;
 
                 case 'pricingShampoo':
                     updateScript(scripts.pricingShampoo);
-                    content = createButtonGroup([
-                        createButton('btn-yes', 'Yes', 'btn-primary'),
-                        createButton('btn-no', 'No', 'btn-primary'),
-                        createButton('btn-back-pet-hair', 'Back', 'btn-secondary mt-4')
-                    ]);
+                    content = createButtonGroup([ createButton('btn-yes', 'Yes', 'btn-primary'), createButton('btn-no', 'No', 'btn-primary'), createButton('btn-back-pet-hair', 'Back', 'btn-secondary mt-4') ]);
                     break;
                 
                 case 'pricingRecommendation':
-                    const price = prices[state.vehicleSize][state.recLevel];
+                    const price = packageData[`Level ${state.recLevel} Detail`].prices[state.vehicleSize];
                     updateScript(state.recLevel === 2 ? scripts.pricingLevel2Rec(price) : scripts.pricingLevel1Rec(price));
-                    content = createButtonGroup([
-                        createButton('btn-schedule-it', 'Yes, Schedule It!', 'btn-success'),
-                        createButton('btn-no-thanks', 'No, Thanks', 'btn-secondary')
-                    ]);
+                    content = createButtonGroup([ createButton('btn-schedule-it', 'Yes, Schedule It!', 'btn-success'), createButton('btn-no-thanks', 'No, Thanks', 'btn-secondary') ]);
                     break;
 
                 case 'schedulingVehicleType':
                     updateScript(scripts.schedulingVehicleType);
-                    content = createButtonGroup([
-                        createButton('btn-car', 'Car', 'btn-primary'),
-                        createButton('btn-suv', 'SUV / Truck', 'btn-primary'),
-                        createButton('btn-back-initial', 'Back', 'btn-secondary mt-4')
-                    ]);
+                    content = createButtonGroup([ createButton('btn-car', 'Car', 'btn-primary'), createButton('btn-truck', 'Truck', 'btn-primary'), createButton('btn-suv', 'SUV', 'btn-primary'), createButton('btn-back-initial', 'Back', 'btn-secondary mt-4') ]);
+                    break;
+
+                case 'packageSelection':
+                    updateScript(scripts.packageSelection);
+                    let packageCards = '<div class="pricing-grid">';
+                    Object.entries(packageData).forEach(([name, data]) => {
+                        const price = data.prices[state.vehicleSize];
+                        const featureList = data.features.map(f => `<li>${f}</li>`).join('');
+                        packageCards += `
+                            <div class="pricing-card">
+                                <h4 class="pricing-level">${name}</h4>
+                                <p class="pricing-price">$${price}</p>
+                                <button class="see-whats-included-btn">See what's included</button>
+                                <div class="feature-dropdown">
+                                    <ul class="feature-list">${featureList}</ul>
+                                </div>
+                                <button class="select-package-btn btn btn-success" data-package-name="${name}" data-package-price="${price}">Select Package</button>
+                            </div>`;
+                    });
+                    packageCards += '</div>';
+                    content = `<div class="p-4">${packageCards}<br>${createButton('btn-back-sched-vehicle', 'Back', 'btn-secondary')}</div>`;
                     break;
 
                 case 'bookingForm':
@@ -188,15 +204,15 @@
                                 <div><label class="form-label">Veh. Model</label><input type="text" id="vehicle_model" class="form-input"></div>
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div><label class="form-label">Package</label><input type="text" id="package_type" class="form-input" value="${state.package_type || ''}"></div>
-                                <div><label class="form-label">Price ($)</label><input type="number" id="package_price" class="form-input" value="${state.package_price || ''}"></div>
+                                <div><label class="form-label">Package</label><input type="text" id="package_type" class="form-input bg-gray-100" value="${state.package_type || ''}" readonly></div>
+                                <div><label class="form-label">Price ($)</label><input type="number" id="package_price" class="form-input bg-gray-100" value="${state.package_price || ''}" readonly></div>
                             </div>
                             <div><label class="form-label">Date</label><input type="date" id="date" class="form-input"></div>
                             <div><label class="form-label">Time</label><div id="booking-time-buttons" class="grid grid-cols-3 gap-2"></div><input type="hidden" id="time"></div>
                             <div class="pt-4 border-t"><label class="flex items-center"><input type="checkbox" id="create_account" class="h-4 w-4 rounded mr-2">Create Account (Optional)</label></div>
                             <div id="password-field" class="hidden"><label class="form-label">Password</label><input type="password" id="password" class="form-input"></div>
                             <button id="submit-btn" class="btn btn-success w-full mt-4">Submit Appointment</button>
-                            <button id="back-to-vehicle" class="btn btn-secondary w-full mt-2">Back</button>
+                            <button id="back-to-packages" class="btn btn-secondary w-full mt-2">Back to Packages</button>
                         </div>`;
                     break;
             }
@@ -206,14 +222,18 @@
 
         const attachListeners = (view) => {
             const el = (id) => document.getElementById(id);
+            const handleVehicleClick = (size) => { state.vehicleSize = size; renderView('pricingIntro'); };
+            const handleSchedVehicleClick = (size) => { state.vehicleSize = size; state.vehicle_type = size.charAt(0).toUpperCase() + size.slice(1); renderView('packageSelection'); };
+
             switch (view) {
                 case 'initial':
                     el('btn-scheduling').addEventListener('click', () => renderView('schedulingVehicleType'));
                     el('btn-pricing').addEventListener('click', () => renderView('pricingVehicleType'));
                     break;
                 case 'pricingVehicleType':
-                    el('btn-car').addEventListener('click', () => { state.vehicleSize = 'car'; renderView('pricingIntro'); });
-                    el('btn-suv').addEventListener('click', () => { state.vehicleSize = 'suv_truck'; renderView('pricingIntro'); });
+                    el('btn-car').addEventListener('click', () => handleVehicleClick('car'));
+                    el('btn-truck').addEventListener('click', () => handleVehicleClick('truck'));
+                    el('btn-suv').addEventListener('click', () => handleVehicleClick('suv'));
                     el('btn-back-initial').addEventListener('click', () => renderView('initial'));
                     break;
                 case 'pricingIntro':
@@ -233,15 +253,33 @@
                 case 'pricingRecommendation':
                     el('btn-schedule-it').addEventListener('click', () => {
                         state.package_type = `Level ${state.recLevel} Detail`;
-                        state.package_price = prices[state.vehicleSize][state.recLevel];
+                        state.package_price = packageData[state.package_type].prices[state.vehicleSize];
+                        state.vehicle_type = state.vehicleSize.charAt(0).toUpperCase() + state.vehicleSize.slice(1);
                         renderView('bookingForm');
                     });
                     el('btn-no-thanks').addEventListener('click', () => renderView('initial'));
                     break;
                 case 'schedulingVehicleType':
-                    el('btn-car').addEventListener('click', () => { state.vehicle_type = 'Car'; renderView('bookingForm'); });
-                    el('btn-suv').addEventListener('click', () => { state.vehicle_type = 'SUV/Truck'; renderView('bookingForm'); });
+                    el('btn-car').addEventListener('click', () => handleSchedVehicleClick('car'));
+                    el('btn-truck').addEventListener('click', () => handleSchedVehicleClick('truck'));
+                    el('btn-suv').addEventListener('click', () => handleSchedVehicleClick('suv'));
                     el('btn-back-initial').addEventListener('click', () => renderView('initial'));
+                    break;
+                case 'packageSelection':
+                    elements.scriptContainer.querySelectorAll('.see-whats-included-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            const dropdown = e.target.nextElementSibling;
+                            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+                        });
+                    });
+                    elements.scriptContainer.querySelectorAll('.select-package-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            state.package_type = e.target.dataset.packageName;
+                            state.package_price = e.target.dataset.packagePrice;
+                            renderView('bookingForm');
+                        });
+                    });
+                    el('btn-back-sched-vehicle').addEventListener('click', () => renderView('schedulingVehicleType'));
                     break;
                 case 'bookingForm':
                     initGoogleAutocomplete();
@@ -255,7 +293,7 @@
                     });
                     el('create_account').addEventListener('change', (e) => { el('password-field').classList.toggle('hidden', !e.target.checked); });
                     el('submit-btn').addEventListener('click', submitAndPopulate);
-                    el('back-to-vehicle').addEventListener('click', () => renderView('schedulingVehicleType'));
+                    el('back-to-packages').addEventListener('click', () => renderView('packageSelection'));
                     break;
             }
         };
@@ -299,6 +337,7 @@
                 document.getElementById('form-booking-date').value = formatDate(payload.date);
                 document.getElementById('form-booking-time').value = formatTime(payload.time);
                 
+                state = {};
                 renderView('initial');
 
             } catch (error) {
