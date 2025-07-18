@@ -7,97 +7,22 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
-            color: #334155;
-        }
-        .pac-container { z-index: 1050 !important; } /* Google Places dropdown z-index */
-        /* General button styling */
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-        }
-        .btn-primary {
-            background-color: #3b82f6;
-            color: white;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-        .btn-primary:hover:not(:disabled) {
-            background-color: #2563eb;
-            transform: translateY(-2px);
-        }
-        .btn-secondary {
-            background-color: #e2e8f0;
-            color: #475569;
-            border: 1px solid #cbd5e1;
-        }
-        .btn-secondary:hover:not(:disabled) {
-            background-color: #cbd5e1;
-        }
-        .btn-success {
-            background-color: #22c55e;
-            color: white;
-        }
-        .btn-success:hover:not(:disabled) {
-            background-color: #16a34a;
-            transform: translateY(-2px);
-        }
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        /* Form & Layout Styling */
-        .card {
-            background-color: #ffffff;
-            border-radius: 1rem;
-            padding: 1.5rem;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
-        }
-        .form-input, .form-select {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid #cbd5e1;
-            border-radius: 0.5rem;
-            background-color: #ffffff;
-            font-size: 1rem;
-            color: #334155;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-        .form-input:focus, .form-select:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-        }
-        .form-label {
-            display: block;
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-            color: #475569;
-        }
-        .script-display {
-            background-color: #e0f2fe;
-            border: 2px solid #90cdf4;
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            font-size: 1.125rem;
-            font-weight: 500;
-            color: #1e40af;
-            text-align: center;
-        }
-        .time-button {
-            padding: 0.75rem 1rem; border-radius: 0.75rem; border: 2px solid #cbd5e1; font-weight: 500; cursor: pointer; transition: all 0.2s ease; background-color: #e0f2fe; color: #1e40af; text-align: center;
-        }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #334155; }
+        .pac-container { z-index: 1050 !important; }
+        .btn { padding: 0.75rem 1.5rem; border-radius: 0.75rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; border: none; display: inline-flex; align-items: center; justify-content: center; text-align: center; }
+        .btn-primary { background-color: #3b82f6; color: white; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+        .btn-primary:hover:not(:disabled) { background-color: #2563eb; transform: translateY(-2px); }
+        .btn-secondary { background-color: #e2e8f0; color: #475569; border: 1px solid #cbd5e1; }
+        .btn-secondary:hover:not(:disabled) { background-color: #cbd5e1; }
+        .btn-success { background-color: #22c55e; color: white; }
+        .btn-success:hover:not(:disabled) { background-color: #16a34a; transform: translateY(-2px); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .card { background-color: #ffffff; border-radius: 1rem; padding: 1.5rem; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05); }
+        .form-input, .form-select { width: 100%; padding: 0.75rem 1rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; background-color: #ffffff; font-size: 1rem; color: #334155; transition: border-color 0.2s, box-shadow 0.2s; }
+        .form-input:focus, .form-select:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
+        .form-label { display: block; font-weight: 500; margin-bottom: 0.5rem; color: #475569; }
+        .script-display { background-color: #e0f2fe; border: 2px solid #90cdf4; border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1.5rem; font-size: 1.125rem; font-weight: 500; color: #1e40af; text-align: center; min-height: 100px;}
+        .time-button { padding: 0.75rem 1rem; border-radius: 0.75rem; border: 2px solid #cbd5e1; font-weight: 500; cursor: pointer; transition: all 0.2s ease; background-color: #e0f2fe; color: #1e40af; text-align: center; }
         .time-button:hover:not(:disabled) { background-color: #bfdbfe; border-color: #60a5fa; }
         .time-button.selected { background-color: #2563eb; color: white; border-color: #2563eb; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
         .time-button:disabled { background-color: #e2e8f0; color: #94a3b8; cursor: not-allowed; opacity: 0.7; }
@@ -108,21 +33,14 @@
     <div class="container mx-auto p-4 sm:p-6 lg:p-8">
         <header class="text-center mb-10">
             <img src="https://michieauto.com/logo.jpeg" alt="Michie Auto Detailing Logo" class="mx-auto mb-4 w-64 h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/256x100/e2e8f0/334155?text=Michie+Auto';">
-            <h1 class="text-4xl font-bold text-gray-800 mb-2">Michie Auto Detailing - Call Center Tool</h1>
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">Michie Auto Detailing Call Center</h1>
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 lg:gap-8">
             <!-- Left Column: Interactive Script -->
             <div class="flex flex-col space-y-4">
                 <div class="script-display" id="script-display"></div>
-
-                <div id="script-container" class="card">
-                    <!-- All script sections will be toggled here -->
-                </div>
-
-                <button id="fill-form-btn" class="btn btn-success w-full hidden">
-                    Fill Form
-                </button>
+                <div id="script-container" class="card"></div>
             </div>
 
             <!-- Right Column: Static Form -->
@@ -130,301 +48,277 @@
                 <div class="card sticky top-8">
                     <h2 class="text-2xl font-bold text-gray-700 mb-6 border-b pb-4">Booking Summary</h2>
                     <form id="static-booking-form" class="space-y-4">
-                        <!-- Customer Info -->
-                        <div>
-                            <label for="form-full-name" class="form-label">Full Name</label>
-                            <input type="text" id="form-full-name" class="form-input bg-gray-100" readonly>
+                        <div><label for="form-full-name" class="form-label">Full Name</label><input type="text" id="form-full-name" class="form-input bg-gray-100" readonly></div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div><label for="form-email" class="form-label">Email Address</label><input type="email" id="form-email" class="form-input bg-gray-100" readonly></div>
+                            <div><label for="form-phone" class="form-label">Phone Number</label><input type="tel" id="form-phone" class="form-input bg-gray-100" readonly></div>
                         </div>
-                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label for="form-email" class="form-label">Email Address</label>
-                                <input type="email" id="form-email" class="form-input bg-gray-100" readonly>
-                            </div>
-                            <div>
-                                <label for="form-phone" class="form-label">Phone Number</label>
-                                <input type="tel" id="form-phone" class="form-input bg-gray-100" readonly>
-                            </div>
-                        </div>
-                        <div>
-                            <label for="form-address" class="form-label">Service Address</label>
-                            <input type="text" id="form-address" class="form-input bg-gray-100" readonly>
-                        </div>
-                        
-                        <!-- Vehicle Info -->
-                        <div class="pt-4 border-t">
-                             <h3 class="text-lg font-semibold text-gray-600 mb-2">Vehicle Details</h3>
-                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div>
-                                    <label for="form-vehicle-type" class="form-label">Type</label>
-                                    <input type="text" id="form-vehicle-type" class="form-input bg-gray-100" readonly>
-                                </div>
-                                <div>
-                                    <label for="form-vehicle-year" class="form-label">Year</label>
-                                    <input type="text" id="form-vehicle-year" class="form-input bg-gray-100" readonly>
-                                </div>
-                                 <div>
-                                    <label for="form-vehicle-make" class="form-label">Make</label>
-                                    <input type="text" id="form-vehicle-make" class="form-input bg-gray-100" readonly>
-                                </div>
-                                <div class="col-span-1 md:col-span-3">
-                                    <label for="form-vehicle-model" class="form-label">Model</label>
-                                    <input type="text" id="form-vehicle-model" class="form-input bg-gray-100" readonly>
-                                </div>
-                             </div>
-                        </div>
-
-                        <!-- Appointment Info -->
-                        <div class="pt-4 border-t">
-                            <h3 class="text-lg font-semibold text-gray-600 mb-2">Appointment Details</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label for="form-package-type" class="form-label">Package</label>
-                                    <input type="text" id="form-package-type" class="form-input bg-gray-100" readonly>
-                                </div>
-                                <div>
-                                    <label for="form-package-price" class="form-label">Price</label>
-                                    <input type="text" id="form-package-price" class="form-input bg-gray-100" readonly>
-                                </div>
-                                <div>
-                                    <label for="form-booking-date" class="form-label">Date</label>
-                                    <input type="text" id="form-booking-date" class="form-input bg-gray-100" readonly>
-                                </div>
-                                <div>
-                                    <label for="form-booking-time" class="form-label">Time</label>
-                                    <input type="text" id="form-booking-time" class="form-input bg-gray-100" readonly>
-                                </div>
-                            </div>
-                        </div>
+                        <div><label for="form-address" class="form-label">Service Address</label><input type="text" id="form-address" class="form-input bg-gray-100" readonly></div>
+                        <div class="pt-4 border-t"><h3 class="text-lg font-semibold text-gray-600 mb-2">Vehicle Details</h3><div class="grid grid-cols-1 md:grid-cols-3 gap-4"><div><label for="form-vehicle-type" class="form-label">Type</label><input type="text" id="form-vehicle-type" class="form-input bg-gray-100" readonly></div><div><label for="form-vehicle-year" class="form-label">Year</label><input type="text" id="form-vehicle-year" class="form-input bg-gray-100" readonly></div><div><label for="form-vehicle-make" class="form-label">Make</label><input type="text" id="form-vehicle-make" class="form-input bg-gray-100" readonly></div><div class="col-span-1 md:col-span-3"><label for="form-vehicle-model" class="form-label">Model</label><input type="text" id="form-vehicle-model" class="form-input bg-gray-100" readonly></div></div></div>
+                        <div class="pt-4 border-t"><h3 class="text-lg font-semibold text-gray-600 mb-2">Appointment Details</h3><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label for="form-package-type" class="form-label">Package</label><input type="text" id="form-package-type" class="form-input bg-gray-100" readonly></div><div><label for="form-package-price" class="form-label">Price</label><input type="text" id="form-package-price" class="form-input bg-gray-100" readonly></div><div><label for="form-booking-date" class="form-label">Date</label><input type="text" id="form-booking-date" class="form-input bg-gray-100" readonly></div><div><label for="form-booking-time" class="form-label">Time</label><input type="text" id="form-booking-time" class="form-input bg-gray-100" readonly></div></div></div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- The Google Places API script is now included. -->
-    <!-- IMPORTANT: Replace "YOUR_API_KEY_HERE" with your actual Google Cloud API Key. -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk&libraries=places&callback=initApp" async defer></script>
 
     <script>
-    // This function will be called by the Google Maps script once it's loaded.
     function initApp() {
-        console.log("Google Maps API loaded or app is initializing.");
-        
-        // --- DOM Elements ---
-        const elements = {
-            scriptDisplay: document.getElementById('script-display'),
-            scriptContainer: document.getElementById('script-container'),
-            fillFormBtn: document.getElementById('fill-form-btn'),
-        };
+        const API_URL = 'https://michie-detailing-admin.onrender.com/public/appointment';
+        const elements = { scriptDisplay: document.getElementById('script-display'), scriptContainer: document.getElementById('script-container') };
+        let state = {};
 
-        // --- State Management ---
-        let bookingPayload = {};
-
-        // --- Scripts and Content ---
         const scripts = {
-            initial: "Thank you for calling Michie Auto Detail, how can I help you today?",
-            schedulingVehicleType: "Excellent! To schedule your appointment, what type of vehicle is it?",
+            initial: "Thank you for calling Michie Auto Detailing. Are you calling about pricing or to schedule an appointment?",
+            pricingVehicleType: "I can certainly help with pricing. What type of vehicle is it?",
+            pricingIntro: "We have 3 levels of service. I'll ask a couple of questions to see which is right for you, sound good?",
+            pricingPetHair: "Do you have any pet hair in your vehicle?",
+            pricingShampoo: "Would you like your seats and carpets shampooed?",
+            pricingLevel2Rec: (price) => `Based on your answers, I recommend our most popular option, the Level 2 Detail. It includes a full interior and exterior cleaning with shampoo for just $${price}. Does that sound good?`,
+            pricingLevel1Rec: (price) => `Okay, in that case I'd recommend our Level 1 Detail. It's a thorough interior and exterior cleaning for just $${price}. Does that sound good?`,
+            schedulingVehicleType: "Excellent! To schedule, what type of vehicle is it?",
             bookingForm: "Perfect. Please provide the customer's details to find an appointment.",
-            dataCollected: "Data collected. Please review and click 'Fill Form' to see the summary.",
             otherCalls: "Okay, I'm ready to take notes. What is the call regarding?"
         };
 
-        // --- Helper Functions ---
-        const updateScript = (text) => {
-            elements.scriptDisplay.textContent = text;
-        };
-
-        const clearForm = () => {
-            document.getElementById('static-booking-form').reset();
-        };
-
-        const formatTimeDisplay = (time24hr) => {
-            if (!time24hr) return '';
-            const [hours, minutes] = time24hr.split(':').map(Number);
-            const date = new Date();
-            date.setHours(hours, minutes);
-            return date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
-        };
-
-        const formatFullDateDisplay = (dateStr) => {
-            if (!dateStr) return '';
-            const date = new Date(dateStr + 'T12:00:00'); // Use noon to avoid timezone issues
-            return date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
-        };
+        const prices = { car: { 1: 149, 2: 249, 3: 349 }, suv_truck: { 1: 199, 2: 299, 3: 399 } };
+        const updateScript = (text) => { elements.scriptDisplay.innerHTML = text; };
+        const formatTime = (t) => { if (!t) return ''; const [h, m] = t.split(':'); return new Date(0,0,0,h,m).toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'}); };
+        const formatDate = (d) => { if (!d) return ''; return new Date(d+'T12:00:00').toLocaleDateString('en-US', {weekday:'long',month:'long',day:'numeric',year:'numeric'}); };
         
         const initGoogleAutocomplete = () => {
             const addressInput = document.getElementById('address');
-            if (addressInput && window.google && window.google.maps && window.google.maps.places) {
-                console.log("Initializing Google Places Autocomplete.");
-                const autocomplete = new google.maps.places.Autocomplete(addressInput, {
-                    componentRestrictions: { country: "us" },
-                    fields: ["formatted_address"],
-                    types: ["address"],
-                });
+            if (addressInput && window.google?.maps?.places) {
+                const autocomplete = new google.maps.places.Autocomplete(addressInput, { componentRestrictions: { country: "us" }, fields: ["address_components", "formatted_address"], types: ["address"] });
                 autocomplete.addListener('place_changed', () => {
                     const place = autocomplete.getPlace();
-                    if (place.formatted_address) {
-                        addressInput.value = place.formatted_address;
-                    }
+                    if (place.formatted_address) addressInput.value = place.formatted_address;
+                    const zip = place.address_components?.find(c => c.types.includes('postal_code'))?.long_name || '';
+                    const zipInput = document.getElementById('zip_code');
+                    if (zipInput) zipInput.value = zip;
                 });
-            } else {
-                console.warn("Google Places Autocomplete could not be initialized. API might not be loaded or input not found.");
             }
         };
 
-        // --- Core Application Flow ---
-
         const renderView = (view) => {
             elements.scriptContainer.innerHTML = '';
-            elements.fillFormBtn.classList.add('hidden');
+            let content = '';
+
+            const createButton = (id, text, style, wFull = true) => `<button id="${id}" class="btn ${style} ${wFull ? 'w-full' : ''}">${text}</button>`;
+            const createButtonGroup = (buttons) => `<div class="space-y-4 p-4">${buttons.join('')}</div>`;
 
             switch (view) {
                 case 'initial':
                     updateScript(scripts.initial);
-                    elements.scriptContainer.innerHTML = `
-                        <div class="text-center space-y-4 p-4">
-                            <button id="btn-scheduling" class="btn btn-primary w-full">Schedule Appointment</button>
-                            <button id="btn-pricing" class="btn btn-secondary w-full">Pricing Question</button>
-                            <button id="btn-other" class="btn btn-secondary w-full">Other Inquiry</button>
-                        </div>`;
-                    document.getElementById('btn-scheduling').addEventListener('click', () => renderView('schedulingVehicleType'));
-                    document.getElementById('btn-pricing').addEventListener('click', () => alert('Pricing flow would start here.'));
-                    document.getElementById('btn-other').addEventListener('click', () => renderView('otherCalls'));
+                    content = createButtonGroup([
+                        createButton('btn-scheduling', 'Schedule Appointment', 'btn-primary'),
+                        createButton('btn-pricing', 'Pricing Question', 'btn-secondary')
+                    ]);
+                    break;
+                
+                case 'pricingVehicleType':
+                    updateScript(scripts.pricingVehicleType);
+                    content = createButtonGroup([
+                        createButton('btn-car', 'Car', 'btn-primary'),
+                        createButton('btn-suv', 'SUV / Truck', 'btn-primary'),
+                        createButton('btn-back-initial', 'Back', 'btn-secondary mt-4')
+                    ]);
+                    break;
+
+                case 'pricingIntro':
+                    updateScript(scripts.pricingIntro);
+                    content = createButtonGroup([
+                        createButton('btn-ok', 'OK', 'btn-primary'),
+                        createButton('btn-back-pricing-vehicle', 'Back', 'btn-secondary mt-4')
+                    ]);
+                    break;
+                
+                case 'pricingPetHair':
+                    updateScript(scripts.pricingPetHair);
+                    content = createButtonGroup([
+                        createButton('btn-yes', 'Yes', 'btn-primary'),
+                        createButton('btn-no', 'No', 'btn-primary'),
+                        createButton('btn-back-pricing-intro', 'Back', 'btn-secondary mt-4')
+                    ]);
+                    break;
+
+                case 'pricingShampoo':
+                    updateScript(scripts.pricingShampoo);
+                    content = createButtonGroup([
+                        createButton('btn-yes', 'Yes', 'btn-primary'),
+                        createButton('btn-no', 'No', 'btn-primary'),
+                        createButton('btn-back-pet-hair', 'Back', 'btn-secondary mt-4')
+                    ]);
+                    break;
+                
+                case 'pricingRecommendation':
+                    const price = prices[state.vehicleSize][state.recLevel];
+                    updateScript(state.recLevel === 2 ? scripts.pricingLevel2Rec(price) : scripts.pricingLevel1Rec(price));
+                    content = createButtonGroup([
+                        createButton('btn-schedule-it', 'Yes, Schedule It!', 'btn-success'),
+                        createButton('btn-no-thanks', 'No, Thanks', 'btn-secondary')
+                    ]);
                     break;
 
                 case 'schedulingVehicleType':
                     updateScript(scripts.schedulingVehicleType);
-                    elements.scriptContainer.innerHTML = `
-                        <div class="text-center space-y-4 p-4">
-                            <button class="btn btn-primary w-full" data-type="Car">Car</button>
-                            <button class="btn btn-primary w-full" data-type="Truck">Truck</button>
-                            <button class="btn btn-primary w-full" data-type="SUV">SUV</button>
-                            <button id="back-to-main" class="btn btn-secondary w-full mt-4">Back</button>
-                        </div>`;
-                    elements.scriptContainer.querySelectorAll('[data-type]').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            bookingPayload.vehicle_type = e.target.dataset.type;
-                            renderView('bookingForm');
-                        });
-                    });
-                    document.getElementById('back-to-main').addEventListener('click', () => renderView('initial'));
+                    content = createButtonGroup([
+                        createButton('btn-car', 'Car', 'btn-primary'),
+                        createButton('btn-suv', 'SUV / Truck', 'btn-primary'),
+                        createButton('btn-back-initial', 'Back', 'btn-secondary mt-4')
+                    ]);
                     break;
 
                 case 'bookingForm':
                     updateScript(scripts.bookingForm);
-                    elements.scriptContainer.innerHTML = `
+                    content = `
                         <div class="space-y-4 p-4">
-                            <div><label class="form-label">Full Name</label><input type="text" id="full-name" class="form-input"></div>
-                            <div><label class="form-label">Email</label><input type="email" id="email" class="form-input"></div>
-                            <div><label class="form-label">Phone</label><input type="tel" id="phone" class="form-input"></div>
-                            <div><label class="form-label">Address</label><input type="text" id="address" class="form-input"></div>
-                            <div><label class="form-label">Vehicle Year</label><input type="text" id="vehicle-year" class="form-input"></div>
-                            <div><label class="form-label">Vehicle Make</label><input type="text" id="vehicle-make" class="form-input"></div>
-                            <div><label class="form-label">Vehicle Model</label><input type="text" id="vehicle-model" class="form-input"></div>
-                            <div><label class="form-label">Package</label><input type="text" id="package-type" class="form-input" placeholder="e.g., Level 2 Detail"></div>
-                            <div><label class="form-label">Price ($)</label><input type="number" id="package-price" class="form-input" placeholder="e.g., 299"></div>
-                            <div><label class="form-label">Date</label><input type="date" id="booking-date" class="form-input"></div>
-                            <div>
-                                <label class="form-label">Time</label>
-                                <div id="booking-time-buttons" class="grid grid-cols-3 gap-2"></div>
-                                <input type="hidden" id="selected-booking-time">
+                            <div><label class="form-label">Full Name</label><input type="text" id="full_name" class="form-input"></div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div><label class="form-label">Email</label><input type="email" id="email" class="form-input"></div>
+                                <div><label class="form-label">Phone</label><input type="tel" id="phone" class="form-input"></div>
                             </div>
-                            <button id="collect-data-btn" class="btn btn-primary w-full mt-4">Collect Data</button>
+                            <div><label class="form-label">Address</label><input type="text" id="address" class="form-input"></div>
+                            <div><label class="form-label">Zip Code</label><input type="text" id="zip_code" class="form-input"></div>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div><label class="form-label">Veh. Year</label><input type="text" id="vehicle_year" class="form-input"></div>
+                                <div><label class="form-label">Veh. Make</label><input type="text" id="vehicle_make" class="form-input"></div>
+                                <div><label class="form-label">Veh. Model</label><input type="text" id="vehicle_model" class="form-input"></div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div><label class="form-label">Package</label><input type="text" id="package_type" class="form-input" value="${state.package_type || ''}"></div>
+                                <div><label class="form-label">Price ($)</label><input type="number" id="package_price" class="form-input" value="${state.package_price || ''}"></div>
+                            </div>
+                            <div><label class="form-label">Date</label><input type="date" id="date" class="form-input"></div>
+                            <div><label class="form-label">Time</label><div id="booking-time-buttons" class="grid grid-cols-3 gap-2"></div><input type="hidden" id="time"></div>
+                            <div class="pt-4 border-t"><label class="flex items-center"><input type="checkbox" id="create_account" class="h-4 w-4 rounded mr-2">Create Account (Optional)</label></div>
+                            <div id="password-field" class="hidden"><label class="form-label">Password</label><input type="password" id="password" class="form-input"></div>
+                            <button id="submit-btn" class="btn btn-success w-full mt-4">Submit Appointment</button>
                             <button id="back-to-vehicle" class="btn btn-secondary w-full mt-2">Back</button>
                         </div>`;
-                    
-                    initGoogleAutocomplete(); // Attempt to initialize autocomplete here
+                    break;
+            }
+            elements.scriptContainer.innerHTML = content;
+            attachListeners(view);
+        };
 
-                    document.getElementById('booking-date').min = new Date().toISOString().split("T")[0];
-                    
-                    const timeContainer = document.getElementById('booking-time-buttons');
-                    const timeInput = document.getElementById('selected-booking-time');
-                    const availableTimes = ['09:00', '11:00', '12:00', '14:00', '16:00', '17:00', '18:00'];
-                    availableTimes.forEach(time => {
-                        const button = document.createElement('button');
-                        button.type = 'button';
-                        button.className = 'time-button';
-                        button.textContent = formatTimeDisplay(time);
-                        button.dataset.time = time;
-                        button.addEventListener('click', () => {
-                            timeContainer.querySelector('.selected')?.classList.remove('selected');
-                            button.classList.add('selected');
-                            timeInput.value = time;
-                        });
-                        timeContainer.appendChild(button);
+        const attachListeners = (view) => {
+            const el = (id) => document.getElementById(id);
+            switch (view) {
+                case 'initial':
+                    el('btn-scheduling').addEventListener('click', () => renderView('schedulingVehicleType'));
+                    el('btn-pricing').addEventListener('click', () => renderView('pricingVehicleType'));
+                    break;
+                case 'pricingVehicleType':
+                    el('btn-car').addEventListener('click', () => { state.vehicleSize = 'car'; renderView('pricingIntro'); });
+                    el('btn-suv').addEventListener('click', () => { state.vehicleSize = 'suv_truck'; renderView('pricingIntro'); });
+                    el('btn-back-initial').addEventListener('click', () => renderView('initial'));
+                    break;
+                case 'pricingIntro':
+                    el('btn-ok').addEventListener('click', () => renderView('pricingPetHair'));
+                    el('btn-back-pricing-vehicle').addEventListener('click', () => renderView('pricingVehicleType'));
+                    break;
+                case 'pricingPetHair':
+                    el('btn-yes').addEventListener('click', () => { state.recLevel = 2; renderView('pricingRecommendation'); });
+                    el('btn-no').addEventListener('click', () => renderView('pricingShampoo'));
+                    el('btn-back-pricing-intro').addEventListener('click', () => renderView('pricingIntro'));
+                    break;
+                case 'pricingShampoo':
+                    el('btn-yes').addEventListener('click', () => { state.recLevel = 2; renderView('pricingRecommendation'); });
+                    el('btn-no').addEventListener('click', () => { state.recLevel = 1; renderView('pricingRecommendation'); });
+                    el('btn-back-pet-hair').addEventListener('click', () => renderView('pricingPetHair'));
+                    break;
+                case 'pricingRecommendation':
+                    el('btn-schedule-it').addEventListener('click', () => {
+                        state.package_type = `Level ${state.recLevel} Detail`;
+                        state.package_price = prices[state.vehicleSize][state.recLevel];
+                        renderView('bookingForm');
                     });
-
-                    document.getElementById('collect-data-btn').addEventListener('click', collectData);
-                    document.getElementById('back-to-vehicle').addEventListener('click', () => renderView('schedulingVehicleType'));
+                    el('btn-no-thanks').addEventListener('click', () => renderView('initial'));
                     break;
-
-                case 'otherCalls':
-                    updateScript(scripts.otherCalls);
-                    elements.scriptContainer.innerHTML = `
-                        <div class="p-4 space-y-4">
-                           <textarea id="other-calls-notes" rows="10" placeholder="Enter notes for this call here..." class="w-full form-input"></textarea>
-                           <button id="back-to-main" class="btn btn-secondary w-full mt-2">Back</button>
-                        </div>
-                    `;
-                    document.getElementById('back-to-main').addEventListener('click', () => renderView('initial'));
+                case 'schedulingVehicleType':
+                    el('btn-car').addEventListener('click', () => { state.vehicle_type = 'Car'; renderView('bookingForm'); });
+                    el('btn-suv').addEventListener('click', () => { state.vehicle_type = 'SUV/Truck'; renderView('bookingForm'); });
+                    el('btn-back-initial').addEventListener('click', () => renderView('initial'));
+                    break;
+                case 'bookingForm':
+                    initGoogleAutocomplete();
+                    el('date').min = new Date().toISOString().split("T")[0];
+                    const timeContainer = el('booking-time-buttons'), timeInput = el('time');
+                    ['09:00', '11:00', '12:00', '14:00', '16:00', '17:00', '18:00'].forEach(t => {
+                        const btn = document.createElement('button');
+                        btn.type = 'button'; btn.className = 'time-button'; btn.textContent = formatTime(t); btn.dataset.time = t;
+                        btn.addEventListener('click', () => { timeContainer.querySelector('.selected')?.classList.remove('selected'); btn.classList.add('selected'); timeInput.value = t; });
+                        timeContainer.appendChild(btn);
+                    });
+                    el('create_account').addEventListener('change', (e) => { el('password-field').classList.toggle('hidden', !e.target.checked); });
+                    el('submit-btn').addEventListener('click', submitAndPopulate);
+                    el('back-to-vehicle').addEventListener('click', () => renderView('schedulingVehicleType'));
                     break;
             }
         };
 
-        const collectData = () => {
-            bookingPayload.full_name = document.getElementById('full-name')?.value;
-            bookingPayload.email = document.getElementById('email')?.value;
-            bookingPayload.phone = document.getElementById('phone')?.value;
-            bookingPayload.address = document.getElementById('address')?.value;
-            bookingPayload.vehicle_year = document.getElementById('vehicle-year')?.value;
-            bookingPayload.vehicle_make = document.getElementById('vehicle-make')?.value;
-            bookingPayload.vehicle_model = document.getElementById('vehicle-model')?.value;
-            bookingPayload.package_type = document.getElementById('package-type')?.value;
-            bookingPayload.package_price = document.getElementById('package-price')?.value;
-            bookingPayload.date = document.getElementById('booking-date')?.value;
-            bookingPayload.time = document.getElementById('selected-booking-time')?.value;
+        const submitAndPopulate = async () => {
+            const getVal = (id) => document.getElementById(id)?.value;
+            const payload = {
+                full_name: getVal('full_name'), email: getVal('email'), phone: getVal('phone'),
+                address: getVal('address'), zip_code: getVal('zip_code'),
+                vehicle_year: getVal('vehicle_year'), vehicle_make: getVal('vehicle_make'), vehicle_model: getVal('vehicle_model'),
+                package_type: getVal('package_type'), package_price: getVal('package_price'),
+                date: getVal('date'), time: getVal('time'),
+                create_account: document.getElementById('create_account').checked,
+                password: getVal('password'),
+                vehicle_type: state.vehicle_type 
+            };
+            payload.deal_name = `${payload.package_type || 'Detail'} - ${payload.vehicle_make || ''} ${payload.vehicle_model || ''}`;
 
-            if (!bookingPayload.full_name || !bookingPayload.date || !bookingPayload.time) {
-                alert("Please fill out at least the Name, Date, and Time.");
-                return;
+            if (!payload.full_name || !payload.date || !payload.time) return alert("Name, Date, and Time are required.");
+
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.disabled = true; submitBtn.textContent = 'Submitting...';
+
+            try {
+                const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.message || `Server error: ${response.status}`);
+                
+                alert('Appointment submitted successfully!');
+                
+                document.getElementById('form-full-name').value = payload.full_name;
+                document.getElementById('form-email').value = payload.email;
+                document.getElementById('form-phone').value = payload.phone;
+                document.getElementById('form-address').value = payload.address;
+                document.getElementById('form-vehicle-type').value = payload.vehicle_type;
+                document.getElementById('form-vehicle-year').value = payload.vehicle_year;
+                document.getElementById('form-vehicle-make').value = payload.vehicle_make;
+                document.getElementById('form-vehicle-model').value = payload.vehicle_model;
+                document.getElementById('form-package-type').value = payload.package_type;
+                document.getElementById('form-package-price').value = payload.package_price ? `$${payload.package_price}` : '';
+                document.getElementById('form-booking-date').value = formatDate(payload.date);
+                document.getElementById('form-booking-time').value = formatTime(payload.time);
+                
+                renderView('initial');
+
+            } catch (error) {
+                console.error('Submission Error:', error);
+                alert(`Failed to submit appointment: ${error.message}`);
+            } finally {
+                submitBtn.disabled = false; submitBtn.textContent = 'Submit Appointment';
             }
-
-            updateScript(scripts.dataCollected);
-            elements.fillFormBtn.classList.remove('hidden');
         };
 
-        const populateSummaryForm = () => {
-            document.getElementById('form-full-name').value = bookingPayload.full_name || '';
-            document.getElementById('form-email').value = bookingPayload.email || '';
-            document.getElementById('form-phone').value = bookingPayload.phone || '';
-            document.getElementById('form-address').value = bookingPayload.address || '';
-            document.getElementById('form-vehicle-type').value = bookingPayload.vehicle_type || '';
-            document.getElementById('form-vehicle-year').value = bookingPayload.vehicle_year || '';
-            document.getElementById('form-vehicle-make').value = bookingPayload.vehicle_make || '';
-            document.getElementById('form-vehicle-model').value = bookingPayload.vehicle_model || '';
-            document.getElementById('form-package-type').value = bookingPayload.package_type || '';
-            document.getElementById('form-package-price').value = bookingPayload.package_price ? `$${bookingPayload.package_price}` : '';
-            document.getElementById('form-booking-date').value = formatFullDateDisplay(bookingPayload.date);
-            document.getElementById('form-booking-time').value = formatTimeDisplay(bookingPayload.time);
-        };
-
-        // --- Initialization ---
-        elements.fillFormBtn.addEventListener('click', populateSummaryForm);
-        
-        bookingPayload = {};
-        clearForm();
+        state = {};
         renderView('initial');
     }
 
-    // This handles the case where the Google Maps script fails to load (e.g., network error, ad blocker)
-    // We still want the app to run.
     document.addEventListener('DOMContentLoaded', () => {
         if (!window.google) {
-            console.warn("Google Maps script not loaded yet or failed to load. Initializing app without it.");
+            console.warn("Google Maps script not loaded. Initializing app without it.");
             initApp();
         }
     });
-
     </script>
 </body>
 </html>
