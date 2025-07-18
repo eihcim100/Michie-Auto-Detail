@@ -27,7 +27,6 @@
         .time-button.selected { background-color: #2563eb; color: white; border-color: #2563eb; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
         .time-button:disabled { background-color: #e2e8f0; color: #94a3b8; cursor: not-allowed; opacity: 0.7; }
         
-        /* New styles from book.html for package cards */
         .pricing-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
         @media (min-width: 1024px) { .pricing-grid { grid-template-columns: repeat(3, 1fr); } }
         .pricing-card { background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 1rem; padding: 1.5rem; display: flex; flex-direction: column; box-shadow: 0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.1); height: 100%;}
@@ -96,6 +95,8 @@
             schedulingVehicleType: "Excellent! To schedule, what type of vehicle is it?",
             packageSelection: "Please select a package for the customer.",
             bookingForm: "Perfect. Please provide the customer's details to find an appointment.",
+            paymentOptions: "Your appointment is almost confirmed! We have two payment options. You can pay a $50 deposit now and the remainder after the service is complete, or you can choose to pay in full, which do you prefer?",
+            sendSMSPrompt: "Ok great! I'll send you a secure text to collect your payment. Please click the button below to open your SMS app."
         };
         
         const packageData = {
@@ -177,7 +178,7 @@
                                 <h4 class="pricing-level">${name}</h4>
                                 <p class="pricing-price">$${price}</p>
                                 <button class="see-whats-included-btn">See what's included</button>
-                                <div class="feature-dropdown">
+                                <div class="feature-dropdown" style="display: none;">
                                     <ul class="feature-list">${featureList}</ul>
                                 </div>
                                 <button class="select-package-btn btn btn-success" data-package-name="${name}" data-package-price="${price}">Select Package</button>
@@ -189,6 +190,8 @@
 
                 case 'bookingForm':
                     updateScript(scripts.bookingForm);
+                    const makes = ["Acura","Audi","BMW","Buick","Cadillac","Chevrolet","Chrysler","Dodge","Ford","GMC","Honda","Hyundai","Infiniti","Jaguar","Jeep","Kia","Land Rover","Lexus","Lincoln","Mazda","Mercedes-Benz","Mini","Mitsubishi","Nissan","Ram","Subaru","Tesla","Toyota","Volkswagen","Volvo","Smart","Other"];
+                    const makeOptions = makes.map(make => `<option value="${make}">${make}</option>`).join('');
                     content = `
                         <div class="space-y-4 p-4">
                             <div><label class="form-label">Full Name</label><input type="text" id="full_name" class="form-input"></div>
@@ -200,7 +203,7 @@
                             <div><label class="form-label">Zip Code</label><input type="text" id="zip_code" class="form-input"></div>
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div><label class="form-label">Veh. Year</label><input type="text" id="vehicle_year" class="form-input"></div>
-                                <div><label class="form-label">Veh. Make</label><input type="text" id="vehicle_make" class="form-input"></div>
+                                <div><label class="form-label">Veh. Make</label><select id="vehicle_make" class="form-select"><option value="">Select Make</option>${makeOptions}</select></div>
                                 <div><label class="form-label">Veh. Model</label><input type="text" id="vehicle_model" class="form-input"></div>
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -214,6 +217,26 @@
                             <button id="submit-btn" class="btn btn-success w-full mt-4">Submit Appointment</button>
                             <button id="back-to-packages" class="btn btn-secondary w-full mt-2">Back to Packages</button>
                         </div>`;
+                    break;
+                
+                case 'paymentOptions':
+                    updateScript(scripts.paymentOptions);
+                    content = createButtonGroup([
+                        createButton('btn-pay-full', 'Pay in full', 'btn-primary'),
+                        createButton('btn-pay-deposit', 'Pay $50 deposit', 'btn-primary'),
+                        createButton('btn-back-initial', 'Start New Call', 'btn-secondary mt-4')
+                    ]);
+                    break;
+
+                case 'sendSMS':
+                    updateScript(scripts.sendSMSPrompt);
+                    const smsButton = state.paymentChoice === 'full' 
+                        ? createButton('btn-send-sms', 'Send Pay In Full SMS', 'btn-success')
+                        : createButton('btn-send-sms', 'Send $50 Deposit SMS', 'btn-success');
+                    content = createButtonGroup([
+                        smsButton,
+                        createButton('btn-back-initial', 'Start New Call', 'btn-secondary mt-4')
+                    ]);
                     break;
             }
             elements.scriptContainer.innerHTML = content;
@@ -295,6 +318,29 @@
                     el('submit-btn').addEventListener('click', submitAndPopulate);
                     el('back-to-packages').addEventListener('click', () => renderView('packageSelection'));
                     break;
+                case 'paymentOptions':
+                    el('btn-pay-full').addEventListener('click', () => { state.paymentChoice = 'full'; renderView('sendSMS'); });
+                    el('btn-pay-deposit').addEventListener('click', () => { state.paymentChoice = 'deposit'; renderView('sendSMS'); });
+                    el('btn-back-initial').addEventListener('click', () => renderView('initial'));
+                    break;
+                case 'sendSMS':
+                    el('btn-send-sms').addEventListener('click', () => {
+                        const p = state.lastPayload;
+                        let message = '';
+                        if (state.paymentChoice === 'full') {
+                            message = `Hi, it's Judy with Michie Auto Detail! Your appointment is almost confirmed. Please use the following link to make your payment in full. Thank you!`;
+                        } else {
+                            message = `Hi, it's Judy with Michie Auto Detail! Your appointment is almost confirmed. Please use the following link to make your $50 deposit and secure your appointment slot. Thank you!`;
+                        }
+                        
+                        if (p && p.phone) {
+                            window.open(`sms:${p.phone}?body=${encodeURIComponent(message)}`);
+                        } else {
+                            alert('Could not send SMS. Customer phone number is missing.');
+                        }
+                    });
+                    el('btn-back-initial').addEventListener('click', () => renderView('initial'));
+                    break;
             }
         };
 
@@ -322,7 +368,7 @@
                 const result = await response.json();
                 if (!response.ok) throw new Error(result.message || `Server error: ${response.status}`);
                 
-                alert('Appointment submitted successfully!');
+                alert('Appointment submitted successfully! Proceeding to payment.');
                 
                 document.getElementById('form-full-name').value = payload.full_name;
                 document.getElementById('form-email').value = payload.email;
@@ -337,14 +383,14 @@
                 document.getElementById('form-booking-date').value = formatDate(payload.date);
                 document.getElementById('form-booking-time').value = formatTime(payload.time);
                 
-                state = {};
-                renderView('initial');
+                state.lastPayload = payload; // Save payload for SMS step
+                renderView('paymentOptions');
 
             } catch (error) {
                 console.error('Submission Error:', error);
                 alert(`Failed to submit appointment: ${error.message}`);
-            } finally {
-                submitBtn.disabled = false; submitBtn.textContent = 'Submit Appointment';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Appointment';
             }
         };
 
