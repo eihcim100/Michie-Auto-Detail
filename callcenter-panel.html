@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -84,8 +85,6 @@
     <script>
     function initApp() {
         const API_URL = 'https://michie-detailing-admin.onrender.com/public/appointment';
-        // New API URL for your dedicated SMS server
-        const SMS_API_URL = 'https://your-new-sms-server.onrender.com/send-sms'; // <<< YOU MUST REPLACE THIS WITH YOUR ACTUAL RENDER.COM SMS SERVER URL
         const elements = { scriptDisplay: document.getElementById('script-display'), scriptContainer: document.getElementById('script-container') };
         let state = {};
 
@@ -288,13 +287,13 @@
                     // Agent instructions banner
                     content = `
                         <div class="alert-banner">
-                            AGENT INSTRUCTIONS: A text message has been sent to the client to collect the $50 deposit.
+                            AGENT INSTRUCTIONS: SEND THIS MESSAGE THROUGH RINGCENTRAL TO THE CLIENT TO COLLECT $50 DEPOSIT OR APPOINTMENT IS NOT CONFIRMED!
                         </div>
                         <div class="script-display mb-4">
                             ${scripts.sendSMSPromptCustomer}
                         </div>
                         <div class="agent-instructions">
-                            NOTE FOR AGENT: The system has attempted to send the SMS automatically. Confirm with the customer.
+                            NOTE FOR AGENT: COPY AND PASTE TO SEND TO CUSTOMERS PHONE NUMBER IN RING CENTRAL
                         </div>
                         <div class="copy-paste-box">
                             ${scripts.smsTextToCopy}
@@ -326,7 +325,7 @@
                     updateScript(scripts.resendSMSText);
                     content = `
                         <div class="agent-instructions">
-                            AGENT ALERT: Resending text. Confirm with the customer.
+                            AGENT ALERT: Copy and paste the text and wait until customer gets it and makes payment before disconnecting
                         </div>
                         <div class="copy-paste-box">
                             ${scripts.smsTextToCopy}
@@ -345,7 +344,7 @@
         const attachListeners = (view) => {
             const el = (id) => document.getElementById(id);
             const handleVehicleClick = (size) => { state.vehicleSize = size; renderView('pricingPetHair'); }; 
-            const handleSchedVehicleClick = (size) => { state.vehicleSize = size; state.vehicle_type = size.charAt(0).toUpperCase() + size.vehicleSize.slice(1); renderView('packageSelection'); };
+            const handleSchedVehicleClick = (size) => { state.vehicleSize = size; state.vehicle_type = size.charAt(0).toUpperCase() + size.slice(1); renderView('packageSelection'); };
 
             switch (view) {
                 case 'initial':
@@ -444,11 +443,7 @@
                     break;
                 case 'paymentOptions':
                     el('btn-pay-full').addEventListener('click', () => { state.paymentChoice = 'full'; renderView('sendSMS'); });
-                    el('btn-pay-deposit').addEventListener('click', async () => { 
-                        state.paymentChoice = 'deposit'; 
-                        await sendDepositSMS(state.lastPayload.phone, scripts.smsTextToCopy); // Call the new SMS function
-                        renderView('sendSMS'); 
-                    });
+                    el('btn-pay-deposit').addEventListener('click', () => { state.paymentChoice = 'deposit'; renderView('sendSMS'); });
                     el('btn-back-initial').addEventListener('click', () => renderView('initial'));
                     break;
                 case 'sendSMS':
@@ -457,10 +452,7 @@
                     break;
                 case 'paymentConfirmationQuestion':
                     el('btn-payment-yes').addEventListener('click', () => renderView('paymentConfirmed'));
-                    el('btn-payment-no').addEventListener('click', async () => {
-                        await sendDepositSMS(state.lastPayload.phone, scripts.smsTextToCopy); // Resend SMS
-                        renderView('resendSMS');
-                    });
+                    el('btn-payment-no').addEventListener('click', () => renderView('resendSMS'));
                     break;
                 case 'paymentConfirmed':
                     el('btn-back-initial').addEventListener('click', () => renderView('initial'));
@@ -524,34 +516,6 @@
                 submitBtn.textContent = 'Submit Appointment';
             }
         };
-
-        // Function to send SMS via the new Render.com server
-        const sendDepositSMS = async (toPhoneNumber, messageText) => {
-            try {
-                const response = await fetch(SMS_API_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        to: toPhoneNumber,
-                        message: messageText
-                    })
-                });
-
-                const result = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(result.message || 'Failed to send SMS');
-                }
-                console.log('SMS sent successfully:', result);
-                showCustomMessage('SMS sent successfully to client!');
-            } catch (error) {
-                console.error('Error sending SMS:', error);
-                showCustomMessage(`Failed to send SMS: ${error.message}. Please send manually.`);
-            }
-        };
-
 
         // Custom message box function (replaces alert)
         function showCustomMessage(message) {
