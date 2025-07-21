@@ -39,6 +39,9 @@
         .see-whats-included-btn:hover { background-color: #dbeafe; }
         .feature-dropdown { display: none; overflow: hidden; }
         .select-package-btn { width: 100%; margin-top: auto; }
+        .alert-banner { background-color: #fefcbf; border: 2px solid #fbd38d; color: #975a16; padding: 1rem; border-radius: 0.75rem; margin-bottom: 1.5rem; font-weight: 600; text-align: center; }
+        .agent-instructions { background-color: #fee2e2; border: 2px solid #fca5a5; color: #dc2626; padding: 1rem; border-radius: 0.75rem; margin-top: 1.5rem; font-weight: 600; text-align: center; }
+        .copy-paste-box { background-color: #ecfdf5; border: 1px solid #34d399; padding: 1rem; border-radius: 0.5rem; font-family: monospace; white-space: pre-wrap; word-break: break-all; margin-top: 1rem; text-align: left; }
 
     </style>
 </head>
@@ -85,18 +88,27 @@
         let state = {};
 
         const scripts = {
-            initial: "Thank you for calling Michie Auto Detailing. Are you calling about pricing or to schedule an appointment?",
-            pricingVehicleType: "I can certainly help with pricing. What type of vehicle is it?",
-            pricingIntro: "We have 3 levels of service. I'll ask a couple of questions to see which is right for you, sound good?",
-            pricingPetHair: "Do you have any pet hair in your vehicle?",
-            pricingShampoo: "Would you like your seats and carpets shampooed?",
-            pricingLevel2Rec: (price) => `Based on your answers, I recommend our most popular option, the Level 2 Detail. It includes a full interior and exterior cleaning with shampoo for just $${price}. Does that sound good?`,
-            pricingLevel1Rec: (price) => `Okay, in that case I'd recommend our Level 1 Detail. It's a thorough interior and exterior cleaning for just $${price}. Does that sound good?`,
+            initial: "Thank you for calling Michie Auto Detailing, are you calling to book an appointment?",
+            pricingMainOptions: "I can certainly help with pricing. What type of vehicle is it?",
+            pricingPetHair: "Do you have any pet hair in the vehicle, even just a little bit?",
+            pricingShampoo: "Would you like your carpets shampooed so they are fresh and new, with all the odor removed?",
+            pricingLevel2Rec: (vehicleType, price) => {
+                const baseScript = "Excellent! Based on the answers you provided, I'm going to recommend our level 2 detail package. This package goes beyond the basic wash and vacuum, and instead makes your car look and feel like new. This package includes Tire cleaning, as well as Window cleaning, Deep vacuuming, Display controls and panels wipedown, Mirror cleaning, Surface protectant for the dash and display/controls, and a full Shampoo for the carpets and seats. It also includes hair removal and odor elimination.";
+                return `${baseScript} The price for our level 2 service for a ${vehicleType} is $${price}.`;
+            },
+            pricingLevel1Rec: (vehicleType, price) => `Okay, in that case I'd recommend our Level 1 Detail. It's a thorough interior and exterior cleaning for just $${price}. Does that sound good?`,
+            pricingLevel2Downsell: (vehicleType, discountedPrice) => `Well I completely understand, let me see what I can do here. I don't want to lose you over price. Since you're a first time customer I want to give you a special rate that can fit your budget a bit better. I've added a promo code of $50 off, which brings it down to $${discountedPrice} for a ${vehicleType} if you schedule today. Sound good?`,
+            pricingLevel1Downsell: (vehicleType, discountedPrice) => `Well I completely understand, let me see what I can do here. I don't want to lose you over price. Since you're a first time customer I want to give you a special rate that can fit your budget a bit better. I've added a promo code of $25 off, which brings it down to $${discountedPrice} for a ${vehicleType} if you schedule today. Sound good?`,
+            otherCalls: "Okay, what is the nature of your call?",
             schedulingVehicleType: "Excellent! To schedule, what type of vehicle is it?",
             packageSelection: "Please select a package for the customer.",
             bookingForm: "Perfect. Please provide the customer's details to find an appointment.",
             paymentOptions: "Your appointment is almost confirmed! We have two payment options. You can pay a $50 deposit now and the remainder after the service is complete, or you can choose to pay in full, which do you prefer?",
-            sendSMSPrompt: "Ok great! I'll send you a secure text to collect your payment. Please click the button below to open your SMS app."
+            sendSMSPromptCustomer: "Alright thank you for providing me that information, your appointment is almost confirmed! One last step we need to complete your booking is for you to pay the $50 deposit, I'll send a link to your phone number so you can pay this. The deposit goes towards the cost of the auto detail, and your remaining balance will be collected after the service is completed.",
+            smsTextToCopy: "ACTION REQUIRED: Hi it's Michie Auto Detail! Your appointment is almost confirmed! We just need to collect a $50 deposit to secure your booking, this goes towards the cost of your detail service, and the balance is collected after the service is complete. Please make your secure deposit payment here: https://pay.michieauto.com/deposit",
+            paymentConfirmationQuestion: "Were you able to get the text and make the payment?",
+            paymentConfirmedSuccess: "Alright then! You'll all set and good to go - and your appointment is confirmed we'll see you then, and if you have any questions or need to reschedule before your appointment time, feel free to contact us. Thanks for calling Michie Auto Detail, have a great day!",
+            resendSMSText: "Ok let me resend the text"
         };
         
         const packageData = {
@@ -133,33 +145,75 @@
             switch (view) {
                 case 'initial':
                     updateScript(scripts.initial);
-                    content = createButtonGroup([ createButton('btn-scheduling', 'Schedule Appointment', 'btn-primary'), createButton('btn-pricing', 'Pricing Question', 'btn-secondary') ]);
+                    content = createButtonGroup([ 
+                        createButton('btn-schedule-service', 'Schedule Service', 'btn-primary'), 
+                        createButton('btn-pricing-question', 'Calling about pricing', 'btn-primary'),
+                        createButton('btn-all-other-calls', 'All other calls', 'btn-secondary')
+                    ]);
                     break;
                 
-                case 'pricingVehicleType':
-                    updateScript(scripts.pricingVehicleType);
-                    content = createButtonGroup([ createButton('btn-car', 'Car', 'btn-primary'), createButton('btn-truck', 'Truck', 'btn-primary'), createButton('btn-suv', 'SUV', 'btn-primary'), createButton('btn-back-initial', 'Back', 'btn-secondary mt-4') ]);
+                case 'pricingMainOptions':
+                    updateScript(scripts.pricingMainOptions);
+                    content = createButtonGroup([ 
+                        createButton('btn-car', 'Car', 'btn-primary'), 
+                        createButton('btn-truck', 'Truck', 'btn-primary'), 
+                        createButton('btn-suv', 'SUV', 'btn-primary'), 
+                        createButton('btn-back-initial', 'Back', 'btn-secondary mt-4') 
+                    ]);
                     break;
 
-                case 'pricingIntro':
-                    updateScript(scripts.pricingIntro);
-                    content = createButtonGroup([ createButton('btn-ok', 'OK', 'btn-primary'), createButton('btn-back-pricing-vehicle', 'Back', 'btn-secondary mt-4') ]);
-                    break;
-                
                 case 'pricingPetHair':
                     updateScript(scripts.pricingPetHair);
-                    content = createButtonGroup([ createButton('btn-yes', 'Yes', 'btn-primary'), createButton('btn-no', 'No', 'btn-primary'), createButton('btn-back-pricing-intro', 'Back', 'btn-secondary mt-4') ]);
+                    content = createButtonGroup([ 
+                        createButton('btn-yes-pet-hair', 'Yes', 'btn-primary'), 
+                        createButton('btn-no-pet-hair', 'No', 'btn-primary'), 
+                        createButton('btn-back-pricing-main', 'Back', 'btn-secondary mt-4') 
+                    ]);
                     break;
 
                 case 'pricingShampoo':
                     updateScript(scripts.pricingShampoo);
-                    content = createButtonGroup([ createButton('btn-yes', 'Yes', 'btn-primary'), createButton('btn-no', 'No', 'btn-primary'), createButton('btn-back-pet-hair', 'Back', 'btn-secondary mt-4') ]);
+                    content = createButtonGroup([ 
+                        createButton('btn-yes-shampoo', 'Yes', 'btn-primary'), 
+                        createButton('btn-no-shampoo', 'No', 'btn-primary'), 
+                        createButton('btn-back-pet-hair-q', 'Back', 'btn-secondary mt-4') 
+                    ]);
                     break;
                 
                 case 'pricingRecommendation':
                     const price = packageData[`Level ${state.recLevel} Detail`].prices[state.vehicleSize];
-                    updateScript(state.recLevel === 2 ? scripts.pricingLevel2Rec(price) : scripts.pricingLevel1Rec(price));
-                    content = createButtonGroup([ createButton('btn-schedule-it', 'Yes, Schedule It!', 'btn-success'), createButton('btn-no-thanks', 'No, Thanks', 'btn-secondary') ]);
+                    updateScript(state.recLevel === 2 ? scripts.pricingLevel2Rec(state.vehicleSize.charAt(0).toUpperCase() + state.vehicleSize.slice(1), price) : scripts.pricingLevel1Rec(state.vehicleSize.charAt(0).toUpperCase() + state.vehicleSize.slice(1), price));
+                    content = createButtonGroup([ 
+                        createButton('btn-schedule-it', 'Yes, Schedule It!', 'btn-success'), 
+                        createButton('btn-no-thanks', 'No, Thanks', 'btn-secondary') 
+                    ]);
+                    break;
+
+                case 'pricingDownsell': // This now handles Level 2 downsell
+                    const originalLevel2Price = packageData["Level 2 Detail"].prices[state.vehicleSize];
+                    const discountedPriceL2 = originalLevel2Price - 50;
+                    updateScript(scripts.pricingLevel2Downsell(state.vehicleSize.charAt(0).toUpperCase() + state.vehicleSize.slice(1), discountedPriceL2));
+                    content = createButtonGroup([
+                        createButton('btn-accept-downsell', 'Yes, Schedule It!', 'btn-success'),
+                        createButton('btn-no-downsell', 'No, Thanks', 'btn-secondary')
+                    ]);
+                    break;
+                
+                case 'pricingLevel1Downsell': // New case for Level 1 downsell
+                    const originalLevel1Price = packageData["Level 1 Detail"].prices[state.vehicleSize];
+                    const discountedPriceL1 = originalLevel1Price - 25;
+                    updateScript(scripts.pricingLevel1Downsell(state.vehicleSize.charAt(0).toUpperCase() + state.vehicleSize.slice(1), discountedPriceL1));
+                    content = createButtonGroup([
+                        createButton('btn-accept-level1-downsell', 'Yes, Schedule It!', 'btn-success'),
+                        createButton('btn-no-downsell', 'No, Thanks', 'btn-secondary')
+                    ]);
+                    break;
+
+                case 'otherCalls':
+                    updateScript(scripts.otherCalls);
+                    content = createButtonGroup([
+                        createButton('btn-back-initial', 'Start New Call', 'btn-secondary mt-4')
+                    ]);
                     break;
 
                 case 'schedulingVehicleType':
@@ -229,14 +283,57 @@
                     break;
 
                 case 'sendSMS':
-                    updateScript(scripts.sendSMSPrompt);
-                    const smsButton = state.paymentChoice === 'full' 
-                        ? createButton('btn-send-sms', 'Send Pay In Full SMS', 'btn-success')
-                        : createButton('btn-send-sms', 'Send $50 Deposit SMS', 'btn-success');
+                    // Agent instructions banner
+                    content = `
+                        <div class="alert-banner">
+                            AGENT INSTRUCTIONS: SEND THIS MESSAGE THROUGH RINGCENTRAL TO THE CLIENT TO COLLECT $50 DEPOSIT OR APPOINTMENT IS NOT CONFIRMED!
+                        </div>
+                        <div class="script-display mb-4">
+                            ${scripts.sendSMSPromptCustomer}
+                        </div>
+                        <div class="agent-instructions">
+                            NOTE FOR AGENT: COPY AND PASTE TO SEND TO CUSTOMERS PHONE NUMBER IN RING CENTRAL
+                        </div>
+                        <div class="copy-paste-box">
+                            ${scripts.smsTextToCopy}
+                        </div>
+                        <div class="space-y-4 p-4 mt-4">
+                            <button id="btn-payment-confirmation-q" class="btn btn-primary w-full">Ask about payment confirmation</button>
+                            <button id="btn-back-initial" class="btn btn-secondary w-full mt-4">Start New Call</button>
+                        </div>
+                    `;
+                    // No updateScript here, as the script is part of the content HTML
+                    break;
+
+                case 'paymentConfirmationQuestion':
+                    updateScript(scripts.paymentConfirmationQuestion);
                     content = createButtonGroup([
-                        smsButton,
-                        createButton('btn-back-initial', 'Start New Call', 'btn-secondary mt-4')
+                        createButton('btn-payment-yes', 'Yes', 'btn-success'),
+                        createButton('btn-payment-no', 'No', 'btn-secondary')
                     ]);
+                    break;
+
+                case 'paymentConfirmed':
+                    updateScript(scripts.paymentConfirmedSuccess);
+                    content = createButtonGroup([
+                        createButton('btn-back-initial', 'Start New Call', 'btn-primary')
+                    ]);
+                    break;
+
+                case 'resendSMS':
+                    updateScript(scripts.resendSMSText);
+                    content = `
+                        <div class="agent-instructions">
+                            AGENT ALERT: Copy and paste the text and wait until customer gets it and makes payment before disconnecting
+                        </div>
+                        <div class="copy-paste-box">
+                            ${scripts.smsTextToCopy}
+                        </div>
+                        <div class="space-y-4 p-4 mt-4">
+                            <button id="btn-payment-confirmation-q" class="btn btn-primary w-full">Ask about payment confirmation</button>
+                            <button id="btn-back-initial" class="btn btn-secondary w-full mt-4">Start New Call</button>
+                        </div>
+                    `;
                     break;
             }
             elements.scriptContainer.innerHTML = content;
@@ -245,33 +342,30 @@
 
         const attachListeners = (view) => {
             const el = (id) => document.getElementById(id);
-            const handleVehicleClick = (size) => { state.vehicleSize = size; renderView('pricingIntro'); };
+            const handleVehicleClick = (size) => { state.vehicleSize = size; renderView('pricingPetHair'); }; 
             const handleSchedVehicleClick = (size) => { state.vehicleSize = size; state.vehicle_type = size.charAt(0).toUpperCase() + size.slice(1); renderView('packageSelection'); };
 
             switch (view) {
                 case 'initial':
-                    el('btn-scheduling').addEventListener('click', () => renderView('schedulingVehicleType'));
-                    el('btn-pricing').addEventListener('click', () => renderView('pricingVehicleType'));
+                    el('btn-schedule-service').addEventListener('click', () => renderView('schedulingVehicleType'));
+                    el('btn-pricing-question').addEventListener('click', () => renderView('pricingMainOptions')); 
+                    el('btn-all-other-calls').addEventListener('click', () => renderView('otherCalls'));
                     break;
-                case 'pricingVehicleType':
+                case 'pricingMainOptions': 
                     el('btn-car').addEventListener('click', () => handleVehicleClick('car'));
                     el('btn-truck').addEventListener('click', () => handleVehicleClick('truck'));
                     el('btn-suv').addEventListener('click', () => handleVehicleClick('suv'));
                     el('btn-back-initial').addEventListener('click', () => renderView('initial'));
                     break;
-                case 'pricingIntro':
-                    el('btn-ok').addEventListener('click', () => renderView('pricingPetHair'));
-                    el('btn-back-pricing-vehicle').addEventListener('click', () => renderView('pricingVehicleType'));
-                    break;
                 case 'pricingPetHair':
-                    el('btn-yes').addEventListener('click', () => { state.recLevel = 2; renderView('pricingRecommendation'); });
-                    el('btn-no').addEventListener('click', () => renderView('pricingShampoo'));
-                    el('btn-back-pricing-intro').addEventListener('click', () => renderView('pricingIntro'));
+                    el('btn-yes-pet-hair').addEventListener('click', () => { state.recLevel = 2; renderView('pricingRecommendation'); });
+                    el('btn-no-pet-hair').addEventListener('click', () => renderView('pricingShampoo'));
+                    el('btn-back-pricing-main').addEventListener('click', () => renderView('pricingMainOptions'));
                     break;
                 case 'pricingShampoo':
-                    el('btn-yes').addEventListener('click', () => { state.recLevel = 2; renderView('pricingRecommendation'); });
-                    el('btn-no').addEventListener('click', () => { state.recLevel = 1; renderView('pricingRecommendation'); });
-                    el('btn-back-pet-hair').addEventListener('click', () => renderView('pricingPetHair'));
+                    el('btn-yes-shampoo').addEventListener('click', () => { state.recLevel = 2; renderView('pricingRecommendation'); });
+                    el('btn-no-shampoo').addEventListener('click', () => { state.recLevel = 1; renderView('pricingRecommendation'); });
+                    el('btn-back-pet-hair-q').addEventListener('click', () => renderView('pricingPetHair'));
                     break;
                 case 'pricingRecommendation':
                     el('btn-schedule-it').addEventListener('click', () => {
@@ -280,7 +374,35 @@
                         state.vehicle_type = state.vehicleSize.charAt(0).toUpperCase() + state.vehicleSize.slice(1);
                         renderView('bookingForm');
                     });
-                    el('btn-no-thanks').addEventListener('click', () => renderView('initial'));
+                    // If customer says 'No, Thanks' to the initial recommendation, offer the downsell
+                    el('btn-no-thanks').addEventListener('click', () => {
+                        if (state.recLevel === 2) {
+                            renderView('pricingDownsell'); // Level 2 downsell
+                        } else if (state.recLevel === 1) {
+                            renderView('pricingLevel1Downsell'); // Level 1 downsell
+                        }
+                    });
+                    break;
+                case 'pricingDownsell': // This now handles Level 2 downsell
+                    el('btn-accept-downsell').addEventListener('click', () => {
+                        state.package_type = `Level 2 Detail (Promo)`;
+                        state.package_price = packageData["Level 2 Detail"].prices[state.vehicleSize] - 50; // Apply $50 discount
+                        state.vehicle_type = state.vehicleSize.charAt(0).toUpperCase() + state.vehicleSize.slice(1);
+                        renderView('bookingForm');
+                    });
+                    el('btn-no-downsell').addEventListener('click', () => renderView('initial'));
+                    break;
+                case 'pricingLevel1Downsell': // New case for Level 1 downsell
+                    el('btn-accept-level1-downsell').addEventListener('click', () => {
+                        state.package_type = `Level 1 Detail (Promo)`;
+                        state.package_price = packageData["Level 1 Detail"].prices[state.vehicleSize] - 25; // Apply $25 discount
+                        state.vehicle_type = state.vehicleSize.charAt(0).toUpperCase() + state.vehicleSize.slice(1);
+                        renderView('bookingForm');
+                    });
+                    el('btn-no-downsell').addEventListener('click', () => renderView('initial'));
+                    break;
+                case 'otherCalls':
+                    el('btn-back-initial').addEventListener('click', () => renderView('initial'));
                     break;
                 case 'schedulingVehicleType':
                     el('btn-car').addEventListener('click', () => handleSchedVehicleClick('car'));
@@ -324,21 +446,18 @@
                     el('btn-back-initial').addEventListener('click', () => renderView('initial'));
                     break;
                 case 'sendSMS':
-                    el('btn-send-sms').addEventListener('click', () => {
-                        const p = state.lastPayload;
-                        let message = '';
-                        if (state.paymentChoice === 'full') {
-                            message = `Hi, it's Judy with Michie Auto Detail! Your appointment is almost confirmed. Please use the following link to make your payment in full. Thank you!`;
-                        } else {
-                            message = `Hi, it's Judy with Michie Auto Detail! Your appointment is almost confirmed. Please use the following link to make your $50 deposit and secure your appointment slot. Thank you!`;
-                        }
-                        
-                        if (p && p.phone) {
-                            window.open(`sms:${p.phone}?body=${encodeURIComponent(message)}`);
-                        } else {
-                            alert('Could not send SMS. Customer phone number is missing.');
-                        }
-                    });
+                    el('btn-payment-confirmation-q').addEventListener('click', () => renderView('paymentConfirmationQuestion'));
+                    el('btn-back-initial').addEventListener('click', () => renderView('initial'));
+                    break;
+                case 'paymentConfirmationQuestion':
+                    el('btn-payment-yes').addEventListener('click', () => renderView('paymentConfirmed'));
+                    el('btn-payment-no').addEventListener('click', () => renderView('resendSMS'));
+                    break;
+                case 'paymentConfirmed':
+                    el('btn-back-initial').addEventListener('click', () => renderView('initial'));
+                    break;
+                case 'resendSMS':
+                    el('btn-payment-confirmation-q').addEventListener('click', () => renderView('paymentConfirmationQuestion'));
                     el('btn-back-initial').addEventListener('click', () => renderView('initial'));
                     break;
             }
@@ -358,7 +477,10 @@
             };
             payload.deal_name = `${payload.package_type || 'Detail'} - ${payload.vehicle_make || ''} ${payload.vehicle_model || ''}`;
 
-            if (!payload.full_name || !payload.date || !payload.time) return alert("Name, Date, and Time are required.");
+            if (!payload.full_name || !payload.date || !payload.time) {
+                showCustomMessage("Name, Date, and Time are required.");
+                return;
+            }
 
             const submitBtn = document.getElementById('submit-btn');
             submitBtn.disabled = true; submitBtn.textContent = 'Submitting...';
@@ -368,7 +490,7 @@
                 const result = await response.json();
                 if (!response.ok) throw new Error(result.message || `Server error: ${response.status}`);
                 
-                alert('Appointment submitted successfully! Proceeding to payment.');
+                showCustomMessage('Appointment submitted successfully! Proceeding to payment.');
                 
                 document.getElementById('form-full-name').value = payload.full_name;
                 document.getElementById('form-email').value = payload.email;
@@ -388,11 +510,27 @@
 
             } catch (error) {
                 console.error('Submission Error:', error);
-                alert(`Failed to submit appointment: ${error.message}`);
+                showCustomMessage(`Failed to submit appointment: ${error.message}`);
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Submit Appointment';
             }
         };
+
+        // Custom message box function (replaces alert)
+        function showCustomMessage(message) {
+            const messageBox = document.createElement('div');
+            messageBox.className = 'fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50';
+            messageBox.innerHTML = `
+                <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
+                    <p class="text-lg font-semibold text-gray-800 mb-4">${message}</p>
+                    <button id="message-box-ok" class="btn btn-primary">OK</button>
+                </div>
+            `;
+            document.body.appendChild(messageBox);
+            document.getElementById('message-box-ok').addEventListener('click', () => {
+                document.body.removeChild(messageBox);
+            });
+        }
 
         state = {};
         renderView('initial');
