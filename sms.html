@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send SMS via Twilio</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for Inter font and general layout */
+        body {
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f2f5;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Send Auto Text</h1>
+
+        <div class="mb-4">
+            <label for="phoneNumber" class="block text-gray-700 text-sm font-semibold mb-2">Phone Number (e.g., +12345678900)</label>
+            <input
+                type="tel"
+                id="phoneNumber"
+                class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ease-in-out"
+                placeholder="+15551234567"
+            >
+        </div>
+
+        <button
+            id="sendButton"
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-200 ease-in-out transform hover:scale-105"
+        >
+            Send Auto Text
+        </button>
+
+        <div id="messageBox" class="mt-6 p-4 rounded-lg text-sm text-center hidden" role="alert">
+            <!-- Messages will be displayed here -->
+        </div>
+    </div>
+
+    <script>
+        // Function to display messages in the message box
+        function showMessage(message, type = 'info') {
+            const messageBox = document.getElementById('messageBox');
+            messageBox.textContent = message;
+            messageBox.classList.remove('hidden', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800', 'bg-blue-100', 'text-blue-800');
+
+            if (type === 'success') {
+                messageBox.classList.add('bg-green-100', 'text-green-800');
+            } else if (type === 'error') {
+                messageBox.classList.add('bg-red-100', 'text-red-800');
+            } else { // info
+                messageBox.classList.add('bg-blue-100', 'text-blue-800');
+            }
+            messageBox.classList.remove('hidden');
+        }
+
+        document.getElementById('sendButton').addEventListener('click', async () => {
+            const phoneNumber = document.getElementById('phoneNumber').value.trim();
+            const sendButton = document.getElementById('sendButton');
+
+            if (!phoneNumber) {
+                showMessage('Please enter a phone number.', 'error');
+                return;
+            }
+
+            // Basic validation for phone number format (e.g., starts with +, followed by digits)
+            if (!/^\+\d{10,15}$/.test(phoneNumber)) {
+                showMessage('Please enter a valid phone number, including the country code (e.g., +12345678900).', 'error');
+                return;
+            }
+
+            showMessage('Sending text...', 'info');
+            sendButton.disabled = true;
+            sendButton.textContent = 'Sending...';
+
+            try {
+                // IMPORTANT: Replace '/send-sms' with the actual endpoint of your backend server
+                // This is where your front-end will send the phone number to your backend
+                const response = await fetch('/send-sms', { // This endpoint needs to be created on your server
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ to: phoneNumber }),
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showMessage(result.message || 'Text sent successfully!', 'success');
+                } else {
+                    showMessage(result.error || 'Failed to send text. Please try again.', 'error');
+                }
+            } catch (error) {
+                console.error('Error sending SMS:', error);
+                showMessage('An error occurred. Please check your network connection or try again later.', 'error');
+            } finally {
+                sendButton.disabled = false;
+                sendButton.textContent = 'Send Auto Text';
+            }
+        });
+    </script>
+</body>
+</html>
