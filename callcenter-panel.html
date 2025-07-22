@@ -107,7 +107,7 @@
             schedulingVehicleType: "Excellent! To schedule, what type of vehicle is it?",
             packageSelection: "Please select a package for the customer.",
             bookingForm: "Perfect. Please provide the customer's details to find an appointment.",
-            paymentOptions: "Your appointment is almost confirmed! We have two payment options. You can pay a $50 deposit now and the remainder after the service is complete, or you can choose to pay in full, which do you prefer?",
+            // Removed paymentOptions script as it's no longer needed
             sendSMSPromptCustomer: "Alright thank you for providing me that information, your appointment is almost confirmed! One last step we need to complete your booking is for you to pay the $50 deposit, I'll send a link to your phone number so you can pay this. The deposit goes towards the cost of the auto detail, and your remaining balance will be collected after the service is completed.",
             smsTextToCopy: "ACTION REQUIRED: Hi it's Michie Auto Detail! Your appointment is almost confirmed! We just need to collect a $50 deposit to secure your booking, this goes towards the cost of your detail service, and the balance is collected after the service is complete. Please make your secure deposit payment here: https://pay.michieauto.com/deposit",
             confirmationText: (name, year, make, model, date, time) =>
@@ -279,26 +279,12 @@
                         </div>`;
                     break;
                 
-                case 'paymentOptions':
-                    updateScript(scripts.paymentOptions);
-                    content = createButtonGroup([
-                        createButton('btn-pay-full', 'Pay in full', 'btn-primary'),
-                        createButton('btn-pay-deposit', 'Pay $50 deposit', 'btn-primary'),
-                        createButton('btn-back-initial', 'Start New Call', 'btn-secondary mt-4')
-                    ]);
-                    break;
+                // Removed 'paymentOptions' case completely
 
                 case 'sendSMS':
-                    // Agent instructions banner
                     content = `
-                        <div class="alert-banner">
-                            AGENT INSTRUCTIONS: SEND THIS MESSAGE TO THE CLIENT TO COLLECT $50 DEPOSIT OR APPOINTMENT IS NOT CONFIRMED!
-                        </div>
                         <div class="script-display mb-4">
                             ${scripts.sendSMSPromptCustomer}
-                        </div>
-                        <div class="agent-instructions">
-                            NOTE FOR AGENT: The system will attempt to send this automatically. If it fails, copy and paste to send to customers phone number in Ring Central.
                         </div>
                         <div class="copy-paste-box">
                             ${scripts.smsTextToCopy}
@@ -309,7 +295,6 @@
                             <button id="btn-back-initial" class="btn btn-secondary w-full mt-4">Start New Call</button>
                         </div>
                     `;
-                    // No updateScript here, as the script is part of the content HTML
                     break;
 
                 case 'paymentConfirmationQuestion':
@@ -355,9 +340,6 @@
                 case 'resendSMS':
                     updateScript(scripts.resendSMSText);
                     content = `
-                        <div class="agent-instructions">
-                            AGENT ALERT: The system will attempt to resend this automatically. If it fails, copy and paste the text and wait until customer gets it and makes payment before disconnecting
-                        </div>
                         <div class="copy-paste-box">
                             ${scripts.smsTextToCopy}
                         </div>
@@ -473,11 +455,7 @@
                     el('submit-btn').addEventListener('click', submitAndPopulate);
                     el('back-to-packages').addEventListener('click', () => renderView('packageSelection'));
                     break;
-                case 'paymentOptions':
-                    el('btn-pay-full').addEventListener('click', () => { state.paymentChoice = 'full'; renderView('sendSMS'); });
-                    el('btn-pay-deposit').addEventListener('click', () => { state.paymentChoice = 'deposit'; renderView('sendSMS'); });
-                    el('btn-back-initial').addEventListener('click', () => renderView('initial'));
-                    break;
+                // Removed 'paymentOptions' case from attachListeners too
                 case 'sendSMS':
                     el('btn-send-auto-sms').addEventListener('click', () => sendAutoSMS(state.lastPayload.phone, scripts.smsTextToCopy));
                     el('btn-payment-confirmation-q').addEventListener('click', () => renderView('paymentConfirmationQuestion'));
@@ -690,7 +668,7 @@
                 const result = await response.json();
                 if (!response.ok) throw new Error(result.message || `Server error: ${response.status}`);
                 
-                showCustomMessage('Appointment submitted successfully! Proceeding to payment.', 'success'); // Added type
+                showCustomMessage('Appointment submitted successfully! Proceeding to send deposit link.', 'success'); // Updated message
                 
                 document.getElementById('form-full-name').value = payload.full_name;
                 document.getElementById('form-email').value = payload.email;
@@ -706,7 +684,7 @@
                 document.getElementById('form-booking-time').value = formatTime(payload.time);
                 
                 state.lastPayload = payload; // Save payload for SMS step
-                renderView('paymentOptions');
+                renderView('sendSMS'); // Directly go to sendSMS view
 
             } catch (error) {
                 console.error('Submission Error:', error);
@@ -720,8 +698,46 @@
         // This function is now more robust, ensuring only one message box is active.
         // It also correctly removes the previous message box before showing a new one.
         // The 'currentMessageBox' variable is now declared globally above initApp.
-        // No changes needed here, as the global declaration is handled.
-        // ... (function definition is already correct) ...
+        function showCustomMessage(message, type = 'info') {
+            // If a message box already exists, remove it first
+            if (currentMessageBox && document.body.contains(currentMessageBox)) {
+                document.body.removeChild(currentMessageBox);
+                currentMessageBox = null; // Clear the reference
+            }
+
+            const messageBox = document.createElement('div');
+            messageBox.className = 'fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50';
+            let bgColor = 'bg-white';
+            let textColor = 'text-gray-800';
+            if (type === 'success') {
+                bgColor = 'bg-green-100';
+                textColor = 'text-green-800';
+            } else if (type === 'error') {
+                bgColor = 'bg-red-100';
+                textColor = 'text-red-800';
+            } else if (type === 'info') {
+                bgColor = 'bg-blue-100';
+                textColor = 'text-blue-800';
+            }
+
+            messageBox.innerHTML = `
+                <div class="${bgColor} p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
+                    <p class="text-lg font-semibold ${textColor} mb-4">${message}</p>
+                    <button id="message-box-ok" class="btn btn-primary">OK</button>
+                </div>
+            `;
+            document.body.appendChild(messageBox);
+            currentMessageBox = messageBox; // Store reference to the new message box
+
+            // Attach listener to the OK button of the CURRENT message box
+            document.getElementById('message-box-ok').addEventListener('click', () => {
+                if (currentMessageBox && document.body.contains(currentMessageBox)) {
+                    document.body.removeChild(currentMessageBox);
+                    currentMessageBox = null; // Clear reference when removed
+                }
+            });
+        }
+
         state = {};
         renderView('initial');
     }
