@@ -110,11 +110,12 @@
             pricingShampoo: "Would you like your carpets shampooed so they are fresh and new, with all the odor removed?",
             pricingLevel2Rec: (vehicleType, price) => {
                 const baseScript = "Excellent! Based on the answers you provided, I'm going to recommend our level 2 detail package. This package goes beyond the basic wash and vacuum, and instead makes your car look and feel like new. This package includes Tire cleaning, as well as Window cleaning, Deep vacuuming, Display controls and panels wipedown, Mirror cleaning, Surface protectant for the dash and display/controls, and a full Shampoo for the carpets and seats. It also includes hair removal and odor elimination.";
-                return `${baseScript} The price for our level 2 service for a ${vehicleType} is $${price}.`;
+                return `${baseScript} The price for our level 2 service for a ${vehicleType} is $${price}. Does that sound good?`;
             },
             pricingLevel1Rec: (vehicleType, price) => `Okay, in that case I'd recommend our Level 1 Detail. It's a thorough interior and exterior cleaning for just $${price}. Does that sound good?`,
             pricingLevel2Downsell: (vehicleType, discountedPrice) => `Well I completely understand, let me see what I can do here. I don't want to lose you over price. Since you're a first time customer I want to give you a special rate that can fit your budget a bit better. I've added a promo code of $50 off, which brings it down to $${discountedPrice} for a ${vehicleType} if you schedule today. Sound good?`,
             pricingLevel1Downsell: (vehicleType, discountedPrice) => `Well I completely understand, let me see what I can do here. I'm not here to lose you over price. Since you're a first time customer I want to give you a special rate that can fit your budget a bit better. I've added a promo code of $25 off, which brings it down to $${discountedPrice} for a ${vehicleType} if you schedule today. Sound good?`,
+            pricingLevel1FromLevel2: (vehicleType, price) => `OK I understand you want the lowest price possible. In this situation, I recommend booking our level 1 service which includes the essential cleaning you need and can deliver great results, and the best part is, after the service is done if you wanted to do a level 2 and pay the difference you're welcome to do so. I can offer you this package for $${price}. Does that sound good?`,
             otherCalls: {
                 agentNote: "AGENT NOTE: For all other calls, fill out our \"All other calls form\"",
                 script: "I understand you're looking for more specific information, and I'll be happy to get you in contact with someone who can help within a few minutes, OK? I just need a bit of info from you so we know who to reach out to."
@@ -163,6 +164,18 @@
             const createButton = (id, text, style, wFull = true) => `<button id="${id}" class="btn ${style} ${wFull ? 'w-full' : ''}">${text}</button>`;
             const createButtonGroup = (buttons) => `<div class="space-y-4 p-4">${buttons.join('')}</div>`;
 
+            const createPackageDetails = (packageName, vehicleSize) => {
+                const data = packageData[packageName];
+                const price = data.prices[vehicleSize];
+                const featureList = data.features.map(f => `<li>${f}</li>`).join('');
+                return `
+                    <button class="see-whats-included-btn">See what's included</button>
+                    <div class="feature-dropdown" style="display: none;">
+                        <ul class="feature-list">${featureList}</ul>
+                    </div>
+                `;
+            };
+
             switch (view) {
                 case 'initial':
                     updateScript(scripts.initial);
@@ -202,8 +215,8 @@
                     break;
                 
                 case 'pricingRecommendation':
-                    const price = packageData[`Level ${state.recLevel} Detail`].prices[state.vehicleSize];
-                    updateScript(state.recLevel === 2 ? scripts.pricingLevel2Rec(state.vehicleSize.charAt(0).toUpperCase() + state.vehicleSize.slice(1), price) : scripts.pricingLevel1Rec(state.vehicleSize.charAt(0).toUpperCase() + state.vehicleSize.slice(1), price));
+                    const priceRec = packageData[`Level ${state.recLevel} Detail`].prices[state.vehicleSize];
+                    updateScript(state.recLevel === 2 ? scripts.pricingLevel2Rec(state.vehicleSize.charAt(0).toUpperCase() + state.vehicleSize.slice(1), priceRec) : scripts.pricingLevel1Rec(state.vehicleSize.charAt(0).toUpperCase() + state.vehicleSize.slice(1), priceRec));
                     content = createButtonGroup([ 
                         createButton('btn-schedule-it', 'Yes, Schedule It!', 'btn-success'), 
                         createButton('btn-no-thanks', 'No, Thanks', 'btn-secondary') 
@@ -214,20 +227,44 @@
                     const originalLevel2Price = packageData["Level 2 Detail"].prices[state.vehicleSize];
                     const discountedPriceL2 = originalLevel2Price - 50;
                     updateScript(scripts.pricingLevel2Downsell(state.vehicleSize.charAt(0).toUpperCase() + state.vehicleSize.slice(1), discountedPriceL2));
-                    content = createButtonGroup([
-                        createButton('btn-accept-downsell', 'Yes, Schedule It!', 'btn-success'),
-                        createButton('btn-no-downsell', 'No, Thanks', 'btn-secondary')
-                    ]);
+                    content = `
+                        <div class="p-4">
+                            ${createPackageDetails("Level 2 Detail", state.vehicleSize)}
+                            ${createButtonGroup([
+                                createButton('btn-accept-downsell', 'Yes, Schedule It!', 'btn-success'),
+                                createButton('btn-no-downsell', 'No, Thanks', 'btn-secondary')
+                            ])}
+                        </div>
+                    `;
                     break;
                 
+                case 'pricingLevel1FromLevel2': // New case for Level 1 offer after Level 2 downsell refusal
+                    const priceL1 = packageData["Level 1 Detail"].prices[state.vehicleSize];
+                    updateScript(scripts.pricingLevel1FromLevel2(state.vehicleSize.charAt(0).toUpperCase() + state.vehicleSize.slice(1), priceL1));
+                    content = `
+                        <div class="p-4">
+                            ${createPackageDetails("Level 1 Detail", state.vehicleSize)}
+                            ${createButtonGroup([
+                                createButton('btn-accept-level1-from-level2', 'Yes, Schedule It!', 'btn-success'),
+                                createButton('btn-no-level1-from-level2', 'No, Thanks', 'btn-secondary')
+                            ])}
+                        </div>
+                    `;
+                    break;
+
                 case 'pricingLevel1Downsell': // New case for Level 1 downsell
                     const originalLevel1Price = packageData["Level 1 Detail"].prices[state.vehicleSize];
                     const discountedPriceL1 = originalLevel1Price - 25;
                     updateScript(scripts.pricingLevel1Downsell(state.vehicleSize.charAt(0).toUpperCase() + state.vehicleSize.slice(1), discountedPriceL1));
-                    content = createButtonGroup([
-                        createButton('btn-accept-level1-downsell', 'Yes, Schedule It!', 'btn-success'),
-                        createButton('btn-no-downsell', 'No, Thanks', 'btn-secondary')
-                    ]);
+                    content = `
+                        <div class="p-4">
+                            ${createPackageDetails("Level 1 Detail", state.vehicleSize)}
+                            ${createButtonGroup([
+                                createButton('btn-accept-level1-downsell', 'Yes, Schedule It!', 'btn-success'),
+                                createButton('btn-no-downsell-final', 'No, Thanks', 'btn-secondary')
+                            ])}
+                        </div>
+                    `;
                     break;
 
                 case 'otherCalls':
@@ -380,6 +417,16 @@
             const handleVehicleClick = (size) => { state.vehicleSize = size; renderView('pricingPetHair'); }; 
             const handleSchedVehicleClick = (size) => { state.vehicleSize = size; state.vehicle_type = size.charAt(0).toUpperCase() + size.slice(1); renderView('packageSelection'); };
 
+            // Helper to attach listeners for "See what's included" buttons
+            const attachSeeWhatsIncludedListeners = () => {
+                elements.scriptContainer.querySelectorAll('.see-whats-included-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const dropdown = e.target.nextElementSibling;
+                        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+                    });
+                });
+            };
+
             switch (view) {
                 case 'initial':
                     el('btn-schedule-service').addEventListener('click', () => renderView('schedulingVehicleType'));
@@ -419,22 +466,34 @@
                     });
                     break;
                 case 'pricingDownsell': // This now handles Level 2 downsell
+                    attachSeeWhatsIncludedListeners(); // Attach listener for "See what's included"
                     el('btn-accept-downsell').addEventListener('click', () => {
                         state.package_type = `Level 2 Detail (Promo)`;
                         state.package_price = packageData["Level 2 Detail"].prices[state.vehicleSize] - 50; // Apply $50 discount
                         state.vehicle_type = state.vehicleSize.charAt(0).toUpperCase() + state.vehicleSize.slice(1);
                         renderView('bookingForm');
                     });
-                    el('btn-no-downsell').addEventListener('click', () => renderView('initial'));
+                    el('btn-no-downsell').addEventListener('click', () => renderView('pricingLevel1FromLevel2')); // If no to L2 downsell, offer L1
+                    break;
+                case 'pricingLevel1FromLevel2': // New case for Level 1 offer after Level 2 downsell refusal
+                    attachSeeWhatsIncludedListeners(); // Attach listener for "See what's included"
+                    el('btn-accept-level1-from-level2').addEventListener('click', () => {
+                        state.package_type = `Level 1 Detail`;
+                        state.package_price = packageData["Level 1 Detail"].prices[state.vehicleSize];
+                        state.vehicle_type = state.vehicleSize.charAt(0).toUpperCase() + state.vehicleSize.slice(1);
+                        renderView('bookingForm');
+                    });
+                    el('btn-no-level1-from-level2').addEventListener('click', () => renderView('pricingLevel1Downsell')); // If no to L1, offer L1 downsell
                     break;
                 case 'pricingLevel1Downsell': // New case for Level 1 downsell
+                    attachSeeWhatsIncludedListeners(); // Attach listener for "See what's included"
                     el('btn-accept-level1-downsell').addEventListener('click', () => {
                         state.package_type = `Level 1 Detail (Promo)`;
                         state.package_price = packageData["Level 1 Detail"].prices[state.vehicleSize] - 25; // Apply $25 discount
                         state.vehicle_type = state.vehicleSize.charAt(0).toUpperCase() + state.vehicleSize.slice(1);
                         renderView('bookingForm');
                     });
-                    el('btn-no-downsell').addEventListener('click', () => renderView('initial'));
+                    el('btn-no-downsell-final').addEventListener('click', () => renderView('otherCalls')); // If no to L1 downsell, go to other calls
                     break;
                 case 'otherCalls':
                     el('btn-complete-form').addEventListener('click', () => {
