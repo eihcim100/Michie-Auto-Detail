@@ -133,10 +133,19 @@
             resendSMSText: "Ok let me resend the text"
         };
         
+        // Define base features for each level
+        const level1Features = ["External high pressure wash", "Tire cleaner", "Window cleaning inside and out", "Deep vaccuming", "Display controls and panels wipedown", "Mirror cleaning", "Seat vaccum", "Surface protectent for the dash and display/controls", "Steering wheel and dash clean"];
+        const level2SpecificFeatures = ["Shampoo carpets and seats", "Premium Leather treatment", "Door jam cleaning", "Rims and tires cleaned and wiped down", "Console scrub down", "Pet hair removal", "Odor removal"];
+        const level3SpecificFeatures = ["FINE TOOTH COMB in between seats cleaning", "Glove compartment cleaning", "Trunk shampoo and vaccum", "Door controls cleaning", "Hard to reach areas deep level shampoo", "Meticulous cleaning of all frequently touched surfaces", "External bug removal", "Free microfiber cloth", "Protection plan (complimentary maintenance clean within 15 days)"];
+
+        // Combine features for each level
+        const level2Features = [...level1Features, ...level2SpecificFeatures];
+        const level3Features = [...level2Features, ...level3SpecificFeatures]; // Level 3 includes all of Level 2's features (which includes Level 1)
+
         const packageData = {
-            "Level 1 Detail": { prices: { car: 149, truck: 199, suv: 199 }, features: ["External high pressure wash", "Tire cleaner", "Window cleaning inside and out", "Deep vaccuming", "Display controls and panels wipedown", "Mirror cleaning", "Seat vaccum", "Surface protectent for the dash and display/controls", "Steering wheel and dash clean"] },
-            "Level 2 Detail": { prices: { car: 249, truck: 299, suv: 299 }, features: ["Everything in Level 1", "Shampoo carpets and seats", "Premium Leather treatment", "Door jam cleaning", "Rims and tires cleaned and wiped down", "Console scrub down", "Pet hair removal", "Odor removal"] },
-            "Level 3 Detail": { prices: { car: 349, truck: 399, suv: 399 }, features: ["Everything in Level 2", "FINE TOOTH COMB in between seats cleaning", "Glove compartment cleaning", "Trunk shampoo and vaccum", "Door controls cleaning", "Hard to reach areas deep level shampoo", "Meticulous cleaning of all frequently touched surfaces", "External bug removal", "Free microfiber cloth", "Protection plan (complimentary maintenance clean within 15 days)"] }
+            "Level 1 Detail": { prices: { car: 149, truck: 199, suv: 199 }, features: level1Features },
+            "Level 2 Detail": { prices: { car: 249, truck: 299, suv: 299 }, features: level2Features },
+            "Level 3 Detail": { prices: { car: 349, truck: 399, suv: 399 }, features: level3Features }
         };
 
         const updateScript = (text) => { elements.scriptDisplay.innerHTML = text; };
