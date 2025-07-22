@@ -54,11 +54,13 @@
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 lg:gap-8">
+            <!-- Left Column: Interactive Script -->
             <div class="flex flex-col space-y-4">
                 <div class="script-display" id="script-display"></div>
                 <div id="script-container" class="card"></div>
             </div>
 
+            <!-- Right Column: Static Form -->
             <div class="mt-8 lg:mt-0">
                 <div class="card sticky top-8">
                     <h2 class="text-2xl font-bold text-gray-700 mb-6 border-b pb-4">Booking Summary</h2>
@@ -80,6 +82,9 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk&libraries=places&callback=initApp" async defer></script>
 
     <script>
+    // Moved currentMessageBox declaration to global scope
+    let currentMessageBox = null; // Keep track of the currently active message box
+
     function initApp() {
         const API_URL_BOOKING = 'https://michie-detailing-admin.onrender.com/public/appointment'; // Your booking backend
         const API_URL_SMS = 'https://client-notifications.onrender.com/send-sms'; // Your SMS backend
@@ -435,7 +440,7 @@
                 case 'schedulingVehicleType':
                     el('btn-car').addEventListener('click', () => handleSchedVehicleClick('car'));
                     el('btn-truck').addEventListener('click', () => handleSchedVehicleClick('truck'));
-                    el('btn-suv').addEventListener(() => handleSchedVehicleClick('suv'));
+                    el('btn-suv').addEventListener('click', () => handleSchedVehicleClick('suv')); // Corrected this line
                     el('btn-back-initial').addEventListener('click', () => renderView('initial'));
                     break;
                 case 'packageSelection':
@@ -522,7 +527,52 @@
             }
         };
 
-        // Function to send SMS
+        // Custom message box function (replaces alert)
+        // This function is now more robust, ensuring only one message box is active.
+        // It also correctly removes the previous message box before showing a new one.
+        // The 'currentMessageBox' variable is now declared globally above initApp.
+        function showCustomMessage(message, type = 'info') {
+            // If a message box already exists, remove it first
+            if (currentMessageBox && document.body.contains(currentMessageBox)) {
+                document.body.removeChild(currentMessageBox);
+                currentMessageBox = null; // Clear the reference
+            }
+
+            const messageBox = document.createElement('div');
+            messageBox.className = 'fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50';
+            let bgColor = 'bg-white';
+            let textColor = 'text-gray-800';
+            if (type === 'success') {
+                bgColor = 'bg-green-100';
+                textColor = 'text-green-800';
+            } else if (type === 'error') {
+                bgColor = 'bg-red-100';
+                textColor = 'text-red-800';
+            } else if (type === 'info') {
+                bgColor = 'bg-blue-100';
+                textColor = 'text-blue-800';
+            }
+
+            messageBox.innerHTML = `
+                <div class="${bgColor} p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
+                    <p class="text-lg font-semibold ${textColor} mb-4">${message}</p>
+                    <button id="message-box-ok" class="btn btn-primary">OK</button>
+                </div>
+            `;
+            document.body.appendChild(messageBox);
+            currentMessageBox = messageBox; // Store reference to the new message box
+
+            // Attach listener to the OK button of the CURRENT message box
+            document.getElementById('message-box-ok').addEventListener('click', () => {
+                if (currentMessageBox && document.body.contains(currentMessageBox)) {
+                    document.body.removeChild(currentMessageBox);
+                    currentMessageBox = null; // Clear reference when removed
+                }
+            });
+        }
+
+
+        // Function to send SMS (remains the same as previous version)
         const sendAutoSMS = async (phoneNumber, messageContent) => {
             if (!phoneNumber) {
                 showCustomMessage("Error: No phone number available to send SMS.", 'error');
@@ -542,8 +592,15 @@
             const smsButton = document.getElementById('btn-send-auto-sms'); // This handles deposit SMS button
             const confirmationSmsButton = document.getElementById('btn-send-final-confirmation-sms'); // This handles confirmation SMS button
 
-            const currentButton = smsButton && smsButton.textContent.includes('Deposit Link') ? smsButton : confirmationSmsButton;
-
+            // Determine which button triggered the SMS send
+            let currentButton = null;
+            if (smsButton && smsButton.textContent.includes('Deposit Link') && !smsButton.disabled) { // Check if it's the deposit button and not already disabled
+                currentButton = smsButton;
+            } else if (confirmationSmsButton && confirmationSmsButton.textContent.includes('Confirmation Text') && !confirmationSmsButton.disabled) { // Check if it's the confirmation button
+                currentButton = confirmationSmsButton;
+            } else if (smsButton && smsButton.textContent.includes('Resend Auto Deposit Link SMS') && !smsButton.disabled) {
+                currentButton = smsButton;
+            }
 
             if (currentButton) {
                 currentButton.disabled = true;
@@ -571,12 +628,15 @@
             } finally {
                 if (currentButton) {
                     // Reset text based on which button was clicked
-                    if (currentButton.id === 'btn-send-auto-sms') {
+                    if (currentButton.id === 'btn-send-auto-sms' && currentButton.textContent === 'Sending SMS...') { // Check text to avoid overwriting "Confirmation Sent!"
                          currentButton.textContent = 'Send Auto Deposit Link SMS';
-                    } else if (currentButton.id === 'btn-send-final-confirmation-sms') {
+                    } else if (currentButton.id === 'btn-send-final-confirmation-sms' && currentButton.textContent === 'Sending Confirmation...') {
                          currentButton.textContent = 'Send Confirmation Text';
                     }
-                    currentButton.disabled = false;
+                    // Only re-enable if it wasn't permanently disabled by another part of the flow (e.g., "Confirmation Sent!")
+                    if (currentButton.textContent !== 'Confirmation Sent!') {
+                        currentButton.disabled = false;
+                    }
                 }
             }
         };
@@ -657,34 +717,11 @@
         };
 
         // Custom message box function (replaces alert)
-        function showCustomMessage(message, type = 'info') { // Added 'type' parameter
-            const messageBox = document.createElement('div');
-            messageBox.className = 'fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50';
-            let bgColor = 'bg-white';
-            let textColor = 'text-gray-800';
-            if (type === 'success') {
-                bgColor = 'bg-green-100';
-                textColor = 'text-green-800';
-            } else if (type === 'error') {
-                bgColor = 'bg-red-100';
-                textColor = 'text-red-800';
-            } else if (type === 'info') {
-                bgColor = 'bg-blue-100';
-                textColor = 'text-blue-800';
-            }
-
-            messageBox.innerHTML = `
-                <div class="${bgColor} p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
-                    <p class="text-lg font-semibold ${textColor} mb-4">${message}</p>
-                    <button id="message-box-ok" class="btn btn-primary">OK</button>
-                </div>
-            `;
-            document.body.appendChild(messageBox);
-            document.getElementById('message-box-ok').addEventListener('click', () => {
-                document.body.removeChild(messageBox);
-            });
-        }
-
+        // This function is now more robust, ensuring only one message box is active.
+        // It also correctly removes the previous message box before showing a new one.
+        // The 'currentMessageBox' variable is now declared globally above initApp.
+        // No changes needed here, as the global declaration is handled.
+        // ... (function definition is already correct) ...
         state = {};
         renderView('initial');
     }
