@@ -298,8 +298,8 @@
                         state.lastPayload.vehicle_year,
                         state.lastPayload.vehicle_make,
                         state.lastPayload.vehicle_model,
-                        state.lastPayload.package_type,
-                        state.lastPayload.package_price
+                        state.lastPayload.package_type, // Service Type
+                        state.lastPayload.package_price // Price
                     );
                     content = `
                         <h3 class="text-lg font-semibold text-gray-700 mt-4 mb-2">Text Message Preview</h3>
@@ -363,8 +363,8 @@
                         state.lastPayload.vehicle_year,
                         state.lastPayload.vehicle_make,
                         state.lastPayload.vehicle_model,
-                        state.lastPayload.package_type,
-                        state.lastPayload.package_price
+                        state.lastPayload.package_type, // Service Type
+                        state.lastPayload.package_price // Price
                     );
                     content = `
                         <h3 class="text-lg font-semibold text-gray-700 mt-4 mb-2">Text Message Preview</h3>
@@ -490,12 +490,12 @@
                     el('btn-send-auto-sms').addEventListener('click', () => sendAutoSMS(
                         state.lastPayload.phone,
                         scripts.smsTextToCopy(
-                            state.lastPayload.full_name.split(' ')[0],
+                            state.lastPayload.full_name.split(' ')[0], // Name
                             state.lastPayload.vehicle_year,
                             state.lastPayload.vehicle_make,
                             state.lastPayload.vehicle_model,
-                            state.lastPayload.package_type,
-                            state.lastPayload.package_price
+                            state.lastPayload.package_type, // Service Type
+                            state.lastPayload.package_price // Price
                         )
                     ));
                     el('btn-payment-confirmation-q').addEventListener('click', () => renderView('paymentConfirmationQuestion'));
@@ -540,206 +540,17 @@
                     el('btn-send-auto-sms').addEventListener('click', () => sendAutoSMS( // Re-attach for resend
                         state.lastPayload.phone,
                         scripts.smsTextToCopy(
-                            state.lastPayload.full_name.split(' ')[0],
+                            state.lastPayload.full_name.split(' ')[0], // Name
                             state.lastPayload.vehicle_year,
                             state.lastPayload.vehicle_make,
                             state.lastPayload.vehicle_model,
-                            state.lastPayload.package_type,
-                            state.lastPayload.package_price
+                            state.lastPayload.package_type, // Service Type
+                            state.lastPayload.package_price // Price
                         )
                     ));
                     el('btn-payment-confirmation-q').addEventListener('click', () => renderView('paymentConfirmationQuestion'));
                     el('btn-back-initial').addEventListener('click', () => renderView('initial'));
                     break;
-            }
-        };
-
-        // Custom message box function (replaces alert)
-        // This function is now more robust, ensuring only one message box is active.
-        // It also correctly removes the previous message box before showing a new one.
-        // The 'currentMessageBox' variable is now declared globally above initApp.
-        function showCustomMessage(message, type = 'info') {
-            // If a message box already exists, remove it first
-            if (currentMessageBox && document.body.contains(currentMessageBox)) {
-                document.body.removeChild(currentMessageBox);
-                currentMessageBox = null; // Clear the reference
-            }
-
-            const messageBox = document.createElement('div');
-            messageBox.className = 'fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50';
-            let bgColor = 'bg-white';
-            let textColor = 'text-gray-800';
-            if (type === 'success') {
-                bgColor = 'bg-green-100';
-                textColor = 'text-green-800';
-            } else if (type === 'error') {
-                bgColor = 'bg-red-100';
-                textColor = 'text-red-800';
-            } else if (type === 'info') {
-                bgColor = 'bg-blue-100';
-                textColor = 'text-blue-800';
-            }
-
-            messageBox.innerHTML = `
-                <div class="${bgColor} p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
-                    <p class="text-lg font-semibold ${textColor} mb-4">${message}</p>
-                    <button id="message-box-ok" class="btn btn-primary">OK</button>
-                </div>
-            `;
-            document.body.appendChild(messageBox);
-            currentMessageBox = messageBox; // Store reference to the new message box
-
-            // Attach listener to the OK button of the CURRENT message box
-            document.getElementById('message-box-ok').addEventListener('click', () => {
-                if (currentMessageBox && document.body.contains(currentMessageBox)) {
-                    document.body.removeChild(currentMessageBox);
-                    currentMessageBox = null; // Clear reference when removed
-                }
-            });
-        }
-
-
-        // Function to send SMS (remains the same as previous version)
-        const sendAutoSMS = async (phoneNumber, messageContent) => {
-            if (!phoneNumber) {
-                showCustomMessage("Error: No phone number available to send SMS.", 'error');
-                return;
-            }
-            if (!messageContent) {
-                showCustomMessage("Error: No message content to send SMS.", 'error');
-                return;
-            }
-
-            // Basic validation for phone number format (e.g., starts with +, followed by digits)
-            if (!/^\+\d{10,15}$/.test(phoneNumber)) {
-                showCustomMessage('Error: Invalid phone number format for SMS. Must start with "+" and contain only digits.', 'error');
-                return;
-            }
-
-            const smsButton = document.getElementById('btn-send-auto-sms'); // This handles deposit SMS button
-            const confirmationSmsButton = document.getElementById('btn-send-final-confirmation-sms'); // This handles confirmation SMS button
-
-            // Determine which button triggered the SMS send
-            let currentButton = null;
-            if (smsButton && smsButton.textContent.includes('Deposit Link') && !smsButton.disabled) { // Check if it's the deposit button and not already disabled
-                currentButton = smsButton;
-            } else if (confirmationSmsButton && confirmationSmsButton.textContent.includes('Confirmation Text') && !confirmationSmsButton.disabled) { // Check if it's the confirmation button
-                currentButton = confirmationSmsButton;
-            } else if (smsButton && smsButton.textContent.includes('Resend Auto Deposit Link SMS') && !smsButton.disabled) {
-                currentButton = smsButton;
-            }
-
-            if (currentButton) {
-                currentButton.disabled = true;
-                currentButton.textContent = 'Sending SMS...';
-            }
-            showCustomMessage('Attempting to send SMS...');
-
-            try {
-                const response = await fetch(API_URL_SMS, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ to: phoneNumber, message_body: messageContent }),
-                });
-
-                const result = await response.json();
-
-                if (response.ok) {
-                    showCustomMessage(result.message || 'SMS sent successfully!', 'success');
-                } else {
-                    showCustomMessage(result.error || 'Failed to send SMS. Please check backend logs.', 'error');
-                }
-            } catch (error) {
-                console.error('SMS Sending Error:', error);
-                showCustomMessage(`An error occurred while sending SMS: ${error.message}`, 'error');
-            } finally {
-                if (currentButton) {
-                    // Reset text based on which button was clicked
-                    if (currentButton.id === 'btn-send-auto-sms' && currentButton.textContent === 'Sending SMS...') { // Check text to avoid overwriting "Confirmation Sent!"
-                         currentButton.textContent = 'Send Auto Deposit Link SMS';
-                    } else if (currentButton.id === 'btn-send-final-confirmation-sms' && currentButton.textContent === 'Sending Confirmation...') {
-                         currentButton.textContent = 'Send Confirmation Text';
-                    }
-                    // Only re-enable if it wasn't permanently disabled by another part of the flow (e.g., "Confirmation Sent!")
-                    if (currentButton.textContent !== 'Confirmation Sent!') {
-                        currentButton.disabled = false;
-                    }
-                }
-            }
-        };
-
-
-        const submitAndPopulate = async () => {
-            const getVal = (id) => document.getElementById(id)?.value;
-            let rawPhoneNumber = getVal('phone'); // Get the raw phone number
-            let formattedPhoneNumber = '';
-
-            // Attempt to format the phone number to E.164
-            // Remove all non-digit characters
-            const digitsOnly = rawPhoneNumber.replace(/\D/g, '');
-
-            // If it doesn't start with '+', assume US number and prepend '+1'
-            if (!rawPhoneNumber.startsWith('+')) {
-                formattedPhoneNumber = '+1' + digitsOnly;
-            } else {
-                formattedPhoneNumber = '+' + digitsOnly; // Ensure it only has one '+'
-            }
-
-            const payload = {
-                full_name: getVal('full_name'), email: getVal('email'), phone: formattedPhoneNumber, // Use formatted phone number
-                address: getVal('address'), zip_code: getVal('zip_code'),
-                vehicle_year: getVal('vehicle_year'), vehicle_make: getVal('vehicle_make'), vehicle_model: getVal('vehicle_model'),
-                package_type: getVal('package_type'), package_price: getVal('package_price'),
-                date: getVal('date'), time: getVal('time'),
-                create_account: document.getElementById('create_account').checked,
-                password: getVal('password'),
-                vehicle_type: state.vehicle_type 
-            };
-            payload.deal_name = `${payload.package_type || 'Detail'} - ${payload.vehicle_make || ''} ${payload.vehicle_model || ''}`;
-
-            if (!payload.full_name || !payload.date || !payload.time) {
-                showCustomMessage("Name, Date, and Time are required.", 'error'); // Added type
-                return;
-            }
-
-            // Add an additional validation step for the formatted phone number before sending
-            if (!/^\+\d{10,15}$/.test(payload.phone)) {
-                showCustomMessage('Invalid phone number format. Please enter a valid number (e.g., +12345678900).', 'error');
-                return;
-            }
-
-
-            const submitBtn = document.getElementById('submit-btn');
-            submitBtn.disabled = true; submitBtn.textContent = 'Submitting...';
-
-            try {
-                const response = await fetch(API_URL_BOOKING, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                const result = await response.json();
-                if (!response.ok) throw new Error(result.message || `Server error: ${response.status}`);
-                
-                showCustomMessage('Appointment submitted successfully! Proceeding to send deposit link.', 'success'); // Updated message
-                
-                document.getElementById('form-full-name').value = payload.full_name;
-                document.getElementById('form-email').value = payload.email;
-                document.getElementById('form-phone').value = payload.phone; // Display formatted phone
-                document.getElementById('form-address').value = payload.address;
-                document.getElementById('form-vehicle-type').value = payload.vehicle_type;
-                document.getElementById('form-vehicle-year').value = payload.vehicle_year;
-                document.getElementById('form-vehicle-make').value = payload.vehicle_make;
-                document.getElementById('form-vehicle-model').value = payload.vehicle_model;
-                document.getElementById('form-package-type').value = payload.package_type;
-                document.getElementById('form-package-price').value = payload.package_price ? `$${payload.package_price}` : '';
-                document.getElementById('form-booking-date').value = formatDate(payload.date);
-                document.getElementById('form-booking-time').value = formatTime(payload.time);
-                
-                state.lastPayload = payload; // Save payload for SMS step
-                renderView('sendSMS'); // Directly go to sendSMS view
-
-            } catch (error) {
-                console.error('Submission Error:', error);
-                showCustomMessage(`Failed to submit appointment: ${error.message}`, 'error'); // Added type
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Submit Appointment';
             }
         };
 
