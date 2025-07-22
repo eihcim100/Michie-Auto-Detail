@@ -42,6 +42,18 @@
         .alert-banner { background-color: #fefcbf; border: 2px solid #fbd38d; color: #975a16; padding: 1rem; border-radius: 0.75rem; margin-bottom: 1.5rem; font-weight: 600; text-align: center; }
         .agent-instructions { background-color: #fee2e2; border: 2px solid #fca5a5; color: #dc2626; padding: 1rem; border-radius: 0.75rem; margin-top: 1.5rem; font-weight: 600; text-align: center; }
         .copy-paste-box { background-color: #ecfdf5; border: 1px solid #34d399; padding: 1rem; border-radius: 0.5rem; font-family: monospace; white-space: pre-wrap; word-break: break-all; margin-top: 1rem; text-align: left; }
+        /* Updated copy-paste-box style */
+        .copy-paste-box {
+            background-color: #ecfdf5;
+            border: 1px solid #34d399;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: monospace;
+            /* Removed white-space: pre-wrap; and word-break: break-all; */
+            margin-top: 0.5rem; /* Adjusted margin-top for the heading */
+            text-align: left;
+            word-wrap: break-word; /* Ensures long words/URLs break correctly */
+        }
 
     </style>
 </head>
@@ -111,6 +123,7 @@
             packageSelection: "Please select a package for the customer.",
             bookingForm: "Perfect. Please provide the customer's details to find an appointment.",
             sendSMSPromptCustomer: "Alright thank you for providing me that information, your appointment is almost confirmed! One last step we need to complete your booking is for you to pay the $50 deposit, I'll send a link to your phone number so you can pay this. The deposit goes towards the cost of the auto detail, and your remaining balance will be collected after the service is completed.",
+            // smsTextToCopy is now a single line to prevent unwanted line breaks
             smsTextToCopy: "ACTION REQUIRED: Hi it's Michie Auto Detail! Your appointment is almost confirmed! We just need to collect a $50 deposit to secure your booking, this goes towards the cost of your detail service, and the balance is collected after the service is complete. Please make your secure deposit payment here: https://pay.michieauto.com/deposit",
             confirmationText: (name, year, make, model, date, time) =>
                 `Hi, ${name}, Thanks for choosing Michie Auto Detail, your auto detail appointment for your ${year} ${make} ${model} is confirmed on ${date} at ${time}. Questions or need to reschedule? Call (405) 295-5189 - We'll see you soon! 🚗 😃`,
@@ -218,19 +231,20 @@
                     break;
 
                 case 'otherCalls':
+                    updateScript(scripts.otherCalls.script); // Use the script part
                     content = `
                         <div class="agent-instructions">
                             ${scripts.otherCalls.agentNote}
                         </div>
-                        <div class="script-display mb-4">
-                            ${scripts.otherCalls.script}
+                        <h3 class="text-lg font-semibold text-gray-700 mt-4 mb-2">Text Message Preview</h3>
+                        <div class="copy-paste-box">
+                            ${scripts.smsTextToCopy}
                         </div>
                         <div class="space-y-4 p-4 mt-4">
                             <button id="btn-complete-form" class="btn btn-primary w-full">Complete form</button>
                             <button id="btn-back-initial" class="btn btn-secondary w-full mt-4">Start New Call</button>
                         </div>
                     `;
-                    // No updateScript here, as the script is part of the content HTML
                     break;
 
                 case 'schedulingVehicleType':
@@ -262,7 +276,7 @@
                 case 'bookingForm':
                     updateScript(scripts.bookingForm);
                     const makes = ["Acura","Audi","BMW","Buick","Cadillac","Chevrolet","Chrysler","Dodge","Ford","GMC","Honda","Hyundai","Infiniti","Jaguar","Jeep","Kia","Land Rover","Lexus","Lincoln","Mazda","Mercedes-Benz","Mini","Mitsubishi","Nissan","Ram","Subaru","Tesla","Toyota","Volkswagen","Volvo","Smart","Other"];
-                    const makeOptions = makes.map(make => `<option value="${make}">${make}</option>`).join('');
+                    const makeOptions = makes.map(make => `<option value="">Select Make</option><option value="${make}">${make}</option>`).join('');
                     content = `
                         <div class="space-y-4 p-4">
                             <div><label class="form-label">Full Name</label><input type="text" id="full_name" class="form-input"></div>
@@ -274,7 +288,7 @@
                             <div><label class="form-label">Zip Code</label><input type="text" id="zip_code" class="form-input"></div>
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div><label class="form-label">Veh. Year</label><input type="text" id="vehicle_year" class="form-input"></div>
-                                <div><label class="form-label">Veh. Make</label><select id="vehicle_make" class="form-select"><option value="">Select Make</option>${makeOptions}</select></div>
+                                <div><label class="form-label">Veh. Make</label><select id="vehicle_make" class="form-select">${makeOptions}</select></div>
                                 <div><label class="form-label">Veh. Model</label><input type="text" id="vehicle_model" class="form-input"></div>
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -291,10 +305,9 @@
                     break;
                 
                 case 'sendSMS':
+                    updateScript(scripts.sendSMSPromptCustomer); // Use the script part
                     content = `
-                        <div class="script-display mb-4">
-                            ${scripts.sendSMSPromptCustomer}
-                        </div>
+                        <h3 class="text-lg font-semibold text-gray-700 mt-4 mb-2">Text Message Preview</h3>
                         <div class="copy-paste-box">
                             ${scripts.smsTextToCopy}
                         </div>
@@ -328,6 +341,7 @@
                         <div class="alert-banner">
                             AGENT INSTRUCTIONS: Send the final confirmation message.
                         </div>
+                        <h3 class="text-lg font-semibold text-gray-700 mt-4 mb-2">Text Message Preview</h3>
                         <div class="copy-paste-box">
                             ${finalConfirmationMessage}
                         </div>
@@ -347,8 +361,9 @@
                     break;
 
                 case 'resendSMS':
-                    updateScript(scripts.resendSMSText);
+                    updateScript(scripts.resendSMSText); // Use the script part
                     content = `
+                        <h3 class="text-lg font-semibold text-gray-700 mt-4 mb-2">Text Message Preview</h3>
                         <div class="copy-paste-box">
                             ${scripts.smsTextToCopy}
                         </div>
