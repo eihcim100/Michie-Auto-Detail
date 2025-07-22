@@ -323,7 +323,8 @@
                 case 'bookingForm':
                     updateScript(scripts.bookingForm);
                     const makes = ["Acura","Audi","BMW","Buick","Cadillac","Chevrolet","Chrysler","Dodge","Ford","GMC","Honda","Hyundai","Infiniti","Jaguar","Jeep","Kia","Land Rover","Lexus","Lincoln","Mazda","Mercedes-Benz","Mini","Mitsubishi","Nissan","Ram","Subaru","Tesla","Toyota","Volkswagen","Volvo","Smart","Other"];
-                    const makeOptions = makes.map(make => `<option value="">Select Make</option><option value="${make}">${make}</option>`).join('');
+                    // Corrected: Add "Select Make" once at the beginning, then map the rest
+                    const makeOptions = `<option value="">Select Make</option>` + makes.map(make => `<option value="${make}">${make}</option>`).join('');
                     content = `
                         <div class="space-y-4 p-4">
                             <div><label class="form-label">Full Name</label><input type="text" id="full_name" class="form-input"></div>
