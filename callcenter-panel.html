@@ -41,7 +41,19 @@
         .select-package-btn { width: 100%; margin-top: auto; }
         .alert-banner { background-color: #fefcbf; border: 2px solid #fbd38d; color: #975a16; padding: 1rem; border-radius: 0.75rem; margin-bottom: 1.5rem; font-weight: 600; text-align: center; }
         .agent-instructions { background-color: #fee2e2; border: 2px solid #fca5a5; color: #dc2626; padding: 1rem; border-radius: 0.75rem; margin-top: 1.5rem; font-weight: 600; text-align: center; }
-        .copy-paste-box { background-color: #ecfdf5; border: 1px solid #34d399; padding: 1rem; border-radius: 0.5rem; font-family: monospace; word-wrap: break-word; margin-top: 0.5rem; text-align: left; }
+        .copy-paste-box { background-color: #ecfdf5; border: 1px solid #34d399; padding: 1rem; border-radius: 0.5rem; font-family: monospace; white-space: pre-wrap; word-break: break-all; margin-top: 1rem; text-align: left; }
+        /* Updated copy-paste-box style */
+        .copy-paste-box {
+            background-color: #ecfdf5;
+            border: 1px solid #34d399;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: monospace;
+            /* Removed white-space: pre-wrap; and word-break: break-all; */
+            margin-top: 0.5rem; /* Adjusted margin-top for the heading */
+            text-align: left;
+            word-wrap: break-word; /* Ensures long words/URLs break correctly */
+        }
 
     </style>
 </head>
@@ -85,14 +97,7 @@
     // Moved currentMessageBox declaration to global scope
     let currentMessageBox = null; // Keep track of the currently active message box
 
-    // initApp is now solely called by the Google Maps API script's callback
     function initApp() {
-        // Optional: Add a console error if Google Maps Places library is not loaded, for debugging purposes
-        if (!window.google || !window.google.maps || !window.google.maps.places) {
-            console.error("Google Maps Places API not loaded or not ready. Check API key and network connection.");
-            // You might want to show a user-friendly message here or disable map-dependent features.
-        }
-
         const API_URL_BOOKING = 'https://michie-detailing-admin.onrender.com/public/appointment'; // Your booking backend
         const API_URL_SMS = 'https://client-notifications.onrender.com/send-sms'; // Your SMS backend
         const elements = { scriptDisplay: document.getElementById('script-display'), scriptContainer: document.getElementById('script-container') };
@@ -118,9 +123,8 @@
             packageSelection: "Please select a package for the customer.",
             bookingForm: "Perfect. Please provide the customer's details to find an appointment.",
             sendSMSPromptCustomer: "Alright thank you for providing me that information, your appointment is almost confirmed! One last step we need to complete your booking is for you to pay the $50 deposit, I'll send a link to your phone number so you can pay this. The deposit goes towards the cost of the auto detail, and your remaining balance will be collected after the service is completed.",
-            // smsTextToCopy is now a dynamic function
-            smsTextToCopy: (name, year, make, model, serviceType, price) =>
-                `ACTION REQUIRED: Hi ${name} it's Michie Auto Detail! Your appointment is almost confirmed for your ${year} ${make} ${model} vehicle detail for your ${serviceType} service. We just need to collect a $50 deposit to secure the booking, this goes towards the $${price} cost of detail package, and you'll pay the remaining balance when service is complete. Pay your $50 deposit at https://pay.michieauto.com/deposit Questions? Call (405) 295-5189`,
+            // smsTextToCopy is now a single line to prevent unwanted line breaks
+            smsTextToCopy: "ACTION REQUIRED: Hi it's Michie Auto Detail! Your appointment is almost confirmed! We just need to collect a $50 deposit to secure your booking, this goes towards the cost of your detail service, and the balance is collected after the service is complete. Please make your secure deposit payment here: https://pay.michieauto.com/deposit",
             confirmationText: (name, year, make, model, date, time) =>
                 `Hi, ${name}, Thanks for choosing Michie Auto Detail, your auto detail appointment for your ${year} ${make} ${model} is confirmed on ${date} at ${time}. Questions or need to reschedule? Call (405) 295-5189 - We'll see you soon! 🚗 😃`,
             paymentConfirmationQuestion: "Were you able to get the text and make the payment?",
@@ -232,6 +236,10 @@
                         <div class="agent-instructions">
                             ${scripts.otherCalls.agentNote}
                         </div>
+                        <h3 class="text-lg font-semibold text-gray-700 mt-4 mb-2">Text Message Preview</h3>
+                        <div class="copy-paste-box">
+                            ${scripts.smsTextToCopy}
+                        </div>
                         <div class="space-y-4 p-4 mt-4">
                             <button id="btn-complete-form" class="btn btn-primary w-full">Complete form</button>
                             <button id="btn-back-initial" class="btn btn-secondary w-full mt-4">Start New Call</button>
@@ -268,8 +276,7 @@
                 case 'bookingForm':
                     updateScript(scripts.bookingForm);
                     const makes = ["Acura","Audi","BMW","Buick","Cadillac","Chevrolet","Chrysler","Dodge","Ford","GMC","Honda","Hyundai","Infiniti","Jaguar","Jeep","Kia","Land Rover","Lexus","Lincoln","Mazda","Mercedes-Benz","Mini","Mitsubishi","Nissan","Ram","Subaru","Tesla","Toyota","Volkswagen","Volvo","Smart","Other"];
-                    // Corrected: Only add "Select Make" once at the beginning
-                    const makeOptions = '<option value="">Select Make</option>' + makes.map(make => `<option value="${make}">${make}</option>`).join('');
+                    const makeOptions = makes.map(make => `<option value="">Select Make</option><option value="${make}">${make}</option>`).join('');
                     content = `
                         <div class="space-y-4 p-4">
                             <div><label class="form-label">Full Name</label><input type="text" id="full_name" class="form-input"></div>
@@ -298,20 +305,11 @@
                     break;
                 
                 case 'sendSMS':
-                    updateScript(scripts.sendSMSPromptCustomer);
-                    // Dynamically generate the SMS text for the preview
-                    const depositSMSPreview = scripts.smsTextToCopy(
-                        state.lastPayload.full_name.split(' ')[0], // Name
-                        state.lastPayload.vehicle_year,
-                        state.lastPayload.vehicle_make,
-                        state.lastPayload.vehicle_model,
-                        state.lastPayload.package_type, // Service Type
-                        state.lastPayload.package_price // Price
-                    );
+                    updateScript(scripts.sendSMSPromptCustomer); // Use the script part
                     content = `
                         <h3 class="text-lg font-semibold text-gray-700 mt-4 mb-2">Text Message Preview</h3>
                         <div class="copy-paste-box">
-                            ${depositSMSPreview}
+                            ${scripts.smsTextToCopy}
                         </div>
                         <div class="space-y-4 p-4 mt-4">
                             <button id="btn-send-auto-sms" class="btn btn-primary w-full">Send Auto Deposit Link SMS</button>
@@ -363,20 +361,11 @@
                     break;
 
                 case 'resendSMS':
-                    updateScript(scripts.resendSMSText);
-                    // Dynamically generate the SMS text for the preview
-                    const resendDepositSMSPreview = scripts.smsTextToCopy(
-                        state.lastPayload.full_name.split(' ')[0], // Name
-                        state.lastPayload.vehicle_year,
-                        state.lastPayload.vehicle_make,
-                        state.lastPayload.vehicle_model,
-                        state.lastPayload.package_type, // Service Type
-                        state.lastPayload.package_price // Price
-                    );
+                    updateScript(scripts.resendSMSText); // Use the script part
                     content = `
                         <h3 class="text-lg font-semibold text-gray-700 mt-4 mb-2">Text Message Preview</h3>
                         <div class="copy-paste-box">
-                            ${resendDepositSMSPreview}
+                            ${scripts.smsTextToCopy}
                         </div>
                         <div class="space-y-4 p-4 mt-4">
                             <button id="btn-send-auto-sms" class="btn btn-primary w-full">Resend Auto Deposit Link SMS</button>
@@ -494,17 +483,7 @@
                     el('back-to-packages').addEventListener('click', () => renderView('packageSelection'));
                     break;
                 case 'sendSMS':
-                    el('btn-send-auto-sms').addEventListener('click', () => sendAutoSMS(
-                        state.lastPayload.phone,
-                        scripts.smsTextToCopy(
-                            state.lastPayload.full_name.split(' ')[0], // Name
-                            state.lastPayload.vehicle_year,
-                            state.lastPayload.vehicle_make,
-                            state.lastPayload.vehicle_model,
-                            state.lastPayload.package_type, // Service Type
-                            state.lastPayload.package_price // Price
-                        )
-                    ));
+                    el('btn-send-auto-sms').addEventListener('click', () => sendAutoSMS(state.lastPayload.phone, scripts.smsTextToCopy));
                     el('btn-payment-confirmation-q').addEventListener('click', () => renderView('paymentConfirmationQuestion'));
                     el('btn-back-initial').addEventListener('click', () => renderView('initial'));
                     break;
@@ -544,17 +523,7 @@
                     el('btn-back-initial').addEventListener('click', () => renderView('initial'));
                     break;
                 case 'resendSMS':
-                    el('btn-send-auto-sms').addEventListener('click', () => sendAutoSMS( // Re-attach for resend
-                        state.lastPayload.phone,
-                        scripts.smsTextToCopy(
-                            state.lastPayload.full_name.split(' ')[0], // Name
-                            state.lastPayload.vehicle_year,
-                            state.lastPayload.vehicle_make,
-                            state.lastPayload.vehicle_model,
-                            state.lastPayload.package_type, // Service Type
-                            state.lastPayload.package_price // Price
-                        )
-                    ));
+                    el('btn-send-auto-sms').addEventListener('click', () => sendAutoSMS(state.lastPayload.phone, scripts.smsTextToCopy)); // Re-attach for resend
                     el('btn-payment-confirmation-q').addEventListener('click', () => renderView('paymentConfirmationQuestion'));
                     el('btn-back-initial').addEventListener('click', () => renderView('initial'));
                     break;
@@ -605,12 +574,167 @@
             });
         }
 
+
+        // Function to send SMS (remains the same as previous version)
+        const sendAutoSMS = async (phoneNumber, messageContent) => {
+            if (!phoneNumber) {
+                showCustomMessage("Error: No phone number available to send SMS.", 'error');
+                return;
+            }
+            if (!messageContent) {
+                showCustomMessage("Error: No message content to send SMS.", 'error');
+                return;
+            }
+
+            // Basic validation for phone number format (e.g., starts with +, followed by digits)
+            if (!/^\+\d{10,15}$/.test(phoneNumber)) {
+                showCustomMessage('Error: Invalid phone number format for SMS. Must start with "+" and contain only digits.', 'error');
+                return;
+            }
+
+            const smsButton = document.getElementById('btn-send-auto-sms'); // This handles deposit SMS button
+            const confirmationSmsButton = document.getElementById('btn-send-final-confirmation-sms'); // This handles confirmation SMS button
+
+            // Determine which button triggered the SMS send
+            let currentButton = null;
+            if (smsButton && smsButton.textContent.includes('Deposit Link') && !smsButton.disabled) { // Check if it's the deposit button and not already disabled
+                currentButton = smsButton;
+            } else if (confirmationSmsButton && confirmationSmsButton.textContent.includes('Confirmation Text') && !confirmationSmsButton.disabled) { // Check if it's the confirmation button
+                currentButton = confirmationSmsButton;
+            } else if (smsButton && smsButton.textContent.includes('Resend Auto Deposit Link SMS') && !smsButton.disabled) {
+                currentButton = smsButton;
+            }
+
+            if (currentButton) {
+                currentButton.disabled = true;
+                currentButton.textContent = 'Sending SMS...';
+            }
+            showCustomMessage('Attempting to send SMS...');
+
+            try {
+                const response = await fetch(API_URL_SMS, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ to: phoneNumber, message_body: messageContent }),
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showCustomMessage(result.message || 'SMS sent successfully!', 'success');
+                } else {
+                    showCustomMessage(result.error || 'Failed to send SMS. Please check backend logs.', 'error');
+                }
+            } catch (error) {
+                console.error('SMS Sending Error:', error);
+                showCustomMessage(`An error occurred while sending SMS: ${error.message}`, 'error');
+            } finally {
+                if (currentButton) {
+                    // Reset text based on which button was clicked
+                    if (currentButton.id === 'btn-send-auto-sms' && currentButton.textContent === 'Sending SMS...') { // Check text to avoid overwriting "Confirmation Sent!"
+                         currentButton.textContent = 'Send Auto Deposit Link SMS';
+                    } else if (currentButton.id === 'btn-send-final-confirmation-sms' && currentButton.textContent === 'Sending Confirmation...') {
+                         currentButton.textContent = 'Send Confirmation Text';
+                    }
+                    // Only re-enable if it wasn't permanently disabled by another part of the flow (e.g., "Confirmation Sent!")
+                    if (currentButton.textContent !== 'Confirmation Sent!') {
+                        currentButton.disabled = false;
+                    }
+                }
+            }
+        };
+
+
+        const submitAndPopulate = async () => {
+            const getVal = (id) => document.getElementById(id)?.value;
+            let rawPhoneNumber = getVal('phone'); // Get the raw phone number
+            let formattedPhoneNumber = '';
+
+            // Attempt to format the phone number to E.164
+            // Remove all non-digit characters
+            const digitsOnly = rawPhoneNumber.replace(/\D/g, '');
+
+            // If it doesn't start with '+', assume US number and prepend '+1'
+            if (!rawPhoneNumber.startsWith('+')) {
+                formattedPhoneNumber = '+1' + digitsOnly;
+            } else {
+                formattedPhoneNumber = '+' + digitsOnly; // Ensure it only has one '+'
+            }
+
+            const payload = {
+                full_name: getVal('full_name'), email: getVal('email'), phone: formattedPhoneNumber, // Use formatted phone number
+                address: getVal('address'), zip_code: getVal('zip_code'),
+                vehicle_year: getVal('vehicle_year'), vehicle_make: getVal('vehicle_make'), vehicle_model: getVal('vehicle_model'),
+                package_type: getVal('package_type'), package_price: getVal('package_price'),
+                date: getVal('date'), time: getVal('time'),
+                create_account: document.getElementById('create_account').checked,
+                password: getVal('password'),
+                vehicle_type: state.vehicle_type 
+            };
+            payload.deal_name = `${payload.package_type || 'Detail'} - ${payload.vehicle_make || ''} ${payload.vehicle_model || ''}`;
+
+            if (!payload.full_name || !payload.date || !payload.time) {
+                showCustomMessage("Name, Date, and Time are required.", 'error'); // Added type
+                return;
+            }
+
+            // Add an additional validation step for the formatted phone number before sending
+            if (!/^\+\d{10,15}$/.test(payload.phone)) {
+                showCustomMessage('Invalid phone number format. Please enter a valid number (e.g., +12345678900).', 'error');
+                return;
+            }
+
+
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.disabled = true; submitBtn.textContent = 'Submitting...';
+
+            try {
+                const response = await fetch(API_URL_BOOKING, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.message || `Server error: ${response.status}`);
+                
+                showCustomMessage('Appointment submitted successfully! Proceeding to send deposit link.', 'success'); // Updated message
+                
+                document.getElementById('form-full-name').value = payload.full_name;
+                document.getElementById('form-email').value = payload.email;
+                document.getElementById('form-phone').value = payload.phone; // Display formatted phone
+                document.getElementById('form-address').value = payload.address;
+                document.getElementById('form-vehicle-type').value = payload.vehicle_type;
+                document.getElementById('form-vehicle-year').value = payload.vehicle_year;
+                document.getElementById('form-vehicle-make').value = payload.vehicle_make;
+                document.getElementById('form-vehicle-model').value = payload.vehicle_model;
+                document.getElementById('form-package-type').value = payload.package_type;
+                document.getElementById('form-package-price').value = payload.package_price ? `$${payload.package_price}` : '';
+                document.getElementById('form-booking-date').value = formatDate(payload.date);
+                document.getElementById('form-booking-time').value = formatTime(payload.time);
+                
+                state.lastPayload = payload; // Save payload for SMS step
+                renderView('sendSMS'); // Directly go to sendSMS view
+
+            } catch (error) {
+                console.error('Submission Error:', error);
+                showCustomMessage(`Failed to submit appointment: ${error.message}`, 'error'); // Added type
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Appointment';
+            }
+        };
+
+        // Custom message box function (replaces alert)
+        // This function is now more robust, ensuring only one message box is active.
+        // It also correctly removes the previous message box before showing a new one.
+        // The 'currentMessageBox' variable is now declared globally above initApp.
+        // No changes needed here, as the global declaration is handled.
+        // ... (function definition is already correct) ...
         state = {};
         renderView('initial');
     }
 
-    // Removed the DOMContentLoaded listener entirely.
-    // The initApp function is now expected to be called by the Google Maps script.
+    document.addEventListener('DOMContentLoaded', () => {
+        if (!window.google) {
+            console.warn("Google Maps script not loaded. Initializing app without it.");
+            initApp();
+        }
+    });
     </script>
 </body>
 </html>
