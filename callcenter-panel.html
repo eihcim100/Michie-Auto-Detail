@@ -85,7 +85,14 @@
     // Moved currentMessageBox declaration to global scope
     let currentMessageBox = null; // Keep track of the currently active message box
 
+    // initApp is now solely called by the Google Maps API script's callback
     function initApp() {
+        // Optional: Add a console error if Google Maps Places library is not loaded, for debugging purposes
+        if (!window.google || !window.google.maps || !window.google.maps.places) {
+            console.error("Google Maps Places API not loaded or not ready. Check API key and network connection.");
+            // You might want to show a user-friendly message here or disable map-dependent features.
+        }
+
         const API_URL_BOOKING = 'https://michie-detailing-admin.onrender.com/public/appointment'; // Your booking backend
         const API_URL_SMS = 'https://client-notifications.onrender.com/send-sms'; // Your SMS backend
         const elements = { scriptDisplay: document.getElementById('script-display'), scriptContainer: document.getElementById('script-container') };
@@ -602,12 +609,8 @@
         renderView('initial');
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        if (!window.google) {
-            console.warn("Google Maps script not loaded. Initializing app without it.");
-            initApp();
-        }
-    });
+    // Removed the DOMContentLoaded listener entirely.
+    // The initApp function is now expected to be called by the Google Maps script.
     </script>
 </body>
 </html>
