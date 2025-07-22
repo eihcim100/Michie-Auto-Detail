@@ -217,10 +217,15 @@
                 case 'pricingRecommendation':
                     const priceRec = packageData[`Level ${state.recLevel} Detail`].prices[state.vehicleSize];
                     updateScript(state.recLevel === 2 ? scripts.pricingLevel2Rec(state.vehicleSize.charAt(0).toUpperCase() + state.vehicleSize.slice(1), priceRec) : scripts.pricingLevel1Rec(state.vehicleSize.charAt(0).toUpperCase() + state.vehicleSize.slice(1), priceRec));
-                    content = createButtonGroup([ 
-                        createButton('btn-schedule-it', 'Yes, Schedule It!', 'btn-success'), 
-                        createButton('btn-no-thanks', 'No, Thanks', 'btn-secondary') 
-                    ]);
+                    content = `
+                        <div class="p-4">
+                            ${createPackageDetails(`Level ${state.recLevel} Detail`, state.vehicleSize)}
+                            ${createButtonGroup([ 
+                                createButton('btn-schedule-it', 'Yes, Schedule It!', 'btn-success'), 
+                                createButton('btn-no-thanks', 'No, Thanks', 'btn-secondary') 
+                            ])}
+                        </div>
+                    `;
                     break;
 
                 case 'pricingDownsell': // This now handles Level 2 downsell
@@ -450,6 +455,7 @@
                     el('btn-back-pet-hair-q').addEventListener('click', () => renderView('pricingPetHair'));
                     break;
                 case 'pricingRecommendation':
+                    attachSeeWhatsIncludedListeners(); // Attach listener for "See what's included"
                     el('btn-schedule-it').addEventListener('click', () => {
                         state.package_type = `Level ${state.recLevel} Detail`;
                         state.package_price = packageData[state.package_type].prices[state.vehicleSize];
