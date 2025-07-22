@@ -41,19 +41,7 @@
         .select-package-btn { width: 100%; margin-top: auto; }
         .alert-banner { background-color: #fefcbf; border: 2px solid #fbd38d; color: #975a16; padding: 1rem; border-radius: 0.75rem; margin-bottom: 1.5rem; font-weight: 600; text-align: center; }
         .agent-instructions { background-color: #fee2e2; border: 2px solid #fca5a5; color: #dc2626; padding: 1rem; border-radius: 0.75rem; margin-top: 1.5rem; font-weight: 600; text-align: center; }
-        .copy-paste-box { background-color: #ecfdf5; border: 1px solid #34d399; padding: 1rem; border-radius: 0.5rem; font-family: monospace; white-space: pre-wrap; word-break: break-all; margin-top: 1rem; text-align: left; }
-        /* Updated copy-paste-box style */
-        .copy-paste-box {
-            background-color: #ecfdf5;
-            border: 1px solid #34d399;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            font-family: monospace;
-            /* Removed white-space: pre-wrap; and word-break: break-all; */
-            margin-top: 0.5rem; /* Adjusted margin-top for the heading */
-            text-align: left;
-            word-wrap: break-word; /* Ensures long words/URLs break correctly */
-        }
+        .copy-paste-box { background-color: #ecfdf5; border: 1px solid #34d399; padding: 1rem; border-radius: 0.5rem; font-family: monospace; word-wrap: break-word; margin-top: 0.5rem; text-align: left; }
 
     </style>
 </head>
@@ -123,8 +111,9 @@
             packageSelection: "Please select a package for the customer.",
             bookingForm: "Perfect. Please provide the customer's details to find an appointment.",
             sendSMSPromptCustomer: "Alright thank you for providing me that information, your appointment is almost confirmed! One last step we need to complete your booking is for you to pay the $50 deposit, I'll send a link to your phone number so you can pay this. The deposit goes towards the cost of the auto detail, and your remaining balance will be collected after the service is completed.",
-            // smsTextToCopy is now a single line to prevent unwanted line breaks
-            smsTextToCopy: "ACTION REQUIRED: Hi it's Michie Auto Detail! Your appointment is almost confirmed! We just need to collect a $50 deposit to secure your booking, this goes towards the cost of your detail service, and the balance is collected after the service is complete. Please make your secure deposit payment here: https://pay.michieauto.com/deposit",
+            // smsTextToCopy is now a dynamic function
+            smsTextToCopy: (name, year, make, model, serviceType, price) =>
+                `ACTION REQUIRED: Hi ${name} it's Michie Auto Detail! Your appointment is almost confirmed for your ${year} ${make} ${model} vehicle detail for your ${serviceType} service. We just need to collect a $50 deposit to secure the booking, this goes towards the $${price} cost of detail package, and you'll pay the remaining balance when service is complete. Pay your $50 deposit at https://pay.michieauto.com/deposit Questions? Call (405) 295-5189`,
             confirmationText: (name, year, make, model, date, time) =>
                 `Hi, ${name}, Thanks for choosing Michie Auto Detail, your auto detail appointment for your ${year} ${make} ${model} is confirmed on ${date} at ${time}. Questions or need to reschedule? Call (405) 295-5189 - We'll see you soon! 🚗 😃`,
             paymentConfirmationQuestion: "Were you able to get the text and make the payment?",
@@ -236,10 +225,6 @@
                         <div class="agent-instructions">
                             ${scripts.otherCalls.agentNote}
                         </div>
-                        <h3 class="text-lg font-semibold text-gray-700 mt-4 mb-2">Text Message Preview</h3>
-                        <div class="copy-paste-box">
-                            ${scripts.smsTextToCopy}
-                        </div>
                         <div class="space-y-4 p-4 mt-4">
                             <button id="btn-complete-form" class="btn btn-primary w-full">Complete form</button>
                             <button id="btn-back-initial" class="btn btn-secondary w-full mt-4">Start New Call</button>
@@ -276,7 +261,8 @@
                 case 'bookingForm':
                     updateScript(scripts.bookingForm);
                     const makes = ["Acura","Audi","BMW","Buick","Cadillac","Chevrolet","Chrysler","Dodge","Ford","GMC","Honda","Hyundai","Infiniti","Jaguar","Jeep","Kia","Land Rover","Lexus","Lincoln","Mazda","Mercedes-Benz","Mini","Mitsubishi","Nissan","Ram","Subaru","Tesla","Toyota","Volkswagen","Volvo","Smart","Other"];
-                    const makeOptions = makes.map(make => `<option value="">Select Make</option><option value="${make}">${make}</option>`).join('');
+                    // Corrected: Only add "Select Make" once at the beginning
+                    const makeOptions = '<option value="">Select Make</option>' + makes.map(make => `<option value="${make}">${make}</option>`).join('');
                     content = `
                         <div class="space-y-4 p-4">
                             <div><label class="form-label">Full Name</label><input type="text" id="full_name" class="form-input"></div>
@@ -305,11 +291,20 @@
                     break;
                 
                 case 'sendSMS':
-                    updateScript(scripts.sendSMSPromptCustomer); // Use the script part
+                    updateScript(scripts.sendSMSPromptCustomer);
+                    // Dynamically generate the SMS text for the preview
+                    const depositSMSPreview = scripts.smsTextToCopy(
+                        state.lastPayload.full_name.split(' ')[0], // Name
+                        state.lastPayload.vehicle_year,
+                        state.lastPayload.vehicle_make,
+                        state.lastPayload.vehicle_model,
+                        state.lastPayload.package_type,
+                        state.lastPayload.package_price
+                    );
                     content = `
                         <h3 class="text-lg font-semibold text-gray-700 mt-4 mb-2">Text Message Preview</h3>
                         <div class="copy-paste-box">
-                            ${scripts.smsTextToCopy}
+                            ${depositSMSPreview}
                         </div>
                         <div class="space-y-4 p-4 mt-4">
                             <button id="btn-send-auto-sms" class="btn btn-primary w-full">Send Auto Deposit Link SMS</button>
@@ -361,11 +356,20 @@
                     break;
 
                 case 'resendSMS':
-                    updateScript(scripts.resendSMSText); // Use the script part
+                    updateScript(scripts.resendSMSText);
+                    // Dynamically generate the SMS text for the preview
+                    const resendDepositSMSPreview = scripts.smsTextToCopy(
+                        state.lastPayload.full_name.split(' ')[0], // Name
+                        state.lastPayload.vehicle_year,
+                        state.lastPayload.vehicle_make,
+                        state.lastPayload.vehicle_model,
+                        state.lastPayload.package_type,
+                        state.lastPayload.package_price
+                    );
                     content = `
                         <h3 class="text-lg font-semibold text-gray-700 mt-4 mb-2">Text Message Preview</h3>
                         <div class="copy-paste-box">
-                            ${scripts.smsTextToCopy}
+                            ${resendDepositSMSPreview}
                         </div>
                         <div class="space-y-4 p-4 mt-4">
                             <button id="btn-send-auto-sms" class="btn btn-primary w-full">Resend Auto Deposit Link SMS</button>
@@ -483,7 +487,17 @@
                     el('back-to-packages').addEventListener('click', () => renderView('packageSelection'));
                     break;
                 case 'sendSMS':
-                    el('btn-send-auto-sms').addEventListener('click', () => sendAutoSMS(state.lastPayload.phone, scripts.smsTextToCopy));
+                    el('btn-send-auto-sms').addEventListener('click', () => sendAutoSMS(
+                        state.lastPayload.phone,
+                        scripts.smsTextToCopy(
+                            state.lastPayload.full_name.split(' ')[0],
+                            state.lastPayload.vehicle_year,
+                            state.lastPayload.vehicle_make,
+                            state.lastPayload.vehicle_model,
+                            state.lastPayload.package_type,
+                            state.lastPayload.package_price
+                        )
+                    ));
                     el('btn-payment-confirmation-q').addEventListener('click', () => renderView('paymentConfirmationQuestion'));
                     el('btn-back-initial').addEventListener('click', () => renderView('initial'));
                     break;
@@ -523,7 +537,17 @@
                     el('btn-back-initial').addEventListener('click', () => renderView('initial'));
                     break;
                 case 'resendSMS':
-                    el('btn-send-auto-sms').addEventListener('click', () => sendAutoSMS(state.lastPayload.phone, scripts.smsTextToCopy)); // Re-attach for resend
+                    el('btn-send-auto-sms').addEventListener('click', () => sendAutoSMS( // Re-attach for resend
+                        state.lastPayload.phone,
+                        scripts.smsTextToCopy(
+                            state.lastPayload.full_name.split(' ')[0],
+                            state.lastPayload.vehicle_year,
+                            state.lastPayload.vehicle_make,
+                            state.lastPayload.vehicle_model,
+                            state.lastPayload.package_type,
+                            state.lastPayload.package_price
+                        )
+                    ));
                     el('btn-payment-confirmation-q').addEventListener('click', () => renderView('paymentConfirmationQuestion'));
                     el('btn-back-initial').addEventListener('click', () => renderView('initial'));
                     break;
@@ -723,8 +747,46 @@
         // This function is now more robust, ensuring only one message box is active.
         // It also correctly removes the previous message box before showing a new one.
         // The 'currentMessageBox' variable is now declared globally above initApp.
-        // No changes needed here, as the global declaration is handled.
-        // ... (function definition is already correct) ...
+        function showCustomMessage(message, type = 'info') {
+            // If a message box already exists, remove it first
+            if (currentMessageBox && document.body.contains(currentMessageBox)) {
+                document.body.removeChild(currentMessageBox);
+                currentMessageBox = null; // Clear the reference
+            }
+
+            const messageBox = document.createElement('div');
+            messageBox.className = 'fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50';
+            let bgColor = 'bg-white';
+            let textColor = 'text-gray-800';
+            if (type === 'success') {
+                bgColor = 'bg-green-100';
+                textColor = 'text-green-800';
+            } else if (type === 'error') {
+                bgColor = 'bg-red-100';
+                textColor = 'text-red-800';
+            } else if (type === 'info') {
+                bgColor = 'bg-blue-100';
+                textColor = 'text-blue-800';
+            }
+
+            messageBox.innerHTML = `
+                <div class="${bgColor} p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
+                    <p class="text-lg font-semibold ${textColor} mb-4">${message}</p>
+                    <button id="message-box-ok" class="btn btn-primary">OK</button>
+                </div>
+            `;
+            document.body.appendChild(messageBox);
+            currentMessageBox = messageBox; // Store reference to the new message box
+
+            // Attach listener to the OK button of the CURRENT message box
+            document.getElementById('message-box-ok').addEventListener('click', () => {
+                if (currentMessageBox && document.body.contains(currentMessageBox)) {
+                    document.body.removeChild(currentMessageBox);
+                    currentMessageBox = null; // Clear reference when removed
+                }
+            });
+        }
+
         state = {};
         renderView('initial');
     }
