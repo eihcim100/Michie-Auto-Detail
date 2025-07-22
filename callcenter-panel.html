@@ -800,12 +800,10 @@
         renderView('initial');
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        if (!window.google) {
-            console.warn("Google Maps script not loaded. Initializing app without it.");
-            initApp();
-        }
-    });
+    // The `DOMContentLoaded` event listener was removed from here.
+    // The `initApp` function is now called directly by the Google Maps API script
+    // using the `callback=initApp` parameter. This ensures `initApp` only runs
+    // after the API is fully loaded, preventing the race condition.
     </script>
 </body>
 </html>
