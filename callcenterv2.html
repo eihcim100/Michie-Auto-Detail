@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Michie Auto Detailing - Call Center Tool</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #334155; }
+        .pac-container { z-index: 1050 !important; }
+        .btn { padding: 0.75rem 1.5rem; border-radius: 0.75rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; border: none; display: inline-flex; align-items: center; justify-content: center; text-align: center; }
+        .btn-primary { background-color: #3b82f6; color: white; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+        .btn-primary:hover:not(:disabled) { background-color: #2563eb; transform: translateY(-2px); }
+        .btn-secondary { background-color: #e2e8f0; color: #475569; border: 1px solid #cbd5e1; }
+        .btn-secondary:hover:not(:disabled) { background-color: #cbd5e1; }
+        .btn-success { background-color: #22c55e; color: white; }
+        .btn-success:hover:not(:disabled) { background-color: #16a34a; transform: translateY(-2px); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .card { background-color: #ffffff; border-radius: 1rem; padding: 1.5rem; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05); }
+        .form-input, .form-select { width: 100%; padding: 0.75rem 1rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; background-color: #ffffff; font-size: 1rem; color: #334155; transition: border-color 0.2s, box-shadow 0.2s; }
+        .form-input:focus, .form-select:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
+        .form-label { display: block; font-weight: 500; margin-bottom: 0.5rem; color: #475569; }
+        .script-display { background-color: #e0f2fe; border: 2px solid #90cdf4; border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1.5rem; font-size: 1.125rem; font-weight: 500; color: #1e40af; text-align: center; min-height: 100px;}
+        .time-button { padding: 0.75rem 1rem; border-radius: 0.75rem; border: 2px solid #cbd5e1; font-weight: 500; cursor: pointer; transition: all 0.2s ease; background-color: #e0f2fe; color: #1e40af; text-align: center; }
+        .time-button:hover:not(:disabled) { background-color: #bfdbfe; border-color: #60a5fa; }
+        .time-button.selected { background-color: #2563eb; color: white; border-color: #2563eb; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .time-button:disabled { background-color: #e2e8f0; color: #94a3b8; cursor: not-allowed; opacity: 0.7; }
+        
+        .pricing-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+        @media (min-width: 1024px) { .pricing-grid { grid-template-columns: repeat(3, 1fr); } }
+        .pricing-card { background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 1rem; padding: 1.5rem; display: flex; flex-direction: column; box-shadow: 0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.1); height: 100%;}
+        .pricing-level { font-size: 1.25rem; font-weight: 700; color: #1e293b; margin-bottom: 0.5rem; }
+        .pricing-price { font-size: 2rem; font-weight: 800; color: #059669; margin-bottom: 1rem; }
+        .feature-list { list-style: none; padding: 0; text-align: left; flex-grow: 1; margin-bottom: 1.5rem; }
+        .feature-list li { position: relative; padding-left: 1.75rem; margin-bottom: 0.6rem; color: #475569; font-size: 0.9rem; }
+        .feature-list li::before { content: '✓'; color: #059669; position: absolute; left: 0; font-weight: bold; font-size: 1.1rem; }
+        .see-whats-included-btn { background-color: #eff6ff; color: #1e40af; font-weight: 500; padding: 0.5rem 1rem; border-radius: 0.5rem; width: 100%; margin-top: 0.5rem; margin-bottom: 1rem; transition: background-color 0.2s; cursor: pointer; text-align: center; border: none; }
+        .see-whats-included-btn:hover { background-color: #dbeafe; }
+        .feature-dropdown { display: none; overflow: hidden; }
+        .select-package-btn { width: 100%; margin-top: auto; }
+        .alert-banner { background-color: #fefcbf; border: 2px solid #fbd38d; color: #975a16; padding: 1rem; border-radius: 0.75rem; margin-bottom: 1.5rem; font-weight: 600; text-align: center; }
+        .agent-instructions { background-color: #fee2e2; border: 2px solid #fca5a5; color: #dc2626; padding: 1rem; border-radius: 0.75rem; margin-top: 1.5rem; font-weight: 600; text-align: center; }
+        .copy-paste-box { background-color: #ecfdf5; border: 1px solid #34d399; padding: 1rem; border-radius: 0.5rem; font-family: monospace; white-space: pre-wrap; word-break: break-all; margin-top: 1rem; text-align: left; }
+        .copy-paste-box {
+            background-color: #ecfdf5;
+            border: 1px solid #34d399;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: monospace;
+            margin-top: 0.5rem;
+            text-align: left;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <header class="text-center mb-10">
+            <img src="https://michieauto.com/logo.jpeg" alt="Michie Auto Detailing Logo" class="mx-auto mb-4 w-64 h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/256x100/e2e8f0/334155?text=Michie+Auto';">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">Michie Auto Detailing Call Center</h1>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-1 lg:gap-8"> <!-- Changed to 1 column -->
+            <!-- Left Column: Interactive Script -->
+            <div class="flex flex-col space-y-4">
+                <div class="script-display" id="script-display"></div>
+                <div id="script-container" class="card"></div>
+            </div>
+
+            <!-- Removed Right Column: Static Form (Booking Summary) -->
+        </div>
+    </div>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk&libraries=places&callback=initApp" async defer></script>
+
+    <script>
+    // --- NEW: Robust Initialization ---
+    // Flag to prevent the app from initializing more than once.
+    window.appInitialized = false;
+
+    // Moved currentMessageBox declaration to global scope
+    let currentMessageBox = null; // Keep track of the currently active message box
+
+    function initApp() {
+        // Prevent double initialization. If the app is already running, do nothing.
+        if (window.appInitialized) {
+            return;
+        }
+        window.appInitialized = true;
+        console.log("Application Initializing...");
+
+        const API_URL_BOOKING = 'https://michie-detailing-admin.onrender.com/public/appointment'; // Your booking backend
+        const API_URL_SMS = 'https://client-notifications.onrender.com/send-sms'; // Your SMS backend
+        const elements = { scriptDisplay: document.getElementById('script-display'), scriptContainer: document.getElementById('script-container') };
+        let state = {};
+
+        const scripts = {
+            initial: "Thank you for calling Michie Auto Detailing, are you calling to book an appointment?",
+            pricingMainOptions: "I can certainly help with pricing. What type of vehicle is it?",
+            pricingPetHair: "Do you have any pet hair in the vehicle, even just a little bit?",
+            pricingShampoo: "Would you like your carpets shampooed so they are fresh and new, with all the odor removed?",
+            pricingLevel2Rec: (vehicleType, price) => {
+                const baseScript = "Excellent! Based on the answers you provided, I'm going to recommend our level 2 detail package. This package goes beyond the basic wash and vacuum, and instead makes your car look and feel like new. This package includes Tire cleaning, as well as Window cleaning, Deep vacuuming, Display controls and panels wipedown, Mirror cleaning, Surface protectant for the dash and display/controls, and a full Shampoo for the carpets and seats. It also includes hair removal and odor elimination.";
+                return `${baseScript} The price for our level 2 service for a ${vehicleType} is $${price}. Does that sound good?`;
+            },
+            pricingLevel1Rec: (vehicleType, price) => `Okay, in that case I'd recommend our Level 1 Detail. It's a thorough interior and exterior cleaning for just $${price}. Does that sound good?`,
+            pricingLevel2Downsell: (vehicleType, discountedPrice) => `Well I completely understand, let me see what I can do here. I don't want to lose you over price. Since you're a first time customer I want to give you a special rate that can fit your budget a bit better. I've added a promo code of $25 off, which brings it down to $${discountedPrice} for a ${vehicleType} if you schedule today. Sound good?`, // Changed from $50 to $25
+            pricingLevel1Downsell: (vehicleType, discountedPrice) => `Well I completely understand, let me see what I can do here. I'm not here to lose you over price. Since you're a first time customer I want to give you a special rate that can fit your budget a bit better. I've added a promo code of $25 off, which brings it down to $${discountedPrice} for a ${vehicleType} if you schedule today. Sound good?`,
+            pricingLevel1FromLevel2: (vehicleType, price) => `OK I understand you want the lowest price possible. In this situation, I recommend booking our level 1 service which includes the essential cleaning you need and can deliver great results, and the best part is, after the service is done if you wanted to do a level 2 and pay the difference you're welcome to do so. I can offer you this package for $${price}. Does that sound good?`,
+            otherCalls: {
+                agentNote: "AGENT NOTE: For all other calls, fill out our \"All other calls form\"",
+                script: "I understand you're looking for more specific information, and I'll be happy to get you in contact with someone who can help within a few minutes, OK? I just need a bit of info from you so we know who to reach out to."
+            },
+            schedulingVehicleType: "Excellent! To schedule, what type of vehicle is it?",
+            packageSelection: "Awesome! And which package were you interested in booking? We have 3 levels of service.",
+            bookingForm: "Perfect. Please provide the customer's details to find an appointment.",
+            sendSMSPromptCustomer: "Alright thank you for providing me that information, your appointment is almost confirmed! One last step we need to complete your booking is for you to pay the $50 deposit, I'll send a link to your phone number so you can pay this. The deposit goes towards the cost of the auto detail, and your remaining balance will be collected after the service is completed.",
+            smsTextToCopy: "ACTION REQUIRED: Hi it's Michie Auto Detail! Your appointment is almost confirmed! We just need to collect a $50 deposit to secure your booking, this goes towards the cost of your detail service, and the balance is collected after the service is complete. Please make your secure deposit payment here: https://pay.michieauto.com/deposit Message and data rates may apply. Reply STOP to stop.",
+            confirmationText: (name, year, make, model, date, time) =>
+                `Hi, ${name}, Thanks for choosing Michie Auto Detail, your auto detail appointment for your ${year} ${make} ${model} is confirmed on ${date} at ${time}. Questions or need to reschedule? Call (405) 295-5189 - We'll see you soon! 🚗 😃 Message and data rates may apply. Reply STOP to stop.`,
+            paymentConfirmationQuestion: "Were you able to get the text and make the payment?",
+            paymentConfirmedSuccess: "Alright then! You'll all set and good to go - and your appointment is confirmed we'll see you then, and if you have any questions or need to reschedule before your appointment time, feel free to contact us. Thanks for calling Michie Auto Detail, have a great day!",
+            resendSMSText: "Ok let me resend the text"
+        };
+        
+        const level1Features = ["External high pressure wash", "Tire cleaner", "Window cleaning inside and out", "Deep vaccuming", "Display controls and panels wipedown", "Mirror cleaning", "Seat vaccum", "Surface protectent for the dash and display/controls", "Steering wheel and dash clean"];
+        const level2SpecificFeatures = ["Shampoo carpets and seats", "Premium Leather treatment", "Door jam cleaning", "Rims and tires cleaned and wiped down", "Console scrub down", "Pet hair removal", "Odor removal"];
+        const level3SpecificFeatures = ["FINE TOOTH COMB in between seats cleaning", "Glove compartment cleaning", "Trunk shampoo and vaccum", "Door controls cleaning", "Hard to reach areas deep level shampoo", "Meticulous cleaning of all frequently touched surfaces", "External bug removal", "Free microfiber cloth", "Protection plan (complimentary maintenance clean within 15 days)"];
+
+        const level2Features = [...level1Features, ...level2SpecificFeatures];
+        const level3Features = [...level2Features, ...level3SpecificFeatures];
+
+        const packageData = {
+            "Level 1 Detail": { prices: { car: 149, truck: 199, suv: 199 }, features: level1Features },
+            "Level 2 Detail": { prices: { car: 249, truck: 299, suv: 299 }, features: level2Features },
+            "Level 3 Detail": { prices: { car: 349, truck: 399, suv: 399 }, features: level3Features }
+        };
+
+        const updateScript = (text) => { elements.scriptDisplay.innerHTML = text; };
+        const formatTime = (t) => { if (!t) return ''; const [h, m] = t.split(':'); return new Date(0,0,0,h,m).toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'}); };
+        const formatDate = (d) => { if (!d) return ''; return new Date(d+'T12:00:00').toLocaleDateString('en-US', {weekday:'long',month:'long',day:'numeric',year:'numeric'}); };
+        
+        const initGoogleAutocomplete = () => {
+            const addressInput = document.getElementById('address');
+            if (addressInput && window.google?.maps?.places) {
+                const autocomplete = new google.maps.places.Autocomplete(addressInput, { componentRestrictions: { country: "us" }, fields: ["address_components", "formatted_address"], types: ["address"] });
+                autocomplete.addListener('place_changed', () => {
+                    const place = autocomplete.getPlace();
+                    if (place.formatted_address) addressInput.value = place.formatted_address;
+                    const zip = place.address_components?.find(c => c.types.includes('postal_code'))?.long_name || '';
+                    const zipInput = document.getElementById('zip_code');
+                    if (zipInput) zipInput.value = zip;
+                });
+            } else {
+                console.log("Google Places API not available. Autocomplete disabled.");
+            }
+        };
+
+        const renderView = (view) => {
+            elements.scriptContainer.innerHTML = '';
+            let content = '';
+
+            const createButton = (id, text, style, wFull = true) => `<button id="${id}" class="btn ${style} ${wFull ? 'w-full' : ''}">${text}</button>`;
+            const createButtonGroup = (buttons) => `<div class="space-y-4 p-4">${buttons.join('')}</div>`;
+
+            const createPackageDetails = (packageName, vehicleSize) => {
+                const data = packageData[packageName];
+                const featureList = data.features.map(f => `<li>${f}</li>`).join('');
+                return `
+                    <button class="see-whats-included-btn">See what's included</button>
+                    <div class="feature-dropdown" style="display: none;">
+                        <ul class="feature-list">${featureList}</ul>
+                    </div>
+                `;
+            };
+
+            switch (view) {
+                case 'initial':
+                    updateScript(scripts.initial);
+                    content = createButtonGroup([ 
+                        createButton('btn-schedule-service', 'Schedule Service', 'btn-primary'), 
+                        createButton('btn-pricing-question', 'Calling about pricing', 'btn-primary'),
+                        createButton('btn-all-other-calls', 'All other calls', 'btn-secondary')
+                    ]);
+                    break;
+                
+                case 'pricingMainOptions':
+                    updateScript(scripts.pricingMainOptions);
+                    content = createButtonGroup([ 
+                        createButton('btn-car', 'Car', 'btn-primary'), 
+                        createButton('btn-truck', 'Truck', 'btn-primary'), 
+                        createButton('btn-suv', 'SUV', 'btn-primary'), 
+                        createButton('btn-back-initial', 'Back', 'btn-secondary mt-4') 
+                    ]);
+                    break;
+
+                case 'pricingPetHair':
+                    updateScript(scripts.pricingPetHair);
+                    content = createButtonGroup([ 
+                        createButton('btn-yes-pet-hair', 'Yes', 'btn-primary'), 
+                        createButton('btn-no-pet-hair', 'No', 'btn-primary'), 
+                        createButton('btn-back-pricing-main', 'Back', 'btn-secondary mt-4') 
+                    ]);
+                    break;
+
+                case 'pricingShampoo':
+                    updateScript(scripts.pricingShampoo);
+                    content = createButtonGroup([ 
+                        createButton('btn-yes-shampoo', 'Yes', 'btn-primary'), 
+                        createButton('btn-no-shampoo', 'No', 'btn-primary'), 
+                        createButton('btn-back-pet-hair-q', 'Back', 'btn-secondary mt-4') 
+                    ]);
+                    break;
+                
+                case 'pricingRecommendation':
+                    const priceRec = packageData[`Level ${state.recLevel} Detail`].prices[state.vehicleSize];
+                    updateScript(state.recLevel === 2 ? scripts.pricingLevel2Rec(state.vehicleSize.charAt(0).toUpperCase() + state.vehicleSize.slice(1), priceRec) : scripts.pricingLevel1Rec(state.vehicleSize.charAt(0).toUpperCase() + state.vehicleSize.slice(1), priceRec));
+                    content = `
+                        <div class="p-4">
+                            ${createPackageDetails(`Level ${state.recLevel} Detail`, state.vehicleSize)}
+                            ${createButtonGroup([ 
+                                createButton('btn-schedule-it', 'Yes, Schedule It!', 'btn-success'), 
+                                createButton('btn-no-thanks', 'No, Thanks', 'btn-secondary') 
+                            ])}
+                        </div>
+                    `;
+                    break;
+
+                case 'pricingDownsell':
+                    const originalLevel2Price = packageData["Level 2 Detail"].prices[state.vehicleSize];
+                    const discountedPriceL2 = originalLevel2Price - 25; // Changed from 50 to 25
+                    updateScript(scripts.pricingLevel2Downsell(state.vehicleSize.charAt(0).toUpperCase() + state.vehicleSize.slice(1), discountedPriceL2));
+                    content = `
+                        <div class="p-4">
+                            ${createPackageDetails("Level 2 Detail", state.vehicleSize)}
+                            ${createButtonGroup([
+                                createButton('btn-accept-downsell', 'Yes, Schedule It!', 'btn-success'),
+                                createButton('btn-no-downsell', 'No, Thanks', 'btn-secondary')
+                            ])}
+                        </div>
+                    `;
+                    break;
+                
+                case 'pricingLevel1FromLevel2':
+                    const priceL1 = packageData["Level 1 Detail"].prices[state.vehicleSize];
+                    updateScript(scripts.pricingLevel1FromLevel2(state.vehicleSize.charAt(0).toUpperCase() + state.vehicleSize.slice(1), priceL1));
+                    content = `
+                        <div class="p-4">
+                            ${createPackageDetails("Level 1 Detail", state.vehicleSize)}
+                            ${createButtonGroup([
+                                createButton('btn-accept-level1-from-level2', 'Yes, Schedule It!', 'btn-success'),
+                                createButton('btn-no-level1-from-level2', 'No, Thanks', 'btn-secondary')
+                            ])}
+                        </div>
+                    `;
+                    break;
+
+                case 'pricingLevel1Downsell':
+                    const originalLevel1Price = packageData["Level 1 Detail"].prices[state.vehicleSize];
+                    const discountedPriceL1 = originalLevel1Price - 25;
+                    updateScript(scripts.pricingLevel1Downsell(state.vehicleSize.charAt(0).toUpperCase() + state.vehicleSize.slice(1), discountedPriceL1));
+                    content = `
+                        <div class="p-4">
+                            ${createPackageDetails("Level 1 Detail", state.vehicleSize)}
+                            ${createButtonGroup([
+                                createButton('btn-accept-level1-downsell', 'Yes, Schedule It!', 'btn-success'),
+                                createButton('btn-no-downsell-final', 'No, Thanks', 'btn-secondary')
+                            ])}
+                        </div>
+                    `;
+                    break;
+
+                case 'otherCalls':
+                    updateScript(scripts.otherCalls.script);
+                    content = `
+                        <div class="agent-instructions">
+                            ${scripts.otherCalls.agentNote}
+                        </div>
+                        <div class="space-y-4 p-4 mt-4">
+                            <button id="btn-complete-form" class="btn btn-primary w-full">Complete form</button>
+                            <button id="btn-back-initial" class="btn btn-secondary w-full mt-4">Start New Call</button>
+                        </div>
+                    `;
+                    break;
+
+                case 'schedulingVehicleType':
+                    updateScript(scripts.schedulingVehicleType);
+                    content = createButtonGroup([ createButton('btn-car', 'Car', 'btn-primary'), createButton('btn-truck', 'Truck', 'btn-primary'), createButton('btn-suv', 'SUV', 'btn-primary'), createButton('btn-back-initial', 'Back', 'btn-secondary mt-4') ]);
+                    break;
+
+                case 'packageSelection':
+                    updateScript(scripts.packageSelection);
+                    let packageCards = '<div class="pricing-grid">';
+                    Object.entries(packageData).forEach(([name, data]) => {
+                        const price = data.prices[state.vehicleSize];
+                        packageCards += `
+                            <div class="pricing-card">
+                                <h4 class="pricing-level">${name}</h4>
+                                <p class="pricing-price">$${price}</p>
+                                ${createPackageDetails(name, state.vehicleSize)}
+                                <button class="select-package-btn btn btn-success" data-package-name="${name}" data-package-price="${price}">Select Package</button>
+                            </div>`;
+                    });
+                    packageCards += '</div>';
+                    content = `<div class="p-4">${packageCards}<br>${createButton('btn-back-sched-vehicle', 'Back', 'btn-secondary')}</div>`;
+                    break;
+
+                case 'bookingForm':
+                    updateScript(scripts.bookingForm);
+                    const makes = ["Acura","Audi","BMW","Buick","Cadillac","Chevrolet","Chrysler","Dodge","Ford","GMC","Honda","Hyundai","Infiniti","Jaguar","Jeep","Kia","Land Rover","Lexus","Lincoln","Mazda","Mercedes-Benz","Mini","Mitsubishi","Nissan","Ram","Subaru","Tesla","Toyota","Volkswagen","Volvo","Smart","Other"];
+                    const makeOptions = `<option value="">Select Make</option>` + makes.map(make => `<option value="${make}">${make}</option>`).join('');
+                    content = `
+                        <div class="space-y-4 p-4">
+                            <div><label class="form-label">Full Name</label><input type="text" id="full_name" class="form-input"></div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div><label class="form-label">Email</label><input type="email" id="email" class="form-input"></div>
+                                <div><label class="form-label">Phone</label><input type="tel" id="phone" class="form-input"></div>
+                            </div>
+                            <div><label class="form-label">Address</label><input type="text" id="address" class="form-input"></div>
+                            <div><label class="form-label">Zip Code</label><input type="text" id="zip_code" class="form-input"></div>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div><label class="form-label">Vehicle Year</label><input type="text" id="vehicle_year" class="form-input"></div>
+                                <div><label class="form-label">Vehicle Make</label><select id="vehicle_make" class="form-select">${makeOptions}</select></div>
+                                <div><label class="form-label">Vehicle Model</label><input type="text" id="vehicle_model" class="form-input"></div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div><label class="form-label">Package</label><input type="text" id="package_type" class="form-input bg-gray-100" value="${state.package_type || ''}" readonly></div>
+                                <div><label class="form-label">Price ($)</label><input type="number" id="package_price" class="form-input bg-gray-100" value="${state.package_price || ''}" readonly></div>
+                            </div>
+                            <div><label class="form-label">Date</label><input type="date" id="date" class="form-input"></div>
+                            <div><label class="form-label">Time</label><div id="booking-time-buttons" class="grid grid-cols-3 gap-2"></div><input type="hidden" id="time"></div>
+                            <div class="pt-4 border-t"><label class="flex items-center"><input type="checkbox" id="create_account" class="h-4 w-4 rounded mr-2">Create Account (Optional)</label></div>
+                            <div id="password-field" class="hidden"><label class="form-label">Password</label><input type="password" id="password" class="form-input"></div>
+                            <button id="submit-btn" class="btn btn-success w-full mt-4">Submit Appointment</button>
+                            <button id="back-to-packages" class="btn btn-secondary w-full mt-2">Back to Packages</button>
+                        </div>`;
+                    break;
+                
+                case 'sendSMS':
+                    updateScript(scripts.sendSMSPromptCustomer);
+                    content = `
+                        <h3 class="text-lg font-semibold text-gray-700 mt-4 mb-2">Text Message Preview</h3>
+                        <div class="copy-paste-box">
+                            ${scripts.smsTextToCopy}
+                        </div>
+                        <div class="space-y-4 p-4 mt-4">
+                            <button id="btn-send-auto-sms" class="btn btn-primary w-full">Send Auto Deposit Link SMS</button>
+                            <button id="btn-payment-confirmation-q" class="btn btn-primary w-full">Ask about payment confirmation</button>
+                            <button id="btn-back-initial" class="btn btn-secondary w-full mt-4">Start New Call</button>
+                        </div>
+                    `;
+                    break;
+
+                case 'paymentConfirmationQuestion':
+                    updateScript(scripts.paymentConfirmationQuestion);
+                    content = createButtonGroup([
+                        createButton('btn-payment-yes', 'Yes', 'btn-success'),
+                        createButton('btn-payment-no', 'No', 'btn-secondary')
+                    ]);
+                    break;
+
+                case 'confirmationPage':
+                    updateScript("Great! Now send the final confirmation text to the customer.");
+                    const finalConfirmationMessage = scripts.confirmationText(
+                        state.lastPayload.full_name.split(' ')[0],
+                        state.lastPayload.vehicle_year,
+                        state.lastPayload.vehicle_make,
+                        state.lastPayload.vehicle_model,
+                        formatDate(state.lastPayload.date),
+                        formatTime(state.lastPayload.time)
+                    );
+                    content = `
+                        <div class="alert-banner">
+                            AGENT INSTRUCTIONS: Send the final confirmation message.
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-700 mt-4 mb-2">Text Message Preview</h3>
+                        <div class="copy-paste-box">
+                            ${finalConfirmationMessage}
+                        </div>
+                        <div class="space-y-4 p-4 mt-4">
+                            <button id="btn-send-final-confirmation-sms" class="btn btn-primary w-full">Send Confirmation Text</button>
+                            <button id="btn-proceed-to-confirmed" class="btn btn-success w-full">Proceed to Call Confirmed</button>
+                            <button id="btn-back-initial" class="btn btn-secondary w-full mt-4">Start New Call</button>
+                        </div>
+                    `;
+                    break;
+
+                case 'paymentConfirmed':
+                    updateScript(scripts.paymentConfirmedSuccess);
+                    content = createButtonGroup([
+                        createButton('btn-back-initial', 'Start New Call', 'btn-primary')
+                    ]);
+                    break;
+
+                case 'resendSMS':
+                    updateScript(scripts.resendSMSText);
+                    content = `
+                        <h3 class="text-lg font-semibold text-gray-700 mt-4 mb-2">Text Message Preview</h3>
+                        <div class="copy-paste-box">
+                            ${scripts.smsTextToCopy}
+                        </div>
+                        <div class="space-y-4 p-4 mt-4">
+                            <button id="btn-send-auto-sms" class="btn btn-primary w-full">Resend Auto Deposit Link SMS</button>
+                            <button id="btn-payment-confirmation-q" class="btn btn-primary w-full">Ask about payment confirmation</button>
+                            <button id="btn-back-initial" class="btn btn-secondary w-full mt-4">Start New Call</button>
+                        </div>
+                    `;
+                    break;
+            }
+            elements.scriptContainer.innerHTML = content;
+            attachListeners(view);
+        };
+
+        const attachListeners = (view) => {
+            const el = (id) => document.getElementById(id);
+            const handleVehicleClick = (size) => { state.vehicleSize = size; renderView('pricingPetHair'); }; 
+            const handleSchedVehicleClick = (size) => { state.vehicleSize = size; state.vehicle_type = size.charAt(0).toUpperCase() + size.slice(1); renderView('packageSelection'); };
+
+            const attachSeeWhatsIncludedListeners = () => {
+                elements.scriptContainer.querySelectorAll('.see-whats-included-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const dropdown = e.target.nextElementSibling;
+                        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+                    });
+                });
+            };
+
+            switch (view) {
+                case 'initial':
+                    el('btn-schedule-service').addEventListener('click', () => renderView('schedulingVehicleType'));
+                    el('btn-pricing-question').addEventListener('click', () => renderView('pricingMainOptions')); 
+                    el('btn-all-other-calls').addEventListener('click', () => renderView('otherCalls'));
+                    break;
+                case 'pricingMainOptions': 
+                    el('btn-car').addEventListener('click', () => handleVehicleClick('car'));
+                    el('btn-truck').addEventListener('click', () => handleVehicleClick('truck'));
+                    el('btn-suv').addEventListener('click', () => handleVehicleClick('suv'));
+                    el('btn-back-initial').addEventListener('click', () => renderView('initial'));
+                    break;
+                case 'pricingPetHair':
+                    el('btn-yes-pet-hair').addEventListener('click', () => { state.recLevel = 2; renderView('pricingRecommendation'); });
+                    el('btn-no-pet-hair').addEventListener('click', () => renderView('pricingShampoo'));
+                    el('btn-back-pricing-main').addEventListener('click', () => renderView('pricingMainOptions'));
+                    break;
+                case 'pricingShampoo':
+                    el('btn-yes-shampoo').addEventListener('click', () => { state.recLevel = 2; renderView('pricingRecommendation'); });
+                    el('btn-no-shampoo').addEventListener('click', () => { state.recLevel = 1; renderView('pricingRecommendation'); });
+                    el('btn-back-pet-hair-q').addEventListener('click', () => renderView('pricingPetHair'));
+                    break;
+                case 'pricingRecommendation':
+                    attachSeeWhatsIncludedListeners();
+                    el('btn-schedule-it').addEventListener('click', () => {
+                        state.package_type = `Level ${state.recLevel} Detail`;
+                        state.package_price = packageData[state.package_type].prices[state.vehicleSize];
+                        state.vehicle_type = state.vehicleSize.charAt(0).toUpperCase() + state.vehicleSize.slice(1);
+                        renderView('bookingForm');
+                    });
+                    el('btn-no-thanks').addEventListener('click', () => {
+                        if (state.recLevel === 2) {
+                            renderView('pricingDownsell');
+                        } else if (state.recLevel === 1) {
+                            renderView('pricingLevel1Downsell');
+                        }
+                    });
+                    break;
+                case 'pricingDownsell':
+                    attachSeeWhatsIncludedListeners();
+                    el('btn-accept-downsell').addEventListener('click', () => {
+                        state.package_type = `Level 2 Detail (Promo)`;
+                        state.package_price = packageData["Level 2 Detail"].prices[state.vehicleSize] - 25; // Changed from 50 to 25
+                        state.vehicle_type = state.vehicleSize.charAt(0).toUpperCase() + state.vehicleSize.slice(1);
+                        renderView('bookingForm');
+                    });
+                    el('btn-no-downsell').addEventListener('click', () => renderView('pricingLevel1FromLevel2'));
+                    break;
+                case 'pricingLevel1FromLevel2':
+                    attachSeeWhatsIncludedListeners();
+                    el('btn-accept-level1-from-level2').addEventListener('click', () => {
+                        state.package_type = `Level 1 Detail`;
+                        state.package_price = packageData["Level 1 Detail"].prices[state.vehicleSize];
+                        state.vehicle_type = state.vehicleSize.charAt(0).toUpperCase() + state.vehicleSize.slice(1);
+                        renderView('bookingForm');
+                    });
+                    el('btn-no-level1-from-level2').addEventListener('click', () => renderView('pricingLevel1Downsell'));
+                    break;
+                case 'pricingLevel1Downsell':
+                    attachSeeWhatsIncludedListeners();
+                    el('btn-accept-level1-downsell').addEventListener('click', () => {
+                        state.package_type = `Level 1 Detail (Promo)`;
+                        state.package_price = packageData["Level 1 Detail"].prices[state.vehicleSize] - 25;
+                        state.vehicle_type = state.vehicleSize.charAt(0).toUpperCase() + state.vehicleSize.slice(1);
+                        renderView('bookingForm');
+                    });
+                    el('btn-no-downsell-final').addEventListener('click', () => renderView('otherCalls'));
+                    break;
+                case 'otherCalls':
+                    el('btn-complete-form').addEventListener('click', () => {
+                        window.open('https://form.jotform.com/252018562435050', '_blank');
+                    });
+                    el('btn-back-initial').addEventListener('click', () => renderView('initial'));
+                    break;
+                case 'schedulingVehicleType':
+                    el('btn-car').addEventListener('click', () => handleSchedVehicleClick('car'));
+                    el('btn-truck').addEventListener('click', () => handleSchedVehicleClick('truck'));
+                    el('btn-suv').addEventListener('click', () => handleSchedVehicleClick('suv'));
+                    el('btn-back-initial').addEventListener('click', () => renderView('initial'));
+                    break;
+                case 'packageSelection':
+                    attachSeeWhatsIncludedListeners();
+                    elements.scriptContainer.querySelectorAll('.select-package-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            state.package_type = e.target.dataset.packageName;
+                            state.package_price = e.target.dataset.packagePrice;
+                            renderView('bookingForm');
+                        });
+                    });
+                    el('btn-back-sched-vehicle').addEventListener('click', () => renderView('schedulingVehicleType'));
+                    break;
+                case 'bookingForm':
+                    initGoogleAutocomplete();
+                    el('date').min = new Date().toISOString().split("T")[0];
+                    const timeContainer = el('booking-time-buttons'), timeInput = el('time');
+                    ['09:00', '11:00', '12:00', '14:00', '16:00', '17:00', '18:00'].forEach(t => {
+                        const btn = document.createElement('button');
+                        btn.type = 'button'; btn.className = 'time-button'; btn.textContent = formatTime(t); btn.dataset.time = t;
+                        btn.addEventListener('click', () => { timeContainer.querySelector('.selected')?.classList.remove('selected'); btn.classList.add('selected'); timeInput.value = t; });
+                        timeContainer.appendChild(btn);
+                    });
+                    el('create_account').addEventListener('change', (e) => { el('password-field').classList.toggle('hidden', !e.target.checked); });
+                    el('submit-btn').addEventListener('click', submitAndPopulate);
+                    el('back-to-packages').addEventListener('click', () => renderView('packageSelection'));
+                    break;
+                case 'sendSMS':
+                    el('btn-send-auto-sms').addEventListener('click', () => sendAutoSMS(state.lastPayload.phone, scripts.smsTextToCopy));
+                    el('btn-payment-confirmation-q').addEventListener('click', () => renderView('paymentConfirmationQuestion'));
+                    el('btn-back-initial').addEventListener('click', () => renderView('initial'));
+                    break;
+                case 'paymentConfirmationQuestion':
+                    el('btn-payment-yes').addEventListener('click', () => renderView('confirmationPage'));
+                    el('btn-payment-no').addEventListener('click', () => renderView('resendSMS'));
+                    break;
+                case 'confirmationPage':
+                    el('btn-send-final-confirmation-sms').addEventListener('click', async () => {
+                        const confirmationBtn = el('btn-send-final-confirmation-sms');
+                        confirmationBtn.disabled = true;
+                        confirmationBtn.textContent = 'Sending Confirmation...';
+                        const finalMessage = scripts.confirmationText(
+                            state.lastPayload.full_name.split(' ')[0],
+                            state.lastPayload.vehicle_year,
+                            state.lastPayload.vehicle_make,
+                            state.lastPayload.vehicle_model,
+                            formatDate(state.lastPayload.date),
+                            formatTime(state.lastPayload.time)
+                        );
+                        await sendAutoSMS(state.lastPayload.phone, finalMessage);
+                        confirmationBtn.textContent = 'Confirmation Sent!';
+                    });
+                    el('btn-proceed-to-confirmed').addEventListener('click', () => renderView('paymentConfirmed'));
+                    el('btn-back-initial').addEventListener('click', () => renderView('initial'));
+                    break;
+                case 'paymentConfirmed':
+                    el('btn-back-initial').addEventListener('click', () => renderView('initial'));
+                    break;
+                case 'resendSMS':
+                    el('btn-send-auto-sms').addEventListener('click', () => sendAutoSMS(state.lastPayload.phone, scripts.smsTextToCopy));
+                    el('btn-payment-confirmation-q').addEventListener('click', () => renderView('paymentConfirmationQuestion'));
+                    el('btn-back-initial').addEventListener('click', () => renderView('initial'));
+                    break;
+            }
+        };
+
+        function showCustomMessage(message, type = 'info') {
+            if (currentMessageBox && document.body.contains(currentMessageBox)) {
+                document.body.removeChild(currentMessageBox);
+                currentMessageBox = null;
+            }
+            const messageBox = document.createElement('div');
+            messageBox.className = 'fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50';
+            let bgColor = type === 'success' ? 'bg-green-100' : type === 'error' ? 'bg-red-100' : 'bg-blue-100';
+            let textColor = type === 'success' ? 'text-green-800' : type === 'error' ? 'text-red-800' : 'text-blue-800';
+            messageBox.innerHTML = `
+                <div class="${bgColor} p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
+                    <p class="text-lg font-semibold ${textColor} mb-4">${message}</p>
+                    <button id="message-box-ok" class="btn btn-primary">OK</button>
+                </div>
+            `;
+            document.body.appendChild(messageBox);
+            currentMessageBox = messageBox;
+            document.getElementById('message-box-ok').addEventListener('click', () => {
+                if (currentMessageBox && document.body.contains(currentMessageBox)) {
+                    document.body.removeChild(currentMessageBox);
+                    currentMessageBox = null;
+                }
+            });
+        }
+
+        const sendAutoSMS = async (phoneNumber, messageContent) => {
+            if (!phoneNumber || !/^\+\d{10,15}$/.test(phoneNumber)) {
+                showCustomMessage('Error: Invalid phone number format for SMS.', 'error');
+                return;
+            }
+            if (!messageContent) {
+                showCustomMessage("Error: No message content to send SMS.", 'error');
+                return;
+            }
+            showCustomMessage('Attempting to send SMS...');
+            try {
+                const response = await fetch(API_URL_SMS, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ to: phoneNumber, message_body: messageContent }),
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    showCustomMessage(result.message || 'SMS sent successfully!', 'success');
+                } else {
+                    showCustomMessage(result.error || 'Failed to send SMS.', 'error');
+                }
+            } catch (error) {
+                console.error('SMS Sending Error:', error);
+                showCustomMessage(`An error occurred while sending SMS: ${error.message}`, 'error');
+            }
+        };
+
+        const submitAndPopulate = async () => {
+            const getVal = (id) => document.getElementById(id)?.value;
+            let rawPhoneNumber = getVal('phone');
+            const digitsOnly = rawPhoneNumber.replace(/\D/g, '');
+            let formattedPhoneNumber = rawPhoneNumber.startsWith('+') ? `+${digitsOnly}` : `+1${digitsOnly}`;
+
+            const payload = {
+                full_name: getVal('full_name'), email: getVal('email'), phone: formattedPhoneNumber,
+                address: getVal('address'), zip_code: getVal('zip_code'),
+                vehicle_year: getVal('vehicle_year'), vehicle_make: getVal('vehicle_make'), vehicle_model: getVal('vehicle_model'),
+                package_type: getVal('package_type'), package_price: getVal('package_price'),
+                date: getVal('date'), time: getVal('time'),
+                create_account: document.getElementById('create_account').checked,
+                password: getVal('password'),
+                vehicle_type: state.vehicle_type 
+            };
+            payload.deal_name = `${payload.package_type || 'Detail'} - ${payload.vehicle_make || ''} ${payload.vehicle_model || ''}`;
+
+            if (!payload.full_name || !payload.date || !payload.time || !/^\+\d{10,15}$/.test(payload.phone)) {
+                showCustomMessage("Name, Date, Time, and a valid Phone Number are required.", 'error');
+                return;
+            }
+
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.disabled = true; submitBtn.textContent = 'Submitting...';
+
+            try {
+                const response = await fetch(API_URL_BOOKING, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.message || `Server error: ${response.status}`);
+                
+                showCustomMessage('Appointment submitted successfully! Proceeding to send deposit link.', 'success');
+                
+                // Removed the population of the static booking form fields as the section is removed
+                // Object.keys(payload).forEach(key => {
+                //     const el = document.getElementById(`form-${key.replace(/_/g, '-')}`);
+                //     if (el) {
+                //         let value = payload[key];
+                //         if (key === 'date') value = formatDate(value);
+                //         if (key === 'time') value = formatTime(value);
+                //         if (key === 'package_price') value = value ? `$${value}` : '';
+                //         el.value = value;
+                //     }
+                // });
+                // document.getElementById('form-vehicle-type').value = payload.vehicle_type;
+                
+                state.lastPayload = payload;
+                renderView('sendSMS');
+
+            } catch (error) {
+                console.error('Submission Error:', error);
+                showCustomMessage(`Failed to submit appointment: ${error.message}`, 'error');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Appointment';
+            }
+        };
+
+        // Initialize the first view
+        state = {};
+        renderView('initial');
+    }
+
+    // --- NEW: Fallback Timer ---
+    // This timer will run after 3 seconds. If the Google Maps API has failed to load
+    // and call initApp by then, this will call it manually.
+    // This ensures the application ALWAYS loads, even if Google Maps has an issue.
+    setTimeout(() => {
+        if (!window.appInitialized) {
+            console.warn("Google Maps API callback timed out. Initializing app manually.");
+            initApp();
+        }
+    }, 3000); // 3 second timeout
+    </script>
+</body>
+</html>
