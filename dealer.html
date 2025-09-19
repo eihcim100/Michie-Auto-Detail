@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Michie Auto Detailing - Custom Worksheet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a202c; /* Dark background */
+            color: #e2e8f0; /* Light text */
+        }
+        .card {
+            background-color: #2d3748; /* Darker card background */
+            border-radius: 1rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            padding: 2rem;
+        }
+        .premium-card {
+            background-color: #4a5568; /* Slightly lighter dark background */
+            border: 2px solid #d4af37;
+            box-shadow: 0 10px 20px rgba(212, 175, 55, 0.4);
+        }
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #4a5568;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .checkbox-container:hover {
+            background-color: #4a5568;
+        }
+        .premium-checkbox-container {
+            border-color: #f3d179;
+        }
+        input[type="checkbox"] {
+            transform: scale(1.5);
+            accent-color: #68d391; /* Light green checkmark */
+            cursor: pointer;
+        }
+        .select-button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid #4a5568;
+            background-color: #2d3748;
+            color: #e2e8f0;
+        }
+        .select-button.selected {
+            background-color: #3b82f6;
+            color: white;
+            border-color: #2563eb;
+            box-shadow: 0 6px 10px -1px rgba(0, 0, 0, 0.15);
+        }
+        .savings-unlocked-box {
+            background-color: #2d3748;
+            border: 2px solid #d69e2e;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+        .savings-unlocked-box::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: linear-gradient(45deg, #d69e2e, #f6e0ba, #d69e2e);
+            z-index: -1;
+            transform: scale(1.1);
+            filter: blur(8px);
+        }
+        .savings-unlocked-box .content {
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 p-4 sm:p-6 lg:p-8">
+    <div class="container mx-auto max-w-4xl">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-200 mb-2">Create Your Custom Detailing Plan</h1>
+            <p class="text-lg text-gray-400">Select the services and number of vehicles for a custom quote.</p>
+        </header>
+
+        <div class="card mb-8">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+                <label class="text-xl font-semibold mb-2 sm:mb-0 text-gray-200">Number of vehicles per month</label>
+                <div id="vehicle-count-display" class="text-xl font-bold text-gray-200">10 vehicles per month</div>
+            </div>
+            <p class="text-center font-bold text-gray-400 mb-4">Select all services you wish to include:</p>
+            <div id="standard-services-list" class="space-y-2">
+                <!-- Standard Checkboxes will be dynamically added here -->
+            </div>
+        </div>
+
+        <div class="card premium-card mt-8 mb-8">
+            <h2 class="text-2xl font-bold text-gray-200 mb-4 text-center">Premium Services</h2>
+            <div id="premium-services-list" class="space-y-2">
+                <!-- Premium Checkboxes will be dynamically added here -->
+            </div>
+        </div>
+
+        <div class="card mt-8">
+            <div class="flex justify-between items-center mb-4">
+                <p class="text-2xl font-bold text-gray-200">Estimated Cost Per Vehicle:</p>
+                <div class="flex items-center space-x-2">
+                    <p id="strikethrough-price" class="text-4xl font-extrabold text-gray-500 line-through mr-2 hidden"></p>
+                    <p id="total-price" class="text-4xl font-extrabold text-green-400">$165</p>
+                    <span id="savings-message" class="text-sm font-semibold text-gray-400 hidden"></span>
+                </div>
+            </div>
+            <p class="text-center text-sm font-semibold text-gray-400 mt-2">
+                This rate is **price-locked** and is the same for all sedans, trucks, and SUVs.
+            </p>
+        </div>
+
+        <div class="card mt-8">
+            <h2 class="text-2xl font-bold text-gray-200 mb-4 text-center">Full Package Price</h2>
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+                <label for="vehicle-count" class="text-xl font-semibold mb-2 sm:mb-0 text-gray-200">Number of vehicles</label>
+                <input type="number" id="vehicle-count-input" value="10" min="5" max="50" class="text-lg w-32 bg-gray-700 text-white rounded-lg p-2">
+            </div>
+            <div class="flex justify-between items-center">
+                <p class="text-2xl font-bold text-gray-200">Total Monthly Cost:</p>
+                <p id="total-package-price" class="text-4xl font-extrabold text-teal-400"></p>
+            </div>
+            
+            <div class="mt-8 savings-unlocked-box">
+                <div class="content">
+                    <label class="flex items-center space-x-2 text-2xl font-bold text-gray-200 mb-4 cursor-pointer">
+                        <input type="checkbox" id="prepaid-discount-checkbox" class="h-6 w-6 rounded">
+                        <span>Prepaid Plan Discount</span>
+                    </label>
+                    <div id="discount-section" class="hidden space-y-2">
+                        <p class="text-xl font-bold text-white mb-2">SAVINGS UNLOCKED!</p>
+                        <div class="flex justify-between items-center">
+                            <p class="text-lg font-semibold text-gray-200">Discount Applied (10%):</p>
+                            <p id="discount-amount" class="text-lg text-green-400 font-bold">-</p>
+                        </div>
+                        <div class="flex justify-between items-center mt-2">
+                            <p class="text-2xl font-bold text-gray-200">Final Prepaid Monthly Cost:</p>
+                            <p id="final-price-with-discount" class="text-3xl font-extrabold text-lime-400"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const services = [
+            { name: "External high-pressure wash", price: 0, required: true },
+            { name: "Window cleaning (inside and out)", price: 0, required: true },
+            { name: "Deep vacuuming of interior", price: 0, required: true },
+            { name: "Dash & display controls wipedown", price: 0, required: true },
+            { name: "Rims and tires cleaned and shined", price: 20, required: false },
+            { name: "Door jamb cleaning", price: 30, required: false },
+            { name: "Shampooing of carpets and seats", price: 49, required: false },
+            { name: "Premium leather treatment", price: 25, required: false },
+            { name: "Headliner spot cleaning", price: 25, required: false },
+            { name: "Full trunk vacuuming and cleaning", price: 25, required: false },
+            { name: "Exterior bug and tar removal", price: 49, required: false }
+        ];
+
+        const premiumServices = [
+            { name: "Pet hair & odor removal", price: 45, required: false },
+            { name: "Engine bay cleaning", price: 99, required: false, exemptFromCap: true },
+            { name: "Clay bar treatment", price: 49, required: false, exemptFromCap: true }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const standardServicesList = document.getElementById('standard-services-list');
+            const premiumServicesList = document.getElementById('premium-services-list');
+            const vehicleCountInput = document.getElementById('vehicle-count-input');
+            const vehicleCountDisplay = document.getElementById('vehicle-count-display');
+            const totalPriceElement = document.getElementById('total-price');
+            const strikethroughPriceElement = document.getElementById('strikethrough-price');
+            const totalPackagePriceElement = document.getElementById('total-package-price');
+            const savingsMessage = document.getElementById('savings-message');
+            const prepaidDiscountCheckbox = document.getElementById('prepaid-discount-checkbox');
+            const discountSection = document.getElementById('discount-section');
+            const discountAmountElement = document.getElementById('discount-amount');
+            const finalPriceWithDiscountElement = document.getElementById('final-price-with-discount');
+
+            const basePrice = 165;
+            const prepaidDiscount = 0.10;
+            const bulkDiscount = 0.10; // 10% discount for more than 9 vehicles
+            const priceCap = 275;
+
+            function updatePrice() {
+                let regularServicesCost = 0;
+                document.querySelectorAll('#standard-services-list input[type="checkbox"]').forEach(checkbox => {
+                    if (checkbox.checked) {
+                        const servicePrice = parseFloat(checkbox.dataset.price);
+                        regularServicesCost += servicePrice;
+                    }
+                });
+
+                let premiumServicesCost = 0;
+                document.querySelectorAll('#premium-services-list input[type="checkbox"]').forEach(checkbox => {
+                    if (checkbox.checked) {
+                        const servicePrice = parseFloat(checkbox.dataset.price);
+                        const serviceObj = premiumServices.find(s => s.price === servicePrice && s.name.startsWith(checkbox.closest('.checkbox-container').querySelector('span').textContent));
+                        if (serviceObj && serviceObj.exemptFromCap) {
+                            premiumServicesCost += servicePrice;
+                        } else {
+                            regularServicesCost += servicePrice;
+                        }
+                    }
+                });
+
+                let finalPricePerVehicle = basePrice + regularServicesCost;
+                let savings = 0;
+                
+                if (finalPricePerVehicle > priceCap) {
+                    savings = finalPricePerVehicle - priceCap;
+                    finalPricePerVehicle = priceCap;
+                }
+                
+                finalPricePerVehicle += premiumServicesCost;
+
+                const originalPrice = finalPricePerVehicle;
+                const vehicleCount = parseInt(vehicleCountInput.value, 10);
+
+                if (vehicleCount > 9) {
+                    const bulkDiscountedPrice = originalPrice - (originalPrice * bulkDiscount);
+                    
+                    if (prepaidDiscountCheckbox.checked) {
+                        const bothDiscountsApplied = originalPrice - (originalPrice * bulkDiscount) - (originalPrice * prepaidDiscount);
+                        strikethroughPriceElement.classList.add('hidden');
+                        totalPriceElement.textContent = `$${bothDiscountsApplied.toFixed(0)}`;
+                    } else {
+                        strikethroughPriceElement.textContent = `$${originalPrice.toFixed(0)}`;
+                        strikethroughPriceElement.classList.remove('hidden');
+                        totalPriceElement.textContent = `$${bulkDiscountedPrice.toFixed(0)}`;
+                    }
+
+                } else {
+                    strikethroughPriceElement.classList.add('hidden');
+                    totalPriceElement.textContent = `$${originalPrice.toFixed(0)}`;
+                }
+
+                if (savings > 0) {
+                    savingsMessage.textContent = `(YOU SAVED $${savings.toFixed(0)})`;
+                    savingsMessage.classList.remove('hidden');
+                } else {
+                    savingsMessage.classList.add('hidden');
+                }
+
+                const priceRanges = [
+                    { min: 0, max: 249, color: 'text-green-400' },
+                    { min: 250, max: 299, color: 'text-lime-400' },
+                    { min: 300, max: 349, color: 'text-teal-400' },
+                    { min: 350, max: Infinity, color: 'text-cyan-400' }
+                ];
+                
+                totalPriceElement.className = 'text-4xl font-extrabold';
+                
+                for (const range of priceRanges) {
+                    if (finalPricePerVehicle >= range.min && finalPricePerVehicle <= range.max) {
+                        totalPriceElement.classList.add(range.color);
+                        break;
+                    }
+                }
+
+                updateTotalPackagePrice();
+            }
+
+            function updateTotalPackagePrice() {
+                const perVehiclePrice = parseFloat(totalPriceElement.textContent.replace('$', ''));
+                const vehicleCount = parseInt(vehicleCountInput.value, 10);
+                
+                if (!isNaN(perVehiclePrice) && !isNaN(vehicleCount)) {
+                    let totalPackagePrice = perVehiclePrice * vehicleCount;
+                    
+                    if (vehicleCount > 9) {
+                        vehicleCountDisplay.textContent = `${vehicleCount} vehicles per month (Bulk Discount Applied)`;
+                    } else {
+                        vehicleCountDisplay.textContent = `${vehicleCount} vehicles per month`;
+                    }
+
+                    totalPackagePriceElement.textContent = `$${totalPackagePrice.toFixed(0)}`;
+                    
+                    if (prepaidDiscountCheckbox.checked) {
+                        const discount = totalPackagePrice * prepaidDiscount;
+                        const finalPrice = totalPackagePrice - discount;
+                        discountAmountElement.textContent = `-$${discount.toFixed(0)}`;
+                        finalPriceWithDiscountElement.textContent = `$${finalPrice.toFixed(0)}`;
+                        discountSection.classList.remove('hidden');
+                    } else {
+                        discountSection.classList.add('hidden');
+                    }
+                } else {
+                    totalPackagePriceElement.textContent = '$0';
+                    discountSection.classList.add('hidden');
+                }
+            }
+
+            function createServiceCheckboxes(serviceList, container) {
+                serviceList.forEach(service => {
+                    const div = document.createElement('div');
+                    div.className = 'checkbox-container';
+                    div.innerHTML = `
+                        <label class="flex items-center flex-grow cursor-pointer text-base text-gray-300">
+                            <input type="checkbox" data-price="${service.price}" ${service.required ? 'checked disabled' : ''}>
+                            <span class="ml-4">${service.name}</span>
+                            ${service.required ? '<span class="ml-2 text-sm text-gray-500">(Required Base Service)</span>' : ''}
+                        </label>
+                        <span class="text-gray-400 font-semibold">${service.price > 0 ? `+$${service.price}` : 'Included'}</span>
+                    `;
+                    container.appendChild(div);
+                });
+            }
+
+            createServiceCheckboxes(services, standardServicesList);
+            createServiceCheckboxes(premiumServices, premiumServicesList);
+
+            standardServicesList.addEventListener('change', updatePrice);
+            premiumServicesList.addEventListener('change', updatePrice);
+            vehicleCountInput.addEventListener('input', updatePrice); // Changed to updatePrice
+            prepaidDiscountCheckbox.addEventListener('change', updatePrice); // Changed to updatePrice
+
+            updatePrice();
+        });
+    </script>
+</body>
+</html>
