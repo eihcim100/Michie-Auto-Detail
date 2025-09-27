@@ -632,7 +632,7 @@
                 <div class="mt-8 space-y-4">
                     <!-- Deposit Option -->
                     <div>
-                        <button id="pay-deposit-button" class="btn-success">Pay $50 deposit</button>
+                        <button id="pay-deposit-button" class="btn-success">Pay $100 deposit</button>
                         <p class="text-xs text-gray-500 mt-2">(Pay the remaining due after service completion)</p>
                     </div>
 
@@ -649,7 +649,7 @@
 
             <!-- Policy Text -->
             <div id="policy-text" class="hidden text-xs text-gray-500 mt-8 space-y-2">
-                <p>* <strong>Deposit Policy:</strong> Paying in full is optional before the detail is completed, however, if you choose to not pay in full, a $50 deposit is required to secure your appointment, and this goes towards the cost of your detail service. The remaining balance will be collected after service is completed. In the event that you cancel the appointment, the $50 deposit paid is non-refundable. Reschedules are always free.</p>
+                <p>* <strong>Deposit Policy:</strong> Paying in full is optional before the detail is completed, however, if you choose to not pay in full, a $100 deposit is required to secure your appointment, and this goes towards the cost of your detail service. The remaining balance will be collected after service is completed. In the event that you cancel the appointment, the $100 deposit paid is non-refundable. Reschedules are always free.</p>
                 <p>* <strong>Paid in Full Policy:</strong> If you paid in full and cancel your appointment, no cancel fee will be charged, instead, 100% of the amount paid will be provided to you as an auto detailing credit, valid for any detail with Michie Auto Detailing LLC in the next 12 months. This is similar to a gift card, no cash refunds are provided. Reschedules are always free of charge.</p>
             </div>
 
@@ -884,6 +884,37 @@
                 checkAndSetInitialDate();
             }
 
+            async function sendSmsNotification(bookingDetails) {
+                const formattedTime = formatTimeDisplay(bookingDetails.time);
+                // The date is already in YYYY-MM-DD format, we'll format it for display.
+                const dateObj = new Date(bookingDetails.date + 'T12:00:00'); // Use midday to avoid timezone issues
+                const formattedDate = dateObj.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+                const message = `ACTION REQUIRED: Thanks for booking Michie Auto Detail! Your appointment is pending for ${formattedTime} on ${formattedDate} for your ${bookingDetails.vehicle_year} ${bookingDetails.vehicle_make} ${bookingDetails.vehicle_model}. Please make sure you have paid your $100 deposit payment to secure your booking, this goes towards the cost of your detail service. You'll pay the remaining balance when we come out. Click here to pay: https://michieauto.com/deposit\n\nQuestions? Call (405) 295-5189`;
+
+                const smsPayload = {
+                    to: bookingDetails.phone, // Already formatted phone number
+                    message_body: message,
+                };
+
+                try {
+                    const response = await fetch('https://client-notifications.onrender.com/send-sms', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(smsPayload)
+                    });
+                    if (response.ok) {
+                        console.log('SMS notification sent successfully.');
+                    } else {
+                        const errorData = await response.json();
+                        console.error('Failed to send SMS notification:', errorData);
+                    }
+                } catch (error) {
+                    console.error('Error sending SMS notification:', error);
+                }
+            }
+
+
             async function handleBooking(e, endpoint, messageEl, selectedTimeInputId) { 
                 e.preventDefault();
                 const submitButton = elements.finalBookAppointmentBtn;
@@ -905,7 +936,7 @@
                 try {
                     const fullName = document.getElementById('full-name').value;
                     const email = document.getElementById('email').value;
-                    const phone = document.getElementById('phone').value;
+                    const phoneRaw = document.getElementById('phone').value;
                     const address = document.getElementById('address-input').value;
                     const zipCode = document.getElementById('zip-code').value;
                     const vehicleYear = document.getElementById('vehicle-year').value;
@@ -916,7 +947,7 @@
                     const packageType = document.getElementById('selected-package-type').value; 
                     const packagePrice = document.getElementById('selected-package-price').value; 
 
-                    if (!fullName || !email || !phone || !address || !zipCode || !vehicleYear || !vehicleMake || !vehicleModel || !bookingDate || !selectedTime || !packageType || !packagePrice) {
+                    if (!fullName || !email || !phoneRaw || !address || !zipCode || !vehicleYear || !vehicleMake || !vehicleModel || !bookingDate || !selectedTime || !packageType || !packagePrice) {
                         if (messageEl) { messageEl.textContent = 'Please fill in all required fields.'; messageEl.style.color = 'red'; }
                         restoreButton();
                         return;
@@ -926,11 +957,16 @@
                         restoreButton();
                         return;
                     }
-                    if (!/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(phone)) {
+                    if (!/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(phoneRaw)) {
                         if (messageEl) { messageEl.textContent = 'Please enter a valid 10-digit phone number.'; messageEl.style.color = 'red'; }
                         restoreButton();
                         return;
                     }
+
+                    // Format phone number to E.164 standard for SMS API
+                    const phoneDigitsOnly = phoneRaw.replace(/\D/g, '');
+                    const formattedPhone = `+1${phoneDigitsOnly.slice(-10)}`;
+
 
                     const createAccount = elements.createAccountCheckbox ? elements.createAccountCheckbox.checked : false;
                     let password = '';
@@ -944,7 +980,7 @@
                     }
 
                     const payload = {
-                        full_name: fullName, email, phone, address, zip_code: zipCode, vehicle_year: vehicleYear,
+                        full_name: fullName, email, phone: formattedPhone, address, zip_code: zipCode, vehicle_year: vehicleYear,
                         vehicle_make: vehicleMake, vehicle_model: vehicleModel, date: bookingDate, time: selectedTime,
                         package_type: packageType, package_price: packagePrice,
                         deal_name: `${packageType || 'Unknown Package'} ${vehicleMake || ''} ${vehicleModel || ''}`,
@@ -954,6 +990,9 @@
                     const { ok, data } = await apiCall(endpoint, 'POST', payload);
 
                     if (ok) {
+                        // Send SMS notification (fire and forget, don't wait for it)
+                        sendSmsNotification(payload);
+
                         hideAllMajorSections();
                         if (elements.confirmationSection) {
                             elements.confirmationSection.style.display = 'block';
