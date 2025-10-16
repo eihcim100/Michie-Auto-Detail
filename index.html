@@ -50,14 +50,14 @@
             color: white;
             height: 70vh; /* Set a height for the hero section */
         }
-        .hero-video {
+        .hero-video { /* This class is now used for the image */
             position: absolute;
             top: 50%;
             left: 50%;
             width: 100%;
             height: 100%;
             transform: translate(-50%, -50%);
-            object-fit: cover; /* This ensures the video covers the area without white space */
+            object-fit: cover; /* This ensures the image covers the area without white space */
             z-index: -100;
             pointer-events: none;
         }
@@ -310,7 +310,7 @@
 
     <main class="flex-grow pb-24"> <!-- Added padding-bottom to prevent content from being hidden by the sticky footer -->
         <section class="hero-section section-padding text-center flex items-center justify-center">
-            <video id="hero-video-player" autoplay muted playsinline class="hero-video"></video>
+            <img src="https://res.cloudinary.com/dvrljjtdr/image/upload/v1751503250/IMG_20250702_124111_h4edvd.jpg" alt="Car detailing background" class="hero-video">
             <div class="hero-overlay"></div>
             <div class="max-w-4xl mx-auto hero-content">
                 <h2 class="text-4xl md:text-5xl font-extrabold leading-tight mb-4 text-gray-900 tracking-tight">
@@ -571,27 +571,6 @@
             sedanBtn.addEventListener('click', showSedan);
             suvBtn.addEventListener('click', showSuv);
             showSedan(); // Initially show sedan packages
-
-            // --- Hero Video Playlist Logic ---
-            const videoPlayer = document.getElementById('hero-video-player');
-            const videoSources = [
-                'https://res.cloudinary.com/dvrljjtdr/video/upload/v1751500247/VID20240216113828_2_bdzawq.mp4',
-                'https://res.cloudinary.com/dvrljjtdr/video/upload/v1751498935/AQNPpHNFYCMP_D3Y5GB_Wqim_VDK4kshW8ftuv3U1cDNRAdJZ7nJyg9FXzKhh9X7xi2rZzpXdzzx6M5Dr2Dm4Njm_yd27ea.mp4'
-            ];
-            let currentVideoIndex = 0;
-
-            function playNextVideo() {
-                currentVideoIndex = (currentVideoIndex + 1) % videoSources.length;
-                videoPlayer.src = videoSources[currentVideoIndex];
-                videoPlayer.load();
-                videoPlayer.play().catch(error => console.error("Video play failed:", error));
-            }
-
-            videoPlayer.src = videoSources[currentVideoIndex];
-            videoPlayer.addEventListener('ended', playNextVideo);
-            videoPlayer.play().catch(error => {
-                console.error("Initial video play failed. This may be due to browser autoplay policies.", error);
-            });
 
             // --- Image Slideshow Logic ---
             const slideshowContainer = document.getElementById('slideshow-container');
