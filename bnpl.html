@@ -3,284 +3,231 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pay in 3 installments - Michie Auto Detailing</title>
+    <title>Freedom Detail Package - Michie Auto Detailing</title>
 
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-10782185640"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'AW-10782185640');
-    </script>
-
-    <script>
-      gtag('config', 'AW-10782185640/PPImCJ-a7eIaEKixrJUo', {
-        'phone_conversion_number': '4052955189'
-      });
-    </script>
-
+    <!-- Custom Styles -->
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #F9FAFB; /* Light gray background */
-            color: #374151; /* Dark gray text */
+            background-color: #0F172A; /* slate-900 */
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #38BDF8, #A78BFA);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-primary {
+            background-image: linear-gradient(to right, #38BDF8 0%, #818CF8 51%, #A78BFA 100%);
+            background-size: 200% auto;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .btn-primary:hover {
+            background-position: right center;
+            transform: scale(1.05);
         }
         
-        .card {
-            background-color: #FFFFFF; /* White cards */
-            border: 1px solid #E5E7EB; /* Light border */
-            border-radius: 1rem;
-            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.07), 0 4px 6px -4px rgb(0 0 0 / 0.07);
-        }
-        .summary-item {
-            background-color: #F3F4F6; /* Lighter gray for summary items */
-            padding: 1.5rem;
-            border-radius: 0.75rem;
-            text-align: center;
-        }
-        .summary-item .value {
-            font-size: 2rem;
-            font-weight: 800;
-            color: #34d399; /* A vibrant green */
-        }
+        /* Custom styles for the payment timeline */
         .payment-schedule-item {
-            border-left: 4px solid #34d399;
-            padding: 1rem 0 1rem 1.5rem;
             position: relative;
+            padding-left: 2.5rem; /* Space for line and dot */
+            padding-bottom: 2.5rem;
+            border-left: 2px solid #334155; /* slate-700 */
         }
-        .payment-schedule-item:not(:last-child) {
-            padding-bottom: 2rem;
+
+        .payment-schedule-item:last-child {
+            border-left: 2px solid transparent;
+            padding-bottom: 0;
         }
+
         .payment-schedule-item::before {
             content: '';
             position: absolute;
-            left: -0.7rem;
-            top: 1.25rem;
-            width: 1.25rem;
-            height: 1.25rem;
-            background-color: #34d399;
+            left: -9px; /* (18px width / 2) - 2px border width */
+            top: 0;
+            width: 18px;
+            height: 18px;
+            background-color: #0F172A; /* slate-900 */
             border-radius: 50%;
-            border: 4px solid #FFFFFF; /* Border matches new card background */
-        }
-        .btn-primary {
-            background-color: #2563eb;
-            color: white;
-            padding: 1rem 2rem;
-            border-radius: 0.5rem;
-            font-size: 1.125rem;
-            font-weight: 700;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            text-decoration: none;
-        }
-        .btn-primary:hover {
-            background-color: #1d4ed8;
-            transform: translateY(-2px);
-        }
-        .feature-list li {
-            position: relative;
-            padding-left: 2rem;
-            margin-bottom: 0.75rem;
-            font-size: 1.05rem;
-        }
-        .feature-list li::before {
-            content: '\f00c'; /* Font Awesome checkmark */
-            font-family: 'Font Awesome 6 Free';
-            font-weight: 900;
-            color: #34d399;
-            position: absolute;
-            left: 0;
-            top: 4px;
+            border: 4px solid #38BDF8; /* sky-400 */
         }
     </style>
 </head>
-<body class="min-h-screen p-4 sm:p-6 lg:p-8">
+<body class="text-gray-200">
 
-    <div class="relative z-10 w-full max-w-4xl mx-auto">
-        <header class="text-center mb-8">
-            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight">Detail Financing Equality</h1>
-            <p class="mt-3 text-lg text-gray-600 max-w-3xl mx-auto">For a limited time, get our most popular package with 0% interest. Just 3 easy payments of $99.</p>
-        </header>
+    <!-- Background Gradient Shapes -->
+    <div class="absolute top-0 left-0 -translate-x-1/4 -translate-y-1/2" aria-hidden="true">
+        <div class="w-[40rem] h-[40rem] rounded-full bg-gradient-to-tr from-sky-500/40 to-violet-500/20 blur-3xl"></div>
+    </div>
+     <div class="absolute bottom-0 right-0 translate-x-1/4 translate-y-1/2" aria-hidden="true">
+        <div class="w-[40rem] h-[40rem] rounded-full bg-gradient-to-bl from-slate-800/50 to-sky-700/20 blur-3xl"></div>
+    </div>
 
-        <div class="card p-6 sm:p-8 lg:p-10 mb-10">
-            
-            <div>
-                 <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center"><i class="fas fa-receipt text-green-400 mr-3"></i>Your Special Payment Plan</h2>
+    <div class="relative min-h-screen flex flex-col justify-center items-center p-4 sm:p-6 lg:p-8">
+        <main class="w-full max-w-6xl mx-auto z-10">
+            <header class="text-center mb-10">
+                <h1 class="text-4xl md:text-6xl font-black tracking-tighter text-white">
+                    <span class="gradient-text">Freedom</span> Detail Package
+                </h1>
+                <p class="mt-4 text-lg text-slate-400 max-w-3xl mx-auto">
+                    Get our best package, now available for everyone. You're <span class="font-bold text-white bg-green-500/10 border border-green-500/30 rounded-md px-2 py-1">APPROVED</span> at Michie Auto Detailing.
+                </p>
+            </header>
+
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
                 
-                 <div id="summary" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <!-- Left Column: Package Details -->
+                <div class="lg:col-span-3 bg-slate-900/50 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-6 md:p-8">
+                    <h2 class="text-2xl font-bold text-white mb-6">Everything Included</h2>
+                    <ul class="space-y-3 text-slate-300">
+                        <!-- Benefits list will be dynamically inserted here by JavaScript -->
+                        <li id="benefits-list" class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3"></li>
+                    </ul>
+
+                    <div class="mt-10 pt-8 border-t border-slate-800">
+                        <h3 class="text-xl font-bold text-white mb-6">Your Peace of Mind</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div class="flex items-start space-x-3">
+                                <div class="flex-shrink-0"><svg class="w-6 h-6 text-sky-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.286zm0 13.036h.008v.008h-.008v-.008z" /></svg></div>
+                                <div>
+                                    <h4 class="font-semibold text-white">No Credit Check</h4>
+                                    <p class="text-sm text-slate-400">Your approval is based on trust, not credit scores.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <div class="flex-shrink-0"><svg class="w-6 h-6 text-sky-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg></div>
+                                <div>
+                                    <h4 class="font-semibold text-white">Price Lock Guarantee</h4>
+                                    <p class="text-sm text-slate-400">Your rate never goes up, no matter your car's condition.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                 <div class="flex-shrink-0"><svg class="w-6 h-6 text-sky-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+                                <div>
+                                    <h4 class="font-semibold text-white">Automatic Approval</h4>
+                                    <p class="text-sm text-slate-400">Our in-house installment plan is open to everyone.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <div class="flex-shrink-0"><svg class="w-6 h-6 text-sky-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0011.667 0l3.181-3.183m-4.991-2.691L7.5 7.5M2.985 19.644A8.25 8.25 0 0115 4.532v0A8.25 8.25 0 012.985 19.644z" /></svg></div>
+                                <div>
+                                    <h4 class="font-semibold text-white">Autopay Enrollment</h4>
+                                    <p class="text-sm text-slate-400">Set it and forget it. Never worry about a payment again.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Payment Plan -->
+                <div class="lg:col-span-2 bg-slate-800/60 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-6 md:p-8 self-start">
+                    <div class="text-center mb-6">
+                        <span class="text-sm font-semibold text-slate-400">ONE FLAT RATE</span>
+                        <p class="text-5xl font-black text-white tracking-tighter" id="total-cost"></p>
                     </div>
 
-                 <div class="mt-8">
-                    <h3 class="text-xl font-bold text-gray-900 mb-4">Your Payment Schedule</h3>
-                    <div id="schedule" class="relative">
-                        </div>
-                 </div>
-            </div>
-            
-            <hr class="border-gray-200 my-10">
-
-            <div class="text-center">
-                 <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center justify-center"><i class="fas fa-rocket text-blue-400 mr-3"></i>Secure Your Plan</h2>
-                 <p class="text-gray-700 mb-6">Ready to detail? Call us now to secure your financing and schedule your Level 2 Detail!</p>
-                 <a href="tel:4052955189" onclick="return gtag_report_conversion('tel:4052955189');" class="btn-primary inline-flex items-center">
-                    <i class="fas fa-phone-alt mr-3"></i> Call 405-295-5189
-                 </a>
-            </div>
-        </div>
-
-        <div class="card p-6 sm:p-8 lg:p-10 mb-10">
-            <h2 class="text-3xl font-bold text-gray-900 mb-6 text-center">What Your Level 2 Detail Includes</h2>
-            
-            <img src="https://michieauto.com/c6106051-ecc6-4964-9246-4c79215cdb5d~1.jpg" alt="Expertly detailed car interior showcasing clean leather seats and dashboard" class="w-full h-auto rounded-lg mb-6 shadow-md">
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
-                <ul class="feature-list">
-                    <li>External high pressure wash</li>
-                    <li>Tire cleaner & shine</li>
-                    <li>Window cleaning inside and out</li>
-                    <li>Deep vaccuming of seats & carpets</li>
-                    <li>Display, controls & panels wipedown</li>
-                    <li>Surface protectent for dash & controls</li>
-                    <li>Steering wheel and dash deep clean</li>
-                    <li>Shampoo carpets and seats</li>
-                    <li>Premium Leather treatment</li>
-                    <li>Pet hair removal</li>
-                </ul>
-                 <ul class="feature-list">
-                    <li>Odor removal</li>
-                    <li>Door jam cleaning</li>
-                    <li>Rims and tires cleaned and wiped down</li>
-                    <li>Console scrub down</li>
-                    <li>Free bonus wash and vaccum 45 days after service</li>
-                    <li>Deep clean in-between seats</li>
-                    <li>Glove compartment & trunk cleaning</li>
-                    <li>Hard to reach areas deep shampoo</li>
-                    <li>External bug removal</li>
-                </ul>
-            </div>
-        </div>
-        
-        <div id="bonus-section" class="card p-6 sm:p-8 lg:p-10 mb-10 text-center">
+                    <div id="schedule" class="mb-8">
+                        <!-- Payment schedule will be dynamically inserted here -->
+                    </div>
+                    
+                    <a href="tel:4052955189" class="btn-primary block w-full text-center text-white font-bold py-4 rounded-xl text-lg shadow-2xl shadow-sky-500/20">
+                        Secure Your Spot Now
+                    </a>
+                    <p class="text-xs text-slate-500 text-center mt-3">Call to enroll & schedule your detail.</p>
+                </div>
             </div>
 
-        <div class="text-center">
-             <h2 class="text-3xl font-bold text-gray-900 mb-4">Ready for a Showroom Finish?</h2>
-             <p class="text-gray-700 mb-6">Don't wait. Call today to secure your financing and schedule your appointment!</p>
-             <a href="tel:4052955189" onclick="return gtag_report_conversion('tel:4052955189');" class="btn-primary inline-flex items-center text-lg">
-                <i class="fas fa-phone-alt mr-3"></i> Call 405-295-5189
-             </a>
-        </div>
-
-
-        <footer class="text-center mt-12">
-            <a href="#" onclick="history.back(); return false;" class="text-blue-600 hover:text-blue-500 transition">&larr; Go Back to Main Page</a>
-        </footer>
+            <footer class="text-center mt-12">
+                <a href="#" onclick="history.back(); return false;" class="text-sky-400 hover:text-sky-300 transition-colors">&larr; Go Back to Main Page</a>
+            </footer>
+        </main>
     </div>
 
     <script>
-        // --- Call Tracking Reporting Function ---
-        function gtag_report_conversion(url) {
-          var callback = function () {
-            if (typeof(url) != 'undefined') {
-              window.location = url;
-            }
-          };
-          gtag('event', 'conversion', {
-              'send_to': 'AW-10782185640/PPImCJ-a7eIaEKixrJUo',
-              'event_callback': callback
-          });
-          return false;
-        }
-
         document.addEventListener('DOMContentLoaded', () => {
             // --- CONFIGURATION ---
-            const PAYMENT_AMOUNT = 99.00;
-            const NUM_PAYMENTS = 3;
-            const TOTAL_COST = PAYMENT_AMOUNT * NUM_PAYMENTS;
+            const planDetails = {
+                name: "Freedom Detail Package",
+                payments: [
+                    { amount: 249.00, label: "Down Payment" },
+                    { amount: 99.00, label: "Installment 2" },
+                    { amount: 49.00, label: "Installment 3" }
+                ],
+                total: 397.00,
+                benefits: [
+                    "External high pressure wash",
+                    "Tire cleaner",
+                    "Window cleaning inside and out",
+                    "Deep vaccuming",
+                    "Mirror cleaning",
+                    "Seat vaccum",
+                    "Surface protectent for dash & display/controls",
+                    "Steering wheel and dash clean",
+                    "Shampoo carpets and seats",
+                    "Premium Leather treatment",
+                    "Rims and tires cleaned and wiped down",
+                    "Console scrub down"
+                ]
+            };
 
             // --- DOM ELEMENTS ---
-            const summaryDiv = document.getElementById('summary');
-            const scheduleDiv = document.getElementById('schedule');
-            const bonusDiv = document.getElementById('bonus-section');
+            const totalCostEl = document.getElementById('total-cost');
+            const scheduleEl = document.getElementById('schedule');
+            const benefitsListEl = document.getElementById('benefits-list');
 
             // --- FUNCTIONS ---
             function formatCurrency(amount) {
-                return `$${amount.toFixed(2)}`;
+                return `$${amount.toFixed(0)}`; // Show whole dollars for cleaner look
             }
 
             function displayPlan() {
+                // 1. Display Total Cost
+                totalCostEl.textContent = formatCurrency(planDetails.total);
+
+                // 2. Display Benefits List
+                benefitsListEl.innerHTML = planDetails.benefits.map(benefit => `
+                    <li class="flex items-start space-x-3">
+                        <svg class="w-5 h-5 flex-shrink-0 text-sky-400 mt-0.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                          <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.052-.143z" clip-rule="evenodd" />
+                        </svg>
+                        <span>${benefit}</span>
+                    </li>
+                `).join('');
+
+
+                // 3. Display Payment Schedule
                 const today = new Date();
-
-                // 1. Update the Summary Section
-                summaryDiv.innerHTML = `
-                    <div class="summary-item">
-                        <span class="block text-sm font-medium text-gray-500 uppercase">Total Cost</span>
-                        <span class="value">${formatCurrency(TOTAL_COST)}</span>
-                    </div>
-                    <div class="summary-item">
-                        <span class="block text-sm font-medium text-gray-500 uppercase">Payment Today</span>
-                        <span class="value text-yellow-400">${formatCurrency(PAYMENT_AMOUNT)}</span>
-                    </div>
-                    <div class="summary-item">
-                        <span class="block text-sm font-medium text-gray-500 uppercase">Remaining Plan</span>
-                        <span class="value">2 x ${formatCurrency(PAYMENT_AMOUNT)}</span>
-                    </div>
-                `;
-
-                // 2. Update the Payment Schedule Section
                 let scheduleHtml = '';
-                
-                // Payment 1 (Today)
-                scheduleHtml += `
-                    <div class="payment-schedule-item">
-                        <p class="font-bold text-lg text-gray-900">Payment 1: ${formatCurrency(PAYMENT_AMOUNT)}</p>
-                        <p class="text-sm text-gray-700">Due on: Today (${today.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })})</p>
-                    </div>
-                `;
 
-                // Payment 2 (in 2 weeks)
-                const payment2Date = new Date(today);
-                payment2Date.setDate(today.getDate() + 14);
-                scheduleHtml += `
-                    <div class="payment-schedule-item">
-                        <p class="font-bold text-lg text-gray-900">Payment 2: ${formatCurrency(PAYMENT_AMOUNT)}</p>
-                        <p class="text-sm text-gray-700">Due on: ${payment2Date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
-                    </div>
-                `;
+                planDetails.payments.forEach((payment, index) => {
+                    const paymentDate = new Date(today);
+                    if (index > 0) {
+                        paymentDate.setDate(today.getDate() + (index * 14)); // 2 weeks apart
+                    }
+                    
+                    const dateString = index === 0 
+                        ? `Due Today, ${paymentDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}`
+                        : `Due ${paymentDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}`;
 
-                // Payment 3 (in 4 weeks)
-                const payment3Date = new Date(today);
-                payment3Date.setDate(today.getDate() + 28);
-                scheduleHtml += `
-                    <div class="payment-schedule-item">
-                        <p class="font-bold text-lg text-gray-900">Payment 3: ${formatCurrency(PAYMENT_AMOUNT)}</p>
-                        <p class="text-sm text-gray-700">Due on: ${payment3Date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
-                    </div>
-                `;
-
-                scheduleDiv.innerHTML = scheduleHtml;
-
-                // 3. Update the Bonus Section
-                const bonusDate = new Date(today);
-                bonusDate.setDate(today.getDate() + 45); // 45 days from today
-                const formattedBonusDate = bonusDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-
-                bonusDiv.innerHTML = `
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center justify-center">
-                        <i class="fas fa-gift text-yellow-400 mr-3"></i>Your Free Bonus Wash
-                    </h2>
-                    <p class="text-lg text-gray-600">As a thank you, you're entitled to a free bonus wash and vacuum after your installments are paid.</p>
-                    <p class="text-2xl font-bold text-green-400 mt-4">
-                        Claim on or after: ${formattedBonusDate}
-                    </p>
-                    <p class="text-sm text-gray-700 mt-2">(45 days after your initial service)</p>
-                `;
+                    scheduleHtml += `
+                        <div class="payment-schedule-item">
+                            <div class="flex justify-between items-center">
+                                <p class="font-semibold text-white">${payment.label}</p>
+                                <p class="text-xl font-bold text-white">${formatCurrency(payment.amount)}</p>
+                            </div>
+                            <p class="text-sm text-slate-400">${dateString}</p>
+                        </div>
+                    `;
+                });
+                scheduleEl.innerHTML = scheduleHtml;
             }
 
             // --- INITIAL DISPLAY ---
