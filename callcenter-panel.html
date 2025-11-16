@@ -18,6 +18,7 @@
         .btn-success:hover:not(:disabled) { background-color: #16a34a; transform: translateY(-2px); }
         .btn:disabled { opacity: 0.6; cursor: not-allowed; }
         .card { background-color: #ffffff; border-radius: 1rem; padding: 1.5rem; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05); }
+        /* ADDED .form-textarea */
         .form-input, .form-select, .form-textarea { width: 100%; padding: 0.75rem 1rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; background-color: #ffffff; font-size: 1rem; color: #334155; transition: border-color 0.2s, box-shadow 0.2s; }
         .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
         .form-label { display: block; font-weight: 500; margin-bottom: 0.5rem; color: #475569; }
@@ -329,17 +330,12 @@
                                 <div><label class="form-label">Package</label><input type="text" id="package_type" class="form-input bg-gray-100" value="${state.package_type || ''}" readonly></div>
                                 <div><label class="form-label">Price ($)</label><input type="number" id="package_price" class="form-input bg-gray-100" value="${state.package_price || ''}" readonly></div>
                             </div>
-                            <!--
-_  _ ____ _  _ ____    ____ ____ _    ____ ____ ____    ___  ____ ____ 
-|\/| |___ |\/| |      |    |  | |    |___ [__] [__]     |__] |  | |    
-|  | |___ |  | |___   |___ |__| |___ |    |    |    ___ |__] |__| |___ 
-                                                                     
-section starts -->
+                            <!-- START: Job Notes Field -->
                             <div>
                                 <label class="form-label" for="job_notes">Job Notes (Optional)</label>
                                 <textarea id="job_notes" class="form-textarea" rows="3" placeholder="e.g., Customer has extra floor mats, focus on driver seat..."></textarea>
                             </div>
-                            <!-- section ends -->
+                            <!-- END: Job Notes Field -->
                             <div><label class="form-label">Date</label><input type="date" id="date" class="form-input"></div>
                             <div><label class="form-label">Time</label><div id="booking-time-buttons" class="grid grid-cols-3 gap-2"></div><input type="hidden" id="time"></div>
                             <div class="pt-4 border-t"><label class="flex items-center"><input type="checkbox" id="create_account" class="h-4 w-4 rounded mr-2">Create Account (Optional)</label></div>
@@ -647,14 +643,9 @@ section starts -->
                 vehicle_year: getVal('vehicle_year'), vehicle_make: getVal('vehicle_make'), vehicle_model: getVal('vehicle_model'),
                 package_type: getVal('package_type'), package_price: getVal('package_price'),
                 date: getVal('date'), time: getVal('time'),
-                // <!--
-// _  _ ____ _  _ ____    ____ ____ _    ____ ____ ____    ___  ____ ____ 
-// |\/| |___ |\/| |      |    |  | |    |___ [__] [__]     |__] |  | |    
-// |  | |___ |  | |___   |___ |__| |___ |    |    |    ___ |__] |__| |___ 
-//                                                                      
-// section starts -->
-                job_notes: getVal('job_notes'), // Added job_notes
-                // <!-- section ends -->
+                // START: Get job_notes value
+                job_notes: getVal('job_notes'), 
+                // END: Get job_notes value
                 create_account: document.getElementById('create_account').checked,
                 password: getVal('password'),
                 vehicle_type: state.vehicle_type 
