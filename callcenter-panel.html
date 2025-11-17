@@ -53,6 +53,16 @@
             text-align: left;
             word-wrap: break-word;
         }
+        /* New section header style */
+        .section-header {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1e293b;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e2e8f0;
+            margin-top: 2rem;
+            margin-bottom: 1.5rem;
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -116,7 +126,7 @@
                 script: "I understand you're looking for more specific information, and I'll be happy to get you in contact with someone who can help within a few minutes, OK? I just need a bit of info from you so we know who to reach out to."
             },
             schedulingVehicleType: "Excellent! To schedule, what type of vehicle is it?",
-            packageSelection: "Awesome! And which package were you interested in booking? We have 3 levels of service.",
+            packageSelection: "Awesome! And which package were you interested in booking? We have several options.", // Updated text
             bookingForm: "Perfect. Please provide the customer's details to find an appointment.",
             sendSMSPromptCustomer: "Alright thank you for providing me that information, your appointment is almost confirmed! One last step we need to complete your booking is for you to pay the $100 deposit, I'll send a link to your phone number so you can pay this. The deposit goes towards the cost of the auto detail, and your remaining balance will be collected after the service is completed.",
             smsTextToCopy: "ACTION REQUIRED: Hi it's Michie Auto Detail! Your appointment is almost confirmed! We just need to collect a $100 deposit to secure your booking, this goes towards the cost of your detail service, and the balance is collected after the service is complete. Please make your secure deposit payment here: https://pay.michieauto.com/deposit100",
@@ -127,6 +137,7 @@
             resendSMSText: "Ok let me resend the text"
         };
         
+        // --- START: Define All Feature Lists ---
         const level1Features = ["External high pressure wash", "Tire cleaner", "Window cleaning inside and out", "Deep vaccuming", "Display controls and panels wipedown", "Mirror cleaning", "Seat vaccum", "Surface protectent for the dash and display/controls", "Steering wheel and dash clean"];
         const level2SpecificFeatures = ["Shampoo carpets and seats", "Premium Leather treatment", "Door jam cleaning", "Rims and tires cleaned and wiped down", "Console scrub down", "Pet hair removal", "Odor removal"];
         const level3SpecificFeatures = ["FINE TOOTH COMB in between seats cleaning", "Glove compartment cleaning", "Trunk shampoo and vaccum", "Door controls cleaning", "Hard to reach areas deep level shampoo", "Meticulous cleaning of all frequently touched surfaces", "External bug removal", "Free microfiber cloth", "Protection plan (complimentary maintenance clean within 15 days)"];
@@ -134,11 +145,29 @@
         const level2Features = [...level1Features, ...level2SpecificFeatures];
         const level3Features = [...level2Features, ...level3SpecificFeatures];
 
+        // --- NEW: Interior-Only Feature Lists ---
+        const interiorL1Features = ["Window cleaning inside", "Deep vaccuming", "Display controls and panels wipedown", "Mirror cleaning", "Seat vaccum", "Surface protectent for the dash and display/controls", "Steering wheel and dash clean"];
+        const interiorL2SpecificFeatures = ["Shampoo carpets and seats", "Premium Leather treatment", "Console scrub down", "Pet hair removal", "Odor removal"];
+        const interiorL2Features = [...interiorL1Features, ...interiorL2SpecificFeatures];
+        const interiorL3SpecificFeatures = ["FINE TOOTH COMB in between seats cleaning", "Glove compartment cleaning", "Trunk shampoo and vaccum", "Door controls cleaning", "Hard to reach areas deep level shampoo", "Meticulous cleaning of all frequently touched surfaces"];
+        const interiorL3Features = [...interiorL2Features, ...interiorL3SpecificFeatures];
+
+        // --- NEW: Exterior-Only Feature Lists ---
+        const exteriorL2Features = ["External high pressure wash", "Tire cleaner", "Window cleaning out", "Door jam cleaning", "Rims and tires cleaned and wiped down", "External bug removal"];
+        // --- END: Define All Feature Lists ---
+
+
+        // --- START: Updated packageData with new packages and pricing ---
         const packageData = {
             "Level 1 Detail": { prices: { car: 169, truck: 219, suv: 219 }, features: level1Features },
             "Level 2 Detail": { prices: { car: 279, truck: 329, suv: 329 }, features: level2Features },
-            "Level 3 Detail": { prices: { car: 399, truck: 449, suv: 449 }, features: level3Features }
+            "Level 3 Detail": { prices: { car: 399, truck: 449, suv: 449 }, features: level3Features },
+            "Interior Only L1": { prices: { car: 139, truck: 179, suv: 179 }, features: interiorL1Features },
+            "Interior Only L2": { prices: { car: 229, truck: 279, suv: 279 }, features: interiorL2Features },
+            "Interior Only L3": { prices: { car: 319, truck: 359, suv: 359 }, features: interiorL3Features },
+            "Exterior Only L2": { prices: { car: 149, truck: 189, suv: 189 }, features: exteriorL2Features }
         };
+        // --- END: Updated packageData ---
 
         const updateScript = (text) => { elements.scriptDisplay.innerHTML = text; };
         const formatTime = (t) => { if (!t) return ''; const [h, m] = t.split(':'); return new Date(0,0,0,h,m).toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'}); };
@@ -167,8 +196,9 @@
             const createButton = (id, text, style, wFull = true) => `<button id="${id}" class="btn ${style} ${wFull ? 'w-full' : ''}">${text}</button>`;
             const createButtonGroup = (buttons) => `<div class="space-y-4 p-4">${buttons.join('')}</div>`;
 
-            const createPackageDetails = (packageName, vehicleSize) => {
+            const createPackageDetails = (packageName) => {
                 const data = packageData[packageName];
+                if (!data) return ''; // Safety check
                 const featureList = data.features.map(f => `<li>${f}</li>`).join('');
                 return `
                     <button class="see-whats-included-btn">See what's included</button>
@@ -177,6 +207,21 @@
                     </div>
                 `;
             };
+            
+            // --- NEW: Helper function to create a package card ---
+            const createPackageCard = (packageName, vehicleSize) => {
+                const data = packageData[packageName];
+                if (!data) return ''; // Safety check
+                const price = data.prices[vehicleSize];
+                return `
+                    <div class="pricing-card">
+                        <h4 class="pricing-level">${packageName}</h4>
+                        <p class="pricing-price">$${price}</p>
+                        ${createPackageDetails(packageName)}
+                        <button class="select-package-btn btn btn-success" data-package-name="${packageName}" data-package-price="${price}">Select Package</button>
+                    </div>`;
+            };
+
 
             switch (view) {
                 case 'initial':
@@ -221,7 +266,7 @@
                     updateScript(state.recLevel === 2 ? scripts.pricingLevel2Rec(state.vehicleSize.charAt(0).toUpperCase() + state.vehicleSize.slice(1), priceRec) : scripts.pricingLevel1Rec(state.vehicleSize.charAt(0).toUpperCase() + state.vehicleSize.slice(1), priceRec));
                     content = `
                         <div class="p-4">
-                            ${createPackageDetails(`Level ${state.recLevel} Detail`, state.vehicleSize)}
+                            ${createPackageDetails(`Level ${state.recLevel} Detail`)}
                             ${createButtonGroup([ 
                                 createButton('btn-schedule-it', 'Yes, Schedule It!', 'btn-success'), 
                                 createButton('btn-no-thanks', 'No, Thanks', 'btn-secondary') 
@@ -236,7 +281,7 @@
                     updateScript(scripts.pricingLevel2Downsell(state.vehicleSize.charAt(0).toUpperCase() + state.vehicleSize.slice(1), discountedPriceL2));
                     content = `
                         <div class="p-4">
-                            ${createPackageDetails("Level 2 Detail", state.vehicleSize)}
+                            ${createPackageDetails("Level 2 Detail")}
                             ${createButtonGroup([
                                 createButton('btn-accept-downsell', 'Yes, Schedule It!', 'btn-success'),
                                 createButton('btn-no-downsell', 'No, Thanks', 'btn-secondary')
@@ -250,7 +295,7 @@
                     updateScript(scripts.pricingLevel1FromLevel2(state.vehicleSize.charAt(0).toUpperCase() + state.vehicleSize.slice(1), priceL1));
                     content = `
                         <div class="p-4">
-                            ${createPackageDetails("Level 1 Detail", state.vehicleSize)}
+                            ${createPackageDetails("Level 1 Detail")}
                             ${createButtonGroup([
                                 createButton('btn-accept-level1-from-level2', 'Yes, Schedule It!', 'btn-success'),
                                 createButton('btn-no-level1-from-level2', 'No, Thanks', 'btn-secondary')
@@ -265,7 +310,7 @@
                     updateScript(scripts.pricingLevel1Downsell(state.vehicleSize.charAt(0).toUpperCase() + state.vehicleSize.slice(1), discountedPriceL1));
                     content = `
                         <div class="p-4">
-                            ${createPackageDetails("Level 1 Detail", state.vehicleSize)}
+                            ${createPackageDetails("Level 1 Detail")}
                             ${createButtonGroup([
                                 createButton('btn-accept-level1-downsell', 'Yes, Schedule It!', 'btn-success'),
                                 createButton('btn-no-downsell-final', 'No, Thanks', 'btn-secondary')
@@ -292,22 +337,55 @@
                     content = createButtonGroup([ createButton('btn-car', 'Car', 'btn-primary'), createButton('btn-truck', 'Truck', 'btn-primary'), createButton('btn-suv', 'SUV', 'btn-primary'), createButton('btn-back-initial', 'Back', 'btn-secondary mt-4') ]);
                     break;
 
+                // --- START: Updated Package Selection View ---
                 case 'packageSelection':
                     updateScript(scripts.packageSelection);
-                    let packageCards = '<div class="pricing-grid">';
-                    Object.entries(packageData).forEach(([name, data]) => {
-                        const price = data.prices[state.vehicleSize];
-                        packageCards += `
-                            <div class="pricing-card">
-                                <h4 class="pricing-level">${name}</h4>
-                                <p class="pricing-price">$${price}</p>
-                                ${createPackageDetails(name, state.vehicleSize)}
-                                <button class="select-package-btn btn btn-success" data-package-name="${name}" data-package-price="${price}">Select Package</button>
-                            </div>`;
-                    });
-                    packageCards += '</div>';
-                    content = `<div class="p-4">${packageCards}<br>${createButton('btn-back-sched-vehicle', 'Back', 'btn-secondary')}</div>`;
+                    
+                    // Generate cards for each section
+                    const fullDetailCards = `
+                        <div class="pricing-grid">
+                            ${createPackageCard("Level 1 Detail", state.vehicleSize)}
+                            ${createPackageCard("Level 2 Detail", state.vehicleSize)}
+                            ${createPackageCard("Level 3 Detail", state.vehicleSize)}
+                        </div>
+                    `;
+                    
+                    const interiorCards = `
+                        <div class="pricing-grid">
+                            ${createPackageCard("Interior Only L1", state.vehicleSize)}
+                            ${createPackageCard("Interior Only L2", state.vehicleSize)}
+                            ${createPackageCard("Interior Only L3", state.vehicleSize)}
+                        </div>
+                    `;
+
+                    const exteriorCards = `
+                        <div class="pricing-grid">
+                            ${createPackageCard("Exterior Only L2", state.vehicleSize)}
+                            <div class="pricing-card border-dashed border-gray-300 bg-gray-50 flex items-center justify-center">
+                                <p class="text-gray-500">More packages coming soon...</p>
+                            </div>
+                            <div class="pricing-card border-dashed border-gray-300 bg-gray-50 flex items-center justify-center">
+                                <p class="text-gray-500">More packages coming soon...</p>
+                            </div>
+                        </div>
+                    `;
+
+                    content = `
+                        <div class="p-4">
+                            <h3 class="section-header">Full Detail Packages</h3>
+                            ${fullDetailCards}
+                            
+                            <h3 class="section-header">Interior Only Packages</h3>
+                            ${interiorCards}
+
+                            <h3 class="section-header">Exterior Only Packages</h3>
+                            ${exteriorCards}
+
+                            <br>
+                            ${createButton('btn-back-sched-vehicle', 'Back', 'btn-secondary')}
+                        </div>`;
                     break;
+                // --- END: Updated Package Selection View ---
 
                 case 'bookingForm':
                     updateScript(scripts.bookingForm);
@@ -431,7 +509,7 @@
         const attachListeners = (view) => {
             const el = (id) => document.getElementById(id);
             const handleVehicleClick = (size) => { state.vehicleSize = size; renderView('pricingPetHair'); }; 
-            const handleSchedVehicleClick = (size) => { state.vehicleSize = size; state.vehicle_type = size.charAt(0).toUpperCase() + state.vehicleSize.slice(1); renderView('packageSelection'); };
+            const handleSchedVehicleClick = (size) => { state.vehicleSize = size; state.vehicle_type = size.charAt(0).toUpperCase() + size.slice(1); renderView('packageSelection'); };
 
             const attachSeeWhatsIncludedListeners = () => {
                 elements.scriptContainer.querySelectorAll('.see-whats-included-btn').forEach(btn => {
@@ -523,7 +601,7 @@
                     el('btn-back-initial').addEventListener('click', () => renderView('initial'));
                     break;
                 case 'packageSelection':
-                    attachSeeWhatsIncludedListeners();
+                    attachSeeWhatsIncludedListeners(); // Attach listeners for all "See what's included" buttons
                     elements.scriptContainer.querySelectorAll('.select-package-btn').forEach(btn => {
                         btn.addEventListener('click', (e) => {
                             state.package_type = e.target.dataset.packageName;
