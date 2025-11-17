@@ -92,7 +92,7 @@
         window.appInitialized = true;
         console.log("Application Initializing...");
 
-        const API_URL_BOOKING = 'https://michie-detailing-admin.onrender.com/public/appointment'; // Your booking backend
+        const API_URL_BOOKING = 'https.michie-detailing-admin.onrender.com/public/appointment'; // Your booking backend
         const API_URL_SMS = 'https://client-notifications.onrender.com/send-sms'; // Your SMS backend
         const elements = { scriptDisplay: document.getElementById('script-display'), scriptContainer: document.getElementById('script-container') };
         let state = {};
@@ -336,6 +336,13 @@
                                 <textarea id="job_notes" class="form-textarea" rows="3" placeholder="e.g., Customer has extra floor mats, focus on driver seat..."></textarea>
                             </div>
                             <!-- END: Job Notes Field -->
+                            <!-- START: Contractor Pay Field -->
+                            <div>
+                                <label class="form-label" for="contractor_pay">Contractor Pay (Optional)</label>
+                                <input type="text" id="contractor_pay" class="form-input" placeholder="Default: $120.00 + TIPS">
+                                <p class="text-xs text-gray-500 mt-1">Leave blank to use default. Enter any text value (e.g., "$70 + Tips") to override.</p>
+                            </div>
+                            <!-- END: Contractor Pay Field -->
                             <div><label class="form-label">Date</label><input type="date" id="date" class="form-input"></div>
                             <div><label class="form-label">Time</label><div id="booking-time-buttons" class="grid grid-cols-3 gap-2"></div><input type="hidden" id="time"></div>
                             <div class="pt-4 border-t"><label class="flex items-center"><input type="checkbox" id="create_account" class="h-4 w-4 rounded mr-2">Create Account (Optional)</label></div>
@@ -646,6 +653,9 @@
                 // START: Get job_notes value
                 job_notes: getVal('job_notes'), 
                 // END: Get job_notes value
+                // START: Get contractor_pay value
+                contractor_pay: getVal('contractor_pay'),
+                // END: Get contractor_pay value
                 create_account: document.getElementById('create_account').checked,
                 password: getVal('password'),
                 vehicle_type: state.vehicle_type 
