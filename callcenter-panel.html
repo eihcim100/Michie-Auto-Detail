@@ -91,8 +91,9 @@
         }
         window.appInitialized = true;
         console.log("Application Initializing...");
-
-        const API_URL_BOOKING = 'https.michie-detailing-admin.onrender.com/public/appointment'; // Your booking backend
+        
+        // --- FIX: Added https:// to the URL ---
+        const API_URL_BOOKING = 'https://michie-detailing-admin.onrender.com/public/appointment'; // Your booking backend
         const API_URL_SMS = 'https://client-notifications.onrender.com/send-sms'; // Your SMS backend
         const elements = { scriptDisplay: document.getElementById('script-display'), scriptContainer: document.getElementById('script-container') };
         let state = {};
@@ -430,7 +431,7 @@
         const attachListeners = (view) => {
             const el = (id) => document.getElementById(id);
             const handleVehicleClick = (size) => { state.vehicleSize = size; renderView('pricingPetHair'); }; 
-            const handleSchedVehicleClick = (size) => { state.vehicleSize = size; state.vehicle_type = size.charAt(0).toUpperCase() + size.slice(1); renderView('packageSelection'); };
+            const handleSchedVehicleClick = (size) => { state.vehicleSize = size; state.vehicle_type = size.charAt(0).toUpperCase() + state.vehicleSize.slice(1); renderView('packageSelection'); };
 
             const attachSeeWhatsIncludedListeners = () => {
                 elements.scriptContainer.querySelectorAll('.see-whats-included-btn').forEach(btn => {
@@ -611,8 +612,9 @@
         }
 
         const sendAutoSMS = async (phoneNumber, messageContent) => {
-            if (!phoneNumber || !/^\+\d{10,15}$/.test(phoneNumber)) {
-                showCustomMessage('Error: Invalid phone number format for SMS.', 'error');
+            // This is a check for a valid US number, +1 and 10 digits
+            if (!phoneNumber || !/^\+1\d{10}$/.test(phoneNumber)) {
+                showCustomMessage('Error: Invalid phone number format. Must be +1XXXXXXXXXX.', 'error');
                 return;
             }
             if (!messageContent) {
@@ -642,6 +644,7 @@
             const getVal = (id) => document.getElementById(id)?.value;
             let rawPhoneNumber = getVal('phone');
             const digitsOnly = rawPhoneNumber.replace(/\D/g, '');
+            // --- FIX: Ensure phone number is always in +1XXXXXXXXXX format for validation ---
             let formattedPhoneNumber = rawPhoneNumber.startsWith('+') ? `+${digitsOnly}` : `+1${digitsOnly}`;
 
             const payload = {
@@ -661,9 +664,10 @@
                 vehicle_type: state.vehicle_type 
             };
             payload.deal_name = `${payload.package_type || 'Detail'} - ${payload.vehicle_make || ''} ${payload.vehicle_model || ''}`;
-
-            if (!payload.full_name || !payload.date || !payload.time || !/^\+\d{10,15}$/.test(payload.phone)) {
-                showCustomMessage("Name, Date, Time, and a valid Phone Number are required.", 'error');
+            
+            // --- FIX: Stricter phone validation ---
+            if (!payload.full_name || !payload.date || !payload.time || !/^\+1\d{10}$/.test(payload.phone)) {
+                showCustomMessage("Name, Date, Time, and a valid 10-digit US Phone Number are required.", 'error');
                 return;
             }
 
