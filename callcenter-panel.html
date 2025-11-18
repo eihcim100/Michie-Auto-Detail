@@ -42,7 +42,7 @@
         .select-package-btn { width: 100%; margin-top: auto; }
         .alert-banner { background-color: #fefcbf; border: 2px solid #fbd38d; color: #975a16; padding: 1rem; border-radius: 0.75rem; margin-bottom: 1.5rem; font-weight: 600; text-align: center; }
         .agent-instructions { background-color: #fee2e2; border: 2px solid #fca5a5; color: #dc2626; padding: 1rem; border-radius: 0.75rem; margin-top: 1.5rem; font-weight: 600; text-align: center; }
-        .copy-paste-box { background-color: #ecfdf5; border: 1px solid #34d399; padding: 1rem; border-radius: 0.5rem; font-family: monospace; white-space: pre-wrap; word-break: break-all; margin-top: 1rem; text-align: left; }
+        
         .copy-paste-box {
             background-color: #ecfdf5;
             border: 1px solid #34d399;
@@ -52,16 +52,7 @@
             margin-top: 0.5rem;
             text-align: left;
             word-wrap: break-word;
-        }
-        /* New section header style */
-        .section-header {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: #1e293b;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid #e2e8f0;
-            margin-top: 2rem;
-            margin-bottom: 1.5rem;
+            white-space: pre-wrap;
         }
     </style>
 </head>
@@ -337,50 +328,34 @@
                     content = createButtonGroup([ createButton('btn-car', 'Car', 'btn-primary'), createButton('btn-truck', 'Truck', 'btn-primary'), createButton('btn-suv', 'SUV', 'btn-primary'), createButton('btn-back-initial', 'Back', 'btn-secondary mt-4') ]);
                     break;
 
-                // --- START: Updated Package Selection View ---
+                // --- UPDATED: Package Selection View (V6 Formatting / V7 Data) ---
                 case 'packageSelection':
                     updateScript(scripts.packageSelection);
                     
-                    // Generate cards for each section
-                    const fullDetailCards = `
-                        <div class="pricing-grid">
-                            ${createPackageCard("Level 1 Detail", state.vehicleSize)}
-                            ${createPackageCard("Level 2 Detail", state.vehicleSize)}
-                            ${createPackageCard("Level 3 Detail", state.vehicleSize)}
-                        </div>
-                    `;
+                    // Create one unified grid for all packages (V6 Style)
+                    let allPackageCards = `<div class="pricing-grid">`;
                     
-                    const interiorCards = `
-                        <div class="pricing-grid">
-                            ${createPackageCard("Interior Only L1", state.vehicleSize)}
-                            ${createPackageCard("Interior Only L2", state.vehicleSize)}
-                            ${createPackageCard("Interior Only L3", state.vehicleSize)}
+                    // 1. Iterate through ALL defined packages in V7 data
+                    Object.keys(packageData).forEach(pkgName => {
+                        allPackageCards += createPackageCard(pkgName, state.vehicleSize);
+                    });
+
+                    // 2. Append the placeholders (from V7) to the end of the same grid
+                    allPackageCards += `
+                        <div class="pricing-card border-dashed border-gray-300 bg-gray-50 flex items-center justify-center">
+                            <p class="text-gray-500">More packages coming soon...</p>
+                        </div>
+                        <div class="pricing-card border-dashed border-gray-300 bg-gray-50 flex items-center justify-center">
+                            <p class="text-gray-500">More packages coming soon...</p>
                         </div>
                     `;
 
-                    const exteriorCards = `
-                        <div class="pricing-grid">
-                            ${createPackageCard("Exterior Only L2", state.vehicleSize)}
-                            <div class="pricing-card border-dashed border-gray-300 bg-gray-50 flex items-center justify-center">
-                                <p class="text-gray-500">More packages coming soon...</p>
-                            </div>
-                            <div class="pricing-card border-dashed border-gray-300 bg-gray-50 flex items-center justify-center">
-                                <p class="text-gray-500">More packages coming soon...</p>
-                            </div>
-                        </div>
-                    `;
+                    allPackageCards += `</div>`;
 
                     content = `
                         <div class="p-4">
-                            <h3 class="section-header">Full Detail Packages</h3>
-                            ${fullDetailCards}
-                            
-                            <h3 class="section-header">Interior Only Packages</h3>
-                            ${interiorCards}
-
-                            <h3 class="section-header">Exterior Only Packages</h3>
-                            ${exteriorCards}
-
+                            <!-- No Section Headers, just one big grid like V6 -->
+                            ${allPackageCards}
                             <br>
                             ${createButton('btn-back-sched-vehicle', 'Back', 'btn-secondary')}
                         </div>`;
