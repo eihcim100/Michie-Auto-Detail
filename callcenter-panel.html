@@ -42,7 +42,7 @@
         .select-package-btn { width: 100%; margin-top: auto; }
         .alert-banner { background-color: #fefcbf; border: 2px solid #fbd38d; color: #975a16; padding: 1rem; border-radius: 0.75rem; margin-bottom: 1.5rem; font-weight: 600; text-align: center; }
         .agent-instructions { background-color: #fee2e2; border: 2px solid #fca5a5; color: #dc2626; padding: 1rem; border-radius: 0.75rem; margin-top: 1.5rem; font-weight: 600; text-align: center; }
-        
+        .copy-paste-box { background-color: #ecfdf5; border: 1px solid #34d399; padding: 1rem; border-radius: 0.5rem; font-family: monospace; white-space: pre-wrap; word-break: break-all; margin-top: 1rem; text-align: left; }
         .copy-paste-box {
             background-color: #ecfdf5;
             border: 1px solid #34d399;
@@ -52,26 +52,35 @@
             margin-top: 0.5rem;
             text-align: left;
             word-wrap: break-word;
-            white-space: pre-wrap;
+        }
+        /* New section header style */
+        .section-header {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1e293b;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e2e8f0;
+            margin-top: 2rem;
+            margin-bottom: 1.5rem;
         }
     </style>
 </head>
 <body class="bg-gray-50">
 
     <div class="container mx-auto p-4 sm:p-6 lg:p-8">
-        <!-- FIXED: Left aligned header, bigger logo -->
-        <header class="text-left mb-10">
-            <img src="https://michieauto.com/logo.jpeg" alt="Michie Auto Detailing Logo" class="mb-4 w-auto max-w-md h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/256x100/e2e8f0/334155?text=Michie+Auto';">
+        <header class="text-center mb-10">
+            <img src="https://michieauto.com/logo.jpeg" alt="Michie Auto Detailing Logo" class="mx-auto mb-4 w-64 h-auto rounded-lg shadow-md" onerror="this.onerror=null;this.src='https://placehold.co/256x100/e2e8f0/334155?text=Michie+Auto';">
             <h1 class="text-4xl font-bold text-gray-800 mb-2">Michie Auto Detailing Call Center</h1>
         </header>
 
-        <!-- FIXED: Removed max-w constraints for full width -->
-        <div class="grid grid-cols-1 lg:grid-cols-1 lg:gap-8 w-full"> 
-            <!-- Interactive Script -->
+        <div class="grid grid-cols-1 lg:grid-cols-1 lg:gap-8"> <!-- Changed to 1 column -->
+            <!-- Left Column: Interactive Script -->
             <div class="flex flex-col space-y-4">
                 <div class="script-display" id="script-display"></div>
                 <div id="script-container" class="card"></div>
             </div>
+
+            <!-- Removed Right Column: Static Form (Booking Summary) -->
         </div>
     </div>
 
@@ -79,16 +88,23 @@
 
     <script>
     // --- NEW: Robust Initialization ---
+    // Flag to prevent the app from initializing more than once.
     window.appInitialized = false;
-    let currentMessageBox = null;
+
+    // Moved currentMessageBox declaration to global scope
+    let currentMessageBox = null; // Keep track of the currently active message box
 
     function initApp() {
-        if (window.appInitialized) return;
+        // Prevent double initialization. If the app is already running, do nothing.
+        if (window.appInitialized) {
+            return;
+        }
         window.appInitialized = true;
         console.log("Application Initializing...");
         
-        const API_URL_BOOKING = 'https://michie-detailing-admin.onrender.com/public/appointment'; 
-        const API_URL_SMS = 'https://client-notifications.onrender.com/send-sms'; 
+        // --- FIX: Added https:// to the URL ---
+        const API_URL_BOOKING = 'https://michie-detailing-admin.onrender.com/public/appointment'; // Your booking backend
+        const API_URL_SMS = 'https://client-notifications.onrender.com/send-sms'; // Your SMS backend
         const elements = { scriptDisplay: document.getElementById('script-display'), scriptContainer: document.getElementById('script-container') };
         let state = {};
 
@@ -129,14 +145,19 @@
         const level2Features = [...level1Features, ...level2SpecificFeatures];
         const level3Features = [...level2Features, ...level3SpecificFeatures];
 
+        // --- NEW: Interior-Only Feature Lists ---
         const interiorL1Features = ["Window cleaning inside", "Deep vaccuming", "Display controls and panels wipedown", "Mirror cleaning", "Seat vaccum", "Surface protectent for the dash and display/controls", "Steering wheel and dash clean"];
         const interiorL2SpecificFeatures = ["Shampoo carpets and seats", "Premium Leather treatment", "Console scrub down", "Pet hair removal", "Odor removal"];
         const interiorL2Features = [...interiorL1Features, ...interiorL2SpecificFeatures];
         const interiorL3SpecificFeatures = ["FINE TOOTH COMB in between seats cleaning", "Glove compartment cleaning", "Trunk shampoo and vaccum", "Door controls cleaning", "Hard to reach areas deep level shampoo", "Meticulous cleaning of all frequently touched surfaces"];
         const interiorL3Features = [...interiorL2Features, ...interiorL3SpecificFeatures];
 
+        // --- NEW: Exterior-Only Feature Lists ---
         const exteriorL2Features = ["External high pressure wash", "Tire cleaner", "Window cleaning out", "Door jam cleaning", "Rims and tires cleaned and wiped down", "External bug removal"];
-        
+        // --- END: Define All Feature Lists ---
+
+
+        // --- START: Updated packageData with new packages and pricing ---
         const packageData = {
             "Level 1 Detail": { prices: { car: 169, truck: 219, suv: 219 }, features: level1Features },
             "Level 2 Detail": { prices: { car: 279, truck: 329, suv: 329 }, features: level2Features },
@@ -146,6 +167,7 @@
             "Interior Only L3": { prices: { car: 319, truck: 359, suv: 359 }, features: interiorL3Features },
             "Exterior Only L2": { prices: { car: 149, truck: 189, suv: 189 }, features: exteriorL2Features }
         };
+        // --- END: Updated packageData ---
 
         const updateScript = (text) => { elements.scriptDisplay.innerHTML = text; };
         const formatTime = (t) => { if (!t) return ''; const [h, m] = t.split(':'); return new Date(0,0,0,h,m).toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'}); };
@@ -171,15 +193,12 @@
             elements.scriptContainer.innerHTML = '';
             let content = '';
 
-            // FIXED: Default wFull to false for horizontal buttons
-            const createButton = (id, text, style, wFull = false) => `<button id="${id}" class="btn ${style} ${wFull ? 'w-full' : ''}">${text}</button>`;
-            
-            // FIXED: Changed from space-y-4 (vertical) to flex flex-wrap gap-4 (horizontal)
-            const createButtonGroup = (buttons) => `<div class="flex flex-wrap gap-4 p-4">${buttons.join('')}</div>`;
+            const createButton = (id, text, style, wFull = true) => `<button id="${id}" class="btn ${style} ${wFull ? 'w-full' : ''}">${text}</button>`;
+            const createButtonGroup = (buttons) => `<div class="space-y-4 p-4">${buttons.join('')}</div>`;
 
             const createPackageDetails = (packageName) => {
                 const data = packageData[packageName];
-                if (!data) return ''; 
+                if (!data) return ''; // Safety check
                 const featureList = data.features.map(f => `<li>${f}</li>`).join('');
                 return `
                     <button class="see-whats-included-btn">See what's included</button>
@@ -189,19 +208,20 @@
                 `;
             };
             
+            // --- NEW: Helper function to create a package card ---
             const createPackageCard = (packageName, vehicleSize) => {
                 const data = packageData[packageName];
-                if (!data) return ''; 
+                if (!data) return ''; // Safety check
                 const price = data.prices[vehicleSize];
                 return `
                     <div class="pricing-card">
                         <h4 class="pricing-level">${packageName}</h4>
                         <p class="pricing-price">$${price}</p>
                         ${createPackageDetails(packageName)}
-                        <!-- Button inside card should still be full width -->
-                        <button class="select-package-btn btn btn-success w-full" data-package-name="${packageName}" data-package-price="${price}">Select Package</button>
+                        <button class="select-package-btn btn btn-success" data-package-name="${packageName}" data-package-price="${price}">Select Package</button>
                     </div>`;
             };
+
 
             switch (view) {
                 case 'initial':
@@ -317,28 +337,55 @@
                     content = createButtonGroup([ createButton('btn-car', 'Car', 'btn-primary'), createButton('btn-truck', 'Truck', 'btn-primary'), createButton('btn-suv', 'SUV', 'btn-primary'), createButton('btn-back-initial', 'Back', 'btn-secondary mt-4') ]);
                     break;
 
+                // --- START: Updated Package Selection View ---
                 case 'packageSelection':
                     updateScript(scripts.packageSelection);
-                    let allPackageCards = `<div class="pricing-grid">`;
-                    Object.keys(packageData).forEach(pkgName => {
-                        allPackageCards += createPackageCard(pkgName, state.vehicleSize);
-                    });
-                    allPackageCards += `
-                        <div class="pricing-card border-dashed border-gray-300 bg-gray-50 flex items-center justify-center">
-                            <p class="text-gray-500">More packages coming soon...</p>
-                        </div>
-                        <div class="pricing-card border-dashed border-gray-300 bg-gray-50 flex items-center justify-center">
-                            <p class="text-gray-500">More packages coming soon...</p>
+                    
+                    // Generate cards for each section
+                    const fullDetailCards = `
+                        <div class="pricing-grid">
+                            ${createPackageCard("Level 1 Detail", state.vehicleSize)}
+                            ${createPackageCard("Level 2 Detail", state.vehicleSize)}
+                            ${createPackageCard("Level 3 Detail", state.vehicleSize)}
                         </div>
                     `;
-                    allPackageCards += `</div>`;
+                    
+                    const interiorCards = `
+                        <div class="pricing-grid">
+                            ${createPackageCard("Interior Only L1", state.vehicleSize)}
+                            ${createPackageCard("Interior Only L2", state.vehicleSize)}
+                            ${createPackageCard("Interior Only L3", state.vehicleSize)}
+                        </div>
+                    `;
+
+                    const exteriorCards = `
+                        <div class="pricing-grid">
+                            ${createPackageCard("Exterior Only L2", state.vehicleSize)}
+                            <div class="pricing-card border-dashed border-gray-300 bg-gray-50 flex items-center justify-center">
+                                <p class="text-gray-500">More packages coming soon...</p>
+                            </div>
+                            <div class="pricing-card border-dashed border-gray-300 bg-gray-50 flex items-center justify-center">
+                                <p class="text-gray-500">More packages coming soon...</p>
+                            </div>
+                        </div>
+                    `;
+
                     content = `
                         <div class="p-4">
-                            ${allPackageCards}
+                            <h3 class="section-header">Full Detail Packages</h3>
+                            ${fullDetailCards}
+                            
+                            <h3 class="section-header">Interior Only Packages</h3>
+                            ${interiorCards}
+
+                            <h3 class="section-header">Exterior Only Packages</h3>
+                            ${exteriorCards}
+
                             <br>
                             ${createButton('btn-back-sched-vehicle', 'Back', 'btn-secondary')}
                         </div>`;
                     break;
+                // --- END: Updated Package Selection View ---
 
                 case 'bookingForm':
                     updateScript(scripts.bookingForm);
@@ -362,15 +409,19 @@
                                 <div><label class="form-label">Package</label><input type="text" id="package_type" class="form-input bg-gray-100" value="${state.package_type || ''}" readonly></div>
                                 <div><label class="form-label">Price ($)</label><input type="number" id="package_price" class="form-input bg-gray-100" value="${state.package_price || ''}" readonly></div>
                             </div>
+                            <!-- START: Job Notes Field -->
                             <div>
                                 <label class="form-label" for="job_notes">Job Notes (Optional)</label>
                                 <textarea id="job_notes" class="form-textarea" rows="3" placeholder="e.g., Customer has extra floor mats, focus on driver seat..."></textarea>
                             </div>
+                            <!-- END: Job Notes Field -->
+                            <!-- START: Contractor Pay Field -->
                             <div>
                                 <label class="form-label" for="contractor_pay">Contractor Pay (Optional)</label>
                                 <input type="text" id="contractor_pay" class="form-input" placeholder="Default: $120.00 + TIPS">
                                 <p class="text-xs text-gray-500 mt-1">Leave blank to use default. Enter any text value (e.g., "$70 + Tips") to override.</p>
                             </div>
+                            <!-- END: Contractor Pay Field -->
                             <div><label class="form-label">Date</label><input type="date" id="date" class="form-input"></div>
                             <div><label class="form-label">Time</label><div id="booking-time-buttons" class="grid grid-cols-3 gap-2"></div><input type="hidden" id="time"></div>
                             <div class="pt-4 border-t"><label class="flex items-center"><input type="checkbox" id="create_account" class="h-4 w-4 rounded mr-2">Create Account (Optional)</label></div>
@@ -550,7 +601,7 @@
                     el('btn-back-initial').addEventListener('click', () => renderView('initial'));
                     break;
                 case 'packageSelection':
-                    attachSeeWhatsIncludedListeners();
+                    attachSeeWhatsIncludedListeners(); // Attach listeners for all "See what's included" buttons
                     elements.scriptContainer.querySelectorAll('.select-package-btn').forEach(btn => {
                         btn.addEventListener('click', (e) => {
                             state.package_type = e.target.dataset.packageName;
@@ -639,6 +690,7 @@
         }
 
         const sendAutoSMS = async (phoneNumber, messageContent) => {
+            // This is a check for a valid US number, +1 and 10 digits
             if (!phoneNumber || !/^\+1\d{10}$/.test(phoneNumber)) {
                 showCustomMessage('Error: Invalid phone number format. Must be +1XXXXXXXXXX.', 'error');
                 return;
@@ -670,6 +722,7 @@
             const getVal = (id) => document.getElementById(id)?.value;
             let rawPhoneNumber = getVal('phone');
             const digitsOnly = rawPhoneNumber.replace(/\D/g, '');
+            // --- FIX: Ensure phone number is always in +1XXXXXXXXXX format for validation ---
             let formattedPhoneNumber = rawPhoneNumber.startsWith('+') ? `+${digitsOnly}` : `+1${digitsOnly}`;
 
             const payload = {
@@ -678,14 +731,19 @@
                 vehicle_year: getVal('vehicle_year'), vehicle_make: getVal('vehicle_make'), vehicle_model: getVal('vehicle_model'),
                 package_type: getVal('package_type'), package_price: getVal('package_price'),
                 date: getVal('date'), time: getVal('time'),
+                // START: Get job_notes value
                 job_notes: getVal('job_notes'), 
+                // END: Get job_notes value
+                // START: Get contractor_pay value
                 contractor_pay: getVal('contractor_pay'),
+                // END: Get contractor_pay value
                 create_account: document.getElementById('create_account').checked,
                 password: getVal('password'),
                 vehicle_type: state.vehicle_type 
             };
             payload.deal_name = `${payload.package_type || 'Detail'} - ${payload.vehicle_make || ''} ${payload.vehicle_model || ''}`;
             
+            // --- FIX: Stricter phone validation ---
             if (!payload.full_name || !payload.date || !payload.time || !/^\+1\d{10}$/.test(payload.phone)) {
                 showCustomMessage("Name, Date, Time, and a valid 10-digit US Phone Number are required.", 'error');
                 return;
@@ -700,6 +758,20 @@
                 if (!response.ok) throw new Error(result.message || `Server error: ${response.status}`);
                 
                 showCustomMessage('Appointment submitted successfully! Proceeding to send deposit link.', 'success');
+                
+                // Removed the population of the static booking form fields as the section is removed
+                // Object.keys(payload).forEach(key => {
+                //     const el = document.getElementById(`form-${key.replace(/_/g, '-')}`);
+                //     if (el) {
+                //         let value = payload[key];
+                //         if (key === 'date') value = formatDate(value);
+                //         if (key === 'time') value = formatTime(value);
+                //         if (key === 'package_price') value = value ? `$${value}` : '';
+                //         el.value = value;
+                //     }
+                // });
+                // document.getElementById('form-vehicle-type').value = payload.vehicle_type;
+                
                 state.lastPayload = payload;
                 renderView('sendSMS');
 
@@ -711,16 +783,21 @@
             }
         };
 
+        // Initialize the first view
         state = {};
         renderView('initial');
     }
 
+    // --- NEW: Fallback Timer ---
+    // This timer will run after 3 seconds. If the Google Maps API has failed to load
+    // and call initApp by then, this will call it manually.
+    // This ensures the application ALWAYS loads, even if Google Maps has an issue.
     setTimeout(() => {
         if (!window.appInitialized) {
             console.warn("Google Maps API callback timed out. Initializing app manually.");
             initApp();
         }
-    }, 3000); 
+    }, 3000); // 3 second timeout
     </script>
 </body>
 </html>
