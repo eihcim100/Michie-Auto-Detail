@@ -609,7 +609,7 @@
 
     <!-- Main Application Logic -->
     <script>
-        // Pre-define init function to ensure it exists before Google Maps loads
+        // 1. Define init function GLOBALLY so it exists when Google Maps script calls it
         window.initBookingPage = function() {
             const addressInput = document.getElementById('address-input');
             if (window.google && window.google.maps && window.google.maps.places && addressInput) {
@@ -844,15 +844,17 @@
                         return;
                     }
                     
-                    // Robust Phone Formatting (Fixes "No Text Sent" issue)
-                    const phoneDigitsOnly = phoneRaw.replace(/\D/g, '');
-                    if (phoneDigitsOnly.length < 10) {
+                    // 2. Robust Phone Formatting (Using standard Call Center Logic)
+                    const digitsOnly = phoneRaw.replace(/\D/g, '');
+                    if (digitsOnly.length < 10) {
                         if (messageEl) { messageEl.textContent = 'Please enter a valid 10-digit phone number.'; messageEl.style.color = 'red'; }
                         restoreButton();
                         return;
                     }
-                    // Force +1 prefix
-                    const formattedPhone = `+1${phoneDigitsOnly.slice(-10)}`;
+                    // If user typed +1405..., digitsOnly has 1405... (length 11) -> formatted +1405...
+                    // If user typed 405..., digitsOnly has 405... (length 10) -> formatted +1405...
+                    let formattedPhone = phoneRaw.startsWith('+') ? `+${digitsOnly}` : `+1${digitsOnly}`;
+
 
                     const createAccount = elements.createAccountCheckbox ? elements.createAccountCheckbox.checked : false;
                     let password = '';
@@ -860,33 +862,44 @@
                         password = elements.passwordInput ? elements.passwordInput.value : '';
                     }
 
-                    // Calculate Hidden Contractor Pay
+                    // 3. Calculate Hidden Contractor Pay
                     const priceVal = parseFloat(packagePrice) || 0;
                     const contractorPayCalc = (priceVal * 0.55).toFixed(2);
                     const contractorPayString = `$${contractorPayCalc} + TIPS`;
 
+                    // 4. Construct Payload IDENTICAL to callcenter-panel (No offer_code, No hash keys)
                     const payload = {
-                        full_name: fullName, email, phone: formattedPhone, address, zip_code: zipCode, 
-                        vehicle_year: vehicleYear, vehicle_make: vehicleMake, vehicle_model: vehicleModel, 
-                        date: bookingDate, time: selectedTime, package_type: packageType, package_price: packagePrice,
-                        deal_name: `${packageType || 'Unknown Package'} ${vehicleMake || ''} ${vehicleModel || ''}`,
-                        offer_code: "OnlineBooking", create_account: createAccount, password: password,
+                        full_name: fullName, 
+                        email: email, 
+                        phone: formattedPhone, 
+                        address: address, 
+                        zip_code: zipCode, 
+                        vehicle_year: vehicleYear, 
+                        vehicle_make: vehicleMake, 
+                        vehicle_model: vehicleModel, 
+                        date: bookingDate, 
+                        time: selectedTime, 
+                        package_type: packageType, 
+                        package_price: packagePrice,
+                        create_account: createAccount, 
+                        password: password,
                         vehicle_type: selectedVehicleType,
                         
-                        // --- REQUESTED CHANGES ---
-                        // 1. Notes (Visible)
-                        job_notes: additionalInfo, 
-                        "8ac249a30f1fdf7bcc6ee8804a9fa02161319eb8": additionalInfo,
-                        
-                        // 2. Contractor Pay (Hidden, Calculated)
-                        contractor_pay: contractorPayString,
-                        "df0924dde48a9f24dc9dfc6e741b26555c097be4": contractorPayString
+                        // Custom fields matched to Call Center logic
+                        job_notes: additionalInfo,
+                        contractor_pay: contractorPayString
                     };
+                    
+                    // Add Deal Name logic (same as callcenter)
+                    payload.deal_name = `${packageType || 'Unknown Package'} ${vehicleMake || ''} ${vehicleModel || ''}`;
+
+                    // NOTE: Removed offer_code: "OnlineBooking" to prevent backend from using broken logic.
+                    // NOTE: Removed "8ac..." and "df0..." hash keys.
 
                     const { ok, data } = await apiCall(endpoint, 'POST', payload);
 
                     if (ok) {
-                        sendSmsNotification(payload); // Fire and forget SMS
+                        sendSmsNotification(payload); 
 
                         hideAllMajorSections();
                         if (elements.confirmationSection) {
