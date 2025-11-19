@@ -662,6 +662,7 @@
                 stickyBookNowBtn: document.getElementById('sticky-book-now-btn'), 
                 stickyBookNowFooter: document.getElementById('sticky-book-now-footer'), 
                 payNowButton: document.getElementById('pay-now-button'),
+                // payDepositButton removed
                 policyText: document.getElementById('policy-text'),
                 bookingDateInput: document.getElementById('booking-date'),
                 bookingTimeButtonsContainer: document.getElementById('booking-time-box'), 
@@ -838,7 +839,7 @@
                         return;
                     }
                     
-                    // 2. Robust Phone Formatting (Matched to Call Center Logic)
+                    // 2. Robust Phone Formatting (Using standard Call Center Logic)
                     const digitsOnly = phoneRaw.replace(/\D/g, '');
                     if (digitsOnly.length < 10) {
                         if (messageEl) { messageEl.textContent = 'Please enter a valid 10-digit phone number.'; messageEl.style.color = 'red'; }
@@ -859,7 +860,7 @@
                     const contractorPayCalc = (priceVal * 0.55).toFixed(2);
                     const contractorPayString = `$${contractorPayCalc} + TIPS`;
 
-                    // 4. Construct Payload IDENTICAL to callcenter-panel (No offer_code, No hash keys)
+                    // 4. Construct Payload IDENTICAL to callcenter-panel
                     const payload = {
                         full_name: fullName, 
                         email: email, 
