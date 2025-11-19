@@ -454,11 +454,12 @@
                 <h2 class="text-2xl font-bold text-slate-700 mb-4">3. Your Information & Appointment Details 📝</h2>
                 <p class="text-lg font-semibold text-gray-800 mb-4">Selected Package: <span id="selected-package-display" class="text-blue-600"></span></p>
                 
-                <!-- CRITICAL CHANGE: Converted FORM to DIV to prevent browser form interference -->
-                <div id="booking-form" class="space-y-6">
+                <!-- CRITICAL CHANGE: Converted back to FORM to match working book (5).html -->
+                <form id="booking-form" class="space-y-6">
                     <div>
-                        <label for="full_name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                        <input type="text" id="full_name" placeholder="Your Full Name" required>
+                        <label for="full-name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                        <!-- CHANGED: ID to full-name (matching book (5).html) -->
+                        <input type="text" id="full-name" placeholder="Your Full Name" required>
                     </div>
                     <div>
                         <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
@@ -469,25 +470,25 @@
                         <input type="tel" id="phone" placeholder="Your Phone Number" required>
                     </div>
                     <div>
-                        <label for="address" class="block text-sm font-medium text-gray-700 mb-1">Service Address</label>
-                        <!-- ID standardized to match Call Center -->
-                        <input type="text" id="address" placeholder="Start typing your address..." required>
+                        <label for="address-input" class="block text-sm font-medium text-gray-700 mb-1">Service Address</label>
+                        <!-- CHANGED: ID to address-input (matching book (5).html) -->
+                        <input type="text" id="address-input" placeholder="Start typing your address..." required>
                     </div>
                     
                     <div>
-                        <label for="zip_code" class="block text-sm font-medium text-gray-700 mb-1">Zip Code</label>
-                        <!-- ID standardized to match Call Center -->
-                        <input type="text" id="zip_code" placeholder="Your Zip Code" required>
+                        <label for="zip-code" class="block text-sm font-medium text-gray-700 mb-1">Zip Code</label>
+                        <!-- CHANGED: ID to zip-code (matching book (5).html) -->
+                        <input type="text" id="zip-code" placeholder="Your Zip Code" required>
                     </div>
                     <div>
-                        <label for="vehicle_year" class="block text-sm font-medium text-gray-700 mb-1">Vehicle Year</label>
-                        <!-- ID standardized to match Call Center -->
-                        <input type="text" id="vehicle_year" placeholder="e.g., 2020" required>
+                        <label for="vehicle-year" class="block text-sm font-medium text-gray-700 mb-1">Vehicle Year</label>
+                        <!-- CHANGED: ID to vehicle-year (matching book (5).html) -->
+                        <input type="text" id="vehicle-year" placeholder="e.g., 2020" required>
                     </div>
                     <div>
-                        <label for="vehicle_make" class="block text-sm font-medium text-gray-700 mb-1">Vehicle Make</label>
-                        <!-- ID standardized to match Call Center -->
-                        <select id="vehicle_make" required class="w-full px-3 py-2 border rounded-lg">
+                        <label for="vehicle-make" class="block text-sm font-medium text-gray-700 mb-1">Vehicle Make</label>
+                        <!-- CHANGED: ID to vehicle-make (matching book (5).html) -->
+                        <select id="vehicle-make" required class="w-full px-3 py-2 border rounded-lg">
                             <option value="">Select Make</option>
                             <option value="Acura">Acura</option>
                             <option value="Audi">Audi</option>
@@ -524,9 +525,9 @@
                         </select>
                     </div>
                     <div>
-                        <label for="vehicle_model" class="block text-sm font-medium text-gray-700 mb-1">Vehicle Model</label>
-                        <!-- ID standardized to match Call Center -->
-                        <input type="text" id="vehicle_model" placeholder="e.g., Civic" required>
+                        <label for="vehicle-model" class="block text-sm font-medium text-gray-700 mb-1">Vehicle Model</label>
+                        <!-- CHANGED: ID to vehicle-model (matching book (5).html) -->
+                        <input type="text" id="vehicle-model" placeholder="e.g., Civic" required>
                     </div>
                     
                     <!-- Additional Information Field (Public Note) -->
@@ -577,10 +578,10 @@
                     <!-- Hidden vehicle type field -->
                     <input type="hidden" id="selected-vehicle-type" name="vehicle-type">
                     
-                    <!-- CHANGED: Type button to prevent form submission -->
-                    <button type="button" id="final-book-appointment-btn" class="w-full btn-success hidden">Book Appointment</button>
+                    <!-- CHANGED: Reverted to submit button since we are using form submit event -->
+                    <button type="submit" id="final-book-appointment-btn" class="w-full btn-success hidden">Book Appointment</button>
                     <p id="booking-message" class="text-center mt-2"></p>
-                </div>
+                </form>
             </div>
 
             <!-- Confirmation Section -->
@@ -614,8 +615,8 @@
     <script>
         // 1. Define init function GLOBALLY so it exists when Google Maps script calls it
         window.initBookingPage = function() {
-            // Match Call Center ID: 'address' (not 'address-input')
-            const addressInput = document.getElementById('address'); 
+            // CHANGED: ID to address-input (matching book (5).html)
+            const addressInput = document.getElementById('address-input'); 
             if (window.google && window.google.maps && window.google.maps.places && addressInput) {
                 let addressAutocomplete = new google.maps.places.Autocomplete(addressInput, {
                     componentRestrictions: { country: "us" },
@@ -642,8 +643,8 @@
                     zipCode = component.long_name;
                 }
             }
-            // Match Call Center ID: 'zip_code' (not 'zip-code')
-            const zipCodeInput = document.getElementById('zip_code'); 
+            // CHANGED: ID to zip-code (matching book (5).html)
+            const zipCodeInput = document.getElementById('zip-code'); 
             if(zipCodeInput) {
                 zipCodeInput.value = zipCode;
             }
@@ -745,10 +746,9 @@
             if (elements.selectTruckBtn) elements.selectTruckBtn.addEventListener('click', () => handleVehicleClick('truck'));
             if (elements.selectSuvBtn) elements.selectSuvBtn.addEventListener('click', () => handleVehicleClick('suv'));
 
-            // CRITICAL CHANGE: Use 'click' event on button instead of 'submit' on form.
-            // This eliminates form submission interference.
-            if (elements.finalBookAppointmentBtn) {
-                elements.finalBookAppointmentBtn.addEventListener('click', (e) => handleBooking(e, '/public/appointment', elements.bookingMessage, 'selected-booking-time'));
+            // CHANGED: Using 'submit' on form instead of click on button
+            if (elements.bookingForm) {
+                elements.bookingForm.addEventListener('submit', (e) => handleBooking(e, '/public/appointment', elements.bookingMessage, 'selected-booking-time'));
             }
 
             if (elements.bookingDateInput) {
@@ -829,15 +829,15 @@
                 };
 
                 try {
-                    // CRITICAL: Use underscores for IDs to match Call Center logic exactly
-                    const fullName = document.getElementById('full_name').value;
+                    // CHANGED: Use hyphenated IDs to match book (5).html logic
+                    const fullName = document.getElementById('full-name').value;
                     const email = document.getElementById('email').value;
                     const phoneRaw = document.getElementById('phone').value;
-                    const address = document.getElementById('address').value;
-                    const zipCode = document.getElementById('zip_code').value;
-                    const vehicleYear = document.getElementById('vehicle_year').value;
-                    const vehicleMake = document.getElementById('vehicle_make').value;
-                    const vehicleModel = document.getElementById('vehicle_model').value;
+                    const address = document.getElementById('address-input').value; // Changed ID
+                    const zipCode = document.getElementById('zip-code').value; // Changed ID
+                    const vehicleYear = document.getElementById('vehicle-year').value; // Changed ID
+                    const vehicleMake = document.getElementById('vehicle-make').value; // Changed ID
+                    const vehicleModel = document.getElementById('vehicle-model').value; // Changed ID
                     const bookingDate = document.getElementById('booking-date').value;
                     const selectedTime = document.getElementById(selectedTimeInputId).value; 
                     const packageType = document.getElementById('selected-package-type').value; 
@@ -851,14 +851,14 @@
                         return;
                     }
                     
-                    // Phone formatting
-                    const digitsOnly = phoneRaw.replace(/\D/g, '');
-                    if (digitsOnly.length < 10) {
+                    // CHANGED: Use simpler phone logic from book (5).html
+                    const phoneDigitsOnly = phoneRaw.replace(/\D/g, '');
+                    if (phoneDigitsOnly.length < 10) {
                         if (messageEl) { messageEl.textContent = 'Please enter a valid 10-digit phone number.'; messageEl.style.color = 'red'; }
                         restoreButton();
                         return;
                     }
-                    let formattedPhone = phoneRaw.startsWith('+') ? `+${digitsOnly}` : `+1${digitsOnly}`;
+                    const formattedPhone = `+1${phoneDigitsOnly.slice(-10)}`;
 
 
                     const createAccount = elements.createAccountCheckbox ? elements.createAccountCheckbox.checked : false;
@@ -872,7 +872,6 @@
                     const contractorPayString = `$${contractorPayCalc} + TIPS`;
 
                     // 4. Construct Payload
-                    // CRITICAL: Ensure keys match Call Center exactly.
                     const payload = {
                         full_name: fullName, 
                         email: email, 
@@ -893,7 +892,7 @@
                         contractor_pay: contractorPayString
                     };
                     
-                    // CRITICAL: Add the hyphen to Deal Name to match Call Center logic
+                    // Add hyphen to Deal Name to match Call Center logic
                     payload.deal_name = `${packageType || 'Unknown Package'} - ${vehicleMake || ''} ${vehicleModel || ''}`;
 
                     console.log("Sending Payload:", payload); // Debug log
