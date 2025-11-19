@@ -579,23 +579,18 @@
             <div id="confirmation-section" class="hidden text-center">
                 <div id="confirmation-message" class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-6 rounded-lg">
                     <p class="text-2xl font-bold mb-2">⚠️ Action Required: One more step to confirm your booking!</p>
-                    <p class="text-md mt-4">Payment is required to confirm your appointment. Please select an option below to continue.</p>
+                    <p class="text-md mt-4">Payment is required to confirm your appointment. Please click the button below to pay in full.</p>
                 </div>
                 
                 <div class="mt-8 space-y-4">
+                    <!-- Pay in Full Option -->
                     <div>
-                        <button id="pay-deposit-button" class="btn-success">Pay $100 deposit</button>
-                        <p class="text-xs text-gray-500 mt-2">(Pay the remaining due after service completion)</p>
-                    </div>
-                    <p class="text-xl font-bold text-gray-600">OR</p>
-                    <div>
-                        <button id="pay-now-button" class="btn-primary">Pay in full</button>
+                        <button id="pay-now-button" class="btn-success w-full sm:w-auto px-8 py-4 text-xl">Pay in full</button>
                     </div>
                 </div>
             </div>
 
             <div id="policy-text" class="hidden text-xs text-gray-500 mt-8 space-y-2">
-                <p>* <strong>Deposit Policy:</strong> Paying in full is optional before the detail is completed, however, if you choose to not pay in full, a $100 deposit is required to secure your appointment, and this goes towards the cost of your detail service. The remaining balance will be collected after service is completed. In the event that you cancel the appointment, the $100 deposit paid is non-refundable. Reschedules are always free.</p>
                 <p>* <strong>Paid in Full Policy:</strong> If you paid in full and cancel your appointment, no cancel fee will be charged, instead, 100% of the amount paid will be provided to you as an auto detailing credit, valid for any detail with Michie Auto Detailing LLC in the next 12 months. This is similar to a gift card, no cash refunds are provided. Reschedules are always free of charge.</p>
             </div>
         </div>
@@ -667,7 +662,7 @@
                 stickyBookNowBtn: document.getElementById('sticky-book-now-btn'), 
                 stickyBookNowFooter: document.getElementById('sticky-book-now-footer'), 
                 payNowButton: document.getElementById('pay-now-button'),
-                payDepositButton: document.getElementById('pay-deposit-button'),
+                // payDepositButton removed
                 policyText: document.getElementById('policy-text'),
                 bookingDateInput: document.getElementById('booking-date'),
                 bookingTimeButtonsContainer: document.getElementById('booking-time-box'), 
@@ -851,8 +846,6 @@
                         restoreButton();
                         return;
                     }
-                    // If user typed +1405..., digitsOnly has 1405... (length 11) -> formatted +1405...
-                    // If user typed 405..., digitsOnly has 405... (length 10) -> formatted +1405...
                     let formattedPhone = phoneRaw.startsWith('+') ? `+${digitsOnly}` : `+1${digitsOnly}`;
 
 
@@ -867,7 +860,7 @@
                     const contractorPayCalc = (priceVal * 0.55).toFixed(2);
                     const contractorPayString = `$${contractorPayCalc} + TIPS`;
 
-                    // 4. Construct Payload IDENTICAL to callcenter-panel (No offer_code, No hash keys)
+                    // 4. Construct Payload IDENTICAL to callcenter-panel
                     const payload = {
                         full_name: fullName, 
                         email: email, 
@@ -893,9 +886,6 @@
                     // Add Deal Name logic (same as callcenter)
                     payload.deal_name = `${packageType || 'Unknown Package'} ${vehicleMake || ''} ${vehicleModel || ''}`;
 
-                    // NOTE: Removed offer_code: "OnlineBooking" to prevent backend from using broken logic.
-                    // NOTE: Removed "8ac..." and "df0..." hash keys.
-
                     const { ok, data } = await apiCall(endpoint, 'POST', payload);
 
                     if (ok) {
@@ -916,9 +906,7 @@
                                 elements.payNowButton.textContent = `Pay now $${parseFloat(packagePrice).toFixed(0)}`;
                                 elements.payNowButton.onclick = () => { window.open(paymentRedirectLink, '_blank'); };
                             }
-                            if (elements.payDepositButton) {
-                                elements.payDepositButton.onclick = () => { window.open('https://pay.michieauto.com/deposit', '_blank'); };
-                            }
+                            // Deposit button logic removed
                         }
                         if (elements.stickyBookNowFooter) elements.stickyBookNowFooter.style.display = 'none';
                     } else {
