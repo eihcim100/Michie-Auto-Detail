@@ -19,9 +19,9 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f0f9ff; /* Very light blue background for winter feel */
+            background-color: #f0f9ff;
             color: #334155;
-            padding-bottom: 100px; /* Increased padding to ensure footer doesn't overlap content */
+            padding-bottom: 100px;
         }
         .pac-container { z-index: 1050 !important; }
 
@@ -33,7 +33,7 @@
 
         /* General button styling */
         .btn-primary {
-            background-color: #2563eb; /* Blue-600 */
+            background-color: #2563eb;
             color: white;
             padding: 0.75rem 1.5rem;
             border-radius: 0.75rem;
@@ -44,12 +44,12 @@
             border: none;
         }
         .btn-primary:hover {
-            background-color: #1d4ed8; /* Blue-700 */
+            background-color: #1d4ed8;
             transform: translateY(-2px);
             box-shadow: 0 6px 10px -1px rgba(37, 99, 235, 0.25), 0 4px 6px -2px rgba(37, 99, 235, 0.15);
         }
         .btn-secondary {
-            background-color: #f1f5f9; /* Slate-100 */
+            background-color: #f1f5f9;
             color: #475569;
             padding: 0.75rem 1.5rem;
             border-radius: 0.75rem;
@@ -64,7 +64,7 @@
         }
         /* Christmas Green Button */
         .btn-success {
-            background-color: #16a34a; /* Green-600 */
+            background-color: #16a34a;
             color: white;
             padding: 0.75rem 1.5rem;
             border-radius: 0.75rem;
@@ -78,7 +78,7 @@
             justify-content: center;
         }
         .btn-success:hover:not(:disabled) {
-            background-color: #15803d; /* Green-700 */
+            background-color: #15803d;
             transform: translateY(-2px);
             box-shadow: 0 6px 10px -1px rgba(22, 163, 74, 0.25), 0 4px 6px -2px rgba(22, 163, 74, 0.15);
         }
@@ -114,11 +114,10 @@
             position: relative;
             overflow: hidden;
         }
-        /* Subtle snow effect on card hover */
         .pricing-card:hover {
             transform: translateY(-8px);
             box-shadow: 0 15px 30px rgba(59, 130, 246, 0.15);
-            border-color: #93c5fd; /* Blue-300 */
+            border-color: #93c5fd;
         }
         .pricing-level {
             font-size: 1.5rem;
@@ -146,7 +145,6 @@
             color: #475569;
             font-size: 0.95rem;
         }
-        /* Snowflake bullet points */
         .feature-list li::before {
             content: '❄️';
             color: #3b82f6; 
@@ -185,17 +183,15 @@
             display: block;
         }
 
-        /* NEW: Scrollable Time Slot Box */
+        /* Time Slot Box */
         .time-slots-box {
-            height: 220px; /* Fixed height for scrolling */
+            height: 220px;
             overflow-y: auto;
             border: 1px solid #cbd5e1;
             border-radius: 0.5rem;
             background-color: #ffffff;
             padding: 0.5rem;
         }
-        
-        /* Individual time slot item in the list */
         .time-slot-item {
             display: block;
             width: 100%;
@@ -209,48 +205,17 @@
             color: #334155;
             border: 1px solid transparent;
         }
+        .time-slot-item:hover { background-color: #eff6ff; }
+        .time-slot-item.selected { background-color: #2563eb; color: white; }
+        .time-slot-item:disabled { color: #94a3b8; cursor: not-allowed; opacity: 0.6; text-decoration: line-through; }
         
-        .time-slot-item:hover {
-            background-color: #eff6ff; /* Light blue hover */
-        }
-        
-        .time-slot-item.selected {
-            background-color: #2563eb; /* Blue-600 */
-            color: white;
-        }
-        
-        .time-slot-item:disabled {
-            color: #94a3b8;
-            cursor: not-allowed;
-            opacity: 0.6;
-            text-decoration: line-through;
-        }
-        
-        /* Custom Scrollbar for the box */
-        .time-slots-box::-webkit-scrollbar {
-            width: 8px;
-        }
-        .time-slots-box::-webkit-scrollbar-track {
-            background: #f1f5f9;
-            border-radius: 4px;
-        }
-        .time-slots-box::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 4px;
-        }
-        .time-slots-box::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
+        .time-slots-box::-webkit-scrollbar { width: 8px; }
+        .time-slots-box::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+        .time-slots-box::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .time-slots-box::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-
-        /* Form input styling */
-        input[type="text"],
-        input[type="email"],
-        input[type="tel"],
-        input[type="date"],
-        input[type="password"],
-        textarea,
-        select {
+        /* Form inputs */
+        input[type="text"], input[type="email"], input[type="tel"], input[type="date"], input[type="password"], textarea, select {
             width: 100%;
             padding: 0.75rem 1rem;
             border: 1px solid #cbd5e1;
@@ -260,13 +225,7 @@
             color: #334155;
             transition: border-color 0.2s, box-shadow 0.2s;
         }
-        input[type="text"]:focus,
-        input[type="email"]:focus,
-        input[type="tel"]:focus,
-        input[type="date"]:focus,
-        input[type="password"]:focus,
-        textarea:focus,
-        select:focus {
+        input:focus, textarea:focus, select:focus {
             outline: none;
             border-color: #3b82f6;
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
@@ -289,7 +248,7 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            background-color: #ffffff; /* Semi-transparent white */
+            background-color: #ffffff;
             backdrop-filter: blur(8px);
             box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
             padding: 1rem;
@@ -347,7 +306,6 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 <img src="https://michieauto.com/winter.png" alt="Winter Interior Detail" class="w-full h-64 object-cover rounded-lg shadow-md border border-slate-200 hover:scale-105 transition-transform duration-300" onerror="this.onerror=null;this.src='https://placehold.co/400x300/e0f2fe/1e40af?text=Winter+Detail'">
-                
                 <img src="https://michieauto.com/winterdetail2.png" alt="Winter Interior Detail Close-up" class="w-full h-64 object-cover rounded-lg shadow-md border border-slate-200 hover:scale-105 transition-transform duration-300" onerror="this.onerror=null;this.src='https://placehold.co/400x300/e0f2fe/1e40af?text=Winter+Detail+2'">
             </div>
         </section>
@@ -513,18 +471,6 @@
                         <input type="text" id="address-input" placeholder="Start typing your address..." required>
                     </div>
                     
-                    <!-- ADDED: Explicit City and State fields for manual entry support -->
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label for="city" class="block text-sm font-medium text-gray-700 mb-1">City</label>
-                            <input type="text" id="city" placeholder="City" required>
-                        </div>
-                        <div>
-                            <label for="state" class="block text-sm font-medium text-gray-700 mb-1">State</label>
-                            <input type="text" id="state" placeholder="State" required>
-                        </div>
-                    </div>
-
                     <div>
                         <label for="zip-code" class="block text-sm font-medium text-gray-700 mb-1">Zip Code</label>
                         <input type="text" id="zip-code" placeholder="Your Zip Code" required>
@@ -576,7 +522,7 @@
                         <input type="text" id="vehicle-model" placeholder="e.g., Civic" required>
                     </div>
                     
-                    <!-- Added Additional Information Field (Public Note) -->
+                    <!-- Additional Information Field (Public Note) -->
                     <div>
                         <label for="additional-info" class="block text-sm font-medium text-gray-700 mb-1">Additional Information (Optional)</label>
                         <textarea id="additional-info" rows="3" placeholder="Any specific stains, pet hair details, gate codes, or special requests?" class="w-full px-3 py-2 border rounded-lg"></textarea>
@@ -614,20 +560,14 @@
                         </div>
                         <div>
                             <label for="selected-booking-time" class="block text-sm font-medium text-gray-700 mb-1">Time</label>
-                            <!-- REPLACED GRID WITH SCROLLABLE BOX -->
-                            <div id="booking-time-box" class="time-slots-box">
-                                <!-- Time slot buttons will be injected here -->
-                            </div>
+                            <div id="booking-time-box" class="time-slots-box"></div>
                             <input type="hidden" id="selected-booking-time" name="booking-time" required>
                         </div>
                     </div>
 
-                    <!-- REMOVED SMS COMPLIANCE SECTION -->
-
                     <input type="hidden" id="selected-package-type" name="package-type">
                     <input type="hidden" id="selected-package-price" name="package-price">
-                    
-                    <!-- Added hidden vehicle type to capture Car/Truck/SUV choice -->
+                    <!-- Hidden vehicle type field -->
                     <input type="hidden" id="selected-vehicle-type" name="vehicle-type">
                     
                     <button type="submit" id="final-book-appointment-btn" class="w-full btn-success hidden">Book Appointment</button>
@@ -635,7 +575,7 @@
                 </form>
             </div>
 
-            <!-- Confirmation Message -->
+            <!-- Confirmation Section -->
             <div id="confirmation-section" class="hidden text-center">
                 <div id="confirmation-message" class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-6 rounded-lg">
                     <p class="text-2xl font-bold mb-2">⚠️ Action Required: One more step to confirm your booking!</p>
@@ -643,72 +583,33 @@
                 </div>
                 
                 <div class="mt-8 space-y-4">
-                    <!-- Deposit Option -->
                     <div>
                         <button id="pay-deposit-button" class="btn-success">Pay $100 deposit</button>
                         <p class="text-xs text-gray-500 mt-2">(Pay the remaining due after service completion)</p>
                     </div>
-
-                    <!-- OR Separator -->
                     <p class="text-xl font-bold text-gray-600">OR</p>
-
-                    <!-- Pay in Full Option -->
                     <div>
                         <button id="pay-now-button" class="btn-primary">Pay in full</button>
                     </div>
                 </div>
             </div>
 
-
-            <!-- Policy Text -->
             <div id="policy-text" class="hidden text-xs text-gray-500 mt-8 space-y-2">
                 <p>* <strong>Deposit Policy:</strong> Paying in full is optional before the detail is completed, however, if you choose to not pay in full, a $100 deposit is required to secure your appointment, and this goes towards the cost of your detail service. The remaining balance will be collected after service is completed. In the event that you cancel the appointment, the $100 deposit paid is non-refundable. Reschedules are always free.</p>
                 <p>* <strong>Paid in Full Policy:</strong> If you paid in full and cancel your appointment, no cancel fee will be charged, instead, 100% of the amount paid will be provided to you as an auto detailing credit, valid for any detail with Michie Auto Detailing LLC in the next 12 months. This is similar to a gift card, no cash refunds are provided. Reschedules are always free of charge.</p>
             </div>
-
         </div>
     </div>
 
-    <!-- Sticky Book Now Footer -->
     <div id="sticky-book-now-footer" class="sticky-book-now-footer">
         <button id="sticky-book-now-btn" class="btn-success">
             Book Your Winter Detail! ❄️
         </button>
     </div>
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk&libraries=places&callback=initBookingPage" async defer></script>
+    <!-- Main Application Logic -->
     <script>
-        // This function needs to be available for the autocomplete callback
-        function fillAddressFields(place) {
-            let zipCode = '';
-            let city = '';
-            let state = '';
-
-            // Parse Google Maps place components
-            for (const component of place.address_components) {
-                const types = component.types;
-                if (types.includes('postal_code')) {
-                    zipCode = component.long_name;
-                }
-                if (types.includes('locality')) {
-                    city = component.long_name;
-                }
-                if (types.includes('administrative_area_level_1')) {
-                    state = component.short_name; // Use short name for state (e.g., OK)
-                }
-            }
-
-            // Auto-populate fields
-            const zipCodeInput = document.getElementById('zip-code');
-            const cityInput = document.getElementById('city');
-            const stateInput = document.getElementById('state');
-
-            if (zipCodeInput) zipCodeInput.value = zipCode;
-            if (cityInput) cityInput.value = city;
-            if (stateInput) stateInput.value = state;
-        }
-
-        // This function will be called by the Google Maps script.
+        // Pre-define init function to ensure it exists before Google Maps loads
         window.initBookingPage = function() {
             const addressInput = document.getElementById('address-input');
             if (window.google && window.google.maps && window.google.maps.places && addressInput) {
@@ -725,11 +626,24 @@
                     }
                 });
             } else {
-                console.warn("Google Maps Autocomplete could not be initialized. The feature will be disabled, but the form will still work.");
+                console.warn("Google Maps Autocomplete could not be initialized.");
+            }
+        };
+
+        function fillAddressFields(place) {
+            let zipCode = '';
+            for (const component of place.address_components) {
+                const types = component.types;
+                if (types.includes('postal_code')) {
+                    zipCode = component.long_name;
+                }
+            }
+            const zipCodeInput = document.getElementById('zip-code');
+            if(zipCodeInput) {
+                zipCodeInput.value = zipCode;
             }
         }
 
-        // The main application logic, including form event listeners.
         function initializeApp() {
             const API_BASE_URL = 'https://michie-detailing-admin.onrender.com';
             
@@ -770,29 +684,22 @@
             };
 
             const availableTimes = ['09:00', '11:00', '12:00', '14:00', '16:00', '17:00', '18:00'];
-
             const paymentLinks = {
                 "Interior Level 1": { "149": "https://pay.michieauto.com/interwintersedan1", "189": "https://pay.michieauto.com/interiorwintersuv1" },
                 "Interior Level 2": { "229": "https://pay.michieauto.com/intwintersedan2", "279": "https://pay.michieauto.com/interiorwintersuv2" },
                 "Interior Level 3": { "319": "https://pay.michieauto.com/intwintersedan3", "349": "https://pay.michieauto.com/interiorwintersuv3" },
             };
-            
             const pageLoadTimeCST = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
 
             async function apiCall(endpoint, method, payload = null) {
                 const headers = { 'Content-Type': 'application/json' };
-                const options = { method, headers };
-                if (payload) {
-                    options.body = JSON.stringify(payload);
-                }
                 try {
-                    const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
-                    const responseText = await response.text();
-                    const data = responseText ? JSON.parse(responseText) : {};
+                    const response = await fetch(`${API_BASE_URL}${endpoint}`, { method, headers, body: payload ? JSON.stringify(payload) : null });
+                    const data = await response.json();
                     return { ok: response.ok, data: data, status: response.status };
                 } catch (error) {
                     console.error('API Call Error:', error);
-                    return { ok: false, data: { message: 'Network error or invalid JSON response.' } };
+                    return { ok: false, data: { message: 'Network error.' } };
                 }
             }
             
@@ -816,40 +723,23 @@
 
             if (elements.stickyBookNowBtn) {
                 elements.stickyBookNowBtn.addEventListener('click', () => {
-                    // 1. Ensure container is displayed
-                    if (elements.bookingFlowContainer) {
-                        elements.bookingFlowContainer.style.display = 'block';
-                    }
-                    
-                    // 2. Reset view to initial state
+                    if (elements.bookingFlowContainer) elements.bookingFlowContainer.style.display = 'block';
                     showInitialPage();
-                    
-                    // 3. Scroll to it with a slight delay to ensure DOM render
-                    //    The delay fixes the issue where scrollIntoView fires before the element is painted.
                     setTimeout(() => {
-                        if (elements.bookingFlowContainer) {
-                            elements.bookingFlowContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        }
+                        if (elements.bookingFlowContainer) elements.bookingFlowContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     }, 100);
                 });
             }
 
-            // Updated Logic to store vehicle type
-            if (elements.selectCarBtn) elements.selectCarBtn.addEventListener('click', (e) => {
-                showPackageSelection('sedan', e.target);
-                if(elements.selectedVehicleTypeInput) elements.selectedVehicleTypeInput.value = "Car"; 
+            const handleVehicleClick = (type) => {
+                showPackageSelection(type === 'car' ? 'sedan' : 'suv-truck', null);
+                if (elements.selectedVehicleTypeInput) elements.selectedVehicleTypeInput.value = type.charAt(0).toUpperCase() + type.slice(1);
                 if (elements.packageSelectionContainer) elements.packageSelectionContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            });
-            if (elements.selectTruckBtn) elements.selectTruckBtn.addEventListener('click', (e) => {
-                showPackageSelection('suv-truck', e.target);
-                if(elements.selectedVehicleTypeInput) elements.selectedVehicleTypeInput.value = "Truck";
-                if (elements.packageSelectionContainer) elements.packageSelectionContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            });
-            if (elements.selectSuvBtn) elements.selectSuvBtn.addEventListener('click', (e) => {
-                showPackageSelection('suv-truck', e.target);
-                if(elements.selectedVehicleTypeInput) elements.selectedVehicleTypeInput.value = "SUV";
-                if (elements.packageSelectionContainer) elements.packageSelectionContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            });
+            };
+
+            if (elements.selectCarBtn) elements.selectCarBtn.addEventListener('click', () => handleVehicleClick('car'));
+            if (elements.selectTruckBtn) elements.selectTruckBtn.addEventListener('click', () => handleVehicleClick('truck'));
+            if (elements.selectSuvBtn) elements.selectSuvBtn.addEventListener('click', () => handleVehicleClick('suv'));
 
             if (elements.bookingForm) {
                 elements.bookingForm.addEventListener('submit', (e) => handleBooking(e, '/public/appointment', elements.bookingMessage, 'selected-booking-time'));
@@ -880,43 +770,15 @@
                 elements.createAccountCheckbox.addEventListener('change', () => {
                     if (elements.passwordFields) {
                         elements.passwordFields.style.display = elements.createAccountCheckbox.checked ? 'block' : 'none';
-                        if (!elements.createAccountCheckbox.checked) {
-                            if (elements.passwordInput) elements.passwordInput.value = '';
-                            if (elements.confirmPasswordInput) elements.confirmPasswordInput.value = '';
-                        }
                     }
                 });
-            }
-
-            if (elements.passwordInput) elements.passwordInput.addEventListener('input', validatePassword);
-            if (elements.passwordInput) elements.passwordInput.addEventListener('input', checkPasswordsMatch);
-            if (elements.confirmPasswordInput) elements.confirmPasswordInput.addEventListener('input', checkPasswordsMatch);
-
-            function validatePassword() {
-                const password = elements.passwordInput ? elements.passwordInput.value : '';
-                const isLengthValid = password.length >= 6;
-                const hasUppercase = /[A-Z]/.test(password);
-                if (elements.passwordLengthReq) elements.passwordLengthReq.classList.toggle('valid', isLengthValid);
-                if (elements.passwordLengthReq) elements.passwordLengthReq.classList.toggle('invalid', !isLengthValid);
-                if (elements.passwordUppercaseReq) elements.passwordUppercaseReq.classList.toggle('valid', hasUppercase);
-                if (elements.passwordUppercaseReq) elements.passwordUppercaseReq.classList.toggle('invalid', !hasUppercase);
-                return isLengthValid && hasUppercase;
-            }
-
-            function checkPasswordsMatch() {
-                const password = elements.passwordInput ? elements.passwordInput.value : '';
-                const confirmPassword = elements.confirmPasswordInput ? elements.confirmPasswordInput.value : '';
-                if (elements.passwordMatchMessage) elements.passwordMatchMessage.classList.toggle('hidden', password === confirmPassword);
-                return password === confirmPassword;
             }
 
             function showPackageSelection(vehicleCategory, clickedButton) {
                 hideAllMajorSections();
                 if (elements.packageSelectionContainer) elements.packageSelectionContainer.style.display = 'block';
-                document.querySelectorAll('.btn-primary.active').forEach(b => b.classList.remove('active'));
-                if (clickedButton) clickedButton.classList.add('active');
                 if (elements.sedanPackagesDisplay) elements.sedanPackagesDisplay.style.display = vehicleCategory === 'sedan' ? 'grid' : 'none';
-                if (elements.suvTruckPackagesDisplay) elements.suvTruckPackagesDisplay.style.display = vehicleCategory === 'suv-truck' ? 'grid' : 'none';
+                if (elements.suvTruckPackagesDisplay) elements.suvTruckPackagesDisplay.style.display = vehicleCategory !== 'sedan' ? 'grid' : 'none';
                 if (elements.stickyBookNowFooter) elements.stickyBookNowFooter.style.display = 'none';
             }
 
@@ -929,53 +791,31 @@
             }
 
             async function sendSmsNotification(bookingDetails) {
-                // Resolve specific payment link based on selection
                 let paymentLink = 'https://pay.michieauto.com/deposit'; 
                 const priceKey = String(bookingDetails.package_price);
                 if (paymentLinks[bookingDetails.package_type] && paymentLinks[bookingDetails.package_type][priceKey]) {
                     paymentLink = paymentLinks[bookingDetails.package_type][priceKey];
                 }
-
-                // Extract first name for personalization
                 const firstName = bookingDetails.full_name.split(' ')[0];
-
                 const message = `ACTION REQUIRED: Hi ${firstName}, it's Michie Auto Detail. Your ${bookingDetails.package_type} for the ${bookingDetails.vehicle_make} ${bookingDetails.vehicle_model} is PENDING. Payment is required IMMEDIATELY to secure your spot. Pay here: ${paymentLink} Questions? (405) 295-5189`;
 
-                const smsPayload = {
-                    to: bookingDetails.phone, // Already formatted phone number
-                    message_body: message,
-                };
-
                 try {
-                    const response = await fetch('https://client-notifications.onrender.com/send-sms', {
+                    await fetch('https://client-notifications.onrender.com/send-sms', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(smsPayload)
+                        body: JSON.stringify({ to: bookingDetails.phone, message_body: message })
                     });
-                    if (response.ok) {
-                        console.log('SMS notification sent successfully.');
-                    } else {
-                        const errorData = await response.json();
-                        console.error('Failed to send SMS notification:', errorData);
-                    }
+                    console.log('SMS notification sent successfully.');
                 } catch (error) {
                     console.error('Error sending SMS notification:', error);
                 }
             }
 
-
             async function handleBooking(e, endpoint, messageEl, selectedTimeInputId) { 
                 e.preventDefault();
                 const submitButton = elements.finalBookAppointmentBtn;
-
                 submitButton.disabled = true;
-                submitButton.innerHTML = `
-                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Processing...
-                `;
+                submitButton.innerHTML = `Processing...`;
 
                 const restoreButton = () => {
                     submitButton.disabled = false;
@@ -988,11 +828,6 @@
                     const phoneRaw = document.getElementById('phone').value;
                     const address = document.getElementById('address-input').value;
                     const zipCode = document.getElementById('zip-code').value;
-                    
-                    // NEW: Get City and State
-                    const city = document.getElementById('city').value;
-                    const state = document.getElementById('state').value;
-
                     const vehicleYear = document.getElementById('vehicle-year').value;
                     const vehicleMake = document.getElementById('vehicle-make').value;
                     const vehicleModel = document.getElementById('vehicle-model').value;
@@ -1003,71 +838,47 @@
                     const selectedVehicleType = document.getElementById('selected-vehicle-type') ? document.getElementById('selected-vehicle-type').value : '';
                     const additionalInfo = document.getElementById('additional-info') ? document.getElementById('additional-info').value : '';
 
-                    // Updated validation to include City and State
-                    if (!fullName || !email || !phoneRaw || !address || !city || !state || !zipCode || !vehicleYear || !vehicleMake || !vehicleModel || !bookingDate || !selectedTime || !packageType || !packagePrice) {
-                        if (messageEl) { messageEl.textContent = 'Please fill in all required fields (Address, City, State, Phone, etc.).'; messageEl.style.color = 'red'; }
+                    if (!fullName || !email || !phoneRaw || !address || !zipCode || !vehicleYear || !vehicleMake || !vehicleModel || !bookingDate || !selectedTime || !packageType || !packagePrice) {
+                        if (messageEl) { messageEl.textContent = 'Please fill in all required fields.'; messageEl.style.color = 'red'; }
                         restoreButton();
                         return;
                     }
-                    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                        if (messageEl) { messageEl.textContent = 'Please enter a valid email address.'; messageEl.style.color = 'red'; }
-                        restoreButton();
-                        return;
-                    }
-                    if (!/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(phoneRaw)) {
+                    
+                    // Robust Phone Formatting (Fixes "No Text Sent" issue)
+                    const phoneDigitsOnly = phoneRaw.replace(/\D/g, '');
+                    if (phoneDigitsOnly.length < 10) {
                         if (messageEl) { messageEl.textContent = 'Please enter a valid 10-digit phone number.'; messageEl.style.color = 'red'; }
                         restoreButton();
                         return;
                     }
-
-                    // Format phone number to E.164 standard
-                    const phoneDigitsOnly = phoneRaw.replace(/\D/g, '');
+                    // Force +1 prefix
                     const formattedPhone = `+1${phoneDigitsOnly.slice(-10)}`;
 
                     const createAccount = elements.createAccountCheckbox ? elements.createAccountCheckbox.checked : false;
                     let password = '';
                     if (createAccount) {
                         password = elements.passwordInput ? elements.passwordInput.value : '';
-                        if (!validatePassword() || !checkPasswordsMatch()) {
-                            if (messageEl) { messageEl.textContent = 'Please fix password errors.'; messageEl.style.color = 'red'; }
-                            restoreButton();
-                            return;
-                        }
                     }
 
-                    // Calculate Contractor Pay
+                    // Calculate Hidden Contractor Pay
                     const priceVal = parseFloat(packagePrice) || 0;
                     const contractorPayCalc = (priceVal * 0.55).toFixed(2);
                     const contractorPayString = `$${contractorPayCalc} + TIPS`;
 
-                    // Construct Robust Address String
-                    // Pipedrive often needs a single full string. We append City/State/Zip to ensure they are present.
-                    // Check if address already contains them to avoid duplication if user used autocomplete
-                    let finalAddress = address;
-                    if (!finalAddress.toLowerCase().includes(city.toLowerCase())) {
-                        finalAddress += `, ${city}`;
-                    }
-                    if (!finalAddress.toLowerCase().includes(state.toLowerCase())) {
-                        finalAddress += `, ${state}`;
-                    }
-                    if (!finalAddress.includes(zipCode)) {
-                        finalAddress += ` ${zipCode}`;
-                    }
-
                     const payload = {
-                        full_name: fullName, email, phone: formattedPhone, 
-                        address: finalAddress, // Send the fully constructed address string
-                        zip_code: zipCode, 
-                        vehicle_year: vehicleYear,
-                        vehicle_make: vehicleMake, vehicle_model: vehicleModel, date: bookingDate, time: selectedTime,
-                        package_type: packageType, package_price: packagePrice,
+                        full_name: fullName, email, phone: formattedPhone, address, zip_code: zipCode, 
+                        vehicle_year: vehicleYear, vehicle_make: vehicleMake, vehicle_model: vehicleModel, 
+                        date: bookingDate, time: selectedTime, package_type: packageType, package_price: packagePrice,
                         deal_name: `${packageType || 'Unknown Package'} ${vehicleMake || ''} ${vehicleModel || ''}`,
                         offer_code: "OnlineBooking", create_account: createAccount, password: password,
                         vehicle_type: selectedVehicleType,
                         
+                        // --- REQUESTED CHANGES ---
+                        // 1. Notes (Visible)
                         job_notes: additionalInfo, 
                         "8ac249a30f1fdf7bcc6ee8804a9fa02161319eb8": additionalInfo,
                         
+                        // 2. Contractor Pay (Hidden, Calculated)
                         contractor_pay: contractorPayString,
                         "df0924dde48a9f24dc9dfc6e741b26555c097be4": contractorPayString
                     };
@@ -1075,7 +886,7 @@
                     const { ok, data } = await apiCall(endpoint, 'POST', payload);
 
                     if (ok) {
-                        sendSmsNotification(payload);
+                        sendSmsNotification(payload); // Fire and forget SMS
 
                         hideAllMajorSections();
                         if (elements.confirmationSection) {
@@ -1103,45 +914,32 @@
                     }
                 } catch (error) {
                     console.error("An unexpected JavaScript error occurred:", error);
-                    if (elements.bookingMessage) {
-                        elements.bookingMessage.textContent = 'An unexpected error occurred. Please try again.';
-                        elements.bookingMessage.style.color = 'red';
-                    }
                     restoreButton();
                 }
             }
             
-            // UPDATED: Render items as a scrollable list instead of grid buttons
             function renderTimeButtons(container, hiddenInput, selectedDateStr, finalBookButton, now) {
                 if (!container) return false;
                 container.innerHTML = '';
-            
                 let hasAvailableSlots = false;
                 const twoHoursInMs = 2 * 60 * 60 * 1000;
                 const comparisonTime = new Date(now.getTime() + twoHoursInMs);
-            
-                const selectedDate = new Date(selectedDateStr + 'T00:00:00-05:00'); // Assuming CST/CDT
+                const selectedDate = new Date(selectedDateStr + 'T00:00:00-05:00');
                 const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            
                 const isToday = selectedDate.getTime() === today.getTime();
             
                 availableTimes.forEach(time => {
                     const [hour, minute] = time.split(':').map(Number);
                     const appointmentDateTime = new Date(selectedDate);
                     appointmentDateTime.setHours(hour, minute);
-                    
                     const isDisabled = isToday && (appointmentDateTime < comparisonTime);
                     
-                    const timeLabel = formatTimeDisplay(time);
-
-                    // Use div for list item look instead of button
                     const item = document.createElement('div');
-                    item.textContent = timeLabel;
+                    item.textContent = new Date(0,0,0,hour,minute).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
                     item.dataset.time = time;
             
                     if (isDisabled) {
                         item.className = 'time-slot-item disabled';
-                        // item.style.pointerEvents = 'none'; // Optional: fully block interaction
                     } else {
                         hasAvailableSlots = true;
                         item.className = 'time-slot-item';
@@ -1164,39 +962,26 @@
             function checkAndSetInitialDate() {
                 const today = new Date(pageLoadTimeCST);
                 const todayFormatted = today.toISOString().split('T')[0];
-
                 const todayHasSlots = renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, todayFormatted, elements.finalBookAppointmentBtn, pageLoadTimeCST);
 
                 if (todayHasSlots) {
-                    if (elements.bookingDateInput) {
-                        elements.bookingDateInput.value = todayFormatted;
-                    }
+                    if (elements.bookingDateInput) elements.bookingDateInput.value = todayFormatted;
                 } else {
                     const tomorrow = new Date(today);
                     tomorrow.setDate(today.getDate() + 1);
                     const tomorrowFormatted = tomorrow.toISOString().split('T')[0];
-                    
-                    if (elements.bookingDateInput) {
-                        elements.bookingDateInput.value = tomorrowFormatted;
-                    }
+                    if (elements.bookingDateInput) elements.bookingDateInput.value = tomorrowFormatted;
                     renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, tomorrowFormatted, elements.finalBookAppointmentBtn, pageLoadTimeCST);
                 }
             }
-
-            function formatTimeDisplay(time24hr) {
-                const [hours, minutes] = time24hr.split(':').map(Number);
-                const date = new Date();
-                date.setHours(hours, minutes);
-                return date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
-            }
             
             const todayFormatted = new Date().toISOString().split('T')[0];
-            if (elements.bookingDateInput) {
-                elements.bookingDateInput.min = todayFormatted;
-            }
+            if (elements.bookingDateInput) elements.bookingDateInput.min = todayFormatted;
         }
 
         document.addEventListener('DOMContentLoaded', initializeApp);
     </script>
+    <!-- Google Maps loaded AFTER initBookingPage is defined -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk&libraries=places&callback=initBookingPage" async defer></script>
 </body>
 </html>
