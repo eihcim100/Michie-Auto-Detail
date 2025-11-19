@@ -506,12 +506,25 @@
                     </div>
                     <div>
                         <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-                        <input type="tel" id="phone" placeholder="Your Phone Number" required>
+                        <input type="tel" id="phone" name="phone" placeholder="Your Phone Number" required>
                     </div>
                     <div>
                         <label for="address-input" class="block text-sm font-medium text-gray-700 mb-1">Service Address</label>
                         <input type="text" id="address-input" placeholder="Start typing your address..." required>
                     </div>
+                    
+                    <!-- ADDED: Explicit City and State fields for manual entry support -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="city" class="block text-sm font-medium text-gray-700 mb-1">City</label>
+                            <input type="text" id="city" placeholder="City" required>
+                        </div>
+                        <div>
+                            <label for="state" class="block text-sm font-medium text-gray-700 mb-1">State</label>
+                            <input type="text" id="state" placeholder="State" required>
+                        </div>
+                    </div>
+
                     <div>
                         <label for="zip-code" class="block text-sm font-medium text-gray-700 mb-1">Zip Code</label>
                         <input type="text" id="zip-code" placeholder="Your Zip Code" required>
@@ -666,21 +679,36 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk&libraries=places&callback=initBookingPage" async defer></script>
     <script>
         // This function needs to be available for the autocomplete callback
-        function fillAddressFields(place, zipCodeInputId) {
+        function fillAddressFields(place) {
             let zipCode = '';
+            let city = '';
+            let state = '';
+
+            // Parse Google Maps place components
             for (const component of place.address_components) {
-                if (component.types.includes('postal_code')) {
+                const types = component.types;
+                if (types.includes('postal_code')) {
                     zipCode = component.long_name;
                 }
+                if (types.includes('locality')) {
+                    city = component.long_name;
+                }
+                if (types.includes('administrative_area_level_1')) {
+                    state = component.short_name; // Use short name for state (e.g., OK)
+                }
             }
-            const zipCodeInput = document.getElementById(zipCodeInputId);
-            if(zipCodeInput) {
-                zipCodeInput.value = zipCode;
-            }
+
+            // Auto-populate fields
+            const zipCodeInput = document.getElementById('zip-code');
+            const cityInput = document.getElementById('city');
+            const stateInput = document.getElementById('state');
+
+            if (zipCodeInput) zipCodeInput.value = zipCode;
+            if (cityInput) cityInput.value = city;
+            if (stateInput) stateInput.value = state;
         }
 
         // This function will be called by the Google Maps script.
-        // It is now ONLY responsible for the autocomplete feature.
         window.initBookingPage = function() {
             const addressInput = document.getElementById('address-input');
             if (window.google && window.google.maps && window.google.maps.places && addressInput) {
@@ -693,7 +721,7 @@
                     const place = addressAutocomplete.getPlace();
                     if (place.formatted_address) {
                         addressInput.value = place.formatted_address;
-                        fillAddressFields(place, 'zip-code');
+                        fillAddressFields(place);
                     }
                 });
             } else {
@@ -960,6 +988,11 @@
                     const phoneRaw = document.getElementById('phone').value;
                     const address = document.getElementById('address-input').value;
                     const zipCode = document.getElementById('zip-code').value;
+                    
+                    // NEW: Get City and State
+                    const city = document.getElementById('city').value;
+                    const state = document.getElementById('state').value;
+
                     const vehicleYear = document.getElementById('vehicle-year').value;
                     const vehicleMake = document.getElementById('vehicle-make').value;
                     const vehicleModel = document.getElementById('vehicle-model').value;
@@ -968,11 +1001,11 @@
                     const packageType = document.getElementById('selected-package-type').value; 
                     const packagePrice = document.getElementById('selected-package-price').value; 
                     const selectedVehicleType = document.getElementById('selected-vehicle-type') ? document.getElementById('selected-vehicle-type').value : '';
-                    // New Additional Info Field
                     const additionalInfo = document.getElementById('additional-info') ? document.getElementById('additional-info').value : '';
 
-                    if (!fullName || !email || !phoneRaw || !address || !zipCode || !vehicleYear || !vehicleMake || !vehicleModel || !bookingDate || !selectedTime || !packageType || !packagePrice) {
-                        if (messageEl) { messageEl.textContent = 'Please fill in all required fields.'; messageEl.style.color = 'red'; }
+                    // Updated validation to include City and State
+                    if (!fullName || !email || !phoneRaw || !address || !city || !state || !zipCode || !vehicleYear || !vehicleMake || !vehicleModel || !bookingDate || !selectedTime || !packageType || !packagePrice) {
+                        if (messageEl) { messageEl.textContent = 'Please fill in all required fields (Address, City, State, Phone, etc.).'; messageEl.style.color = 'red'; }
                         restoreButton();
                         return;
                     }
@@ -987,10 +1020,9 @@
                         return;
                     }
 
-                    // Format phone number to E.164 standard for SMS API
+                    // Format phone number to E.164 standard
                     const phoneDigitsOnly = phoneRaw.replace(/\D/g, '');
                     const formattedPhone = `+1${phoneDigitsOnly.slice(-10)}`;
-
 
                     const createAccount = elements.createAccountCheckbox ? elements.createAccountCheckbox.checked : false;
                     let password = '';
@@ -1008,15 +1040,31 @@
                     const contractorPayCalc = (priceVal * 0.55).toFixed(2);
                     const contractorPayString = `$${contractorPayCalc} + TIPS`;
 
+                    // Construct Robust Address String
+                    // Pipedrive often needs a single full string. We append City/State/Zip to ensure they are present.
+                    // Check if address already contains them to avoid duplication if user used autocomplete
+                    let finalAddress = address;
+                    if (!finalAddress.toLowerCase().includes(city.toLowerCase())) {
+                        finalAddress += `, ${city}`;
+                    }
+                    if (!finalAddress.toLowerCase().includes(state.toLowerCase())) {
+                        finalAddress += `, ${state}`;
+                    }
+                    if (!finalAddress.includes(zipCode)) {
+                        finalAddress += ` ${zipCode}`;
+                    }
+
                     const payload = {
-                        full_name: fullName, email, phone: formattedPhone, address, zip_code: zipCode, vehicle_year: vehicleYear,
+                        full_name: fullName, email, phone: formattedPhone, 
+                        address: finalAddress, // Send the fully constructed address string
+                        zip_code: zipCode, 
+                        vehicle_year: vehicleYear,
                         vehicle_make: vehicleMake, vehicle_model: vehicleModel, date: bookingDate, time: selectedTime,
                         package_type: packageType, package_price: packagePrice,
                         deal_name: `${packageType || 'Unknown Package'} ${vehicleMake || ''} ${vehicleModel || ''}`,
                         offer_code: "OnlineBooking", create_account: createAccount, password: password,
-                        vehicle_type: selectedVehicleType, // Added missing field
+                        vehicle_type: selectedVehicleType,
                         
-                        // DUAL KEY SUBMISSION: Sending both readable keys AND legacy hash keys to ensure backend compatibility
                         job_notes: additionalInfo, 
                         "8ac249a30f1fdf7bcc6ee8804a9fa02161319eb8": additionalInfo,
                         
@@ -1027,7 +1075,6 @@
                     const { ok, data } = await apiCall(endpoint, 'POST', payload);
 
                     if (ok) {
-                        // Send SMS notification (fire and forget, don't wait for it)
                         sendSmsNotification(payload);
 
                         hideAllMajorSections();
