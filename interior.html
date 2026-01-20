@@ -867,7 +867,8 @@
 
                     // 3. Calculate Hidden Contractor Pay
                     const priceVal = parseFloat(packagePrice) || 0;
-                    const contractorPayCalc = (priceVal * 0.55).toFixed(2);
+                    // UPDATED: Changed from 0.55 (55%) to 0.45 (45%)
+                    const contractorPayCalc = (priceVal * 0.45).toFixed(2);
                     const contractorPayString = `$${contractorPayCalc} + TIPS`;
 
                     // 4. Construct Payload IDENTICAL to callcenter-panel
