@@ -643,10 +643,13 @@
             const availableTimes = ['09:00', '11:00', '12:00', '14:00', '16:00', '17:00', '18:00'];
             const pageLoadTimeCST = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
 
+            let isPromoActive = false; // Track if promo is applied
+
             // Promo and Timer Logic
             elements.activatePromoBtn.addEventListener('click', () => {
                 const code = elements.promoInput.value.trim().toLowerCase();
                 if (code === 'vipclient') {
+                    isPromoActive = true;
                     applyDiscounts();
                     startPromoTimer();
                 } else {
@@ -655,7 +658,7 @@
             });
 
             function applyDiscounts() {
-                const discounts = { 1: 0.12, 2: 0.18, 3: 0.24 };
+                const discounts = { 1: 0.12, 2: 0.18, 3: 0.19 }; // Updated to 12%, 18%, 19%
                 ['sedan', 'suv'].forEach(prefix => {
                     [1, 2, 3].forEach(level => {
                         const priceEl = document.getElementById(`${prefix}-price-${level}`);
@@ -714,6 +717,49 @@
                 btn.addEventListener('click', () => handleVehicleClick(types[i]));
             });
 
+            async function sendSmsNotification(bookingDetails, paymentLink) {
+                const firstName = bookingDetails.full_name.split(' ')[0];
+                const message = `ACTION REQUIRED: Hi ${firstName}, it's Michie Auto Detail. Your ${bookingDetails.package_type} for the ${bookingDetails.vehicle_make} ${bookingDetails.vehicle_model} is PENDING. Payment is required IMMEDIATELY to secure your spot. Pay here: ${paymentLink} Questions? (405) 295-5189`;
+
+                try {
+                    await fetch('https://client-notifications.onrender.com/send-sms', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ to: bookingDetails.phone, message_body: message })
+                    });
+                    console.log('SMS notification sent successfully.');
+                } catch (error) {
+                    console.error('Error sending SMS notification:', error);
+                }
+            }
+
+            function getPaymentLink(packageType, vehicleType, priceStr, isPromo) {
+                if (isPromo) {
+                    const isCar = vehicleType === 'Car';
+                    if (isCar) {
+                        if (packageType === "Interior Level 1") return "https://pay.michieauto.com/vipsinterior26";
+                        if (packageType === "Interior Level 2") return "https://pay.michieauto.com/vipsinteriorlvl2s";
+                        if (packageType === "Interior Level 3") return "https://pay.michieauto.com/vipsinteriorlvl3s";
+                    } else { // SUV or Truck
+                        if (packageType === "Interior Level 1") return "https://pay.michieauto.com/vipsinteriorlvl1suv";
+                        if (packageType === "Interior Level 2") return "https://pay.michieauto.com/vipsinteriorlvl2suv";
+                        if (packageType === "Interior Level 3") return "https://pay.michieauto.com/vipsinteriorlvl3suv";
+                    }
+                }
+                
+                // Map standard links for standard prices (or fallback)
+                const standardPaymentLinks = {
+                    "Interior Level 1": { "199": "https://pay.michieauto.com/interwintersedan1", "219": "https://pay.michieauto.com/interiorwintersuv1" },
+                    "Interior Level 2": { "249": "https://pay.michieauto.com/intwintersedan2", "299": "https://pay.michieauto.com/interiorwintersuv2" },
+                    "Interior Level 3": { "349": "https://pay.michieauto.com/intwintersedan3", "379": "https://pay.michieauto.com/interiorwintersuv3" },
+                };
+                
+                if (standardPaymentLinks[packageType] && standardPaymentLinks[packageType][priceStr]) {
+                    return standardPaymentLinks[packageType][priceStr];
+                }
+                return "https://pay.michieauto.com/deposit";
+            }
+
             if (elements.packageSelectionContainer) elements.packageSelectionContainer.addEventListener('click', (e) => {
                 const btn = e.target.closest('.select-package-btn');
                 if (btn) {
@@ -765,10 +811,13 @@
                     });
 
                     if (response.ok) {
+                        const paymentLink = getPaymentLink(payload.package_type, payload.vehicle_type, payload.package_price, isPromoActive);
+                        sendSmsNotification(payload, paymentLink);
+
                         hideAllMajorSections();
                         elements.confirmationSection.style.display = 'block';
                         elements.policyText.style.display = 'block';
-                        elements.payNowButton.onclick = () => window.open('https://pay.michieauto.com/deposit', '_blank');
+                        elements.payNowButton.onclick = () => window.open(paymentLink, '_blank');
                     } else {
                         messageEl.textContent = 'Booking failed. Try again.';
                         submitButton.disabled = false;
