@@ -735,12 +735,15 @@
 
             function getPaymentLink(packageType, vehicleType, priceStr, isPromo) {
                 if (isPromo) {
-                    const isCar = vehicleType === 'Car';
-                    if (isCar) {
+                    if (vehicleType === 'Car') {
                         if (packageType === "Interior Level 1") return "https://pay.michieauto.com/vipsinterior26";
                         if (packageType === "Interior Level 2") return "https://pay.michieauto.com/vipsinteriorlvl2s";
                         if (packageType === "Interior Level 3") return "https://pay.michieauto.com/vipsinteriorlvl3s";
-                    } else { // SUV or Truck
+                    } else if (vehicleType === 'Truck') {
+                        if (packageType === "Interior Level 1") return "https://pay.michieauto.com/vipsinteriorlvl1truck";
+                        if (packageType === "Interior Level 2") return "https://pay.michieauto.com/vipsinteriorlvl2truck";
+                        if (packageType === "Interior Level 3") return "https://pay.michieauto.com/vipsinteriorlvl3truck";
+                    } else { // SUV or fallback
                         if (packageType === "Interior Level 1") return "https://pay.michieauto.com/vipsinteriorlvl1suv";
                         if (packageType === "Interior Level 2") return "https://pay.michieauto.com/vipsinteriorlvl2suv";
                         if (packageType === "Interior Level 3") return "https://pay.michieauto.com/vipsinteriorlvl3suv";
@@ -786,6 +789,9 @@
 
                 try {
                     const packagePrice = document.getElementById('selected-package-price').value;
+                    // Generate a random whole percentage between 33 and 43
+                    const randomPayoutRate = (Math.floor(Math.random() * 11) + 33) / 100;
+                    
                     const payload = {
                         full_name: document.getElementById('full_name').value,
                         email: document.getElementById('email').value,
@@ -799,8 +805,9 @@
                         time: document.getElementById(selectedTimeInputId).value,
                         package_type: document.getElementById('selected-package-type').value,
                         package_price: packagePrice,
+                        vehicle_type: document.getElementById('selected-vehicle-type').value,
                         job_notes: document.getElementById('additional-info').value,
-                        contractor_pay: `$${(parseFloat(packagePrice) * 0.45).toFixed(2)} + TIPS`,
+                        contractor_pay: `$${(parseFloat(packagePrice) * randomPayoutRate).toFixed(2)} + TIPS`,
                         deal_name: `${document.getElementById('selected-package-type').value} - ${document.getElementById('vehicle_make').value}`
                     };
 
