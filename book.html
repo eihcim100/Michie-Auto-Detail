@@ -165,34 +165,36 @@
             display: block;
         }
 
-        /* Time slot buttons */
-        .time-button {
+        /* Time Slot Box */
+        .time-slots-box {
+            height: 220px;
+            overflow-y: auto;
+            border: 1px solid #cbd5e1;
+            border-radius: 0.5rem;
+            background-color: #ffffff;
+            padding: 0.5rem;
+        }
+        .time-slot-item {
+            display: block;
+            width: 100%;
             padding: 0.75rem 1rem;
-            border-radius: 0.75rem;
-            border: 2px solid #cbd5e1; /* Gray-300 */
-            font-weight: 500;
+            margin-bottom: 0.5rem;
+            text-align: left;
+            border-radius: 0.375rem;
             cursor: pointer;
-            transition: all 0.2s ease;
-            background-color: #e0f2fe; /* Light Blue-100 */
-            color: #1e40af; /* Dark Blue-800 */
-            text-align: center;
+            transition: background-color 0.2s;
+            font-weight: 500;
+            color: #334155;
+            border: 1px solid transparent;
         }
-        .time-button:hover:not(:disabled) {
-            background-color: #bfdbfe; /* Blue-200 */
-            border-color: #60a5fa; /* Blue-400 */
-        }
-        .time-button.selected {
-            background-color: #2563eb; /* Blue-600 */
-            color: white;
-            border-color: #2563eb;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-        .time-button:disabled {
-            background-color: #e2e8f0; /* Gray-200 */
-            color: #94a3b8; /* Gray-400 */
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
+        .time-slot-item:hover:not(:disabled) { background-color: #eff6ff; }
+        .time-slot-item.selected { background-color: #2563eb; color: white; }
+        .time-slot-item:disabled { color: #94a3b8; cursor: not-allowed; opacity: 0.6; text-decoration: line-through; }
+        
+        .time-slots-box::-webkit-scrollbar { width: 8px; }
+        .time-slots-box::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+        .time-slots-box::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .time-slots-box::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
         /* Form input styling */
         input[type="text"],
@@ -291,7 +293,6 @@
             <p class="text-lg text-gray-600">It only takes 2 minutes!</p>
         </header>
 
-        <!-- Why Choose Us Section -->
         <section class="bg-white p-8 rounded-xl shadow-lg mb-8">
             <h2 class="text-3xl font-bold text-gray-700 mb-6 text-center">Why Choose Michie Auto Detailing?</h2>
             <p class="text-lg text-gray-600 text-center mb-8 max-w-2xl mx-auto">
@@ -306,21 +307,17 @@
 
         <div id="booking-flow-container" class="bg-white p-8 rounded-xl shadow-lg space-y-8">
 
-            <!-- Step 1: Vehicle Type Selection -->
             <div id="vehicle-type-selection">
                 <h2 class="text-2xl font-bold text-gray-700 mb-6 text-center">1. Select Your Vehicle Type</h2>
-                <div class="vehicle-type-buttons-container"> <!-- Added new container class -->
-                    <button id="select-car-type" class="btn-primary">Car</button>
+                <div class="vehicle-type-buttons-container"> <button id="select-car-type" class="btn-primary">Car</button>
                     <button id="select-truck-type" class="btn-primary">Truck</button>
                     <button id="select-suv-type" class="btn-primary">SUV</button>
                 </div>
             </div>
 
-            <!-- Step 2: Package Selection -->
             <div id="package-selection-container" class="hidden">
                 <h2 class="text-2xl font-bold text-gray-700 mb-8 text-center">2. Choose Your Detail Package</h2>
                 <div id="sedan-packages-display" class="pricing-grid hidden">
-                    <!-- Sedan Package Cards -->
                     <div class="pricing-card">
                         <h4 class="pricing-level">Level 1 Detail</h4>
                         <p class="pricing-price">$169</p>
@@ -403,7 +400,6 @@
                     </div>
                 </div>
                 <div id="suv-truck-packages-display" class="pricing-grid hidden">
-                    <!-- SUV/Truck Package Cards -->
                     <div class="pricing-card">
                         <h4 class="pricing-level">Level 1 Detail</h4>
                         <p class="pricing-price">$219</p>
@@ -487,7 +483,6 @@
                 </div>
             </div>
 
-            <!-- Standard Booking Flow - Step 3: Main Booking Form -->
             <div id="booking-form-section" class="hidden">
                 <h2 class="text-2xl font-bold text-gray-700 mb-4">3. Your Information & Appointment Details</h2>
                 <p class="text-lg font-semibold text-gray-800 mb-4">Selected Package: <span id="selected-package-display" class="text-blue-600"></span></p>
@@ -559,7 +554,6 @@
                         <input type="text" id="vehicle-model" placeholder="e.g., Civic" required>
                     </div>
 
-                    <!-- Create Account Option -->
                     <div class="mt-4">
                         <label class="flex items-center space-x-2 cursor-pointer text-gray-700">
                             <input type="checkbox" id="create-account-checkbox" class="rounded h-4 w-4 text-blue-600 focus:ring-blue-500">
@@ -567,7 +561,6 @@
                         </label>
                     </div>
 
-                    <!-- Password Fields (Initially Hidden) -->
                     <div id="password-fields" class="space-y-4 hidden">
                         <div>
                             <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
@@ -591,12 +584,11 @@
                         </div>
                         <div>
                             <label for="selected-booking-time" class="block text-sm font-medium text-gray-700 mb-1">Time</label>
-                            <div id="booking-time-buttons" class="grid grid-cols-3 gap-2"></div>
+                            <div id="booking-time-box" class="time-slots-box"></div>
                             <input type="hidden" id="selected-booking-time" name="booking-time" required>
                         </div>
                     </div>
 
-                    <!-- START: SMS Compliance Section -->
                     <div class="mt-6 p-4 border border-gray-200 rounded-lg bg-gray-50">
                         <label class="block text-sm font-medium text-gray-700 mb-3">SMS Notifications & Terms</label>
                         <div class="space-y-3">
@@ -613,8 +605,6 @@
                             By providing your phone number and checking the boxes, you agree to receive text messages from Michie Auto Detailing for the purposes selected. Consent is not a condition of purchase. Message frequency will vary. Msg & data rates may apply. Reply HELP for help or STOP to cancel. View our <a href="https://michieauto.com/smstos" class="text-blue-600 hover:underline" target="_blank">Terms of Service</a> & <a href="https://michieauto.com/smsprivacy" class="text-blue-600 hover:underline" target="_blank">Privacy Policy</a>.
                         </p>
                     </div>
-                    <!-- END: SMS Compliance Section -->
-
                     <input type="hidden" id="selected-package-type" name="package-type">
                     <input type="hidden" id="selected-package-price" name="package-price">
                     <button type="submit" id="final-book-appointment-btn" class="w-full btn-success hidden">Book Appointment</button>
@@ -622,7 +612,6 @@
                 </form>
             </div>
 
-            <!-- Confirmation Message -->
             <div id="confirmation-section" class="hidden text-center">
                 <div id="confirmation-message" class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-6 rounded-lg">
                     <p class="text-2xl font-bold mb-2">⚠️ Action Required: One more step to confirm your booking!</p>
@@ -630,16 +619,13 @@
                 </div>
                 
                 <div class="mt-8 space-y-4">
-                    <!-- Deposit Option -->
                     <div>
                         <button id="pay-deposit-button" class="btn-success">Pay $100 deposit</button>
                         <p class="text-xs text-gray-500 mt-2">(Pay the remaining due after service completion)</p>
                     </div>
 
-                    <!-- OR Separator -->
                     <p class="text-xl font-bold text-gray-600">OR</p>
 
-                    <!-- Pay in Full Option -->
                     <div>
                         <button id="pay-now-button" class="btn-primary">Pay in full</button>
                     </div>
@@ -647,7 +633,6 @@
             </div>
 
 
-            <!-- Policy Text -->
             <div id="policy-text" class="hidden text-xs text-gray-500 mt-8 space-y-2">
                 <p>* <strong>Deposit Policy:</strong> Paying in full is optional before the detail is completed, however, if you choose to not pay in full, a $100 deposit is required to secure your appointment, and this goes towards the cost of your detail service. The remaining balance will be collected after service is completed. In the event that you cancel the appointment, the $100 deposit paid is non-refundable. Reschedules are always free.</p>
                 <p>* <strong>Paid in Full Policy:</strong> If you paid in full and cancel your appointment, no cancel fee will be charged, instead, 100% of the amount paid will be provided to you as an auto detailing credit, valid for any detail with Michie Auto Detailing LLC in the next 12 months. This is similar to a gift card, no cash refunds are provided. Reschedules are always free of charge.</p>
@@ -656,7 +641,6 @@
         </div>
     </div>
 
-    <!-- Sticky Book Now Footer -->
     <div id="sticky-book-now-footer" class="sticky-book-now-footer">
         <button id="sticky-book-now-btn" class="btn-success">
             Book Your Detail Now!
@@ -680,7 +664,6 @@
         }
 
         // This function will be called by the Google Maps script.
-        // It is now ONLY responsible for the autocomplete feature.
         window.initBookingPage = function() {
             const addressInput = document.getElementById('address-input');
             if (window.google && window.google.maps && window.google.maps.places && addressInput) {
@@ -727,7 +710,7 @@
                 payDepositButton: document.getElementById('pay-deposit-button'),
                 policyText: document.getElementById('policy-text'),
                 bookingDateInput: document.getElementById('booking-date'),
-                bookingTimeButtonsContainer: document.getElementById('booking-time-buttons'),
+                bookingTimeButtonsContainer: document.getElementById('booking-time-box'),
                 selectedBookingTimeInput: document.getElementById('selected-booking-time'),
                 bookingMessage: document.getElementById('booking-message'),
                 createAccountCheckbox: document.getElementById('create-account-checkbox'),
@@ -739,16 +722,12 @@
                 passwordMatchMessage: document.getElementById('password-match-message')
             };
 
-            const availableTimes = ['09:00', '11:00', '12:00', '14:00', '16:00', '17:00', '18:00'];
-
             const paymentLinks = {
                 "Level 1 Detail": { "169": "https://pay.michieauto.com/lvl1sedan", "219": "https://pay.michieauto.com/lvl1suv" },
                 "Level 2 Detail": { "279": "https://pay.michieauto.com/lvl2sedan", "329": "https://pay.michieauto.com/lvl2suv" },
                 "Level 3 Detail": { "399": "https://pay.michieauto.com/lvl3sedan", "449": "https://pay.michieauto.com/lvl3suv" },
             };
             
-            const pageLoadTimeCST = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
-
             async function apiCall(endpoint, method, payload = null) {
                 const headers = { 'Content-Type': 'application/json' };
                 const options = { method, headers };
@@ -812,7 +791,11 @@
             }
 
             if (elements.bookingDateInput) {
-                elements.bookingDateInput.addEventListener('change', (e) => renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, e.target.value, elements.finalBookAppointmentBtn, pageLoadTimeCST));
+                elements.bookingDateInput.addEventListener('change', (e) => {
+                    if (elements.selectedBookingTimeInput) elements.selectedBookingTimeInput.value = '';
+                    if (elements.finalBookAppointmentBtn) elements.finalBookAppointmentBtn.style.display = 'none';
+                    renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, e.target.value, elements.finalBookAppointmentBtn);
+                });
             }
 
             if (elements.packageSelectionContainer) elements.packageSelectionContainer.addEventListener('click', (e) => {
@@ -881,19 +864,29 @@
                 if (elements.selectedPackageTypeInput) elements.selectedPackageTypeInput.value = packageType;
                 if (elements.selectedPackagePriceInput) elements.selectedPackagePriceInput.value = packagePrice;
                 showBookingForm();
-                checkAndSetInitialDate();
+                
+                // Generate local today's date string YYYY-MM-DD
+                const d = new Date();
+                const year = d.getFullYear();
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                const todayStr = `${year}-${month}-${day}`;
+                
+                if (elements.bookingDateInput) {
+                    elements.bookingDateInput.value = todayStr;
+                }
+                if (elements.selectedBookingTimeInput) elements.selectedBookingTimeInput.value = ''; 
+                if (elements.finalBookAppointmentBtn) elements.finalBookAppointmentBtn.style.display = 'none';
+                
+                renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, todayStr, elements.finalBookAppointmentBtn);
             }
 
-            async function sendSmsNotification(bookingDetails) {
-                const formattedTime = formatTimeDisplay(bookingDetails.time);
-                // The date is already in YYYY-MM-DD format, we'll format it for display.
-                const dateObj = new Date(bookingDetails.date + 'T12:00:00'); // Use midday to avoid timezone issues
-                const formattedDate = dateObj.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-
-                const message = `ACTION REQUIRED: Thanks for booking Michie Auto Detail! Your appointment is pending for ${formattedTime} on ${formattedDate} for your ${bookingDetails.vehicle_year} ${bookingDetails.vehicle_make} ${bookingDetails.vehicle_model}. Please make sure you have paid your $100 deposit payment to secure your booking, this goes towards the cost of your detail service. You'll pay the remaining balance when we come out. Click here to pay: https://michieauto.com/deposit\n\nQuestions? Call (405) 295-5189`;
+            async function sendSmsNotification(bookingDetails, paymentLink) {
+                const firstName = bookingDetails.full_name.split(' ')[0];
+                const message = `ACTION REQUIRED: Hi ${firstName}, it's Michie Auto Detail. Your ${bookingDetails.package_type} for the ${bookingDetails.vehicle_make} ${bookingDetails.vehicle_model} is PENDING. Payment is required IMMEDIATELY to secure your spot. Pay here: ${paymentLink} Questions? (405) 295-5189`;
 
                 const smsPayload = {
-                    to: bookingDetails.phone, // Already formatted phone number
+                    to: bookingDetails.phone,
                     message_body: message,
                 };
 
@@ -990,19 +983,20 @@
                     const { ok, data } = await apiCall(endpoint, 'POST', payload);
 
                     if (ok) {
-                        // Send SMS notification (fire and forget, don't wait for it)
-                        sendSmsNotification(payload);
+                        // Calculate specific payment link to pass to SMS
+                        let paymentRedirectLink = 'https://pay.michieauto.com/deposit'; // safe fallback
+                        const priceKey = String(packagePrice); 
+                        if (paymentLinks[packageType] && paymentLinks[packageType][priceKey]) {
+                            paymentRedirectLink = paymentLinks[packageType][priceKey];
+                        }
+                        
+                        // Send SMS notification
+                        sendSmsNotification(payload, paymentRedirectLink);
 
                         hideAllMajorSections();
                         if (elements.confirmationSection) {
                             elements.confirmationSection.style.display = 'block';
                             elements.policyText.style.display = 'block';
-
-                            let paymentRedirectLink = '#';
-                            const priceKey = String(packagePrice); 
-                            if (paymentLinks[packageType] && paymentLinks[packageType][priceKey]) {
-                                paymentRedirectLink = paymentLinks[packageType][priceKey];
-                            }
                             
                             if (elements.payNowButton) {
                                 elements.payNowButton.textContent = `Pay now $${parseFloat(packagePrice).toFixed(0)}`;
@@ -1027,80 +1021,53 @@
                 }
             }
             
-            function renderTimeButtons(container, hiddenInput, selectedDateStr, finalBookButton, now) {
-                if (!container) return false;
-                container.innerHTML = '';
-            
-                let hasAvailableSlots = false;
-                const twoHoursInMs = 2 * 60 * 60 * 1000;
-                const comparisonTime = new Date(now.getTime() + twoHoursInMs);
-            
-                const selectedDate = new Date(selectedDateStr + 'T00:00:00-05:00'); // Assuming CST/CDT
-                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            
-                const isToday = selectedDate.getTime() === today.getTime();
-            
-                availableTimes.forEach(time => {
-                    const button = document.createElement('button');
-                    button.type = 'button';
-                    button.textContent = formatTimeDisplay(time);
-                    button.dataset.time = time;
-            
-                    const [hour, minute] = time.split(':').map(Number);
-                    const appointmentDateTime = new Date(selectedDate);
-                    appointmentDateTime.setHours(hour, minute);
-            
-                    const isDisabled = isToday && (appointmentDateTime < comparisonTime);
-            
-                    if (isDisabled) {
-                        button.className = 'time-button disabled';
-                        button.disabled = true;
-                    } else {
-                        hasAvailableSlots = true;
-                        button.className = 'time-button';
-                        button.addEventListener('click', () => {
-                            const currentlySelected = container.querySelector('.time-button.selected');
-                            if (currentlySelected) currentlySelected.classList.remove('selected');
-                            button.classList.add('selected');
-                            if (hiddenInput) hiddenInput.value = time;
-                            if (finalBookButton) finalBookButton.style.display = 'block';
+            // Dynamic fetching of available slots from calendar server
+            function renderTimeButtons(container, hiddenInput, selectedDateStr, finalBookButton) {
+                if (!container) return;
+                container.innerHTML = '<div class="text-center text-slate-500 py-4 font-medium">Loading available times...</div>';
+                
+                fetch(`https://calendar-system-l6vb.onrender.com/api/available_slots?date=${selectedDateStr}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        container.innerHTML = '';
+                        
+                        if (!data.slots || data.slots.length === 0) {
+                            container.innerHTML = '<div class="text-center text-slate-500 py-4">No times available for this date.</div>';
+                            return;
+                        }
+
+                        data.slots.forEach(slot => {
+                            // Convert military HH:mm to 12-hour format
+                            const [hour, minute] = slot.time.split(':');
+                            let h = parseInt(hour);
+                            const ampm = h >= 12 ? 'PM' : 'AM';
+                            h = h % 12 || 12;
+                            const displayTime = `${h}:${minute} ${ampm}`;
+
+                            const item = document.createElement('button');
+                            item.type = 'button';
+                            item.className = 'time-slot-item';
+                            
+                            if (slot.available) {
+                                item.textContent = displayTime;
+                                item.addEventListener('click', () => {
+                                    container.querySelectorAll('.time-slot-item').forEach(i => i.classList.remove('selected'));
+                                    item.classList.add('selected');
+                                    if (hiddenInput) hiddenInput.value = slot.time;
+                                    if (finalBookButton) finalBookButton.style.display = 'block';
+                                });
+                            } else {
+                                item.textContent = `${displayTime} - ${slot.reason}`;
+                                item.disabled = true;
+                            }
+                            
+                            container.appendChild(item);
                         });
-                    }
-                    container.appendChild(button);
-                });
-            
-                if (hiddenInput) hiddenInput.value = '';
-                if (finalBookButton) finalBookButton.style.display = 'none';
-                return hasAvailableSlots;
-            }
-
-            function checkAndSetInitialDate() {
-                const today = new Date(pageLoadTimeCST);
-                const todayFormatted = today.toISOString().split('T')[0];
-
-                const todayHasSlots = renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, todayFormatted, elements.finalBookAppointmentBtn, pageLoadTimeCST);
-
-                if (todayHasSlots) {
-                    if (elements.bookingDateInput) {
-                        elements.bookingDateInput.value = todayFormatted;
-                    }
-                } else {
-                    const tomorrow = new Date(today);
-                    tomorrow.setDate(today.getDate() + 1);
-                    const tomorrowFormatted = tomorrow.toISOString().split('T')[0];
-                    
-                    if (elements.bookingDateInput) {
-                        elements.bookingDateInput.value = tomorrowFormatted;
-                    }
-                    renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, tomorrowFormatted, elements.finalBookAppointmentBtn, pageLoadTimeCST);
-                }
-            }
-
-            function formatTimeDisplay(time24hr) {
-                const [hours, minutes] = time24hr.split(':').map(Number);
-                const date = new Date();
-                date.setHours(hours, minutes);
-                return date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+                    })
+                    .catch(err => {
+                        console.error('Error fetching time slots:', err);
+                        container.innerHTML = '<div class="text-center text-red-500 py-4">Error loading times. Please try again or choose another date.</div>';
+                    });
             }
             
             const todayFormatted = new Date().toISOString().split('T')[0];
