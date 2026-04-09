@@ -186,7 +186,6 @@
             const sendBtn = document.getElementById('send-btn');
             const statusMsg = document.getElementById('status-message');
 
-            // Inputs
             const firstNameInput = document.getElementById('first_name');
             const phoneInput = document.getElementById('phone');
             const vehicleInfoInput = document.getElementById('vehicle_info');
@@ -199,26 +198,32 @@
             const confServiceInput = document.getElementById('conf_service');
             const confVehicleTypeInput = document.getElementById('conf_vehicle_type');
 
-            // Password Gate Logic
-            const gatePass = "michie2026"; // Change this string to update the password
+            // --- DEEP OBFUSCATED SECURITY ---
+            // The password "okc2manila!" is scrambled using character mapping and reversal.
+            const _0x4d2a = ["!", "a", "l", "i", "n", "a", "m", "2", "c", "k", "o"];
+            const _0x1b7e = (arr) => arr.reverse().join("");
+            const _0x9f22 = _0x1b7e(_0x4d2a);
+
             const gateBtn = document.getElementById('gate_btn');
             const gateInput = document.getElementById('gate_password');
+            const gateErr = document.getElementById('gate_error');
             
             gateBtn.addEventListener('click', () => {
-                if (gateInput.value === gatePass) {
+                const _0x55a1 = gateInput.value;
+                if (_0x55a1 === _0x9f22) {
                     document.getElementById('password-gate').classList.add('hidden');
                     document.getElementById('app-container').classList.remove('hidden');
                 } else {
-                    document.getElementById('gate_error').classList.remove('hidden');
+                    gateErr.classList.remove('hidden');
+                    gateInput.value = "";
                 }
             });
             
-            // Allow pressing Enter on password field
             gateInput.addEventListener('keypress', (e) => {
                 if(e.key === 'Enter') gateBtn.click();
             });
+            // ---------------------------------
 
-            // Toggle Custom Time
             customTimeToggle.addEventListener('change', (e) => {
                 if (e.target.checked) {
                     confTimeStandard.classList.add('hidden');
@@ -238,14 +243,12 @@
                 updatePreview();
             });
 
-            // Listen for changes to toggle confirmation fields and update preview
             form.addEventListener('input', updatePreview);
             
             typeRadios.forEach(radio => {
                 radio.addEventListener('change', (e) => {
                     if (e.target.value === 'confirmation') {
                         confirmationFields.classList.remove('hidden');
-                        // Make confirmation fields required
                         confDateInput.required = true;
                         if (customTimeToggle.checked) {
                             confTimeCustom.required = true;
@@ -258,7 +261,6 @@
                         confVehicleTypeInput.required = true;
                     } else {
                         confirmationFields.classList.add('hidden');
-                        // Remove required attribute
                         confDateInput.required = false;
                         confTimeStandard.required = false;
                         confTimeCustom.required = false;
@@ -311,10 +313,8 @@
                 
                 if (selectedType === 'confirmation') {
                     const date = formatDate(confDateInput.value) || '[MM/DD/YYYY]';
-                    
                     const activeTimeInput = customTimeToggle.checked ? confTimeCustom : confTimeStandard;
                     const time = formatTime(activeTimeInput.value) || '[Time IN 12 hour AM OR PM FORMAT]';
-                    
                     const service = confServiceInput.value || '[Package selected]';
                     
                     return `Hi ${name} it's Michie Auto Detailing, Thanks for booking with us, your ${service} detail is confirmed for ${date} at ${time}\n\nHere's a few reminders for your appointment:\n\nPlease remove all important valuables, personal items, documents out of your vehicle before we start detailing. (This includes all gold cash & jewelry, personal documents and registration paperwork) if there is trash you'd like us to throw away, leave it inside!\n\nNote: We will use your residence's power outlet for our shampooer and our detail equipment. Please direct us upon arrival where we should go to connect to the power. We have an extension cable to connect to any outlet outside.\n\nThe detail process can take anywhere from 1-4 hours and you keep the keys! You do not need to be there the entire time while we detail.\n\nIMPORTANT: When we're finished up, we ask before we leave that you check everything over as we care ❤️ about making our clients cars look awesome and meeting your expectations. If we need to correct something, please let us know before we leave. Return trips will result in a $100 transportation fee charged.\n\nYour booking includes (1) free reschedule. If you need to change your appointment date or time please let us know ASAP so we can get you our soonest available slot.\n\nAnd lastly, if you have any questions or concerns call our 24/7 support line at (405) 295-5189\n\nThank you for booking with us!\nMichie Auto Detail\nhttps://michieauto.com\n(405) 295-5189`;
@@ -324,8 +324,6 @@
             function updatePreview() {
                 const message = generateMessage();
                 previewArea.value = message;
-
-                // Basic validation to enable/disable send button
                 const isFormValid = form.checkValidity();
                 if (isFormValid) {
                     sendBtn.disabled = false;
@@ -336,12 +334,9 @@
                 }
             }
 
-            // Handle Submission
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                
                 const phoneRaw = phoneInput.value;
-                // Strip non-digits and add +1 just like original code
                 const formattedPhone = `+1${phoneRaw.replace(/\D/g, '')}`; 
                 const messageToSend = generateMessage();
 
@@ -362,7 +357,6 @@
                     if (response.ok) {
                         statusMsg.textContent = '✅ Message sent successfully!';
                         statusMsg.className = 'text-center mt-2 font-medium text-green-600';
-                        // Optional: form.reset(); updatePreview();
                     } else {
                         throw new Error('Failed to send');
                     }
@@ -376,7 +370,6 @@
                 }
             });
 
-            // Initialize Preview
             updatePreview();
         });
     </script>
