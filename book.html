@@ -605,25 +605,6 @@
                         </div>
                     </div>
 
-                    <!-- START: SMS Compliance Section -->
-                    <div class="mt-6 p-4 border border-gray-200 rounded-lg bg-gray-50">
-                        <label class="block text-sm font-medium text-gray-700 mb-3">SMS Notifications & Terms</label>
-                        <div class="space-y-3">
-                            <label class="flex items-center space-x-3 cursor-pointer text-gray-700">
-                                <input type="checkbox" id="sms-consent-transactional" class="rounded h-4 w-4 text-blue-600 focus:ring-blue-500">
-                                <span>Appointment reminders & account updates.</span>
-                            </label>
-                            <label class="flex items-center space-x-3 cursor-pointer text-gray-700">
-                                <input type="checkbox" id="sms-consent-marketing" class="rounded h-4 w-4 text-blue-600 focus:ring-blue-500">
-                                <span>Promotional offers & discounts.</span>
-                            </label>
-                        </div>
-                        <p class="text-xs text-gray-500 mt-4">
-                            By providing your phone number and checking the boxes, you agree to receive text messages from Michie Auto Detailing for the purposes selected. Consent is not a condition of purchase. Message frequency will vary. Msg & data rates may apply. Reply HELP for help or STOP to cancel. View our <a href="https://michieauto.com/smstos" class="text-blue-600 hover:underline" target="_blank">Terms of Service</a> & <a href="https://michieauto.com/smsprivacy" class="text-blue-600 hover:underline" target="_blank">Privacy Policy</a>.
-                        </p>
-                    </div>
-                    <!-- END: SMS Compliance Section -->
-
                     <input type="hidden" id="selected-package-type" name="package-type">
                     <input type="hidden" id="selected-package-price" name="package-price">
                     <button type="submit" id="final-book-appointment-btn" class="w-full btn-success hidden">Book Appointment</button>
@@ -635,31 +616,19 @@
             <div id="confirmation-section" class="hidden text-center">
                 <div id="confirmation-message" class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-6 rounded-lg">
                     <p class="text-2xl font-bold mb-2">⚠️ Action Required: One more step to confirm your booking!</p>
-                    <p class="text-md mt-4">Payment is required to confirm your appointment. Please select an option below to continue.</p>
+                    <p class="text-md mt-4">Payment is required to confirm your appointment. Please click below to pay and secure your spot.</p>
                 </div>
                 
-                <div class="mt-8 space-y-4">
-                    <!-- Deposit Option -->
-                    <div>
-                        <button id="pay-deposit-button" class="btn-success">Pay $100 deposit</button>
-                        <p class="text-xs text-gray-500 mt-2">(Pay the remaining due after service completion)</p>
-                    </div>
-
-                    <!-- OR Separator -->
-                    <p class="text-xl font-bold text-gray-600">OR</p>
-
+                <div class="mt-8">
                     <!-- Pay in Full Option -->
-                    <div>
-                        <button id="pay-now-button" class="btn-primary">Pay in full</button>
-                    </div>
+                    <button id="pay-now-button" class="btn-success w-full sm:w-auto px-8 py-4 text-xl">Pay in full</button>
                 </div>
             </div>
 
 
             <!-- Policy Text -->
-            <div id="policy-text" class="hidden text-xs text-gray-500 mt-8 space-y-2">
-                <p>* <strong>Deposit Policy:</strong> Paying in full is optional before the detail is completed, however, if you choose to not pay in full, a $100 deposit is required to secure your appointment, and this goes towards the cost of your detail service. The remaining balance will be collected after service is completed. In the event that you cancel the appointment, the $100 deposit paid is non-refundable. Reschedules are always free.</p>
-                <p>* <strong>Paid in Full Policy:</strong> If you paid in full and cancel your appointment, no cancel fee will be charged, instead, 100% of the amount paid will be provided to you as an auto detailing credit, valid for any detail with Michie Auto Detailing LLC in the next 12 months. This is similar to a gift card, no cash refunds are provided. Reschedules are always free of charge.</p>
+            <div id="policy-text" class="hidden text-xs text-gray-500 mt-8 space-y-2 text-center">
+                <p>* Appointments booked are 100% non refundable. 1 reschedule is allowed for free before your appointment if you notify us within 24 hours of your original appointment time.</p>
             </div>
 
         </div>
@@ -732,7 +701,6 @@
                 stickyBookNowBtn: document.getElementById('sticky-book-now-btn'), 
                 stickyBookNowFooter: document.getElementById('sticky-book-now-footer'), 
                 payNowButton: document.getElementById('pay-now-button'),
-                payDepositButton: document.getElementById('pay-deposit-button'),
                 policyText: document.getElementById('policy-text'),
                 bookingDateInput: document.getElementById('booking-date'),
                 bookingTimeButtonsContainer: document.getElementById('booking-time-box'),
@@ -1032,9 +1000,6 @@
                             if (elements.payNowButton) {
                                 elements.payNowButton.textContent = `Pay now $${parseFloat(packagePrice).toFixed(0)}`;
                                 elements.payNowButton.onclick = () => { window.open(paymentRedirectLink, '_blank'); };
-                            }
-                            if (elements.payDepositButton) {
-                                elements.payDepositButton.onclick = () => { window.open('https://pay.michieauto.com/deposit', '_blank'); };
                             }
                         }
                         if (elements.stickyBookNowFooter) elements.stickyBookNowFooter.style.display = 'none';
