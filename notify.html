@@ -48,12 +48,22 @@
 </head>
 <body class="p-6">
 
-    <div class="max-w-3xl mx-auto bg-white p-8 rounded-xl shadow-xl border border-slate-200">
+    <!-- Password Gate -->
+    <div id="password-gate" class="max-w-md mx-auto bg-white p-8 rounded-xl shadow-xl border border-slate-200 mt-10">
+        <h2 class="text-2xl font-bold mb-4 text-center text-slate-800">Admin Access 🔒</h2>
+        <p class="text-sm text-slate-600 mb-6 text-center">Please enter the password to access the dispatcher.</p>
+        <input type="password" id="gate_password" class="w-full mb-4" placeholder="Enter Password">
+        <button id="gate_btn" class="btn-primary">Unlock</button>
+        <p id="gate_error" class="text-red-500 text-sm mt-2 hidden text-center">Incorrect password.</p>
+    </div>
+
+    <div id="app-container" class="hidden max-w-3xl mx-auto bg-white p-8 rounded-xl shadow-xl border border-slate-200">
         <div class="flex items-center gap-4 mb-8 border-b pb-4">
             <h1 class="text-3xl font-bold text-slate-800">SMS Dispatcher 📱</h1>
         </div>
 
         <form id="sms-form" class="space-y-6">
+            <!-- Basic Information -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label class="font-medium text-slate-700">Client First Name <span class="text-red-500">*</span></label>
@@ -69,6 +79,7 @@
                 </div>
             </div>
 
+            <!-- Message Type Selection -->
             <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
                 <label class="font-medium text-slate-700 block mb-3 text-lg">Select Message Type <span class="text-red-500">*</span></label>
                 <div class="space-y-3">
@@ -81,12 +92,17 @@
                         <span class="text-slate-700 font-medium">Full Detail Link</span>
                     </label>
                     <label class="flex items-center gap-3 cursor-pointer">
+                        <input type="radio" name="message_type" value="photo_request" class="w-5 h-5 text-blue-600">
+                        <span class="text-slate-700 font-medium">Photo Request Text</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer">
                         <input type="radio" name="message_type" value="confirmation" class="w-5 h-5 text-blue-600">
                         <span class="text-slate-700 font-medium">Appointment Confirmation Text</span>
                     </label>
                 </div>
             </div>
 
+            <!-- Conditional Confirmation Fields -->
             <div id="confirmation-fields" class="hidden bg-blue-50 p-4 rounded-lg border border-blue-100 space-y-4">
                 <h3 class="font-bold text-blue-800 border-b border-blue-200 pb-2">Confirmation Details</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -96,7 +112,34 @@
                     </div>
                     <div>
                         <label class="font-medium text-slate-700">Time Booked <span class="text-red-500">*</span></label>
-                        <input type="time" id="conf_time">
+                        <select id="conf_time_standard">
+                            <option value="">Select Time...</option>
+                            <option value="08:00">8:00 AM</option>
+                            <option value="12:00">12:00 PM</option>
+                            <option value="17:00">5:00 PM</option>
+                        </select>
+                        <select id="conf_time_custom" class="hidden">
+                            <option value="">Select Custom Time...</option>
+                            <option value="06:00">6:00 AM</option>
+                            <option value="07:00">7:00 AM</option>
+                            <option value="08:00">8:00 AM</option>
+                            <option value="09:00">9:00 AM</option>
+                            <option value="10:00">10:00 AM</option>
+                            <option value="11:00">11:00 AM</option>
+                            <option value="12:00">12:00 PM</option>
+                            <option value="13:00">1:00 PM</option>
+                            <option value="14:00">2:00 PM</option>
+                            <option value="15:00">3:00 PM</option>
+                            <option value="16:00">4:00 PM</option>
+                            <option value="17:00">5:00 PM</option>
+                            <option value="18:00">6:00 PM</option>
+                            <option value="19:00">7:00 PM</option>
+                            <option value="20:00">8:00 PM</option>
+                            <option value="21:00">9:00 PM</option>
+                        </select>
+                        <label class="flex items-center gap-2 text-sm text-slate-600 mt-2 cursor-pointer">
+                            <input type="checkbox" id="custom_time_toggle" class="w-4 h-4"> Custom Time
+                        </label>
                     </div>
                     <div>
                         <label class="font-medium text-slate-700">Service Booked <span class="text-red-500">*</span></label>
@@ -123,9 +166,10 @@
                 </div>
             </div>
 
+            <!-- Live Preview Area -->
             <div>
                 <label class="font-medium text-slate-700 block mb-2">Message Preview:</label>
-                <textarea id="message_preview" rows="8" readonly class="bg-gray-100 text-sm text-gray-600 resize-none"></textarea>
+                <textarea id="message_preview" rows="9" readonly class="bg-gray-100 text-sm text-gray-600 resize-none"></textarea>
             </div>
 
             <button type="submit" id="send-btn" class="btn-primary" disabled>Fill out required fields to send</button>
@@ -147,9 +191,52 @@
             const phoneInput = document.getElementById('phone');
             const vehicleInfoInput = document.getElementById('vehicle_info');
             const confDateInput = document.getElementById('conf_date');
-            const confTimeInput = document.getElementById('conf_time');
+            
+            const confTimeStandard = document.getElementById('conf_time_standard');
+            const confTimeCustom = document.getElementById('conf_time_custom');
+            const customTimeToggle = document.getElementById('custom_time_toggle');
+            
             const confServiceInput = document.getElementById('conf_service');
             const confVehicleTypeInput = document.getElementById('conf_vehicle_type');
+
+            // Password Gate Logic
+            const gatePass = "michie2026"; // Change this string to update the password
+            const gateBtn = document.getElementById('gate_btn');
+            const gateInput = document.getElementById('gate_password');
+            
+            gateBtn.addEventListener('click', () => {
+                if (gateInput.value === gatePass) {
+                    document.getElementById('password-gate').classList.add('hidden');
+                    document.getElementById('app-container').classList.remove('hidden');
+                } else {
+                    document.getElementById('gate_error').classList.remove('hidden');
+                }
+            });
+            
+            // Allow pressing Enter on password field
+            gateInput.addEventListener('keypress', (e) => {
+                if(e.key === 'Enter') gateBtn.click();
+            });
+
+            // Toggle Custom Time
+            customTimeToggle.addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    confTimeStandard.classList.add('hidden');
+                    confTimeCustom.classList.remove('hidden');
+                    if (!confirmationFields.classList.contains('hidden')) {
+                        confTimeStandard.required = false;
+                        confTimeCustom.required = true;
+                    }
+                } else {
+                    confTimeCustom.classList.add('hidden');
+                    confTimeStandard.classList.remove('hidden');
+                    if (!confirmationFields.classList.contains('hidden')) {
+                        confTimeCustom.required = false;
+                        confTimeStandard.required = true;
+                    }
+                }
+                updatePreview();
+            });
 
             // Listen for changes to toggle confirmation fields and update preview
             form.addEventListener('input', updatePreview);
@@ -160,14 +247,21 @@
                         confirmationFields.classList.remove('hidden');
                         // Make confirmation fields required
                         confDateInput.required = true;
-                        confTimeInput.required = true;
+                        if (customTimeToggle.checked) {
+                            confTimeCustom.required = true;
+                            confTimeStandard.required = false;
+                        } else {
+                            confTimeStandard.required = true;
+                            confTimeCustom.required = false;
+                        }
                         confServiceInput.required = true;
                         confVehicleTypeInput.required = true;
                     } else {
                         confirmationFields.classList.add('hidden');
                         // Remove required attribute
                         confDateInput.required = false;
-                        confTimeInput.required = false;
+                        confTimeStandard.required = false;
+                        confTimeCustom.required = false;
                         confServiceInput.required = false;
                         confVehicleTypeInput.required = false;
                     }
@@ -194,6 +288,7 @@
                 const name = firstNameInput.value.trim() || '[NAME]';
                 const vehicleRaw = vehicleInfoInput.value.trim();
                 const vehicleText = vehicleRaw ? ` ${vehicleRaw}` : ' vehicle';
+                const vehiclePhotoText = vehicleRaw ? `the ${vehicleRaw}` : 'your vehicle';
                 
                 let selectedType = null;
                 for (const radio of typeRadios) {
@@ -208,14 +303,21 @@
                 
                 if (selectedType === 'full') {
                     return `Hey ${name} it's Andrew with Michie Auto Detailing! Here's a link to book your auto detail appointment for your${vehicleText} https://michieauto.com/book`;
-                } 
+                }
+
+                if (selectedType === 'photo_request') {
+                    return `Hi ${name} It's Michie Auto Detail. Could you send us a few photos of ${vehiclePhotoText} so we can have our detailer take a look? This helps us know what type of treatment and restoration options will work best for your vehicle. Send photos of the carpets, the seats, the dashboard and trunk/hatchback area of the vehicle. You can send your photos to (405) 223-8171 and we'll text you back to confirm we got it. Thanks!`;
+                }
                 
                 if (selectedType === 'confirmation') {
                     const date = formatDate(confDateInput.value) || '[MM/DD/YYYY]';
-                    const time = formatTime(confTimeInput.value) || '[Time IN 12 hour AM OR PM FORMAT]';
+                    
+                    const activeTimeInput = customTimeToggle.checked ? confTimeCustom : confTimeStandard;
+                    const time = formatTime(activeTimeInput.value) || '[Time IN 12 hour AM OR PM FORMAT]';
+                    
                     const service = confServiceInput.value || '[Package selected]';
                     
-                    return `Hi ${name} it's Michie Auto Detailing, Thanks for booking with us, your ${service} detail is confirmed for ${date} at ${time}\n\nHere's a few reminders for your appointment:\n\nPlease remove all important valuables, personal items, documents out of your vehicle before we start the shampoo. (This includes all gold cash & jewelry, personal documents and registration paperwork) if there is trash you'd like us to throw away, leave it inside! We are not responsible for any items left behind in the vehicle.\n\nNote: We will use your power outlet for our equipment. Please direct us upon arrival where we should go to connect to the power. We have a very long extension cable to connect to any outlet outside or inside the garage if needed.\n\nThe detail process can take 1 to 3 hours and you keep the keys! You do not need to be there the entire time while we detail.\n\nIMPORTANT: When we're finished up, we ask before we leave that you check everything over and meeting your expectations for the ${service} package you selected. If you need us to come back, return trips will result in a $100 transportation fee charged.\n\nYour booking includes (1) free reschedule. If you need to change your appointment date or time please let us know ASAP so we can get you our soonest available slot.\n\nAnd lastly, if you have any questions or concerns call our 24/7 support line at (405) 295-5189\n\nThank you for booking with us!\nMichie Auto Detail\nhttps://michieauto.com\n(405) 295-5189`;
+                    return `Hi ${name} it's Michie Auto Detailing, Thanks for booking with us, your ${service} detail is confirmed for ${date} at ${time}\n\nHere's a few reminders for your appointment:\n\nPlease remove all important valuables, personal items, documents out of your vehicle before we start detailing. (This includes all gold cash & jewelry, personal documents and registration paperwork) if there is trash you'd like us to throw away, leave it inside!\n\nNote: We will use your residence's power outlet for our shampooer and our detail equipment. Please direct us upon arrival where we should go to connect to the power. We have an extension cable to connect to any outlet outside.\n\nThe detail process can take anywhere from 1-4 hours and you keep the keys! You do not need to be there the entire time while we detail.\n\nIMPORTANT: When we're finished up, we ask before we leave that you check everything over as we care ❤️ about making our clients cars look awesome and meeting your expectations. If we need to correct something, please let us know before we leave. Return trips will result in a $100 transportation fee charged.\n\nYour booking includes (1) free reschedule. If you need to change your appointment date or time please let us know ASAP so we can get you our soonest available slot.\n\nAnd lastly, if you have any questions or concerns call our 24/7 support line at (405) 295-5189\n\nThank you for booking with us!\nMichie Auto Detail\nhttps://michieauto.com\n(405) 295-5189`;
                 }
             }
 
