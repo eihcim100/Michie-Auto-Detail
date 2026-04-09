@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-6Y327JERG9"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -8,18 +9,28 @@
       gtag('js', new Date());
       gtag('config', 'G-6Y327JERG9');
     </script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Michie Auto Detailing - Spring Interior Booking 🌸</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #334155; padding-bottom: 120px; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+            padding-bottom: 120px;
+        }
         .pac-container { z-index: 1050 !important; }
+
+        /* Spring Header Gradient */
         .spring-header {
             background: linear-gradient(135deg, #dcfce7 0%, #f0fdf4 100%);
             border-bottom: 1px solid #bbf7d0;
         }
+
+        /* Promotion Timer Banner */
         #promo-timer-banner {
             display: none;
             position: fixed;
@@ -36,7 +47,13 @@
             box-shadow: 0 -4px 15px rgba(0,0,0,0.2);
             animation: slideUp 0.5s ease;
         }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        /* General button styling */
         .btn-primary {
             background-color: #2563eb;
             color: white;
@@ -45,10 +62,14 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2), 0 2px 4px -1px rgba(37, 99, 235, 0.1);
             border: none;
         }
-        .btn-primary:hover { background-color: #1d4ed8; transform: translateY(-2px); }
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-2px);
+        }
+        
         .btn-success {
             background-color: #16a34a;
             color: white;
@@ -57,15 +78,32 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(22, 163, 74, 0.2);
+            border: none;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            border: none;
         }
-        .btn-success:hover:not(:disabled) { background-color: #15803d; transform: translateY(-2px); }
-        .btn-success:disabled { opacity: 0.7; cursor: not-allowed; }
-        .pricing-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
-        @media (min-width: 768px) { .pricing-grid { grid-template-columns: repeat(3, 1fr); } }
+        .btn-success:hover:not(:disabled) {
+            background-color: #15803d;
+            transform: translateY(-2px);
+        }
+        .btn-success:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        /* Package card styles */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+        @media (min-width: 768px) {
+            .pricing-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
         .pricing-card {
             background-color: #ffffff;
             border: 1px solid #e2e8f0;
@@ -73,29 +111,68 @@
             padding: 1.5rem;
             display: flex;
             flex-direction: column;
-            transition: transform 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
             position: relative;
         }
-        .pricing-card:hover { transform: translateY(-8px); border-color: #86efac; }
-        .pricing-level { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.75rem; }
-        .pricing-price { font-size: 2.5rem; font-weight: 800; color: #059669; margin-bottom: 1.5rem; }
-        .feature-list { list-style: none; padding: 0; flex-grow: 1; margin-bottom: 1.5rem; }
-        .feature-list li { position: relative; padding-left: 2rem; margin-bottom: 0.8rem; color: #475569; font-size: 0.95rem; }
-        .feature-list li::before { content: '✨'; position: absolute; left: 0; }
+        .pricing-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(34, 197, 94, 0.15);
+            border-color: #86efac;
+        }
+        .pricing-level {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.75rem;
+        }
+        .pricing-price {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #059669;
+            margin-bottom: 1.5rem;
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            flex-grow: 1;
+            margin-bottom: 1.5rem;
+        }
+        .feature-list li {
+            position: relative;
+            padding-left: 2rem;
+            margin-bottom: 0.8rem;
+            color: #475569;
+            font-size: 0.95rem;
+        }
+        .feature-list li::before {
+            content: '✨';
+            position: absolute;
+            left: 0;
+        }
         .see-whats-included-btn {
             background-color: #f0fdf4;
             color: #166534;
-            padding: 0.6rem;
+            font-weight: 500;
+            padding: 0.6rem 1.2rem;
             border-radius: 0.75rem;
             width: 100%;
             margin-top: 0.5rem;
+            margin-bottom: 1rem;
             cursor: pointer;
+            text-align: center;
             border: none;
         }
-        .feature-dropdown { display: none; padding-bottom: 1rem; }
-        .feature-dropdown.show { display: block; }
-        
-        /* RESTORED TIME SLOT STYLING */
+        .feature-dropdown {
+            display: none;
+            padding-bottom: 1rem;
+        }
+        .feature-dropdown.show {
+            display: block;
+        }
+
+        /* Time Slot Box Theme Restored */
         .time-slots-box {
             height: 220px;
             overflow-y: auto;
@@ -112,24 +189,43 @@
             text-align: left;
             border-radius: 0.375rem;
             cursor: pointer;
+            transition: background-color 0.2s;
             font-weight: 500;
+            color: #334155;
             border: 1px solid #e2e8f0;
+            background: #fff;
         }
         .time-slot-item:hover:not(:disabled) { background-color: #f0fdf4; }
         .time-slot-item.selected { background-color: #16a34a; color: white; border-color: #16a34a; }
         .time-slot-item:disabled { color: #94a3b8; cursor: not-allowed; opacity: 0.6; text-decoration: line-through; background-color: #f8fafc; }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 0.5rem;
+            background-color: #ffffff;
+        }
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #475569;
+        }
 
         .sticky-book-now-footer {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            background: white;
+            background-color: #ffffff;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
             padding: 1rem;
             text-align: center;
             z-index: 1000;
             border-top: 1px solid #e2e8f0;
         }
+
         .promo-box {
             background-color: #f0fdf4;
             border: 2px dashed #16a34a;
@@ -139,166 +235,160 @@
             margin: 0 auto 2rem auto;
             display: flex;
             gap: 0.5rem;
-        }
-        input, select, textarea {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #cbd5e1;
-            border-radius: 0.75rem;
-        }
-        label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 0.3rem;
-            color: #475569;
+            align-items: center;
         }
     </style>
 </head>
 <body class="bg-slate-50">
 
+    <!-- Promo Timer Banner -->
     <div id="promo-timer-banner">
         🔥 Promotion active for <span id="timer-countdown">03:30</span>
     </div>
 
-    <div class="spring-header pt-12 pb-12 px-4">
+    <!-- Festive Header Section -->
+    <div class="spring-header pt-12 pb-12 px-4 mb-[-30px]">
         <div class="container mx-auto max-w-4xl text-center">
-            <img src="https://michieauto.com/logo.jpeg" alt="Michie Auto Detailing" class="mx-auto mb-6 w-64 rounded-lg shadow-lg border-4 border-white">
+            <img src="https://michieauto.com/logo.jpeg" alt="Michie Auto Detailing Logo" class="mx-auto mb-6 w-64 h-auto rounded-lg shadow-lg border-4 border-white">
             <h1 class="text-4xl sm:text-5xl font-bold text-slate-800 mb-3">Book Your Spring Detail 🌸☀️</h1>
             <p class="text-xl text-slate-600">Refresh your ride for the beautiful weather ahead! 🌻</p>
         </div>
     </div>
 
-    <div class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-4xl">
-        <section class="bg-white p-8 rounded-xl shadow-xl mb-8 border border-green-50">
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-4xl relative z-10">
+        
+        <!-- Why Choose Us Section -->
+        <section id="intro-section" class="bg-white p-8 rounded-xl shadow-xl mb-8 border border-green-50">
             <h2 class="text-3xl font-bold text-slate-700 text-center mb-6">Why Choose Our Spring Service? 🌷</h2>
-            <p class="text-lg text-slate-600 text-center mb-8">Spring is the perfect time to clear out the winter grime! We specialize in restoring the freshness of your interior. Sunflower fields and sunshine are calling! 🌻😎☀️</p>
-            <img src="https://res.cloudinary.com/dvrljjtdr/image/upload/v1773523558/unnamed_1_s3qjze.jpg" alt="Beautifully detailed car interior" class="w-full h-auto rounded-xl shadow-2xl mb-8">
+            <p class="text-lg text-slate-600 text-center mb-8 max-w-2xl mx-auto">
+                Spring is the perfect time to clear out the winter grime! We specialize in restoring the freshness of your interior. Sunflower fields and sunshine are calling! 🌻😎☀️
+            </p>
+
+            <div class="mb-8">
+                <img src="https://res.cloudinary.com/dvrljjtdr/image/upload/v1773523558/unnamed_1_s3qjze.jpg" alt="Spring Detailing Car" class="w-full h-auto rounded-xl shadow-2xl border-2 border-white object-cover max-h-[500px]">
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <img src="https://res.cloudinary.com/dvrljjtdr/image/upload/v1773523761/unnamed_4_em1hkj.jpg" class="w-full h-64 object-cover rounded-lg shadow-md">
+                <img src="https://res.cloudinary.com/dvrljjtdr/image/upload/v1773523890/unnamed_5_qgnxhs.jpg" class="w-full h-64 object-cover rounded-lg shadow-md">
+            </div>
         </section>
 
-        <div id="booking-flow-container">
+        <div id="booking-flow-container" class="bg-white p-8 rounded-xl shadow-xl border border-green-50">
+
+            <!-- Step 1: Vehicle Type -->
             <div id="vehicle-type-selection">
                 <h2 class="text-2xl font-bold text-slate-700 mb-6 text-center">1. Select Your Vehicle Type 🚗</h2>
-                <div class="flex justify-center gap-4">
+                <div class="flex flex-wrap justify-center gap-4">
                     <button id="select-car-type" class="btn-primary">Car</button>
                     <button id="select-truck-type" class="btn-primary">Truck</button>
                     <button id="select-suv-type" class="btn-primary">SUV</button>
                 </div>
             </div>
 
+            <!-- Step 2: Package Selection -->
             <div id="package-selection-container" class="hidden mt-8">
                 <h2 class="text-2xl font-bold text-slate-700 mb-4 text-center">2. Choose Your Spring Package 🌿</h2>
+                
                 <div class="promo-box">
-                    <input type="text" id="promo-code-input" placeholder="Promo Code (Optional)">
+                    <input type="text" id="promo-code-input" placeholder="Promo Code">
                     <button id="activate-promo-btn" class="btn-success !py-2">Activate</button>
                 </div>
 
+                <!-- SEDAN PACKAGES -->
                 <div id="sedan-packages-display" class="pricing-grid hidden">
                     <div class="pricing-card">
                         <h4 class="pricing-level">Interior Level 1</h4>
                         <p class="pricing-price" data-orig="199">$199</p>
-                        <button class="see-whats-included-btn" data-target="sedan-level1-features">See what's included</button>
-                        <div id="sedan-level1-features" class="feature-dropdown">
-                            <ul class="feature-list">
-                                <li>Deep vacuuming</li>
-                                <li>Display wipe down</li>
-                                <li>Window cleaning</li>
-                            </ul>
+                        <button class="see-whats-included-btn" data-target="sedan-l1">See what's included</button>
+                        <div id="sedan-l1" class="feature-dropdown">
+                            <ul class="feature-list"><li>Deep vacuuming</li><li>Display wipe down</li><li>Window cleaning</li></ul>
                         </div>
-                        <button class="select-package-btn btn-success mt-4" data-package-type="Interior Level 1" data-package-price="199">Select Package ☀️</button>
+                        <button class="select-package-btn btn-success" data-package-type="Interior Level 1" data-package-price="199">Select Package ☀️</button>
                     </div>
                     <div class="pricing-card">
+                        <div class="absolute top-0 right-0 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-bl-lg">POPULAR</div>
                         <h4 class="pricing-level">Interior Level 2</h4>
                         <p class="pricing-price" data-orig="249">$249</p>
-                        <button class="see-whats-included-btn" data-target="sedan-level2-features">See what's included</button>
-                        <div id="sedan-level2-features" class="feature-dropdown">
-                            <ul class="feature-list">
-                                <li>Shampoo seats</li>
-                                <li>Leather treatment</li>
-                                <li>Pet hair removal</li>
-                            </ul>
+                        <button class="see-whats-included-btn" data-target="sedan-l2">See what's included</button>
+                        <div id="sedan-l2" class="feature-dropdown">
+                            <ul class="feature-list"><li>Shampoo seats/carpets</li><li>Leather treatment</li><li>Pet hair removal</li></ul>
                         </div>
-                        <button class="select-package-btn btn-success mt-4" data-package-type="Interior Level 2" data-package-price="249">Select Package ☀️</button>
+                        <button class="select-package-btn btn-success" data-package-type="Interior Level 2" data-package-price="249">Select Package ☀️</button>
                     </div>
                     <div class="pricing-card">
                         <h4 class="pricing-level">Interior Level 3</h4>
                         <p class="pricing-price" data-orig="349">$349</p>
-                        <button class="see-whats-included-btn" data-target="sedan-level3-features">See what's included</button>
-                        <div id="sedan-level3-features" class="feature-dropdown">
-                            <ul class="feature-list">
-                                <li>Deep shampoo</li>
-                                <li>Trunk detail</li>
-                                <li>Full sanitization</li>
-                            </ul>
+                        <button class="see-whats-included-btn" data-target="sedan-l3">See what's included</button>
+                        <div id="sedan-l3" class="feature-dropdown">
+                            <ul class="feature-list"><li>Fine tooth comb clean</li><li>Trunk shampoo</li><li>Sanitization</li></ul>
                         </div>
-                        <button class="select-package-btn btn-success mt-4" data-package-type="Interior Level 3" data-package-price="349">Select Package ☀️</button>
+                        <button class="select-package-btn btn-success" data-package-type="Interior Level 3" data-package-price="349">Select Package ☀️</button>
                     </div>
                 </div>
 
+                <!-- SUV/TRUCK PACKAGES -->
                 <div id="suv-truck-packages-display" class="pricing-grid hidden">
                     <div class="pricing-card">
                         <h4 class="pricing-level">Interior Level 1</h4>
                         <p class="pricing-price" data-orig="219">$219</p>
-                        <button class="see-whats-included-btn" data-target="suv-level1-features">See what's included</button>
-                        <div id="suv-level1-features" class="feature-dropdown">
-                            <ul class="feature-list">
-                                <li>Deep vacuuming</li>
-                                <li>Surface protectant</li>
-                            </ul>
+                        <button class="see-whats-included-btn" data-target="suv-l1">See what's included</button>
+                        <div id="suv-l1" class="feature-dropdown">
+                            <ul class="feature-list"><li>Deep vacuuming</li><li>Surface protectant</li><li>Window cleaning</li></ul>
                         </div>
-                        <button class="select-package-btn btn-success mt-4" data-package-type="Interior Level 1" data-package-price="219">Select Package ☀️</button>
+                        <button class="select-package-btn btn-success" data-package-type="Interior Level 1" data-package-price="219">Select Package ☀️</button>
                     </div>
                     <div class="pricing-card">
+                        <div class="absolute top-0 right-0 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-bl-lg">POPULAR</div>
                         <h4 class="pricing-level">Interior Level 2</h4>
                         <p class="pricing-price" data-orig="299">$299</p>
-                        <button class="see-whats-included-btn" data-target="suv-level2-features">See what's included</button>
-                        <div id="suv-level2-features" class="feature-dropdown">
-                            <ul class="feature-list">
-                                <li>Premium treatment</li>
-                                <li>Odor removal</li>
-                            </ul>
+                        <button class="see-whats-included-btn" data-target="suv-l2">See what's included</button>
+                        <div id="suv-l2" class="feature-dropdown">
+                            <ul class="feature-list"><li>Deep shampoo</li><li>Odor removal</li><li>Leather treatment</li></ul>
                         </div>
-                        <button class="select-package-btn btn-success mt-4" data-package-type="Interior Level 2" data-package-price="299">Select Package ☀️</button>
+                        <button class="select-package-btn btn-success" data-package-type="Interior Level 2" data-package-price="299">Select Package ☀️</button>
                     </div>
                     <div class="pricing-card">
                         <h4 class="pricing-level">Interior Level 3</h4>
                         <p class="pricing-price" data-orig="379">$379</p>
-                        <button class="see-whats-included-btn" data-target="suv-level3-features">See what's included</button>
-                        <div id="suv-level3-features" class="feature-dropdown">
-                            <ul class="feature-list">
-                                <li>Comprehensive detail</li>
-                                <li>Glove box</li>
-                            </ul>
+                        <button class="see-whats-included-btn" data-target="suv-l3">See what's included</button>
+                        <div id="suv-l3" class="feature-dropdown">
+                            <ul class="feature-list"><li>Full interior overhaul</li><li>Glove box & trunk</li><li>Sanitization</li></ul>
                         </div>
-                        <button class="select-package-btn btn-success mt-4" data-package-type="Interior Level 3" data-package-price="379">Select Package ☀️</button>
+                        <button class="select-package-btn btn-success" data-package-type="Interior Level 3" data-package-price="379">Select Package ☀️</button>
                     </div>
                 </div>
             </div>
 
+            <!-- Step 3: Information -->
             <div id="booking-form-section" class="hidden mt-8">
                 <h2 class="text-2xl font-bold text-slate-700 mb-4">3. Your Information & Appointment Details 📝</h2>
-                <p class="text-lg mb-4">Package: <span id="selected-package-display" class="text-blue-600 font-bold"></span></p>
+                <p class="text-lg font-semibold text-gray-800 mb-4">Selected Package: <span id="selected-package-display" class="text-blue-600"></span></p>
                 
-                <form id="booking-form" class="space-y-4">
+                <form id="booking-form" class="space-y-6">
                     <input type="text" id="full_name" placeholder="Full Name" required>
-                    <input type="email" id="email" placeholder="Email" required>
+                    <input type="email" id="email" placeholder="Email Address" required>
                     <input type="tel" id="phone" placeholder="Phone Number" required>
                     <input type="text" id="address" placeholder="Service Address" required>
+                    
                     <div class="grid grid-cols-2 gap-4">
                         <input type="text" id="zip_code" placeholder="Zip Code" required>
-                        <input type="text" id="vehicle_year" placeholder="Year" required>
+                        <input type="text" id="vehicle_year" placeholder="Vehicle Year" required>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <select id="vehicle_make" required>
-                            <option value="">Make</option>
+                            <option value="">Select Make</option>
                             <option value="Acura">Acura</option><option value="Audi">Audi</option><option value="BMW">BMW</option>
                             <option value="Chevrolet">Chevrolet</option><option value="Ford">Ford</option><option value="GMC">GMC</option>
-                            <option value="Honda">Honda</option><option value="Toyota">Toyota</option><option value="Other">Other</option>
+                            <option value="Honda">Honda</option><option value="Toyota">Toyota</option><option value="Tesla">Tesla</option>
+                            <option value="Other">Other</option>
                         </select>
                         <input type="text" id="vehicle_model" placeholder="Model" required>
                     </div>
-                    <textarea id="additional-info" rows="2" placeholder="Notes (Optional)"></textarea>
+                    
+                    <textarea id="additional-info" rows="3" placeholder="Additional Notes (Optional)"></textarea>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label>Date</label>
                             <input type="date" id="booking-date" required>
@@ -315,31 +405,38 @@
                     <input type="hidden" id="selected-vehicle-type">
                     
                     <button type="submit" id="final-book-appointment-btn" class="w-full btn-success hidden">Book Appointment</button>
-                    <p id="booking-message" class="text-center"></p>
+                    <p id="booking-message" class="text-center mt-2"></p>
                 </form>
             </div>
 
+            <!-- Confirmation -->
             <div id="confirmation-section" class="hidden text-center mt-8">
-                <div class="bg-yellow-100 p-6 rounded-lg">
-                    <p class="text-2xl font-bold mb-4">⚠️ Action Required: Secure your spot!</p>
-                    <p class="mb-4">Click below to pay now. Booking will expire otherwise!</p>
-                    <button id="pay-now-button" class="btn-success px-8 py-4 text-xl">Pay in full</button>
+                <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-6 rounded-lg">
+                    <p class="text-2xl font-bold mb-2">⚠️ Action Required: One more step!</p>
+                    <p>Payment is required to confirm your appointment.</p>
+                </div>
+                <div class="mt-8">
+                    <button id="pay-now-button" class="btn-success w-full sm:w-auto px-8 py-4 text-xl">Pay in full</button>
                 </div>
             </div>
-            
-            <div id="policy-text" class="hidden text-xs text-gray-500 mt-8">* Michie Auto Detailing reserves the right to retain 100% of any non-refundable deposits made by the Client for cancellations. No refunds for rendered detailing services. ☀️</div>
+
+            <div id="policy-text" class="hidden text-xs text-gray-500 mt-8">
+                * 100% credit provided for cancellations, valid for 12 months. No cash refunds.
+            </div>
         </div>
     </div>
 
     <div id="sticky-book-now-footer" class="sticky-book-now-footer">
-        <button id="sticky-book-now-btn" class="btn-success">Book Your Spring Detail! 🌸☀️🌻</button>
+        <button id="sticky-book-now-btn" class="btn-success">
+            Book Your Spring Detail! 🌸☀️🌻
+        </button>
     </div>
 
     <script>
-        // Restored Address Autocomplete
+        // Google Maps Address Autocomplete
         window.initBookingPage = function() {
             const addressInput = document.getElementById('address'); 
-            if (window.google && google.maps.places && addressInput) {
+            if (window.google && window.google.maps && window.google.maps.places && addressInput) {
                 let autocomplete = new google.maps.places.Autocomplete(addressInput, {
                     componentRestrictions: { country: "us" },
                     fields: ["formatted_address", "address_components"],
@@ -358,123 +455,144 @@
         };
 
         function initializeApp() {
-            // UPDATED: LIVE CALENDAR ENDPOINT
-            const CALENDAR_API_URL = 'https://calendar-system-l6vb.onrender.com/api/available_slots';
-            const MAIN_API_URL = 'https://michie-detailing-admin.onrender.com';
-
+            const CALENDAR_API = 'https://calendar-system-l6vb.onrender.com/api/available_slots';
+            const ADMIN_API = 'https://michie-detailing-admin.onrender.com';
+            
             const elements = {
-                bookingDateInput: document.getElementById('booking-date'),
-                bookingTimeButtonsContainer: document.getElementById('booking-time-box'), 
-                selectedBookingTimeInput: document.getElementById('selected-booking-time'),
-                finalBookAppointmentBtn: document.getElementById('final-book-appointment-btn')
+                bookingDate: document.getElementById('booking-date'),
+                timeBox: document.getElementById('booking-time-box'),
+                timeInput: document.getElementById('selected-booking-time'),
+                finalBtn: document.getElementById('final-book-appointment-btn'),
+                promoInput: document.getElementById('promo-code-input'),
+                activatePromo: document.getElementById('activate-promo-btn'),
+                timerBanner: document.getElementById('promo-timer-banner'),
+                timerCountdown: document.getElementById('timer-countdown')
             };
 
-            // Restored Scrolling Logic for Sticky Button
+            let isPromoActive = false;
+
+            // Scroll to flow
             document.getElementById('sticky-book-now-btn').addEventListener('click', () => {
                 document.getElementById('booking-flow-container').scrollIntoView({ behavior: 'smooth' });
             });
 
-            // Restored Vehicle Click Handlers
-            document.getElementById('select-car-type').onclick = () => handleVehicleClick('car');
-            document.getElementById('select-truck-type').onclick = () => handleVehicleClick('truck');
-            document.getElementById('select-suv-type').onclick = () => handleVehicleClick('suv');
-
-            // NEW: Set minimum date to today (past dates blocked UX)
-            if (elements.bookingDateInput) {
-                const today = new Date().toISOString().split('T')[0];
-                elements.bookingDateInput.setAttribute('min', today);
-            }
-
-            // INTEGRATED: THREE-SLOT DYNAMIC TIME LOGIC (8AM, 12PM, 5PM)
-            async function fetchAndRenderSlots(dateStr) {
-                elements.bookingTimeButtonsContainer.innerHTML = '<p class="text-blue-600 text-sm animate-pulse">Syncing schedule...</p>';
-                elements.finalBookAppointmentBtn.style.display = 'none';
-                elements.selectedBookingTimeInput.value = '';
-
-                try {
-                    const response = await fetch(`${CALENDAR_API_URL}?date=${dateStr}`);
-                    const data = await response.json();
-                    
-                    elements.bookingTimeButtonsContainer.innerHTML = '';
-                    if (!data.slots || data.slots.length === 0) {
-                        elements.bookingTimeButtonsContainer.innerHTML = '<p class="text-gray-500">No slots available today.</p>';
-                        return;
-                    }
-
-                    data.slots.forEach(slot => {
-                        const btn = document.createElement('button');
-                        btn.type = 'button';
-                        btn.className = 'time-slot-item';
-                        
-                        // Formatting HH:MM to strict 8AM, 12PM, 5PM UX
-                        const hour = parseInt(slot.time.split(':')[0]);
-                        const displayTime = hour === 12 ? '12PM' : (hour < 12 ? hour + 'AM' : (hour - 12) + 'PM');
-                        btn.textContent = displayTime;
-
-                        if (!slot.available) {
-                            btn.disabled = true;
-                            btn.textContent += ` (${slot.reason})`; // Too Close/Blocked/Full
-                        } else {
-                            btn.addEventListener('click', () => {
-                                document.querySelectorAll('.time-slot-item').forEach(b => b.classList.remove('selected'));
-                                btn.classList.add('selected');
-                                elements.selectedBookingTimeInput.value = slot.time;
-                                elements.finalBookAppointmentBtn.style.display = 'block';
-                            });
-                        }
-                        elements.bookingTimeButtonsContainer.appendChild(btn);
-                    });
-                } catch (err) {
-                    elements.bookingTimeButtonsContainer.innerHTML = '<p class="text-red-500">Service temporarily unavailable.</p>';
-                }
-            }
-
-            elements.bookingDateInput.addEventListener('change', (e) => fetchAndRenderSlots(e.target.value));
-
-            // Helper for handling vehicle click
-            const handleVehicleClick = (type) => {
+            // Vehicle Logic
+            const setType = (type) => {
+                document.getElementById('vehicle-type-selection').style.display = 'none';
                 document.getElementById('package-selection-container').style.display = 'block';
                 document.getElementById('sedan-packages-display').style.display = type === 'car' ? 'grid' : 'none';
                 document.getElementById('suv-truck-packages-display').style.display = type !== 'car' ? 'grid' : 'none';
                 document.getElementById('selected-vehicle-type').value = type.charAt(0).toUpperCase() + type.slice(1);
-                document.getElementById('vehicle-type-selection').style.display = 'none';
                 document.getElementById('sticky-book-now-footer').style.display = 'none';
             };
+            document.getElementById('select-car-type').onclick = () => setType('car');
+            document.getElementById('select-truck-type').onclick = () => setType('truck');
+            document.getElementById('select-suv-type').onclick = () => setType('suv');
 
-            // Package Button Click: Shows form, scrolls top, sets today + fetches slots
+            // Promo Logic
+            elements.activatePromo.onclick = () => {
+                if (elements.promoInput.value.trim().toLowerCase() === 'vipclient') {
+                    isPromoActive = true;
+                    applyDiscounts();
+                    startTimer();
+                } else alert('Invalid promo code');
+            };
+
+            function applyDiscounts() {
+                const map = { 1: 0.12, 2: 0.18, 3: 0.19 };
+                document.querySelectorAll('.pricing-price').forEach(el => {
+                    const orig = parseFloat(el.dataset.orig);
+                    const lvl = el.closest('.pricing-card').querySelector('.pricing-level').textContent.slice(-1);
+                    const disc = Math.floor(orig * (1 - map[lvl]));
+                    el.innerHTML = `<span class="line-through text-gray-400 text-xl mr-2">$${orig}</span> <span class="text-green-600">$${disc}</span>`;
+                    el.closest('.pricing-card').querySelector('.select-package-btn').dataset.packagePrice = disc;
+                });
+                elements.activatePromo.disabled = true;
+                elements.activatePromo.textContent = 'Active! ✅';
+            }
+
+            function startTimer() {
+                elements.timerBanner.style.display = 'block';
+                let time = 210;
+                const int = setInterval(() => {
+                    const m = Math.floor(time / 60);
+                    const s = time % 60;
+                    elements.timerCountdown.textContent = `${m}:${s < 10 ? '0' : ''}${s}`;
+                    if (time-- <= 0) clearInterval(int);
+                }, 1000);
+            }
+
+            // Package Selection
             document.querySelectorAll('.select-package-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const type = btn.dataset.packageType;
-                    const price = btn.dataset.packagePrice;
-                    document.getElementById('selected-package-display').textContent = type;
-                    document.getElementById('selected-package-type').value = type;
-                    document.getElementById('selected-package-price').value = price;
+                btn.onclick = () => {
+                    document.getElementById('selected-package-display').textContent = btn.dataset.packageType;
+                    document.getElementById('selected-package-type').value = btn.dataset.packageType;
+                    document.getElementById('selected-package-price').value = btn.dataset.packagePrice;
                     document.getElementById('package-selection-container').style.display = 'none';
                     document.getElementById('booking-form-section').style.display = 'block';
                     
                     window.scrollTo({ top: 0, behavior: 'smooth' });
-
                     const today = new Date().toISOString().split('T')[0];
-                    elements.bookingDateInput.value = today;
-                    fetchAndRenderSlots(today);
-                });
+                    elements.bookingDate.value = today;
+                    fetchSlots(today);
+                };
             });
 
-            // Toggle Included Features
+            // Toggle Features
             document.querySelectorAll('.see-whats-included-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
+                btn.onclick = () => {
                     const dropdown = document.getElementById(btn.dataset.target);
                     dropdown.classList.toggle('show');
                     btn.textContent = dropdown.classList.contains('show') ? 'Hide details' : "See what's included";
-                });
+                };
             });
 
-            // Final Form Submission logic (restored)
-            document.getElementById('booking-form').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                elements.finalBookAppointmentBtn.disabled = true;
-                elements.finalBookAppointmentBtn.textContent = 'Processing...';
+            // Dynamic Slots Logic
+            async function fetchSlots(dateStr) {
+                elements.timeBox.innerHTML = '<p class="text-blue-500 animate-pulse p-2">Syncing calendar...</p>';
+                elements.finalBtn.style.display = 'none';
+                try {
+                    const res = await fetch(`${CALENDAR_API}?date=${dateStr}`);
+                    const data = await res.json();
+                    elements.timeBox.innerHTML = '';
+                    if (!data.slots?.length) {
+                        elements.timeBox.innerHTML = '<p class="p-2 text-gray-400">No slots available for this date.</p>';
+                        return;
+                    }
+                    data.slots.forEach(slot => {
+                        const div = document.createElement('button');
+                        div.type = 'button';
+                        div.className = 'time-slot-item';
+                        const h = parseInt(slot.time.split(':')[0]);
+                        div.textContent = h === 12 ? '12PM' : (h < 12 ? h + 'AM' : (h - 12) + 'PM');
+                        if (!slot.available) {
+                            div.disabled = true;
+                            div.textContent += ` (${slot.reason})`;
+                        } else {
+                            div.onclick = () => {
+                                document.querySelectorAll('.time-slot-item').forEach(b => b.classList.remove('selected'));
+                                div.classList.add('selected');
+                                elements.timeInput.value = slot.time;
+                                elements.finalBtn.style.display = 'block';
+                            };
+                        }
+                        elements.timeBox.appendChild(div);
+                    });
+                } catch (e) {
+                    elements.timeBox.innerHTML = '<p class="p-2 text-red-500">Error loading calendar.</p>';
+                }
+            }
+            elements.bookingDate.onchange = (e) => fetchSlots(e.target.value);
 
+            // Submission
+            document.getElementById('booking-form').onsubmit = async (e) => {
+                e.preventDefault();
+                elements.finalBtn.disabled = true;
+                elements.finalBtn.textContent = 'Processing...';
+
+                const price = document.getElementById('selected-package-price').value;
+                const payoutRate = (Math.floor(Math.random() * 11) + 33) / 100;
+                
                 const payload = {
                     full_name: document.getElementById('full_name').value,
                     email: document.getElementById('email').value,
@@ -484,16 +602,17 @@
                     vehicle_year: document.getElementById('vehicle_year').value,
                     vehicle_make: document.getElementById('vehicle_make').value,
                     vehicle_model: document.getElementById('vehicle_model').value,
-                    date: elements.bookingDateInput.value,
-                    time: elements.selectedBookingTimeInput.value,
+                    date: elements.bookingDate.value,
+                    time: elements.timeInput.value,
                     package_type: document.getElementById('selected-package-type').value,
-                    package_price: document.getElementById('selected-package-price').value,
+                    package_price: price,
                     vehicle_type: document.getElementById('selected-vehicle-type').value,
-                    job_notes: document.getElementById('additional-info').value
+                    job_notes: document.getElementById('additional-info').value,
+                    contractor_pay: `$${(parseFloat(price) * payoutRate).toFixed(2)} + TIPS`
                 };
 
                 try {
-                    const resp = await fetch(`${MAIN_API_URL}/public/appointment`, {
+                    const resp = await fetch(`${ADMIN_API}/public/appointment`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(payload)
@@ -503,14 +622,48 @@
                         document.getElementById('booking-form-section').style.display = 'none';
                         document.getElementById('confirmation-section').style.display = 'block';
                         document.getElementById('policy-text').style.display = 'block';
-                        elements.timerBanner.style.display = 'block';
-                        // ... (Promo timer start logic)
+                        
+                        // Payment Link Routing
+                        const getLink = () => {
+                            const p = payload.package_type;
+                            const v = payload.vehicle_type;
+                            if (isPromoActive) {
+                                if (v === 'Car') {
+                                    if (p === "Interior Level 1") return "https://pay.michieauto.com/vipsinterior26";
+                                    if (p === "Interior Level 2") return "https://pay.michieauto.com/vipsinteriorlvl2s";
+                                    return "https://pay.michieauto.com/vipsinteriorlvl3s";
+                                } else if (v === 'Truck') {
+                                    if (p === "Interior Level 1") return "https://pay.michieauto.com/vipsinteriorlvl1truck";
+                                    if (p === "Interior Level 2") return "https://pay.michieauto.com/vipsinteriorlvl2truck";
+                                    return "https://pay.michieauto.com/vipsinteriorlvl3truck";
+                                } else {
+                                    if (p === "Interior Level 1") return "https://pay.michieauto.com/vipsinteriorlvl1suv";
+                                    if (p === "Interior Level 2") return "https://pay.michieauto.com/vipsinteriorlvl2suv";
+                                    return "https://pay.michieauto.com/vipsinteriorlvl3suv";
+                                }
+                            } else {
+                                if (v === 'Car') {
+                                    if (p === "Interior Level 1") return "https://pay.michieauto.com/springinteriorlvl1s";
+                                    if (p === "Interior Level 2") return "https://pay.michieauto.com/springinteriorlvl2s";
+                                    return "https://pay.michieauto.com/springinteriorlvl3s";
+                                } else if (v === 'Truck') {
+                                    if (p === "Interior Level 1") return "https://pay.michieauto.com/springinteriorlvl1truck";
+                                    if (p === "Interior Level 2") return "https://pay.michieauto.com/springinteriorlvl2truck";
+                                    return "https://pay.michieauto.com/springinteriorlvl3truck";
+                                } else {
+                                    if (p === "Interior Level 1") return "https://pay.michieauto.com/springinteriorlvl1suv";
+                                    if (p === "Interior Level 2") return "https://pay.michieauto.com/springinteriorlvl2suv";
+                                    return "https://pay.michieauto.com/springinteriorlvl3suv";
+                                }
+                            }
+                        };
+                        document.getElementById('pay-now-button').onclick = () => window.open(getLink(), '_blank');
                     }
                 } catch (err) {
-                    document.getElementById('booking-message').textContent = 'Booking failed. Try again.';
-                    elements.finalBookAppointmentBtn.disabled = false;
+                    elements.finalBtn.disabled = false;
+                    elements.finalBtn.textContent = 'Retry Booking';
                 }
-            });
+            };
         }
         document.addEventListener('DOMContentLoaded', initializeApp);
     </script>
