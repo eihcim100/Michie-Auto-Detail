@@ -202,6 +202,7 @@
         input[type="tel"],
         input[type="date"],
         input[type="password"], /* Added password input styling */
+        textarea,
         select {
             width: 100%;
             padding: 0.75rem 1rem;
@@ -217,6 +218,7 @@
         input[type="tel"]:focus,
         input[type="date"]:focus,
         input[type="password"]:focus, /* Added password input focus styling */
+        textarea:focus,
         select:focus {
             outline: none;
             border-color: #3b82f6;
@@ -293,6 +295,7 @@
             <p class="text-lg text-gray-600">It only takes 2 minutes!</p>
         </header>
 
+        <!-- Why Choose Us Section -->
         <section class="bg-white p-8 rounded-xl shadow-lg mb-8">
             <h2 class="text-3xl font-bold text-gray-700 mb-6 text-center">Why Choose Michie Auto Detailing?</h2>
             <p class="text-lg text-gray-600 text-center mb-8 max-w-2xl mx-auto">
@@ -307,17 +310,21 @@
 
         <div id="booking-flow-container" class="bg-white p-8 rounded-xl shadow-lg space-y-8">
 
+            <!-- Step 1: Vehicle Type Selection -->
             <div id="vehicle-type-selection">
                 <h2 class="text-2xl font-bold text-gray-700 mb-6 text-center">1. Select Your Vehicle Type</h2>
-                <div class="vehicle-type-buttons-container"> <button id="select-car-type" class="btn-primary">Car</button>
+                <div class="vehicle-type-buttons-container"> <!-- Added new container class -->
+                    <button id="select-car-type" class="btn-primary">Car</button>
                     <button id="select-truck-type" class="btn-primary">Truck</button>
                     <button id="select-suv-type" class="btn-primary">SUV</button>
                 </div>
             </div>
 
+            <!-- Step 2: Package Selection -->
             <div id="package-selection-container" class="hidden">
                 <h2 class="text-2xl font-bold text-gray-700 mb-8 text-center">2. Choose Your Detail Package</h2>
                 <div id="sedan-packages-display" class="pricing-grid hidden">
+                    <!-- Sedan Package Cards -->
                     <div class="pricing-card">
                         <h4 class="pricing-level">Level 1 Detail</h4>
                         <p class="pricing-price">$169</p>
@@ -400,6 +407,7 @@
                     </div>
                 </div>
                 <div id="suv-truck-packages-display" class="pricing-grid hidden">
+                    <!-- SUV/Truck Package Cards -->
                     <div class="pricing-card">
                         <h4 class="pricing-level">Level 1 Detail</h4>
                         <p class="pricing-price">$219</p>
@@ -483,6 +491,7 @@
                 </div>
             </div>
 
+            <!-- Standard Booking Flow - Step 3: Main Booking Form -->
             <div id="booking-form-section" class="hidden">
                 <h2 class="text-2xl font-bold text-gray-700 mb-4">3. Your Information & Appointment Details</h2>
                 <p class="text-lg font-semibold text-gray-800 mb-4">Selected Package: <span id="selected-package-display" class="text-blue-600"></span></p>
@@ -554,6 +563,12 @@
                         <input type="text" id="vehicle-model" placeholder="e.g., Civic" required>
                     </div>
 
+                    <div>
+                        <label for="additional-info" class="block text-sm font-medium text-gray-700 mb-1">Additional Information (Optional)</label>
+                        <textarea id="additional-info" rows="3" placeholder="Specific stains, pet hair details, etc." class="w-full px-3 py-2 border rounded-lg"></textarea>
+                    </div>
+
+                    <!-- Create Account Option -->
                     <div class="mt-4">
                         <label class="flex items-center space-x-2 cursor-pointer text-gray-700">
                             <input type="checkbox" id="create-account-checkbox" class="rounded h-4 w-4 text-blue-600 focus:ring-blue-500">
@@ -561,6 +576,7 @@
                         </label>
                     </div>
 
+                    <!-- Password Fields (Initially Hidden) -->
                     <div id="password-fields" class="space-y-4 hidden">
                         <div>
                             <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
@@ -589,6 +605,7 @@
                         </div>
                     </div>
 
+                    <!-- START: SMS Compliance Section -->
                     <div class="mt-6 p-4 border border-gray-200 rounded-lg bg-gray-50">
                         <label class="block text-sm font-medium text-gray-700 mb-3">SMS Notifications & Terms</label>
                         <div class="space-y-3">
@@ -605,6 +622,8 @@
                             By providing your phone number and checking the boxes, you agree to receive text messages from Michie Auto Detailing for the purposes selected. Consent is not a condition of purchase. Message frequency will vary. Msg & data rates may apply. Reply HELP for help or STOP to cancel. View our <a href="https://michieauto.com/smstos" class="text-blue-600 hover:underline" target="_blank">Terms of Service</a> & <a href="https://michieauto.com/smsprivacy" class="text-blue-600 hover:underline" target="_blank">Privacy Policy</a>.
                         </p>
                     </div>
+                    <!-- END: SMS Compliance Section -->
+
                     <input type="hidden" id="selected-package-type" name="package-type">
                     <input type="hidden" id="selected-package-price" name="package-price">
                     <button type="submit" id="final-book-appointment-btn" class="w-full btn-success hidden">Book Appointment</button>
@@ -612,6 +631,7 @@
                 </form>
             </div>
 
+            <!-- Confirmation Message -->
             <div id="confirmation-section" class="hidden text-center">
                 <div id="confirmation-message" class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-6 rounded-lg">
                     <p class="text-2xl font-bold mb-2">⚠️ Action Required: One more step to confirm your booking!</p>
@@ -619,13 +639,16 @@
                 </div>
                 
                 <div class="mt-8 space-y-4">
+                    <!-- Deposit Option -->
                     <div>
                         <button id="pay-deposit-button" class="btn-success">Pay $100 deposit</button>
                         <p class="text-xs text-gray-500 mt-2">(Pay the remaining due after service completion)</p>
                     </div>
 
+                    <!-- OR Separator -->
                     <p class="text-xl font-bold text-gray-600">OR</p>
 
+                    <!-- Pay in Full Option -->
                     <div>
                         <button id="pay-now-button" class="btn-primary">Pay in full</button>
                     </div>
@@ -633,6 +656,7 @@
             </div>
 
 
+            <!-- Policy Text -->
             <div id="policy-text" class="hidden text-xs text-gray-500 mt-8 space-y-2">
                 <p>* <strong>Deposit Policy:</strong> Paying in full is optional before the detail is completed, however, if you choose to not pay in full, a $100 deposit is required to secure your appointment, and this goes towards the cost of your detail service. The remaining balance will be collected after service is completed. In the event that you cancel the appointment, the $100 deposit paid is non-refundable. Reschedules are always free.</p>
                 <p>* <strong>Paid in Full Policy:</strong> If you paid in full and cancel your appointment, no cancel fee will be charged, instead, 100% of the amount paid will be provided to you as an auto detailing credit, valid for any detail with Michie Auto Detailing LLC in the next 12 months. This is similar to a gift card, no cash refunds are provided. Reschedules are always free of charge.</p>
@@ -641,6 +665,7 @@
         </div>
     </div>
 
+    <!-- Sticky Book Now Footer -->
     <div id="sticky-book-now-footer" class="sticky-book-now-footer">
         <button id="sticky-book-now-btn" class="btn-success">
             Book Your Detail Now!
@@ -935,6 +960,7 @@
                     const vehicleYear = document.getElementById('vehicle-year').value;
                     const vehicleMake = document.getElementById('vehicle-make').value;
                     const vehicleModel = document.getElementById('vehicle-model').value;
+                    const additionalInfo = document.getElementById('additional-info').value;
                     const bookingDate = document.getElementById('booking-date').value;
                     const selectedTime = document.getElementById(selectedTimeInputId).value; 
                     const packageType = document.getElementById('selected-package-type').value; 
@@ -972,10 +998,15 @@
                         }
                     }
 
+                    // Generate a random whole percentage between 33 and 43 for Contractor Pay
+                    const randomPayoutRate = (Math.floor(Math.random() * 11) + 33) / 100;
+
                     const payload = {
                         full_name: fullName, email, phone: formattedPhone, address, zip_code: zipCode, vehicle_year: vehicleYear,
                         vehicle_make: vehicleMake, vehicle_model: vehicleModel, date: bookingDate, time: selectedTime,
                         package_type: packageType, package_price: packagePrice,
+                        job_notes: additionalInfo,
+                        contractor_pay: `$${(parseFloat(packagePrice) * randomPayoutRate).toFixed(2)} + TIPS`, // Added here
                         deal_name: `${packageType || 'Unknown Package'} ${vehicleMake || ''} ${vehicleModel || ''}`,
                         offer_code: "OnlineBooking", create_account: createAccount, password: password 
                     };
