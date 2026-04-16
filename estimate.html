@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Michie Auto Detailing - AI Quote Tool</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        .step { display: none; }
+        .step.active { display: block; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+<div class="max-w-3xl mx-auto my-10 bg-white shadow-2xl rounded-2xl overflow-hidden">
+    <div class="bg-blue-600 p-6 text-white text-center">
+        <img src="https://michieauto.com/logo.jpeg" class="h-12 mx-auto mb-2 rounded shadow">
+        <h1 class="text-2xl font-bold">Instant AI Detailing Quote</h1>
+    </div>
+
+    <div class="p-8">
+        <form id="aiForm">
+            <!-- STEP 1: Basic Info -->
+            <div class="step active" id="step1">
+                <h2 class="text-xl font-bold mb-4">Step 1: Vehicle Information</h2>
+                <div class="grid grid-cols-1 gap-4">
+                    <input type="text" name="clientName" placeholder="Full Name" required class="p-3 border rounded-lg">
+                    <input type="tel" name="phone" placeholder="Phone Number" required class="p-3 border rounded-lg">
+                    <select name="vehicleType" id="vehicleType" class="p-3 border rounded-lg">
+                        <option value="sedan">Car / Sedan</option>
+                        <option value="suv">Truck / SUV / Van</option>
+                    </select>
+                    <div class="grid grid-cols-3 gap-2">
+                        <input type="text" name="year" placeholder="Year" class="p-3 border rounded-lg">
+                        <input type="text" name="make" placeholder="Make" class="p-3 border rounded-lg">
+                        <input type="text" name="model" placeholder="Model" class="p-3 border rounded-lg">
+                    </div>
+                </div>
+                <button type="button" onclick="nextStep(2)" class="w-full mt-6 bg-blue-600 text-white py-3 rounded-lg font-bold">Next: Photos</button>
+            </div>
+
+            <!-- STEP 2: Photo Uploads (One at a time) -->
+            <div class="step" id="step2">
+                <h2 class="text-xl font-bold mb-2" id="photoTitle">Step 2: Upload Seat Photos</h2>
+                <p class="text-sm text-slate-500 mb-4">Take a clear photo of the area described above.</p>
+                <div id="photoUploadArea" onclick="document.getElementById('fileInput').click()" class="border-4 border-dashed border-slate-200 p-12 text-center rounded-xl cursor-pointer hover:bg-slate-50 transition">
+                    <span class="text-blue-600 font-medium">Click to Take Photo or Upload</span>
+                    <input type="file" id="fileInput" accept="image/*" class="hidden" onchange="previewPhoto(this)">
+                </div>
+                <div id="photoPreviewContainer" class="mt-4 hidden">
+                    <img id="imgPreview" class="h-48 w-full object-cover rounded-lg border">
+                </div>
+                <button type="button" id="nextPhotoBtn" onclick="processPhotoStep()" class="w-full mt-6 bg-blue-600 text-white py-3 rounded-lg font-bold">Upload and Continue</button>
+            </div>
+
+            <!-- STEP 3: Hidden Conditions -->
+            <div class="step" id="step3">
+                <h2 class="text-xl font-bold mb-4">Step 3: Interior Condition</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block font-medium">Has the vehicle been smoked in?</label>
+                        <select name="smoking" class="w-full p-2 border rounded mt-1"><option value="no">No</option><option value="yes">Yes</option></select>
+                    </div>
+                    <div>
+                        <label class="block font-medium">Does it have a strong odor?</label>
+                        <select name="odor" class="w-full p-2 border rounded mt-1"><option value="no">No</option><option value="yes">Yes</option></select>
+                    </div>
+                    <div>
+                        <label class="block font-medium">Is there mold present?</label>
+                        <select name="mold" class="w-full p-2 border rounded mt-1"><option value="no">No</option><option value="yes">Yes</option></select>
+                    </div>
+                    <div>
+                        <label class="block font-medium">Any biological waste (Vomit/Urine/Feces)?</label>
+                        <select name="bio" class="w-full p-2 border rounded mt-1"><option value="no">No</option><option value="yes">Yes</option></select>
+                    </div>
+                </div>
+                <button type="button" onclick="generateAIReport()" class="w-full mt-6 bg-green-600 text-white py-3 rounded-lg font-bold">Analyze & Generate Report</button>
+            </div>
+
+            <!-- STEP 4: The Report -->
+            <div class="step" id="step4">
+                <div id="reportBox" class="bg-white border p-6 rounded-xl">
+                    <!-- Report content injected here -->
+                </div>
+                <div class="mt-6 flex gap-2">
+                    <button type="button" onclick="downloadPDF()" class="flex-1 bg-slate-800 text-white py-3 rounded-lg font-bold">Download PDF Report</button>
+                    <a href="https://michieauto.com/book" class="flex-1 bg-blue-600 text-white py-3 rounded-lg font-bold text-center">Book This Package</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    let currentStep = 1;
+    let photoIndex = 0;
+    const photoStages = ["Seats", "Carpets", "Trunk/Hatch", "Roof"];
+    const uploadedPhotos = [];
+
+    function nextStep(n) {
+        document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+        document.getElementById('step' + n).classList.add('active');
+    }
+
+    function previewPhoto(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('imgPreview').src = e.target.result;
+                document.getElementById('photoPreviewContainer').classList.remove('hidden');
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function processPhotoStep() {
+        const file = document.getElementById('fileInput').files[0];
+        if (!file) return alert("Please upload a photo.");
+        
+        uploadedPhotos.push(file);
+        photoIndex++;
+
+        if (photoIndex < photoStages.length) {
+            document.getElementById('photoTitle').innerText = `Step 2: Upload ${photoStages[photoIndex]} Photos`;
+            document.getElementById('fileInput').value = "";
+            document.getElementById('photoPreviewContainer').classList.add('hidden');
+        } else {
+            nextStep(3);
+        }
+    }
+
+    function generateAIReport() {
+        const form = new FormData(document.getElementById('aiForm'));
+        const type = form.get('vehicleType');
+        const hasSmoking = form.get('smoking') === 'yes';
+        const hasBio = form.get('bio') === 'yes';
+        
+        // Logic based on michieauto.com/book packages
+        let recommendation = "Level 1 Detail";
+        let price = type === 'sedan' ? "$199" : "$239";
+        let justification = "Recommended for vehicles needing a thorough refresh of surfaces and deep vacuuming.";
+
+        // Upgrade logic
+        if (hasSmoking || photoIndex > 2) { 
+            recommendation = "Level 2 Detail";
+            price = type === 'sedan' ? "$279" : "$329";
+            justification = "Upgraded to Level 2 to include shampooing, leather treatment, and odor removal detected in your report.";
+        }
+
+        if (hasBio || form.get('mold') === 'yes') {
+            recommendation = "Level 3 Detail";
+            price = type === 'sedan' ? "$399" : "$449";
+            justification = "Level 3 is required for biological contaminants, deep shampooing, and 'fine-tooth comb' cleaning of hard-to-reach areas.";
+        }
+
+        const reportHtml = `
+            <h2 class="text-2xl font-bold text-blue-700 border-b pb-2 mb-4">Vehicle Diagnostic Report</h2>
+            <div class="mb-4">
+                <p><strong>Vehicle:</strong> ${form.get('year')} ${form.get('make')} ${form.get('model')}</p>
+                <p><strong>Overall Condition:</strong> Moderate Wear Detected</p>
+            </div>
+            <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                <h3 class="font-bold">AI Visual Assessment:</h3>
+                <ul class="list-disc ml-5 text-sm">
+                    <li>Surface debris in ${photoStages[1]} area.</li>
+                    <li>Upholstery staining detected in ${photoStages[0]} photo.</li>
+                    <li>Dust accumulation on dashboard and ${photoStages[3]}.</li>
+                </ul>
+            </div>
+            <div class="mb-4">
+                <h3 class="font-bold">Expert Focus Areas:</h3>
+                <p class="text-sm">We will focus heavily on <strong>${hasSmoking ? 'Odor Neutralization' : 'Stain Extraction'}</strong> and deep cleaning of the <strong>${photoStages[1]}</strong>.</p>
+            </div>
+            <div class="bg-green-100 p-4 rounded-lg border-2 border-green-500">
+                <h3 class="text-lg font-bold text-green-800">Recommendation: ${recommendation}</h3>
+                <p class="text-3xl font-black text-green-900">${price}</p>
+                <p class="text-xs mt-2 text-green-800">${justification}</p>
+            </div>
+        `;
+        
+        document.getElementById('reportBox').innerHTML = reportHtml;
+        nextStep(4);
+    }
+
+    function downloadPDF() {
+        const element = document.getElementById('reportBox');
+        html2pdf().from(element).save('MichieAuto_Quote.pdf');
+    }
+</script>
+</body>
+</html>
