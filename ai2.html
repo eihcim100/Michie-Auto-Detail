@@ -7,11 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Maps API for Autocomplete -->
     <script src="https://maps.googleapis.com/maps/api/js?key=&libraries=places"></script>
-    <!-- Firebase Libraries -->
-    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js" type="module"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js" type="module"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js" type="module"></script>
-    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -25,7 +20,7 @@
             background: radial-gradient(circle at top right, #f8fafc, #eff6ff, #f1f5f9);
             color: #1e293b;
             min-height: 100vh;
-            padding-bottom: 120px; /* Space for sticky footer */
+            padding-bottom: 120px;
         }
 
         .font-orbitron { font-family: 'Orbitron', sans-serif; }
@@ -90,7 +85,6 @@
 <body class="p-4 md:p-8">
 
     <div class="max-w-2xl mx-auto space-y-8">
-        <!-- Header -->
         <div class="text-center">
             <div class="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-blue-100 text-blue-700 text-sm font-semibold mb-3">
                 <span class="flex h-2 w-2 rounded-full bg-blue-600 animate-pulse"></span>
@@ -101,13 +95,11 @@
         </div>
 
         <form id="bookingForm" class="space-y-6">
-            <!-- Hidden inputs for logic -->
-            <input type="hidden" id="vehicleInput" value="Sedan/SUV Premium">
-            <input type="hidden" id="priceInput" value="149">
+            <input type="hidden" id="vehicleInput" name="vehicle" value="Sedan/SUV Premium">
+            <input type="hidden" id="priceInput" name="price" value="149">
             <input type="hidden" id="timeInput" name="timeSlot">
-            <input type="hidden" id="fullAddress" name="address">
+            <input type="hidden" id="fullAddress" name="fullAddress">
 
-            <!-- Step 1: Recommended Service Display -->
             <div class="glass-panel rounded-2xl p-6 relative overflow-hidden">
                 <div class="absolute top-0 right-0 p-4 opacity-10">
                     <svg class="w-20 h-20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>
@@ -124,7 +116,6 @@
                 </div>
             </div>
 
-            <!-- Step 2: Customer Details -->
             <div class="glass-panel rounded-2xl p-6 space-y-4">
                 <h3 class="text-sm font-bold flex items-center gap-2">
                     <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
@@ -142,35 +133,26 @@
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-500 mb-1">LOCATION</label>
-                    <input type="text" id="autocomplete" required placeholder="Enter your address for mobile detailing" class="w-full bg-white/50 border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none">
+                    <input type="text" id="autocomplete" required placeholder="Enter your address" class="w-full bg-white/50 border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none">
                 </div>
             </div>
 
-            <!-- Step 3: Date & Time -->
             <div class="glass-panel rounded-2xl p-6 space-y-4">
                 <h3 class="text-sm font-bold flex items-center gap-2">
                     <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                     Schedule Appointment
                 </h3>
-                
                 <div class="w-full">
                     <label class="block text-xs font-semibold text-slate-500 mb-1">SELECT DATE</label>
-                    <input type="date" id="dateInput" name="date" required class="w-full bg-white/50 border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none">
+                    <input type="date" id="dateInput" name="bookingDate" required class="w-full bg-white/50 border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none">
                 </div>
-
                 <div class="space-y-3">
                     <label class="block text-xs font-semibold text-slate-500 mb-1">AVAILABLE TIMES</label>
-                    <div id="timesContainer" class="grid grid-cols-3 gap-2">
-                        <!-- Shimmer placeholders -->
-                        <div class="shimmer-loading h-10 rounded-lg"></div>
-                        <div class="shimmer-loading h-10 rounded-lg"></div>
-                        <div class="shimmer-loading h-10 rounded-lg"></div>
-                    </div>
+                    <div id="timesContainer" class="grid grid-cols-3 gap-2"></div>
                     <p id="timesStatus" class="text-[10px] text-slate-400 italic">Select a date to see available times</p>
                 </div>
             </div>
 
-            <!-- Bottom Sticky Action -->
             <div class="fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-md border-t border-slate-200 z-50">
                 <div class="max-w-2xl mx-auto flex items-center justify-between gap-4">
                     <div class="flex-1">
@@ -180,14 +162,12 @@
                     <button type="submit" id="finalBookBtn" style="display: none;" 
                         class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-2xl shadow-xl shadow-blue-200 transition-all active:scale-95 flex items-center gap-2">
                         Complete Booking
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
                     </button>
                 </div>
             </div>
         </form>
     </div>
 
-    <!-- Modals for feedback -->
     <div id="messageModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl">
             <div id="modalIcon" class="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center"></div>
@@ -197,26 +177,25 @@
         </div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, addDoc, query, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    <script>
+        // BACKEND CONFIGURATION from book.html
+        const API_URLS = [
+            'https://michiedetailingbackend.onrender.com',
+            'https://michiedetailingbackend-1.onrender.com',
+            'https://michiedetailingbackend-2.onrender.com'
+        ];
 
-        // Firebase Setup
-        const firebaseConfig = JSON.parse(__firebase_config);
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'michie-auto-detailing';
+        function getBaseUrl() {
+            return API_URLS[Math.floor(Math.random() * API_URLS.length)];
+        }
 
-        // DOM Elements
         const elements = {
             form: document.getElementById('bookingForm'),
             vehicleInput: document.getElementById('vehicleInput'),
             priceInput: document.getElementById('priceInput'),
             timeInput: document.getElementById('timeInput'),
             dateInput: document.getElementById('dateInput'),
-            autocomplete: document.getElementById('autocomplete'),
+            autocompleteInput: document.getElementById('autocomplete'),
             fullAddress: document.getElementById('fullAddress'),
             timesContainer: document.getElementById('timesContainer'),
             timesStatus: document.getElementById('timesStatus'),
@@ -228,156 +207,56 @@
             modalIcon: document.getElementById('modalIcon')
         };
 
-        let user = null;
-
-        // Initialize Auth
-        const initAuth = async () => {
-            try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-            } catch (err) {
-                console.error("Auth error:", err);
-            }
-        };
-
-        onAuthStateChanged(auth, (u) => {
-            user = u;
-            if (u) {
-                console.log("Authenticated as:", u.uid);
-                setupApp();
-            }
-        });
-
-        initAuth();
-
-        function setupApp() {
-            // Set min date to today
-            const today = new Date().toISOString().split('T')[0];
-            elements.dateInput.min = today;
-
-            // Google Maps Autocomplete
-            if (typeof google !== 'undefined') {
-                const autocomplete = new google.maps.places.Autocomplete(elements.autocomplete, {
+        // Initialize Google Maps
+        function initAutocomplete() {
+            if (typeof google !== 'undefined' && google.maps && google.maps.places) {
+                const autocomplete = new google.maps.places.Autocomplete(elements.autocompleteInput, {
                     types: ['address'],
                     componentRestrictions: { country: 'us' }
                 });
 
                 autocomplete.addListener('place_changed', () => {
                     const place = autocomplete.getPlace();
-                    if (!place.geometry) return;
-                    elements.fullAddress.value = place.formatted_address;
-                    updateSummary();
+                    if (place && place.formatted_address) {
+                        elements.fullAddress.value = place.formatted_address;
+                        updateSummary();
+                    }
                 });
             }
-
-            // Date Change Trigger
-            elements.dateInput.addEventListener('change', (e) => {
-                fetchTimeSlots(e.target.value);
-                updateSummary();
-            });
-
-            // Form Submission
-            elements.form.onsubmit = async (e) => {
-                e.preventDefault();
-                if (!user) {
-                    showMessage("Error", "You must be authenticated to book.", "error");
-                    return;
-                }
-
-                const formData = new FormData(elements.form);
-                const bookingData = {
-                    name: formData.get('name'),
-                    phone: formData.get('phone'),
-                    address: elements.fullAddress.value || formData.get('address'),
-                    date: formData.get('date'),
-                    time: elements.timeInput.value,
-                    vehicle: elements.vehicleInput.value,
-                    price: elements.priceInput.value,
-                    createdAt: new Date().toISOString(),
-                    userId: user.uid,
-                    status: 'pending'
-                };
-
-                // Validate selection
-                if (!bookingData.time) {
-                    showMessage("Selection Required", "Please select a time slot for your appointment.", "warning");
-                    return;
-                }
-
-                setLoading(true);
-
-                try {
-                    // 1. Save Booking
-                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'bookings'), bookingData);
-
-                    // 2. Mark time slot as booked
-                    const availabilityRef = doc(db, 'artifacts', appId, 'public', 'data', 'availability', bookingData.date);
-                    const availSnap = await getDoc(availabilityRef);
-                    
-                    if (availSnap.exists()) {
-                        const data = availSnap.data();
-                        const updatedSlots = data.slots.map(s => {
-                            if (s.time === bookingData.time) return { ...s, available: false, reason: 'Booked' };
-                            return s;
-                        });
-                        await updateDoc(availabilityRef, { slots: updatedSlots });
-                    }
-
-                    showMessage("Success!", "Your detailing session is scheduled. We'll contact you shortly.", "success");
-                    elements.form.reset();
-                    elements.finalBtn.style.display = 'none';
-                    updateSummary();
-                } catch (err) {
-                    console.error("Booking failed:", err);
-                    showMessage("Error", "Something went wrong. Please try again.", "error");
-                } finally {
-                    setLoading(false);
-                }
-            };
         }
 
-        async function fetchTimeSlots(date) {
-            elements.timesContainer.innerHTML = `
-                <div class="shimmer-loading h-10 rounded-lg"></div>
-                <div class="shimmer-loading h-10 rounded-lg"></div>
-                <div class="shimmer-loading h-10 rounded-lg"></div>
-            `;
-            elements.timesStatus.textContent = "Checking availability...";
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => {
+            const today = new Date().toISOString().split('T')[0];
+            elements.dateInput.min = today;
+            initAutocomplete();
+            updateSummary();
+        });
+
+        // Fetch Availability from Backend
+        elements.dateInput.addEventListener('change', async (e) => {
+            const date = e.target.value;
+            if (!date) return;
+
+            elements.timesContainer.innerHTML = '<div class="shimmer-loading h-10 rounded-lg col-span-3"></div>';
+            elements.timesStatus.textContent = "Querying detailing schedules...";
 
             try {
-                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'availability', date);
-                const docSnap = await getDoc(docRef);
-
-                let slots = [];
-                if (docSnap.exists()) {
-                    slots = docSnap.data().slots;
-                } else {
-                    // Default slots if none exist for this date
-                    slots = [
-                        { time: '09:00', available: true },
-                        { time: '11:00', available: true },
-                        { time: '13:00', available: true },
-                        { time: '15:00', available: true }
-                    ];
-                    // Initialize this date in DB
-                    await setDoc(docRef, { slots });
-                }
-
-                renderSlots(slots);
+                const response = await fetch(`${getBaseUrl()}/get-availability?date=${date}`);
+                if (!response.ok) throw new Error('Network response was not ok');
+                
+                const data = await response.json();
+                renderSlots(data.slots || []);
             } catch (err) {
-                console.error("Fetch slots error:", err);
-                elements.timesContainer.innerHTML = `<div class="col-span-3 text-red-500 text-xs py-2 text-center">Failed to load times</div>`;
+                console.error("Fetch error:", err);
+                elements.timesContainer.innerHTML = '<div class="col-span-3 text-red-500 text-xs text-center">Schedule sync failed. Try again.</div>';
             }
-        }
+        });
 
         function renderSlots(slots) {
             elements.timesContainer.innerHTML = '';
-            
             if (slots.length === 0) {
-                elements.timesStatus.textContent = "No slots available for this date.";
+                elements.timesStatus.textContent = "No availability found for this date.";
                 return;
             }
 
@@ -385,7 +264,15 @@
                 const btn = document.createElement('button');
                 btn.type = 'button';
                 btn.className = `time-slot py-2 text-sm font-semibold rounded-xl border border-slate-200 ${!slot.available ? 'disabled' : ''}`;
-                btn.textContent = slot.time;
+                
+                // Format time for display
+                const [hours, minutes] = slot.time.split(':');
+                const hourNum = parseInt(hours);
+                const ampm = hourNum >= 12 ? 'PM' : 'AM';
+                const displayHour = hourNum % 12 || 12;
+                const displayTime = `${displayHour}:${minutes} ${ampm}`;
+                
+                btn.textContent = displayTime;
                 
                 if (slot.available) {
                     btn.onclick = () => {
@@ -396,11 +283,11 @@
                     };
                 } else {
                     btn.disabled = true;
+                    btn.textContent += ` - ${slot.reason || 'Booked'}`;
                 }
-
                 elements.timesContainer.appendChild(btn);
             });
-            elements.timesStatus.textContent = "Pick a time that works best for you.";
+            elements.timesStatus.textContent = "Select a time slot.";
         }
 
         function updateSummary() {
@@ -413,43 +300,62 @@
                 elements.summary.innerHTML = `<span class="text-blue-600 font-bold">${v}</span> @ <span class="text-blue-600 font-bold">${t}</span> — <span class="text-slate-900 font-orbitron font-bold">$${p}</span>`;
                 elements.finalBtn.style.display = 'flex';
             } else if (v) {
-                elements.summary.innerHTML = `<span class="text-blue-600 font-bold">${v}</span> selected. Pick a date & time.`;
+                elements.summary.innerHTML = `<span class="text-blue-600 font-bold">${v}</span> selected. Choose date & time.`;
                 elements.finalBtn.style.display = 'none';
             }
         }
 
-        function setLoading(isLoading) {
-            if (isLoading) {
-                elements.finalBtn.disabled = true;
-                elements.finalBtn.innerHTML = `
-                    <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                    Processing...
-                `;
-            } else {
-                elements.finalBtn.disabled = false;
-                elements.finalBtn.innerHTML = `Complete Booking <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>`;
+        // Form Submission to Backend
+        elements.form.onsubmit = async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(elements.form);
+            const bookingData = Object.fromEntries(formData.entries());
+            
+            // Ensure full address is passed
+            bookingData.address = elements.fullAddress.value || elements.autocompleteInput.value;
+
+            setLoading(true);
+
+            try {
+                const response = await fetch(`${getBaseUrl()}/submit-booking`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(bookingData)
+                });
+
+                if (!response.ok) throw new Error('Submission failed');
+
+                showMessage("Booking Confirmed!", "Your detailing session is scheduled! Check your phone for confirmation.", "success");
+                elements.form.reset();
+                elements.timeInput.value = "";
+                elements.finalBtn.style.display = 'none';
+                updateSummary();
+            } catch (err) {
+                console.error("Booking error:", err);
+                showMessage("Submission Failed", "Could not reach the booking server. Please try again later.", "error");
+            } finally {
+                setLoading(false);
             }
+        };
+
+        function setLoading(isLoading) {
+            elements.finalBtn.disabled = isLoading;
+            elements.finalBtn.textContent = isLoading ? "Syncing..." : "Complete Booking";
         }
 
         function showMessage(title, body, type) {
             elements.modalTitle.textContent = title;
             elements.modalBody.textContent = body;
-            
-            elements.modalIcon.className = "w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center ";
-            if (type === 'success') {
-                elements.modalIcon.classList.add("bg-green-100", "text-green-600");
-                elements.modalIcon.innerHTML = `<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
-            } else {
-                elements.modalIcon.classList.add("bg-red-100", "text-red-600");
-                elements.modalIcon.innerHTML = `<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
-            }
-
+            elements.modalIcon.className = "w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center " + 
+                (type === 'success' ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600");
+            elements.modalIcon.innerHTML = type === 'success' ? 
+                '<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>' :
+                '<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>';
             elements.modal.classList.remove('hidden');
         }
 
-        window.closeModal = () => {
-            elements.modal.classList.add('hidden');
-        };
+        window.closeModal = () => elements.modal.classList.add('hidden');
     </script>
 </body>
 </html>
