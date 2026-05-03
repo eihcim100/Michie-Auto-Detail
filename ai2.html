@@ -7,6 +7,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Maps API for Autocomplete -->
     <script src="https://maps.googleapis.com/maps/api/js?key=&libraries=places"></script>
+    <!-- Firebase Libraries -->
+    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js" type="module"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js" type="module"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js" type="module"></script>
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -27,358 +32,423 @@
 
         .glass-panel {
             background: var(--glass);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 1);
-            border-radius: 1.5rem;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
-        }
-
-        .ai-glow {
-            box-shadow: 0 0 20px rgba(37, 99, 235, 0.1);
-            border: 1px solid rgba(37, 99, 235, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
         }
 
         .ai-gradient-text {
-            background: linear-gradient(to right, #2563eb, #7c3aed);
+            background: linear-gradient(135deg, var(--ai-blue), var(--ai-purple));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .option-card {
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid #e2e8f0;
-            background: #ffffff;
+        .time-slot {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .option-card:hover {
-            transform: translateY(-5px);
-            background: #f8fafc;
+        .time-slot:not(.disabled):hover {
             border-color: var(--ai-blue);
+            background-color: #f0f7ff;
+            transform: translateY(-2px);
         }
 
-        .option-card.selected {
-            background: #eff6ff;
-            border-color: var(--ai-blue);
-            box-shadow: 0 0 15px rgba(37, 99, 235, 0.15);
-        }
-
-        .checklist-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.9rem;
-            color: #475569;
-            padding: 4px 0;
-        }
-
-        .checklist-item svg {
-            color: var(--ai-blue);
-            flex-shrink: 0;
-        }
-
-        input, select, textarea {
-            background: #ffffff !important;
-            border: 1px solid #e2e8f0 !important;
-            color: #1e293b !important;
-            border-radius: 0.75rem !important;
-        }
-
-        input:focus {
-            border-color: var(--ai-blue) !important;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
-        }
-
-        .time-slot-item {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            color: #1e293b;
-            padding: 12px;
-            border-radius: 10px;
-            text-align: center;
-            cursor: pointer;
-            transition: 0.2s;
-            font-size: 0.9rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .time-slot-item:hover:not(:disabled) {
+        .time-slot.selected {
             background: var(--ai-blue);
             color: white;
             border-color: var(--ai-blue);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
         }
 
-        .time-slot-item.selected {
-            background: var(--ai-blue);
-            color: white;
-            font-weight: bold;
-            border-color: var(--ai-blue);
-        }
-
-        .time-slot-item:disabled {
-            opacity: 0.4;
+        .time-slot.disabled {
+            opacity: 0.5;
             cursor: not-allowed;
-            background: #f1f5f9;
-            font-size: 0.75rem;
+            background-color: #f1f5f9;
+            text-decoration: line-through;
         }
 
-        .pac-container {
-            border-radius: 1rem;
-            margin-top: 5px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            border: 1px solid #e2e8f0;
+        .pac-container { 
+            border-radius: 12px; 
+            margin-top: 5px; 
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); 
+            border: none;
+            z-index: 9999 !important;
         }
 
-        @keyframes pulse-slow {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
         }
-        .animate-pulse-slow { animation: pulse-slow 3s infinite; }
 
-        .sticky-footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            border-top: 1px solid #e2e8f0;
-            padding: 1.5rem;
-            z-index: 50;
+        .shimmer-loading {
+            background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite linear;
         }
     </style>
 </head>
-<body>
+<body class="p-4 md:p-8">
 
-    <div class="max-w-4xl mx-auto px-4 pt-12 pb-24">
-        <!-- AI Header -->
-        <div class="text-center mb-12">
-            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 border border-blue-100 mb-6 animate-pulse-slow">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10H12V2Z"/><path d="M12 12L2.1 12.45"/><path d="M16 2a10 10 0 0 0-4 10"/><path d="m16 2 1 6"/><path d="M12 12V2.5"/></svg>
-                <span class="text-blue-600 font-semibold tracking-wider text-sm uppercase font-orbitron">AI-Guided Selection</span>
+    <div class="max-w-2xl mx-auto space-y-8">
+        <!-- Header -->
+        <div class="text-center">
+            <div class="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-blue-100 text-blue-700 text-sm font-semibold mb-3">
+                <span class="flex h-2 w-2 rounded-full bg-blue-600 animate-pulse"></span>
+                AI Recommended Selection
             </div>
-            <h1 class="text-4xl md:text-5xl font-bold mb-4 font-orbitron text-slate-900">Complete Your <span class="ai-gradient-text">Booking</span></h1>
-            <p class="text-slate-600 text-lg max-w-2xl mx-auto leading-relaxed">
-                Your vehicle analysis is complete. <span class="text-slate-900 font-semibold underline decoration-blue-500/30">Google Gemini AI</span> recommends our <span class="text-blue-600 font-bold">Level 2 Detail</span>.
-            </p>
+            <h1 class="text-4xl font-orbitron font-bold tracking-tight ai-gradient-text">Michie Auto Detailing</h1>
+            <p class="text-slate-500 mt-2 font-medium">Ready to restore your vehicle's showroom shine?</p>
         </div>
 
-        <form id="bookingForm" action="https://hook.us2.make.com/6245i5f99nd7m6f78x42f2o5v9i3m8v1" method="POST" class="space-y-8">
-            <!-- Hidden Fields -->
-            <input type="hidden" name="package" value="Level 2">
-            <input type="hidden" id="selectedPrice" name="price" value="0">
-            <input type="hidden" id="selectedVehicle" name="vehicle_type" value="">
-            <input type="hidden" id="selectedTime" name="bookingTime" value="">
+        <form id="bookingForm" class="space-y-6">
+            <!-- Hidden inputs for logic -->
+            <input type="hidden" id="vehicleInput" value="Sedan/SUV Premium">
+            <input type="hidden" id="priceInput" value="149">
+            <input type="hidden" id="timeInput" name="timeSlot">
+            <input type="hidden" id="fullAddress" name="address">
 
-            <!-- 01: Vehicle -->
-            <div class="glass-panel p-8 ai-glow">
-                <h2 class="text-xl font-bold mb-6 flex items-center gap-3 font-orbitron text-slate-800">
-                    <span class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white text-sm">01</span>
-                    Select Vehicle Size
-                </h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="option-card p-6 rounded-2xl text-center" onclick="selectVehicle('Car', 279)">
-                        <div class="text-3xl mb-2">🚗</div>
-                        <div class="font-bold text-lg text-slate-800">Car</div>
-                        <div class="text-blue-600 font-orbitron mt-1">$279</div>
+            <!-- Step 1: Recommended Service Display -->
+            <div class="glass-panel rounded-2xl p-6 relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-4 opacity-10">
+                    <svg class="w-20 h-20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>
+                </div>
+                <h3 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">Recommended Service</h3>
+                <div class="flex justify-between items-end">
+                    <div>
+                        <h2 class="text-2xl font-orbitron font-bold">Sedan/SUV Premium</h2>
+                        <p class="text-sm text-slate-500 mt-1">Full exterior & interior rejuvenation</p>
                     </div>
-                    <div class="option-card p-6 rounded-2xl text-center" onclick="selectVehicle('SUV', 329)">
-                        <div class="text-3xl mb-2">🚙</div>
-                        <div class="font-bold text-lg text-slate-800">SUV</div>
-                        <div class="text-blue-600 font-orbitron mt-1">$329</div>
-                    </div>
-                    <div class="option-card p-6 rounded-2xl text-center" onclick="selectVehicle('Truck', 329)">
-                        <div class="text-3xl mb-2">🛻</div>
-                        <div class="font-bold text-lg text-slate-800">Truck / Large</div>
-                        <div class="text-blue-600 font-orbitron mt-1">$329</div>
+                    <div class="text-right">
+                        <span class="text-3xl font-orbitron font-bold text-blue-600">$149</span>
                     </div>
                 </div>
             </div>
 
-            <!-- 02: Included -->
-            <div class="glass-panel p-8">
-                <h2 class="text-xl font-bold mb-4 flex items-center gap-3 font-orbitron text-slate-800">
-                    <span class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white text-sm">02</span>
-                    Service Scope
-                </h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 mt-4">
-                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Pressure Wash & Foam</div>
-                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Deep Interior Extraction</div>
-                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Leather Conditioning</div>
-                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Full Pet Hair Removal</div>
-                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Window Clarity Treatment</div>
-                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Tire & Rim Detailing</div>
+            <!-- Step 2: Customer Details -->
+            <div class="glass-panel rounded-2xl p-6 space-y-4">
+                <h3 class="text-sm font-bold flex items-center gap-2">
+                    <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    Contact Information
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">FULL NAME</label>
+                        <input type="text" name="name" required placeholder="John Doe" class="w-full bg-white/50 border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">PHONE NUMBER</label>
+                        <input type="tel" name="phone" required placeholder="(555) 000-0000" class="w-full bg-white/50 border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 mb-1">LOCATION</label>
+                    <input type="text" id="autocomplete" required placeholder="Enter your address for mobile detailing" class="w-full bg-white/50 border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none">
                 </div>
             </div>
 
-            <!-- 03: Details -->
-            <div class="glass-panel p-8">
-                <h2 class="text-xl font-bold mb-6 flex items-center gap-3 font-orbitron text-slate-800">
-                    <span class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white text-sm">03</span>
-                    Client Info
-                </h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="space-y-2">
-                        <label class="text-sm font-medium text-slate-600">Full Name</label>
-                        <input type="text" name="name" required class="w-full p-3 outline-none" placeholder="John Smith">
-                    </div>
-                    <div class="space-y-2">
-                        <label class="text-sm font-medium text-slate-600">Phone</label>
-                        <input type="tel" name="phone" required class="w-full p-3 outline-none" placeholder="(555) 000-0000">
-                    </div>
-                    <div class="md:col-span-2 space-y-2">
-                        <label class="text-sm font-medium text-slate-600">Service Address (Google Verified)</label>
-                        <input type="text" id="addressInput" name="address" required class="w-full p-3 outline-none" placeholder="Start typing your address...">
-                    </div>
-                </div>
-            </div>
-
-            <!-- 04: Schedule -->
-            <div class="glass-panel p-8">
-                <h2 class="text-xl font-bold mb-6 flex items-center gap-3 font-orbitron text-slate-800">
-                    <span class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white text-sm">04</span>
+            <!-- Step 3: Date & Time -->
+            <div class="glass-panel rounded-2xl p-6 space-y-4">
+                <h3 class="text-sm font-bold flex items-center gap-2">
+                    <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                     Schedule Appointment
-                </h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div class="space-y-2">
-                        <label class="text-sm font-medium text-slate-600">Preferred Date</label>
-                        <input type="date" id="bookingDate" name="bookingDate" required class="w-full p-3 outline-none">
+                </h3>
+                
+                <div class="w-full">
+                    <label class="block text-xs font-semibold text-slate-500 mb-1">SELECT DATE</label>
+                    <input type="date" id="dateInput" name="date" required class="w-full bg-white/50 border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+
+                <div class="space-y-3">
+                    <label class="block text-xs font-semibold text-slate-500 mb-1">AVAILABLE TIMES</label>
+                    <div id="timesContainer" class="grid grid-cols-3 gap-2">
+                        <!-- Shimmer placeholders -->
+                        <div class="shimmer-loading h-10 rounded-lg"></div>
+                        <div class="shimmer-loading h-10 rounded-lg"></div>
+                        <div class="shimmer-loading h-10 rounded-lg"></div>
                     </div>
-                    <div class="space-y-2">
-                        <label class="text-sm font-medium text-slate-600">Available Times</label>
-                        <div id="timeSlotsContainer" class="grid grid-cols-2 gap-2 max-h-[200px] overflow-y-auto p-2 border border-slate-200 rounded-xl bg-slate-50">
-                            <div class="col-span-2 text-center text-slate-400 py-8 italic text-sm">Choose a date to see available windows</div>
-                        </div>
-                    </div>
+                    <p id="timesStatus" class="text-[10px] text-slate-400 italic">Select a date to see available times</p>
                 </div>
             </div>
 
-            <!-- Sticky Submit Footer -->
-            <div class="sticky-footer">
-                <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-                    <div id="summaryText" class="text-slate-600 text-sm md:text-base font-medium">
-                        Please select your vehicle and time to proceed.
+            <!-- Bottom Sticky Action -->
+            <div class="fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-md border-t border-slate-200 z-50">
+                <div class="max-w-2xl mx-auto flex items-center justify-between gap-4">
+                    <div class="flex-1">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Current Plan</p>
+                        <p id="summaryText" class="text-sm font-medium truncate">Select details to finalize...</p>
                     </div>
-                    <button type="submit" id="finalBookButton" style="display: none;" class="w-full md:w-auto px-12 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl text-lg font-orbitron transition-all shadow-xl shadow-blue-500/20 active:scale-[0.95]">
-                        CONFIRM & BOOK
+                    <button type="submit" id="finalBookBtn" style="display: none;" 
+                        class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-2xl shadow-xl shadow-blue-200 transition-all active:scale-95 flex items-center gap-2">
+                        Complete Booking
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
                     </button>
                 </div>
             </div>
         </form>
     </div>
 
-    <script>
+    <!-- Modals for feedback -->
+    <div id="messageModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl">
+            <div id="modalIcon" class="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center"></div>
+            <h2 id="modalTitle" class="text-xl font-bold mb-2"></h2>
+            <p id="modalBody" class="text-slate-600 mb-6"></p>
+            <button onclick="closeModal()" class="w-full bg-slate-100 hover:bg-slate-200 py-3 rounded-xl font-semibold transition-colors">Dismiss</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, addDoc, query, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Firebase Setup
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'michie-auto-detailing';
+
+        // DOM Elements
         const elements = {
-            vehicleInput: document.getElementById('selectedVehicle'),
-            priceInput: document.getElementById('selectedPrice'),
-            timeInput: document.getElementById('selectedTime'),
-            dateInput: document.getElementById('bookingDate'),
-            slotsContainer: document.getElementById('timeSlotsContainer'),
-            finalBtn: document.getElementById('finalBookButton'),
+            form: document.getElementById('bookingForm'),
+            vehicleInput: document.getElementById('vehicleInput'),
+            priceInput: document.getElementById('priceInput'),
+            timeInput: document.getElementById('timeInput'),
+            dateInput: document.getElementById('dateInput'),
+            autocomplete: document.getElementById('autocomplete'),
+            fullAddress: document.getElementById('fullAddress'),
+            timesContainer: document.getElementById('timesContainer'),
+            timesStatus: document.getElementById('timesStatus'),
             summary: document.getElementById('summaryText'),
-            address: document.getElementById('addressInput'),
-            form: document.getElementById('bookingForm')
+            finalBtn: document.getElementById('finalBookBtn'),
+            modal: document.getElementById('messageModal'),
+            modalTitle: document.getElementById('modalTitle'),
+            modalBody: document.getElementById('modalBody'),
+            modalIcon: document.getElementById('modalIcon')
         };
 
-        // 1. Google Maps Autocomplete
-        function initAutocomplete() {
-            if (elements.address) {
-                const autocomplete = new google.maps.places.Autocomplete(elements.address, {
+        let user = null;
+
+        // Initialize Auth
+        const initAuth = async () => {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (err) {
+                console.error("Auth error:", err);
+            }
+        };
+
+        onAuthStateChanged(auth, (u) => {
+            user = u;
+            if (u) {
+                console.log("Authenticated as:", u.uid);
+                setupApp();
+            }
+        });
+
+        initAuth();
+
+        function setupApp() {
+            // Set min date to today
+            const today = new Date().toISOString().split('T')[0];
+            elements.dateInput.min = today;
+
+            // Google Maps Autocomplete
+            if (typeof google !== 'undefined') {
+                const autocomplete = new google.maps.places.Autocomplete(elements.autocomplete, {
                     types: ['address'],
                     componentRestrictions: { country: 'us' }
                 });
-            }
-        }
-        google.maps.event.addDomListener(window, 'load', initAutocomplete);
 
-        // 2. Vehicle Selection
-        function selectVehicle(type, price) {
-            document.querySelectorAll('.option-card').forEach(card => {
-                card.classList.remove('selected');
-                if (card.innerText.includes(type)) card.classList.add('selected');
+                autocomplete.addListener('place_changed', () => {
+                    const place = autocomplete.getPlace();
+                    if (!place.geometry) return;
+                    elements.fullAddress.value = place.formatted_address;
+                    updateSummary();
+                });
+            }
+
+            // Date Change Trigger
+            elements.dateInput.addEventListener('change', (e) => {
+                fetchTimeSlots(e.target.value);
+                updateSummary();
             });
 
-            elements.vehicleInput.value = type;
-            elements.priceInput.value = price;
-            updateSummary();
-            checkReady();
-        }
+            // Form Submission
+            elements.form.onsubmit = async (e) => {
+                e.preventDefault();
+                if (!user) {
+                    showMessage("Error", "You must be authenticated to book.", "error");
+                    return;
+                }
 
-        // 3. Scheduling Logic
-        elements.dateInput.addEventListener('change', () => {
-            const date = elements.dateInput.value;
-            if (!date) return;
+                const formData = new FormData(elements.form);
+                const bookingData = {
+                    name: formData.get('name'),
+                    phone: formData.get('phone'),
+                    address: elements.fullAddress.value || formData.get('address'),
+                    date: formData.get('date'),
+                    time: elements.timeInput.value,
+                    vehicle: elements.vehicleInput.value,
+                    price: elements.priceInput.value,
+                    createdAt: new Date().toISOString(),
+                    userId: user.uid,
+                    status: 'pending'
+                };
 
-            elements.slotsContainer.innerHTML = '<div class="col-span-2 text-center py-8"><span class="animate-pulse text-blue-600">Verifying availability...</span></div>';
+                // Validate selection
+                if (!bookingData.time) {
+                    showMessage("Selection Required", "Please select a time slot for your appointment.", "warning");
+                    return;
+                }
 
-            fetch(`https://hook.us2.make.com/6245i5f99nd7m6f78x42f2o5v9i3m8v1?date=${date}`)
-                .then(res => res.json())
-                .then(slots => {
-                    elements.slotsContainer.innerHTML = '';
-                    if (!slots || slots.length === 0) {
-                        elements.slotsContainer.innerHTML = '<div class="col-span-2 text-center text-red-500 py-8 text-sm font-semibold">No availability for this date.</div>';
-                        return;
+                setLoading(true);
+
+                try {
+                    // 1. Save Booking
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'bookings'), bookingData);
+
+                    // 2. Mark time slot as booked
+                    const availabilityRef = doc(db, 'artifacts', appId, 'public', 'data', 'availability', bookingData.date);
+                    const availSnap = await getDoc(availabilityRef);
+                    
+                    if (availSnap.exists()) {
+                        const data = availSnap.data();
+                        const updatedSlots = data.slots.map(s => {
+                            if (s.time === bookingData.time) return { ...s, available: false, reason: 'Booked' };
+                            return s;
+                        });
+                        await updateDoc(availabilityRef, { slots: updatedSlots });
                     }
 
-                    slots.forEach(slot => {
-                        const btn = document.createElement('button');
-                        btn.type = 'button';
-                        btn.className = `time-slot-item ${slot.available ? '' : 'disabled'}`;
-                        
-                        // Time Formatting
-                        const [hours, minutes] = slot.time.split(':');
-                        const h = parseInt(hours);
-                        const displayTime = `${h % 12 || 12}:${minutes} ${h >= 12 ? 'PM' : 'AM'}`;
+                    showMessage("Success!", "Your detailing session is scheduled. We'll contact you shortly.", "success");
+                    elements.form.reset();
+                    elements.finalBtn.style.display = 'none';
+                    updateSummary();
+                } catch (err) {
+                    console.error("Booking failed:", err);
+                    showMessage("Error", "Something went wrong. Please try again.", "error");
+                } finally {
+                    setLoading(false);
+                }
+            };
+        }
 
-                        if (slot.available) {
-                            btn.innerHTML = `<span class="font-bold">${displayTime}</span>`;
-                            btn.onclick = () => {
-                                document.querySelectorAll('.time-slot-item').forEach(s => s.classList.remove('selected'));
-                                btn.classList.add('selected');
-                                elements.timeInput.value = slot.time;
-                                updateSummary();
-                                checkReady();
-                            };
-                        } else {
-                            btn.disabled = true;
-                            btn.innerHTML = `<span class="opacity-50">${displayTime}</span><span class="text-[10px] text-red-400 mt-1 uppercase font-bold">${slot.reason || 'Booked'}</span>`;
-                        }
-                        elements.slotsContainer.appendChild(btn);
-                    });
-                })
-                .catch(() => {
-                    elements.slotsContainer.innerHTML = '<div class="col-span-2 text-center text-red-500 py-8">Schedule sync error.</div>';
-                });
-        });
+        async function fetchTimeSlots(date) {
+            elements.timesContainer.innerHTML = `
+                <div class="shimmer-loading h-10 rounded-lg"></div>
+                <div class="shimmer-loading h-10 rounded-lg"></div>
+                <div class="shimmer-loading h-10 rounded-lg"></div>
+            `;
+            elements.timesStatus.textContent = "Checking availability...";
+
+            try {
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'availability', date);
+                const docSnap = await getDoc(docRef);
+
+                let slots = [];
+                if (docSnap.exists()) {
+                    slots = docSnap.data().slots;
+                } else {
+                    // Default slots if none exist for this date
+                    slots = [
+                        { time: '09:00', available: true },
+                        { time: '11:00', available: true },
+                        { time: '13:00', available: true },
+                        { time: '15:00', available: true }
+                    ];
+                    // Initialize this date in DB
+                    await setDoc(docRef, { slots });
+                }
+
+                renderSlots(slots);
+            } catch (err) {
+                console.error("Fetch slots error:", err);
+                elements.timesContainer.innerHTML = `<div class="col-span-3 text-red-500 text-xs py-2 text-center">Failed to load times</div>`;
+            }
+        }
+
+        function renderSlots(slots) {
+            elements.timesContainer.innerHTML = '';
+            
+            if (slots.length === 0) {
+                elements.timesStatus.textContent = "No slots available for this date.";
+                return;
+            }
+
+            slots.forEach(slot => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = `time-slot py-2 text-sm font-semibold rounded-xl border border-slate-200 ${!slot.available ? 'disabled' : ''}`;
+                btn.textContent = slot.time;
+                
+                if (slot.available) {
+                    btn.onclick = () => {
+                        document.querySelectorAll('.time-slot').forEach(b => b.classList.remove('selected'));
+                        btn.classList.add('selected');
+                        elements.timeInput.value = slot.time;
+                        updateSummary();
+                    };
+                } else {
+                    btn.disabled = true;
+                }
+
+                elements.timesContainer.appendChild(btn);
+            });
+            elements.timesStatus.textContent = "Pick a time that works best for you.";
+        }
 
         function updateSummary() {
             const v = elements.vehicleInput.value;
             const p = elements.priceInput.value;
             const t = elements.timeInput.value;
+            const d = elements.dateInput.value;
             
-            if (v && t) {
-                elements.summary.innerHTML = `<span class="text-blue-600 font-bold">${v}</span> Detail @ <span class="text-blue-600 font-bold">${t}</span> — <span class="text-slate-900 font-orbitron font-bold">$${p}</span>`;
+            if (v && t && d) {
+                elements.summary.innerHTML = `<span class="text-blue-600 font-bold">${v}</span> @ <span class="text-blue-600 font-bold">${t}</span> — <span class="text-slate-900 font-orbitron font-bold">$${p}</span>`;
+                elements.finalBtn.style.display = 'flex';
             } else if (v) {
-                elements.summary.innerHTML = `<span class="text-blue-600 font-bold">${v}</span> selected. Now pick a time.`;
+                elements.summary.innerHTML = `<span class="text-blue-600 font-bold">${v}</span> selected. Pick a date & time.`;
+                elements.finalBtn.style.display = 'none';
             }
         }
 
-        function checkReady() {
-            if (elements.vehicleInput.value && elements.timeInput.value) {
-                elements.finalBtn.style.display = 'block';
+        function setLoading(isLoading) {
+            if (isLoading) {
+                elements.finalBtn.disabled = true;
+                elements.finalBtn.innerHTML = `
+                    <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                    Processing...
+                `;
+            } else {
+                elements.finalBtn.disabled = false;
+                elements.finalBtn.innerHTML = `Complete Booking <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>`;
             }
         }
 
-        // Set min date
-        elements.dateInput.min = new Date().toISOString().split('T')[0];
+        function showMessage(title, body, type) {
+            elements.modalTitle.textContent = title;
+            elements.modalBody.textContent = body;
+            
+            elements.modalIcon.className = "w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center ";
+            if (type === 'success') {
+                elements.modalIcon.classList.add("bg-green-100", "text-green-600");
+                elements.modalIcon.innerHTML = `<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+            } else {
+                elements.modalIcon.classList.add("bg-red-100", "text-red-600");
+                elements.modalIcon.innerHTML = `<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+            }
 
-        // Form Submit state
-        elements.form.onsubmit = function() {
-            elements.finalBtn.innerHTML = '<span class="flex items-center gap-2"><svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> BOOKING...</span>';
-            elements.finalBtn.disabled = true;
+            elements.modal.classList.remove('hidden');
+        }
+
+        window.closeModal = () => {
+            elements.modal.classList.add('hidden');
         };
     </script>
 </body>
