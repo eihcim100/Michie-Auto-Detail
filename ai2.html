@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Michie Auto Detailing - AI Recommended Booking</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ai-blue: #2563eb;
+            --ai-purple: #7c3aed;
+            --glass: rgba(255, 255, 255, 0.9);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at top right, #f8fafc, #eff6ff, #f1f5f9);
+            color: #1e293b;
+            min-height: 100vh;
+            padding-bottom: 50px;
+        }
+
+        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+
+        .glass-panel {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 1);
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+        }
+
+        .ai-glow {
+            box-shadow: 0 0 20px rgba(37, 99, 235, 0.1);
+            border: 1px solid rgba(37, 99, 235, 0.2);
+        }
+
+        .ai-gradient-text {
+            background: linear-gradient(to right, #2563eb, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .option-card {
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid #e2e8f0;
+            background: #ffffff;
+        }
+
+        .option-card:hover {
+            transform: translateY(-5px);
+            background: #f8fafc;
+            border-color: var(--ai-blue);
+        }
+
+        .option-card.selected {
+            background: #eff6ff;
+            border-color: var(--ai-blue);
+            box-shadow: 0 0 15px rgba(37, 99, 235, 0.15);
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            color: #475569;
+            padding: 4px 0;
+        }
+
+        .checklist-item svg {
+            color: var(--ai-blue);
+            flex-shrink: 0;
+        }
+
+        input, select, textarea {
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            color: #1e293b !important;
+            border-radius: 0.75rem !important;
+        }
+
+        input:focus {
+            border-color: var(--ai-blue) !important;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
+        }
+
+        .time-slot-item {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            color: #1e293b;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .time-slot-item:hover:not(:disabled) {
+            background: var(--ai-blue);
+            color: white;
+            border-color: var(--ai-blue);
+        }
+
+        .time-slot-item.selected {
+            background: var(--ai-blue);
+            color: white;
+            font-weight: bold;
+            border-color: var(--ai-blue);
+        }
+
+        .time-slot-item:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            background: #f1f5f9;
+        }
+
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        .animate-pulse-slow { animation: pulse-slow 3s infinite; }
+    </style>
+</head>
+<body>
+
+    <div class="max-w-4xl mx-auto px-4 pt-12 pb-24">
+        <!-- AI Header -->
+        <div class="text-center mb-12">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 border border-blue-100 mb-6 animate-pulse-slow">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10H12V2Z"/><path d="M12 12L2.1 12.45"/><path d="M16 2a10 10 0 0 0-4 10"/><path d="m16 2 1 6"/><path d="M12 12V2.5"/></svg>
+                <span class="text-blue-600 font-semibold tracking-wider text-sm uppercase font-orbitron">AI Prediction Engine</span>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 font-orbitron text-slate-900">Finalize Your <span class="ai-gradient-text">Quote</span></h1>
+            <p class="text-slate-600 text-lg max-w-2xl mx-auto leading-relaxed">
+                Based on your vehicle's condition, <span class="text-slate-900 font-semibold underline decoration-blue-500/30">Google Gemini AI</span> Recommended you book our <span class="text-blue-600 font-bold">level 2 detail package</span>. Fill out the info below to confirm your appointment and select your time.
+            </p>
+        </div>
+
+        <form id="bookingForm" action="https://hook.us2.make.com/6245i5f99nd7m6f78x42f2o5v9i3m8v1" method="POST" class="space-y-8">
+            <!-- Hidden Fields for Backend Logic -->
+            <input type="hidden" id="selectedPackage" name="package" value="Level 2">
+            <input type="hidden" id="selectedPrice" name="price" value="0">
+            <input type="hidden" id="selectedVehicle" name="vehicle_type" value="">
+            <input type="hidden" id="selectedTime" name="bookingTime" value="">
+
+            <!-- Step 1: Vehicle Selection -->
+            <div class="glass-panel p-8 ai-glow">
+                <h2 class="text-xl font-bold mb-6 flex items-center gap-3 font-orbitron text-slate-800">
+                    <span class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white text-sm">01</span>
+                    Select Vehicle Size
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="option-card p-6 rounded-2xl text-center" onclick="selectVehicle('Car', 279)">
+                        <div class="text-3xl mb-2">🚗</div>
+                        <div class="font-bold text-lg text-slate-800">Car</div>
+                        <div class="text-blue-600 font-orbitron mt-1">$279</div>
+                    </div>
+                    <div class="option-card p-6 rounded-2xl text-center" onclick="selectVehicle('SUV', 329)">
+                        <div class="text-3xl mb-2">🚙</div>
+                        <div class="font-bold text-lg text-slate-800">SUV</div>
+                        <div class="text-blue-600 font-orbitron mt-1">$329</div>
+                    </div>
+                    <div class="option-card p-6 rounded-2xl text-center" onclick="selectVehicle('Truck', 329)">
+                        <div class="text-3xl mb-2">🛻</div>
+                        <div class="font-bold text-lg text-slate-800">Truck / Large</div>
+                        <div class="text-blue-600 font-orbitron mt-1">$329</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Level 2 Features (Locked) -->
+            <div class="glass-panel p-8 relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-4">
+                    <span class="text-[10px] font-bold bg-blue-100 text-blue-600 px-2 py-1 rounded border border-blue-200 uppercase tracking-tighter">Package Details</span>
+                </div>
+                
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-3 font-orbitron text-slate-800">
+                    <span class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white text-sm">02</span>
+                    What's Included
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 mt-6">
+                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>External high pressure wash</div>
+                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Tire cleaner</div>
+                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Window cleaning inside and out</div>
+                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Deep vaccuming</div>
+                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Display controls and panels wipedown</div>
+                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Mirror cleaning</div>
+                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Seat vaccum</div>
+                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Surface protectent (Dash/Display)</div>
+                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Steering wheel and dash clean</div>
+                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Shampoo carpets and seats</div>
+                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Premium Leather treatment</div>
+                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Door jam cleaning</div>
+                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Rims and tires cleaned/wiped down</div>
+                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Console scrub down</div>
+                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Pet hair removal</div>
+                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Odor removal</div>
+                </div>
+            </div>
+
+            <!-- Step 3: Contact & Address -->
+            <div class="glass-panel p-8">
+                <h2 class="text-xl font-bold mb-6 flex items-center gap-3 font-orbitron text-slate-800">
+                    <span class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white text-sm">03</span>
+                    Client Information
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium text-slate-600">Full Name</label>
+                        <input type="text" name="name" required class="w-full p-3 outline-none" placeholder="First and Last Name">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium text-slate-600">Phone Number</label>
+                        <input type="tel" name="phone" required class="w-full p-3 outline-none" placeholder="(555) 000-0000">
+                    </div>
+                    <div class="md:col-span-2 space-y-2">
+                        <label class="text-sm font-medium text-slate-600">Service Address</label>
+                        <input type="text" id="addressInput" name="address" required class="w-full p-3 outline-none" placeholder="Full Street Address, City, State">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Scheduling -->
+            <div class="glass-panel p-8">
+                <h2 class="text-xl font-bold mb-6 flex items-center gap-3 font-orbitron text-slate-800">
+                    <span class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white text-sm">04</span>
+                    Choose Time
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium text-slate-600">Preferred Date</label>
+                        <input type="date" id="bookingDate" name="bookingDate" required class="w-full p-3 outline-none" onchange="fetchSlots()">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium text-slate-600">Available Slots</label>
+                        <div id="timeSlotsContainer" class="grid grid-cols-2 gap-2 max-h-[200px] overflow-y-auto p-2 border border-slate-200 rounded-xl bg-slate-50">
+                            <div class="col-span-2 text-center text-slate-400 py-4 italic text-sm">Select a date above to view availability</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <div class="pt-4">
+                <button type="submit" id="finalBookButton" style="display: none;" class="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-2xl text-xl font-orbitron transition-all shadow-xl shadow-blue-500/20 active:scale-[0.98]">
+                    CONFIRM APPOINTMENT
+                </button>
+                <p id="promptMsg" class="text-center text-slate-400 text-sm mt-4 font-medium italic">Select vehicle size and time to confirm</p>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function selectVehicle(type, price) {
+            // Update UI
+            document.querySelectorAll('.option-card').forEach(card => {
+                card.classList.remove('selected');
+                if (card.innerText.includes(type)) card.classList.add('selected');
+            });
+
+            // Update Hidden Fields
+            document.getElementById('selectedVehicle').value = type;
+            document.getElementById('selectedPrice').value = price;
+            
+            checkFormReady();
+        }
+
+        function fetchSlots() {
+            const date = document.getElementById('bookingDate').value;
+            const container = document.getElementById('timeSlotsContainer');
+            if (!date) return;
+
+            container.innerHTML = '<div class="col-span-2 text-center py-4"><span class="animate-pulse text-blue-600">Syncing with schedule...</span></div>';
+
+            fetch(`https://hook.us2.make.com/6245i5f99nd7m6f78x42f2o5v9i3m8v1?date=${date}`)
+                .then(res => res.json())
+                .then(slots => {
+                    container.innerHTML = '';
+                    if (slots.length === 0) {
+                        container.innerHTML = '<div class="col-span-2 text-center text-red-500 py-4 text-sm font-medium">No slots found for this date.</div>';
+                        return;
+                    }
+
+                    slots.forEach(slot => {
+                        const div = document.createElement('div');
+                        div.className = `time-slot-item ${slot.available ? '' : 'disabled'}`;
+                        div.innerText = slot.time;
+                        if (slot.available) {
+                            div.onclick = () => {
+                                document.querySelectorAll('.time-slot-item').forEach(s => s.classList.remove('selected'));
+                                div.classList.add('selected');
+                                document.getElementById('selectedTime').value = slot.time;
+                                checkFormReady();
+                            };
+                        }
+                        container.appendChild(div);
+                    });
+                })
+                .catch(() => {
+                    container.innerHTML = '<div class="col-span-2 text-center text-red-500 py-4 text-sm">Failed to load schedule.</div>';
+                });
+        }
+
+        function checkFormReady() {
+            const vehicle = document.getElementById('selectedVehicle').value;
+            const time = document.getElementById('selectedTime').value;
+            const btn = document.getElementById('finalBookButton');
+            const prompt = document.getElementById('promptMsg');
+            
+            if (vehicle && time) {
+                btn.style.display = 'block';
+                prompt.style.display = 'none';
+            }
+        }
+
+        // Set min date to today
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('bookingDate').setAttribute('min', today);
+
+        // Form submission loading state
+        document.getElementById('bookingForm').onsubmit = function(e) {
+            const btn = document.getElementById('finalBookButton');
+            btn.innerHTML = '<span class="flex items-center justify-center gap-2"><svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> FINALIZING APPOINTMENT...</span>';
+            btn.disabled = true;
+        };
+    </script>
+</body>
+</html>
