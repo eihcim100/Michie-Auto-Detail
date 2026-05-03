@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Michie Auto Detailing - AI Recommended Booking</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Maps API for Autocomplete -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=&libraries=places"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -18,7 +20,7 @@
             background: radial-gradient(circle at top right, #f8fafc, #eff6ff, #f1f5f9);
             color: #1e293b;
             min-height: 100vh;
-            padding-bottom: 50px;
+            padding-bottom: 120px; /* Space for sticky footer */
         }
 
         .font-orbitron { font-family: 'Orbitron', sans-serif; }
@@ -91,11 +93,16 @@
             background: #ffffff;
             border: 1px solid #e2e8f0;
             color: #1e293b;
-            padding: 10px;
-            border-radius: 8px;
+            padding: 12px;
+            border-radius: 10px;
             text-align: center;
             cursor: pointer;
             transition: 0.2s;
+            font-size: 0.9rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         .time-slot-item:hover:not(:disabled) {
@@ -112,9 +119,17 @@
         }
 
         .time-slot-item:disabled {
-            opacity: 0.3;
+            opacity: 0.4;
             cursor: not-allowed;
             background: #f1f5f9;
+            font-size: 0.75rem;
+        }
+
+        .pac-container {
+            border-radius: 1rem;
+            margin-top: 5px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
         }
 
         @keyframes pulse-slow {
@@ -122,6 +137,18 @@
             50% { opacity: 1; }
         }
         .animate-pulse-slow { animation: pulse-slow 3s infinite; }
+
+        .sticky-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid #e2e8f0;
+            padding: 1.5rem;
+            z-index: 50;
+        }
     </style>
 </head>
 <body>
@@ -131,22 +158,22 @@
         <div class="text-center mb-12">
             <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 border border-blue-100 mb-6 animate-pulse-slow">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10H12V2Z"/><path d="M12 12L2.1 12.45"/><path d="M16 2a10 10 0 0 0-4 10"/><path d="m16 2 1 6"/><path d="M12 12V2.5"/></svg>
-                <span class="text-blue-600 font-semibold tracking-wider text-sm uppercase font-orbitron">AI Prediction Engine</span>
+                <span class="text-blue-600 font-semibold tracking-wider text-sm uppercase font-orbitron">AI-Guided Selection</span>
             </div>
-            <h1 class="text-4xl md:text-5xl font-bold mb-4 font-orbitron text-slate-900">Finalize Your <span class="ai-gradient-text">Quote</span></h1>
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 font-orbitron text-slate-900">Complete Your <span class="ai-gradient-text">Booking</span></h1>
             <p class="text-slate-600 text-lg max-w-2xl mx-auto leading-relaxed">
-                Based on your vehicle's condition, <span class="text-slate-900 font-semibold underline decoration-blue-500/30">Google Gemini AI</span> Recommended you book our <span class="text-blue-600 font-bold">level 2 detail package</span>. Fill out the info below to confirm your appointment and select your time.
+                Your vehicle analysis is complete. <span class="text-slate-900 font-semibold underline decoration-blue-500/30">Google Gemini AI</span> recommends our <span class="text-blue-600 font-bold">Level 2 Detail</span>.
             </p>
         </div>
 
         <form id="bookingForm" action="https://hook.us2.make.com/6245i5f99nd7m6f78x42f2o5v9i3m8v1" method="POST" class="space-y-8">
-            <!-- Hidden Fields for Backend Logic -->
-            <input type="hidden" id="selectedPackage" name="package" value="Level 2">
+            <!-- Hidden Fields -->
+            <input type="hidden" name="package" value="Level 2">
             <input type="hidden" id="selectedPrice" name="price" value="0">
             <input type="hidden" id="selectedVehicle" name="vehicle_type" value="">
             <input type="hidden" id="selectedTime" name="bookingTime" value="">
 
-            <!-- Step 1: Vehicle Selection -->
+            <!-- 01: Vehicle -->
             <div class="glass-panel p-8 ai-glow">
                 <h2 class="text-xl font-bold mb-6 flex items-center gap-3 font-orbitron text-slate-800">
                     <span class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white text-sm">01</span>
@@ -171,161 +198,187 @@
                 </div>
             </div>
 
-            <!-- Step 2: Level 2 Features (Locked) -->
-            <div class="glass-panel p-8 relative overflow-hidden">
-                <div class="absolute top-0 right-0 p-4">
-                    <span class="text-[10px] font-bold bg-blue-100 text-blue-600 px-2 py-1 rounded border border-blue-200 uppercase tracking-tighter">Package Details</span>
-                </div>
-                
+            <!-- 02: Included -->
+            <div class="glass-panel p-8">
                 <h2 class="text-xl font-bold mb-4 flex items-center gap-3 font-orbitron text-slate-800">
                     <span class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white text-sm">02</span>
-                    What's Included
+                    Service Scope
                 </h2>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 mt-6">
-                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>External high pressure wash</div>
-                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Tire cleaner</div>
-                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Window cleaning inside and out</div>
-                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Deep vaccuming</div>
-                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Display controls and panels wipedown</div>
-                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Mirror cleaning</div>
-                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Seat vaccum</div>
-                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Surface protectent (Dash/Display)</div>
-                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Steering wheel and dash clean</div>
-                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Shampoo carpets and seats</div>
-                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Premium Leather treatment</div>
-                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Door jam cleaning</div>
-                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Rims and tires cleaned/wiped down</div>
-                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Console scrub down</div>
-                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Pet hair removal</div>
-                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Odor removal</div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 mt-4">
+                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Pressure Wash & Foam</div>
+                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Deep Interior Extraction</div>
+                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Leather Conditioning</div>
+                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Full Pet Hair Removal</div>
+                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Window Clarity Treatment</div>
+                    <div class="checklist-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Tire & Rim Detailing</div>
                 </div>
             </div>
 
-            <!-- Step 3: Contact & Address -->
+            <!-- 03: Details -->
             <div class="glass-panel p-8">
                 <h2 class="text-xl font-bold mb-6 flex items-center gap-3 font-orbitron text-slate-800">
                     <span class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white text-sm">03</span>
-                    Client Information
+                    Client Info
                 </h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="space-y-2">
                         <label class="text-sm font-medium text-slate-600">Full Name</label>
-                        <input type="text" name="name" required class="w-full p-3 outline-none" placeholder="First and Last Name">
+                        <input type="text" name="name" required class="w-full p-3 outline-none" placeholder="John Smith">
                     </div>
                     <div class="space-y-2">
-                        <label class="text-sm font-medium text-slate-600">Phone Number</label>
+                        <label class="text-sm font-medium text-slate-600">Phone</label>
                         <input type="tel" name="phone" required class="w-full p-3 outline-none" placeholder="(555) 000-0000">
                     </div>
                     <div class="md:col-span-2 space-y-2">
-                        <label class="text-sm font-medium text-slate-600">Service Address</label>
-                        <input type="text" id="addressInput" name="address" required class="w-full p-3 outline-none" placeholder="Full Street Address, City, State">
+                        <label class="text-sm font-medium text-slate-600">Service Address (Google Verified)</label>
+                        <input type="text" id="addressInput" name="address" required class="w-full p-3 outline-none" placeholder="Start typing your address...">
                     </div>
                 </div>
             </div>
 
-            <!-- Step 4: Scheduling -->
+            <!-- 04: Schedule -->
             <div class="glass-panel p-8">
                 <h2 class="text-xl font-bold mb-6 flex items-center gap-3 font-orbitron text-slate-800">
                     <span class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white text-sm">04</span>
-                    Choose Time
+                    Schedule Appointment
                 </h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div class="space-y-2">
                         <label class="text-sm font-medium text-slate-600">Preferred Date</label>
-                        <input type="date" id="bookingDate" name="bookingDate" required class="w-full p-3 outline-none" onchange="fetchSlots()">
+                        <input type="date" id="bookingDate" name="bookingDate" required class="w-full p-3 outline-none">
                     </div>
                     <div class="space-y-2">
-                        <label class="text-sm font-medium text-slate-600">Available Slots</label>
+                        <label class="text-sm font-medium text-slate-600">Available Times</label>
                         <div id="timeSlotsContainer" class="grid grid-cols-2 gap-2 max-h-[200px] overflow-y-auto p-2 border border-slate-200 rounded-xl bg-slate-50">
-                            <div class="col-span-2 text-center text-slate-400 py-4 italic text-sm">Select a date above to view availability</div>
+                            <div class="col-span-2 text-center text-slate-400 py-8 italic text-sm">Choose a date to see available windows</div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Submit -->
-            <div class="pt-4">
-                <button type="submit" id="finalBookButton" style="display: none;" class="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-2xl text-xl font-orbitron transition-all shadow-xl shadow-blue-500/20 active:scale-[0.98]">
-                    CONFIRM APPOINTMENT
-                </button>
-                <p id="promptMsg" class="text-center text-slate-400 text-sm mt-4 font-medium italic">Select vehicle size and time to confirm</p>
+            <!-- Sticky Submit Footer -->
+            <div class="sticky-footer">
+                <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div id="summaryText" class="text-slate-600 text-sm md:text-base font-medium">
+                        Please select your vehicle and time to proceed.
+                    </div>
+                    <button type="submit" id="finalBookButton" style="display: none;" class="w-full md:w-auto px-12 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl text-lg font-orbitron transition-all shadow-xl shadow-blue-500/20 active:scale-[0.95]">
+                        CONFIRM & BOOK
+                    </button>
+                </div>
             </div>
         </form>
     </div>
 
     <script>
+        const elements = {
+            vehicleInput: document.getElementById('selectedVehicle'),
+            priceInput: document.getElementById('selectedPrice'),
+            timeInput: document.getElementById('selectedTime'),
+            dateInput: document.getElementById('bookingDate'),
+            slotsContainer: document.getElementById('timeSlotsContainer'),
+            finalBtn: document.getElementById('finalBookButton'),
+            summary: document.getElementById('summaryText'),
+            address: document.getElementById('addressInput'),
+            form: document.getElementById('bookingForm')
+        };
+
+        // 1. Google Maps Autocomplete
+        function initAutocomplete() {
+            if (elements.address) {
+                const autocomplete = new google.maps.places.Autocomplete(elements.address, {
+                    types: ['address'],
+                    componentRestrictions: { country: 'us' }
+                });
+            }
+        }
+        google.maps.event.addDomListener(window, 'load', initAutocomplete);
+
+        // 2. Vehicle Selection
         function selectVehicle(type, price) {
-            // Update UI
             document.querySelectorAll('.option-card').forEach(card => {
                 card.classList.remove('selected');
                 if (card.innerText.includes(type)) card.classList.add('selected');
             });
 
-            // Update Hidden Fields
-            document.getElementById('selectedVehicle').value = type;
-            document.getElementById('selectedPrice').value = price;
-            
-            checkFormReady();
+            elements.vehicleInput.value = type;
+            elements.priceInput.value = price;
+            updateSummary();
+            checkReady();
         }
 
-        function fetchSlots() {
-            const date = document.getElementById('bookingDate').value;
-            const container = document.getElementById('timeSlotsContainer');
+        // 3. Scheduling Logic
+        elements.dateInput.addEventListener('change', () => {
+            const date = elements.dateInput.value;
             if (!date) return;
 
-            container.innerHTML = '<div class="col-span-2 text-center py-4"><span class="animate-pulse text-blue-600">Syncing with schedule...</span></div>';
+            elements.slotsContainer.innerHTML = '<div class="col-span-2 text-center py-8"><span class="animate-pulse text-blue-600">Verifying availability...</span></div>';
 
             fetch(`https://hook.us2.make.com/6245i5f99nd7m6f78x42f2o5v9i3m8v1?date=${date}`)
                 .then(res => res.json())
                 .then(slots => {
-                    container.innerHTML = '';
-                    if (slots.length === 0) {
-                        container.innerHTML = '<div class="col-span-2 text-center text-red-500 py-4 text-sm font-medium">No slots found for this date.</div>';
+                    elements.slotsContainer.innerHTML = '';
+                    if (!slots || slots.length === 0) {
+                        elements.slotsContainer.innerHTML = '<div class="col-span-2 text-center text-red-500 py-8 text-sm font-semibold">No availability for this date.</div>';
                         return;
                     }
 
                     slots.forEach(slot => {
-                        const div = document.createElement('div');
-                        div.className = `time-slot-item ${slot.available ? '' : 'disabled'}`;
-                        div.innerText = slot.time;
+                        const btn = document.createElement('button');
+                        btn.type = 'button';
+                        btn.className = `time-slot-item ${slot.available ? '' : 'disabled'}`;
+                        
+                        // Time Formatting
+                        const [hours, minutes] = slot.time.split(':');
+                        const h = parseInt(hours);
+                        const displayTime = `${h % 12 || 12}:${minutes} ${h >= 12 ? 'PM' : 'AM'}`;
+
                         if (slot.available) {
-                            div.onclick = () => {
+                            btn.innerHTML = `<span class="font-bold">${displayTime}</span>`;
+                            btn.onclick = () => {
                                 document.querySelectorAll('.time-slot-item').forEach(s => s.classList.remove('selected'));
-                                div.classList.add('selected');
-                                document.getElementById('selectedTime').value = slot.time;
-                                checkFormReady();
+                                btn.classList.add('selected');
+                                elements.timeInput.value = slot.time;
+                                updateSummary();
+                                checkReady();
                             };
+                        } else {
+                            btn.disabled = true;
+                            btn.innerHTML = `<span class="opacity-50">${displayTime}</span><span class="text-[10px] text-red-400 mt-1 uppercase font-bold">${slot.reason || 'Booked'}</span>`;
                         }
-                        container.appendChild(div);
+                        elements.slotsContainer.appendChild(btn);
                     });
                 })
                 .catch(() => {
-                    container.innerHTML = '<div class="col-span-2 text-center text-red-500 py-4 text-sm">Failed to load schedule.</div>';
+                    elements.slotsContainer.innerHTML = '<div class="col-span-2 text-center text-red-500 py-8">Schedule sync error.</div>';
                 });
-        }
+        });
 
-        function checkFormReady() {
-            const vehicle = document.getElementById('selectedVehicle').value;
-            const time = document.getElementById('selectedTime').value;
-            const btn = document.getElementById('finalBookButton');
-            const prompt = document.getElementById('promptMsg');
+        function updateSummary() {
+            const v = elements.vehicleInput.value;
+            const p = elements.priceInput.value;
+            const t = elements.timeInput.value;
             
-            if (vehicle && time) {
-                btn.style.display = 'block';
-                prompt.style.display = 'none';
+            if (v && t) {
+                elements.summary.innerHTML = `<span class="text-blue-600 font-bold">${v}</span> Detail @ <span class="text-blue-600 font-bold">${t}</span> — <span class="text-slate-900 font-orbitron font-bold">$${p}</span>`;
+            } else if (v) {
+                elements.summary.innerHTML = `<span class="text-blue-600 font-bold">${v}</span> selected. Now pick a time.`;
             }
         }
 
-        // Set min date to today
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('bookingDate').setAttribute('min', today);
+        function checkReady() {
+            if (elements.vehicleInput.value && elements.timeInput.value) {
+                elements.finalBtn.style.display = 'block';
+            }
+        }
 
-        // Form submission loading state
-        document.getElementById('bookingForm').onsubmit = function(e) {
-            const btn = document.getElementById('finalBookButton');
-            btn.innerHTML = '<span class="flex items-center justify-center gap-2"><svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> FINALIZING APPOINTMENT...</span>';
-            btn.disabled = true;
+        // Set min date
+        elements.dateInput.min = new Date().toISOString().split('T')[0];
+
+        // Form Submit state
+        elements.form.onsubmit = function() {
+            elements.finalBtn.innerHTML = '<span class="flex items-center gap-2"><svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> BOOKING...</span>';
+            elements.finalBtn.disabled = true;
         };
     </script>
 </body>
