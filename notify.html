@@ -83,8 +83,13 @@
             <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
                 <label class="font-medium text-slate-700 block mb-3 text-lg">Select Message Type <span class="text-red-500">*</span></label>
                 <div class="space-y-3">
+                    <!-- Added AI Instant Quote Option -->
                     <label class="flex items-center gap-3 cursor-pointer">
-                        <input type="radio" name="message_type" value="interior" class="w-5 h-5 text-blue-600" required>
+                        <input type="radio" name="message_type" value="ai_quote" class="w-5 h-5 text-blue-600" required>
+                        <span class="text-slate-700 font-medium">AI Instant Quote Link ✨</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <input type="radio" name="message_type" value="interior" class="w-5 h-5 text-blue-600">
                         <span class="text-slate-700 font-medium">Interior Detail Link</span>
                     </label>
                     <label class="flex items-center gap-3 cursor-pointer">
@@ -199,7 +204,6 @@
             const confVehicleTypeInput = document.getElementById('conf_vehicle_type');
 
             // --- DEEP OBFUSCATED SECURITY ---
-            // The password "okc2manila!" is scrambled using character mapping and reversal.
             const _0x4d2a = ["!", "a", "l", "i", "n", "a", "m", "2", "c", "k", "o"];
             const _0x1b7e = (arr) => arr.reverse().join("");
             const _0x9f22 = _0x1b7e(_0x4d2a);
@@ -291,6 +295,7 @@
                 const vehicleRaw = vehicleInfoInput.value.trim();
                 const vehicleText = vehicleRaw ? ` ${vehicleRaw}` : ' vehicle';
                 const vehiclePhotoText = vehicleRaw ? `the ${vehicleRaw}` : 'your vehicle';
+                const vehicleMakeModel = vehicleRaw || '[VEHICLE MAKE AND MODEL]';
                 
                 let selectedType = null;
                 for (const radio of typeRadios) {
@@ -298,6 +303,11 @@
                 }
 
                 if (!selectedType) return "Please select a message type.";
+
+                // AI Instant Quote Text Script
+                if (selectedType === 'ai_quote') {
+                    return `Hi ${name}! It's Michie Auto Detail. Here's a link to get your AI Instant detail quote for your ${vehicleMakeModel}. https://quote.michieauto.com/ Once you're done we can go over the results. Questions? Call (405) 295-5189`;
+                }
 
                 if (selectedType === 'interior') {
                     return `Hey ${name} it's Andrew with Michie Auto Detailing! here's a link to book your interior only detail appointment for your${vehicleText} https://michieauto.com/interior`;
