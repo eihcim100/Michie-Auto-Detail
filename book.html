@@ -966,15 +966,15 @@
                         }
                     }
 
-                    // Generate a random whole percentage between 33 and 43 for Contractor Pay
-                    contractor_pay: `$${((parseFloat(packagePrice) - 60) * 0.50).toFixed(2)} + TIPS`,
+                    // Calculate contractor pay: 50% of the gross revenue after $60 operational expense deduction
+                    const contractorPayAmount = (parseFloat(packagePrice) - 60) * 0.50;
 
                     const payload = {
                         full_name: fullName, email, phone: formattedPhone, address, zip_code: zipCode, vehicle_year: vehicleYear,
                         vehicle_make: vehicleMake, vehicle_model: vehicleModel, date: bookingDate, time: selectedTime,
                         package_type: packageType, package_price: packagePrice,
                         job_notes: additionalInfo,
-                        contractor_pay: `$${(parseFloat(packagePrice) * randomPayoutRate).toFixed(2)} + TIPS`, // Added here
+                        contractor_pay: `$${contractorPayAmount.toFixed(2)} + TIPS`, // Updated calculation here
                         deal_name: `${packageType || 'Unknown Package'} ${vehicleMake || ''} ${vehicleModel || ''}`,
                         offer_code: "OnlineBooking", create_account: createAccount, password: password 
                     };
