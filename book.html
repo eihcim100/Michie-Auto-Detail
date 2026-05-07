@@ -967,7 +967,7 @@
                     }
 
                     // Generate a random whole percentage between 33 and 43 for Contractor Pay
-                    const randomPayoutRate = (Math.floor(Math.random() * 11) + 33) / 100;
+                    contractor_pay: `$${((parseFloat(packagePrice) - 60) * 0.50).toFixed(2)} + TIPS`,
 
                     const payload = {
                         full_name: fullName, email, phone: formattedPhone, address, zip_code: zipCode, vehicle_year: vehicleYear,
