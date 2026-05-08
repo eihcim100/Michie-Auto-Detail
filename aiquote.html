@@ -146,9 +146,25 @@
             line-height: 1.4;
             box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
+
+        /* The Urgent Timer Pulse */
+        @keyframes pulse-red {
+            0% { background-color: #ef4444; }
+            50% { background-color: #dc2626; }
+            100% { background-color: #ef4444; }
+        }
+        .urgent-pulse {
+            animation: pulse-red 2s infinite;
+        }
     </style>
 </head>
 <body class="bg-slate-50">
+
+    <!-- Urgent Timer Banner -->
+    <div id="urgent-timer-banner" class="sticky top-0 z-[2000] urgent-pulse text-white text-center py-3 px-4 shadow-lg transition-colors duration-500">
+        <span class="font-bold text-sm sm:text-base">⚠️ AI Quote Expires in: </span>
+        <span id="timer-countdown" class="font-black text-xl tracking-wider ml-1">08:00</span>
+    </div>
 
     <div class="spring-header pt-12 pb-12 px-4 mb-[-30px]">
         <div class="container mx-auto max-w-4xl text-center">
@@ -407,9 +423,32 @@
                 elements.bookingDateInput.value = todayStr;
                 renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, todayStr, elements.finalBookAppointmentBtn);
 
+                // Ignite the pressure timer
+                startUrgentTimer();
+
             } else {
                 // Failsafe if accessed without URL parameters
                 document.getElementById('dynamic-header').innerHTML = `Error: Missing AI parameters.`;
+            }
+
+            function startUrgentTimer() {
+                let timeLeft = 8 * 60; // 8 minutes in seconds
+                const timerDisplay = document.getElementById('timer-countdown');
+                const banner = document.getElementById('urgent-timer-banner');
+
+                const interval = setInterval(() => {
+                    const mins = Math.floor(timeLeft / 60);
+                    const secs = timeLeft % 60;
+                    timerDisplay.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(interval);
+                        banner.classList.remove('urgent-pulse');
+                        banner.style.backgroundColor = '#334155'; // Cold slate grey
+                        banner.innerHTML = '<span class="font-bold text-sm sm:text-base">⚠️ AI Quote Expired - Priority Slot Released ⚠️</span>';
+                    }
+                    timeLeft--;
+                }, 1000);
             }
 
             async function sendSmsNotification(bookingDetails, paymentLink) {
@@ -443,7 +482,7 @@
                 let snappedPrice = Math.round(numericPrice / 20) * 20;
 
                 // 4. Construct the URL dynamically! 
-                return `https://michieauto.com/pay-${snappedPrice}`;
+                return `https://pay.michieauto.com/pay-${snappedPrice}`;
             }
 
             elements.bookingDateInput.addEventListener('change', (e) => {
