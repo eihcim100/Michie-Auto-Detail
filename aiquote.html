@@ -311,7 +311,6 @@
                 bookingFlowContainer: document.getElementById('booking-flow-container'),
                 bookingFormSection: document.getElementById('booking-form-section'),
                 bookingForm: document.getElementById('booking-form'),
-                selectedPackageDisplay: document.getElementById('selected-package-display'),
                 selectedPackageTypeInput: document.getElementById('selected-package-type'),
                 selectedPackagePriceInput: document.getElementById('selected-package-price'),
                 selectedVehicleTypeInput: document.getElementById('selected-vehicle-type'),
@@ -327,7 +326,6 @@
 
             // AI PARSING AND PAGE MUTATION LOGIC
             const urlParams = new URLSearchParams(window.location.search);
-            let isPromoActive = false; // Preserving backend dependency logic
 
             if(urlParams.has('name') && urlParams.has('price') && urlParams.has('pkg')) {
                 const uName = urlParams.get('name');
@@ -338,7 +336,7 @@
                 const uPkgRaw = urlParams.get('pkg'); 
                 const uPrice = urlParams.get('price');
                 const uVType = urlParams.get('vtype') || 'Car';
-                const uSummary = urlParams.get('summary'); // Retrieve the AI Text
+                const uSummary = urlParams.get('summary'); 
 
                 // Map the AI Package string to the Backend Required String
                 let backendPkg = "Interior Level 2"; // Fallback default
@@ -361,6 +359,7 @@
                 // Inject the iMessage AI Bubble
                 if (uSummary) {
                     document.getElementById('imessage-box').style.display = 'flex';
+                    // We render the AI summary text sent to their phone
                     document.getElementById('imessage-text').innerHTML = `<strong>Quote: $${uPrice} for ${uPkgRaw}.</strong><br><br>${uSummary}`;
                 }
                 
@@ -391,9 +390,8 @@
 
                 // Configure hidden inputs for backend functionality
                 elements.selectedPackageTypeInput.value = backendPkg;
-                elements.selectedPackagePriceInput.value = uPrice;
+                elements.selectedPackagePriceInput.value = uPrice; // We store the actual price here
                 elements.selectedVehicleTypeInput.value = uVType;
-                elements.selectedPackageDisplay.textContent = backendPkg;
 
                 // Open Form Sequence
                 elements.bookingFlowContainer.style.display = 'block';
@@ -429,38 +427,23 @@
                 }
             }
 
-            function getPaymentLink(packageType, vehicleType, priceStr, isPromo) {
-                // Uses identical backend logic based on the preserved variables
-                if (isPromo) {
-                    if (vehicleType === 'Car') {
-                        if (packageType === "Interior Level 1") return "https://pay.michieauto.com/vipsinterior26";
-                        if (packageType === "Interior Level 2") return "https://pay.michieauto.com/vipsinteriorlvl2s";
-                        if (packageType === "Interior Level 3") return "https://pay.michieauto.com/vipsinteriorlvl3s";
-                    } else if (vehicleType === 'Truck') {
-                        if (packageType === "Interior Level 1") return "https://pay.michieauto.com/vipsinteriorlvl1truck";
-                        if (packageType === "Interior Level 2") return "https://pay.michieauto.com/vipsinteriorlvl2truck";
-                        if (packageType === "Interior Level 3") return "https://pay.michieauto.com/vipsinteriorlvl3truck";
-                    } else { 
-                        if (packageType === "Interior Level 1") return "https://pay.michieauto.com/vipsinteriorlvl1suv";
-                        if (packageType === "Interior Level 2") return "https://pay.michieauto.com/vipsinteriorlvl2suv";
-                        if (packageType === "Interior Level 3") return "https://pay.michieauto.com/vipsinteriorlvl3suv";
-                    }
-                } else {
-                    if (vehicleType === 'Car') {
-                        if (packageType === "Interior Level 1") return "https://pay.michieauto.com/springinteriorlvl1s";
-                        if (packageType === "Interior Level 2") return "https://pay.michieauto.com/springinteriorlvl2s";
-                        if (packageType === "Interior Level 3") return "https://pay.michieauto.com/springinteriorlvl3s";
-                    } else if (vehicleType === 'Truck') {
-                        if (packageType === "Interior Level 1") return "https://pay.michieauto.com/springinteriorlvl1truck";
-                        if (packageType === "Interior Level 2") return "https://pay.michieauto.com/springinteriorlvl2truck";
-                        if (packageType === "Interior Level 3") return "https://pay.michieauto.com/springinteriorlvl3truck";
-                    } else { 
-                        if (packageType === "Interior Level 1") return "https://pay.michieauto.com/springinteriorlvl1suv";
-                        if (packageType === "Interior Level 2") return "https://pay.michieauto.com/springinteriorlvl2suv";
-                        if (packageType === "Interior Level 3") return "https://pay.michieauto.com/springinteriorlvl3suv";
-                    }
-                }
-                return "https://pay.michieauto.com/deposit";
+            // --- THE NEW DEMONIC PAYMENT ROUTING LOGIC ---
+            function getPaymentLink(priceStr) {
+                // 1. Strip out the dollar sign or any accidental letters
+                let numericPrice = parseFloat(priceStr.replace(/[^0-9.]/g, ''));
+                
+                // Fallback just in case something breaks
+                if (isNaN(numericPrice)) numericPrice = 200;
+
+                // 2. Enforce the constraints: Minimum $100, Maximum $600
+                if (numericPrice < 100) numericPrice = 100;
+                if (numericPrice > 600) numericPrice = 600;
+
+                // 3. Snap to the nearest $20 increment (e.g. 245 becomes 240, 255 becomes 260)
+                let snappedPrice = Math.round(numericPrice / 20) * 20;
+
+                // 4. Construct the URL dynamically! 
+                return `https://michieauto.com/pay-${snappedPrice}`;
             }
 
             elements.bookingDateInput.addEventListener('change', (e) => {
@@ -505,7 +488,9 @@
                     });
 
                     if (response.ok) {
-                        const paymentLink = getPaymentLink(payload.package_type, payload.vehicle_type, payload.package_price, isPromoActive);
+                        // Generate the link based SOLELY on the snapped price
+                        const paymentLink = getPaymentLink(payload.package_price);
+                        
                         sendSmsNotification(payload, paymentLink);
 
                         elements.bookingFormSection.style.display = 'none';
