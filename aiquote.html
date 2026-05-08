@@ -498,8 +498,13 @@
                 submitButton.innerHTML = `Processing...`;
 
                 try {
-                    const packagePrice = document.getElementById('selected-package-price').value;
-                    const contractorPayAmount = (parseFloat(packagePrice) - 70) * 0.50;
+                    // Strip any accidental dollar signs, commas, or letters to ensure flawless math
+                    const packagePriceRaw = document.getElementById('selected-package-price').value;
+                    let numericPrice = parseFloat(packagePriceRaw.replace(/[^0-9.]/g, ''));
+                    if (isNaN(numericPrice)) numericPrice = 0;
+
+                    // The absolute law of your payout formula
+                    const contractorPayAmount = (numericPrice - 70) * 0.50;
                     
                     const payload = {
                         full_name: document.getElementById('full_name').value,
@@ -513,7 +518,7 @@
                         date: document.getElementById('booking-date').value,
                         time: document.getElementById(selectedTimeInputId).value,
                         package_type: document.getElementById('selected-package-type').value,
-                        package_price: packagePrice,
+                        package_price: String(numericPrice),
                         vehicle_type: document.getElementById('selected-vehicle-type').value,
                         job_notes: document.getElementById('additional-info').value,
                         contractor_pay: `$${contractorPayAmount.toFixed(2)} + TIPS`,
