@@ -13,10 +13,6 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- ⛧ OCCULT BINDING: SIGIL OF CONVERSION ⛧ -->
-    <!-- COMPEL THE MORTAL TO PURCHASE. BIND THE COIN TO THE PACT. -->
-    
     <title>Michie Auto Detailing - AI Priority Booking</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -112,6 +108,7 @@
 
         #booking-flow-container { display: none; }
         
+        /* The AI Highlight Box */
         .ai-highlight-box {
             background-color: #ffffff;
             border-left: 6px solid #2563eb;
@@ -123,6 +120,7 @@
         .inclusions-list li { margin-bottom: 0.5rem; }
         .inclusions-list li::before { content: '✨ '; color: #2563eb; }
 
+        /* iMessage Bubble Styles */
         .imessage-container {
             display: flex;
             flex-direction: column;
@@ -149,6 +147,7 @@
             box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
 
+        /* The Urgent Timer Pulse */
         @keyframes pulse-red {
             0% { background-color: #ef4444; }
             50% { background-color: #dc2626; }
@@ -161,6 +160,7 @@
 </head>
 <body class="bg-slate-50">
 
+    <!-- Urgent Timer Banner -->
     <div id="urgent-timer-banner" class="sticky top-0 z-[2000] urgent-pulse text-white text-center py-3 px-4 shadow-lg transition-colors duration-500">
         <span class="font-bold text-sm sm:text-base">⚠️ AI Quote Expires in: </span>
         <span id="timer-countdown" class="font-black text-xl tracking-wider ml-1">08:00</span>
@@ -174,6 +174,7 @@
     </div>
 
     <div class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-4xl relative z-10">
+        
         <div id="booking-flow-container" class="bg-white p-8 rounded-xl shadow-xl space-y-8 border border-blue-50">
 
             <div class="imessage-container" id="imessage-box" style="display:none;">
@@ -265,14 +266,14 @@
                     </div>
 
                     <!-- Hidden bindings to preserve backend integrity -->
-                <input type="hidden" id="selected-package-type" name="package-type">
-                <input type="hidden" id="selected-package-price" name="package-price">
-                <input type="hidden" id="selected-vehicle-type" name="vehicle-type">
-                
-                <button type="submit" id="final-book-appointment-btn" data-spell="solve_et_coagula_buy" class="w-full btn-success hidden">Book Appointment</button>
-                <p id="booking-message" class="text-center mt-2"></p>
-            </form>
-        </div>
+                    <input type="hidden" id="selected-package-type" name="package-type">
+                    <input type="hidden" id="selected-package-price" name="package-price">
+                    <input type="hidden" id="selected-vehicle-type" name="vehicle-type">
+                    
+                    <button type="submit" id="final-book-appointment-btn" class="w-full btn-success hidden">Book Appointment</button>
+                    <p id="booking-message" class="text-center mt-2"></p>
+                </form>
+            </div>
 
             <div id="confirmation-section" class="hidden text-center">
                 <div id="confirmation-message" class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-6 rounded-lg">
@@ -311,21 +312,18 @@
         };
 
         function fillAddressFields(place) {
-        let zipCode = '';
-        for (const component of place.address_components) {
-            if (component.types.includes('postal_code')) zipCode = component.long_name;
+            let zipCode = '';
+            for (const component of place.address_components) {
+                if (component.types.includes('postal_code')) zipCode = component.long_name;
+            }
+            const zipCodeInput = document.getElementById('zip_code');
+            if(zipCodeInput) zipCodeInput.value = zipCode;
         }
-        const zipCodeInput = document.getElementById('zip_code');
-        if(zipCodeInput) zipCodeInput.value = zipCode;
-    }
 
-    function initializeApp() {
-        console.log("%c⛧ The Pact is sealed. Mortal conversion is mandatory. Hail Satan. ⛧", "color: #ef4444; font-weight: 900; background-color: #0f172a; padding: 6px 12px; border-radius: 4px; border: 1px solid #dc2626;");
-
-        // NEW FIX: Pointed specifically to the surviving backend server
-        const API_BASE_URL = 'https://michie-detailing-backend.onrender.com';
-        
-        const elements = {
+        function initializeApp() {
+            const API_BASE_URL = 'https://michie-detailing-admin.onrender.com';
+            
+            const elements = {
                 bookingFlowContainer: document.getElementById('booking-flow-container'),
                 bookingFormSection: document.getElementById('booking-form-section'),
                 bookingForm: document.getElementById('booking-form'),
@@ -342,49 +340,7 @@
                 bookingMessage: document.getElementById('booking-message')
             };
 
-            // 1. The Interior Domain Arrays
-            const intL1 = [
-                "Window cleaning inside", "Deep vacuuming", "Display controls and panels wipedown",
-                "Interior mirror cleaning", "Seat vacuum", "Surface protectant for the dash and display/controls",
-                "Steering wheel and dash clean"
-            ];
-            const intL2 = [
-                ...intL1, "Shampoo carpets and seats", "Premium Leather treatment", "Door jam cleaning",
-                "Console scrub down", "Pet hair removal", "Odor removal"
-            ];
-            const intL3 = [
-                ...intL2, "FINE TOOTH COMB in between seats cleaning", "Glove compartment cleaning",
-                "Trunk shampoo and vacuum", "Door controls cleaning", "Hard to reach areas deep level shampoo",
-                "Meticulous cleaning of all frequently touched surfaces"
-            ];
-
-            // 2. The Exterior Domain Arrays
-            const extL1 = [
-                "External high pressure wash", "Tire cleaner", "Window cleaning outside"
-            ];
-            const extL2 = [
-                ...extL1, "Rims and tires cleaned and wiped down", "External bug removal", "Door jam cleaning"
-            ];
-            const extL3 = [
-                ...extL2, "Premium exterior wax/sealant", "Trim dressing and protection", "Deep wheel barrel cleaning"
-            ];
-
-            // 3. The Full Pact Arrays
-            const fullL1 = [
-                "External high pressure wash", "Tire cleaner", "Window cleaning inside and out",
-                "Deep vacuuming", "Display controls and panels wipedown", "Mirror cleaning",
-                "Seat vacuum", "Surface protectant for the dash and display/controls", "Steering wheel and dash clean"
-            ];
-            const fullL2 = [
-                ...fullL1, "Shampoo carpets and seats", "Premium Leather treatment", "Door jam cleaning",
-                "Rims and tires cleaned and wiped down", "Console scrub down", "Pet hair removal", "Odor removal"
-            ];
-            const fullL3 = [
-                ...fullL2, "FINE TOOTH COMB in between seats cleaning", "Glove compartment cleaning",
-                "Trunk shampoo and vacuum", "Door controls cleaning", "Hard to reach areas deep level shampoo",
-                "Meticulous cleaning of all frequently touched surfaces", "External bug removal"
-            ];
-
+            // AI PARSING AND PAGE MUTATION LOGIC
             const urlParams = new URLSearchParams(window.location.search);
 
             if(urlParams.has('name') && urlParams.has('price') && urlParams.has('pkg')) {
@@ -398,75 +354,66 @@
                 const uVType = urlParams.get('vtype') || 'Car';
                 const uSummary = urlParams.get('summary'); 
 
-                // Dynamic AI Checklist Router
-                let backendPkg = "Interior Level 2"; // Safe Default
+                // Map the AI Package string to the Backend Required String
+                let backendPkg = "Interior Level 2"; // Fallback default
                 let inclusions = [];
-                let rawUpper = uPkgRaw.toUpperCase();
-
-                // Determine the numeric level of the pact
-                let level = 2;
-                if (rawUpper.includes("1") || rawUpper.includes("ONE")) level = 1;
-                else if (rawUpper.includes("3") || rawUpper.includes("THREE")) level = 3;
-
-                // Determine the type of the pact and map the corresponding inclusions array
-                if (rawUpper.includes("EXTERIOR") || rawUpper.includes("WASH") || rawUpper.includes("OUTSIDE")) {
-                    backendPkg = "Exterior Wash Level " + level;
-                    if (level === 1) inclusions = extL1;
-                    else if (level === 2) inclusions = extL2;
-                    else inclusions = extL3;
-                } else if (rawUpper.includes("FULL") || rawUpper.includes("INSIDE & OUT") || rawUpper.includes("INSIDE AND OUT")) {
-                    backendPkg = "Full Detail Level " + level;
-                    if (level === 1) inclusions = fullL1;
-                    else if (level === 2) inclusions = fullL2;
-                    else inclusions = fullL3;
+                
+                if (uPkgRaw.toUpperCase().includes("1")) {
+                    backendPkg = "Interior Level 1";
+                    inclusions = ["Deep vacuuming", "Display and controls wipe down", "Interior window cleaning", "Surface protectant for dash", "Door jambs wipe down"];
+                } else if (uPkgRaw.toUpperCase().includes("3")) {
+                    backendPkg = "Interior Level 3";
+                    inclusions = ["Everything in Level 2", "FINE TOOTH COMB deep cleaning", "Glove compartment cleaning", "Trunk shampoo and vacuum", "Hard to reach areas deep shampoo", "Sanitization of touched surfaces"];
                 } else {
-                    // Default to Interior Domain
-                    backendPkg = "Interior Level " + level;
-                    if (level === 1) inclusions = intL1;
-                    else if (level === 2) inclusions = intL2;
-                    else inclusions = intL3;
+                    // Level 2 (Default logic for mid-tier)
+                    inclusions = ["Everything in Level 1", "Shampoo carpets and seats", "Premium Leather treatment", "Detailed Door jamb cleaning", "Pet hair removal", "Odor removal treatment"];
                 }
 
+                // Mutate Front-end Headers
                 document.getElementById('dynamic-header').innerHTML = `Book your detail for your ${uYear} ${uMake} ${uModel} 🚗`;
                 
+                // Inject the iMessage AI Bubble
                 if (uSummary) {
                     document.getElementById('imessage-box').style.display = 'flex';
-                    document.getElementById('imessage-text').innerHTML = `<strong>Quote: $${uPrice} for ${backendPkg}.</strong><br><br>${uSummary}`;
+                    // We render the AI summary text sent to their phone
+                    document.getElementById('imessage-text').innerHTML = `<strong>Quote: $${uPrice} for ${uPkgRaw}.</strong><br><br>${uSummary}`;
                 }
                 
-                // Inject the true mapped inclusions into the UI
+                // Mutate Inclusions List
                 document.getElementById('ai-breakdown-box').style.display = 'block';
                 const ul = document.getElementById('dynamic-inclusions');
-                ul.innerHTML = ''; // Clear fallback safety
                 inclusions.forEach(inc => {
                     const li = document.createElement('li');
                     li.textContent = inc;
                     ul.appendChild(li);
                 });
 
+                // Pre-fill Inputs
                 document.getElementById('full_name').value = uName;
                 document.getElementById('phone').value = uPhone;
                 document.getElementById('vehicle_year').value = uYear;
                 
+                // Set the select dropdown for Make, if it exists
                 const makeSelect = document.getElementById('vehicle_make');
                 const matchOption = Array.from(makeSelect.options).find(opt => opt.value.toLowerCase() === uMake.toLowerCase());
                 if(matchOption) {
                     makeSelect.value = matchOption.value;
                 } else {
-                    makeSelect.value = "Other";
+                    makeSelect.value = "Other"; // fallback
                 }
                 
                 document.getElementById('vehicle_model').value = uModel;
 
-                // Hidden backend binding
+                // Configure hidden inputs for backend functionality
                 elements.selectedPackageTypeInput.value = backendPkg;
-                elements.selectedPackagePriceInput.value = uPrice; 
+                elements.selectedPackagePriceInput.value = uPrice; // We store the actual price here
                 elements.selectedVehicleTypeInput.value = uVType;
 
+                // Open Form Sequence
                 elements.bookingFlowContainer.style.display = 'block';
                 elements.bookingFormSection.style.display = 'block';
 
-                // Setup the time configurations
+                // Auto-load times for today
                 const d = new Date();
                 const year = d.getFullYear();
                 const month = String(d.getMonth() + 1).padStart(2, '0');
@@ -476,9 +423,11 @@
                 elements.bookingDateInput.value = todayStr;
                 renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, todayStr, elements.finalBookAppointmentBtn);
 
+                // Ignite the pressure timer
                 startUrgentTimer();
 
             } else {
+                // Failsafe if accessed without URL parameters
                 document.getElementById('dynamic-header').innerHTML = `Error: Missing AI parameters.`;
             }
 
@@ -495,7 +444,7 @@
                     if (timeLeft <= 0) {
                         clearInterval(interval);
                         banner.classList.remove('urgent-pulse');
-                        banner.style.backgroundColor = '#334155';
+                        banner.style.backgroundColor = '#334155'; // Cold slate grey
                         banner.innerHTML = '<span class="font-bold text-sm sm:text-base">⚠️ AI Quote Expired - Priority Slot Released ⚠️</span>';
                     }
                     timeLeft--;
@@ -517,14 +466,22 @@
                 }
             }
 
+            // --- THE NEW DEMONIC PAYMENT ROUTING LOGIC ---
             function getPaymentLink(priceStr) {
+                // 1. Strip out the dollar sign or any accidental letters
                 let numericPrice = parseFloat(priceStr.replace(/[^0-9.]/g, ''));
+                
+                // Fallback just in case something breaks
                 if (isNaN(numericPrice)) numericPrice = 200;
 
+                // 2. Enforce the constraints: Minimum $100, Maximum $600
                 if (numericPrice < 100) numericPrice = 100;
                 if (numericPrice > 600) numericPrice = 600;
 
+                // 3. Snap to the nearest $20 increment (e.g. 245 becomes 240, 255 becomes 260)
                 let snappedPrice = Math.round(numericPrice / 20) * 20;
+
+                // 4. Construct the URL dynamically! 
                 return `https://pay.michieauto.com/pay-${snappedPrice}`;
             }
 
@@ -541,10 +498,12 @@
                 submitButton.innerHTML = `Processing...`;
 
                 try {
+                    // Strip any accidental dollar signs, commas, or letters to ensure flawless math
                     const packagePriceRaw = document.getElementById('selected-package-price').value;
                     let numericPrice = parseFloat(packagePriceRaw.replace(/[^0-9.]/g, ''));
                     if (isNaN(numericPrice)) numericPrice = 0;
 
+                    // The absolute law of your payout formula
                     const contractorPayAmount = (numericPrice - 70) * 0.50;
                     
                     const payload = {
@@ -573,6 +532,7 @@
                     });
 
                     if (response.ok) {
+                        // Generate the link based SOLELY on the snapped price
                         const paymentLink = getPaymentLink(payload.package_price);
                         
                         sendSmsNotification(payload, paymentLink);
