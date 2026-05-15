@@ -465,15 +465,25 @@
                 elements.bookingFlowContainer.style.display = 'block';
                 elements.bookingFormSection.style.display = 'block';
 
-                // Setup the time configurations
-                const d = new Date();
-                const year = d.getFullYear();
-                const month = String(d.getMonth() + 1).padStart(2, '0');
-                const day = String(d.getDate()).padStart(2, '0');
-                const todayStr = `${year}-${month}-${day}`;
+                // --- TIMEZONE FIX ---
+                // Calculate today's date strictly in CST (America/Chicago) to match the Python backend.
+                // This prevents the "value must be greater" error when user local time and server time cross midnight.
+                const formatter = new Intl.DateTimeFormat('en-US', {
+                    timeZone: 'America/Chicago',
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit'
+                });
+                const parts = formatter.formatToParts(new Date());
+                const cstYear = parts.find(p => p.type === 'year').value;
+                const cstMonth = parts.find(p => p.type === 'month').value;
+                const cstDay = parts.find(p => p.type === 'day').value;
+                const todayCST = `${cstYear}-${cstMonth}-${cstDay}`;
                 
-                elements.bookingDateInput.value = todayStr;
-                renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, todayStr, elements.finalBookAppointmentBtn);
+                // Enforce minimum date using the computed CST date
+                elements.bookingDateInput.min = todayCST; 
+                elements.bookingDateInput.value = todayCST;
+                renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, todayCST, elements.finalBookAppointmentBtn);
 
                 startUrgentTimer();
 
