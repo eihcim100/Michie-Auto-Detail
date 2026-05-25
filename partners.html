@@ -381,19 +381,19 @@
             const smsMessage = `🚨 NEW LEAD (Michie AI) 🚨\n\nName: ${formData.name}\nPhone: ${formData.phone}\nCompany: ${formData.company}\nDetails: ${formData.fit}`;
 
             try {
-             // 1. Send SMS to the owner
+                // 1. Send SMS to the owner
                 await fetch('https://client-notifications.onrender.com/send-sms', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
-                        password: "okc2manila!", // <-- ADD THIS LINE
-                        to: "+14052955189",
+                        password: "okc2manila!",
+                        to: "+14052955189", // The owner's cell number to receive the lead text
                         message_body: smsMessage 
                     })
                 });
 
                 // 2. Trigger the Retell AI Outbound Call
-                // IMPORTANT: Replace "YOUR-RETELL-BACKEND.onrender.com" with the actual domain of your Python backend!!
+                // Updated to point directly to the dedicated Retell Server
                 await fetch('https://retell-ai-sms.onrender.com/trigger-outbound-call', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
