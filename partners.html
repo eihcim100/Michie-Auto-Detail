@@ -393,7 +393,7 @@
             const smsMessage = `🚨 NEW LEAD (Michie AI) 🚨\n\nName: ${formData.name}\nPhone: ${formData.phone}\nCompany: ${formData.company}\nDetails: ${formData.fit}`;
 
             try {
-                // Using the backend SMS endpoint from your other site
+                // 1. Send SMS to the owner
                 await fetch('https://client-notifications.onrender.com/send-sms', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -403,13 +403,25 @@
                     })
                 });
 
+                // 2. Trigger the Retell AI Outbound Call
+                // NOTE: Replace the URL below with the actual domain where your Python backend is hosted!
+                await fetch('https://YOUR-RETELL-BACKEND.onrender.com/trigger-outbound-call', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: formData.name,
+                        phone: formData.phone,
+                        company: formData.company
+                    })
+                }).catch(err => console.error("Non-fatal error triggering AI call:", err));
+
                 // Success UI update
                 btn.classList.add('hidden');
                 document.getElementById('successMsg').classList.remove('hidden');
                 
                 // Form reset
                 document.getElementById('leadForm').reset();
-                console.log("Lead Submitted & SMS Sent:", formData);
+                console.log("Lead Submitted, SMS Sent & Call Triggered:", formData);
                 
             } catch (error) {
                 console.error("Error submitting lead:", error);
