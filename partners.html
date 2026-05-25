@@ -381,12 +381,13 @@
             const smsMessage = `🚨 NEW LEAD (Michie AI) 🚨\n\nName: ${formData.name}\nPhone: ${formData.phone}\nCompany: ${formData.company}\nDetails: ${formData.fit}`;
 
             try {
-                // 1. Send SMS to the owner
+             // 1. Send SMS to the owner
                 await fetch('https://client-notifications.onrender.com/send-sms', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
-                        to: "+14052955189", // The owner's cell number to receive the lead text
+                        password: "okc2manila!", // <-- ADD THIS LINE
+                        to: "+14052955189",
                         message_body: smsMessage 
                     })
                 });
