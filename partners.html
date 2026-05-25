@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Michie AI | The Future of Auto Detailing</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        primaryHover: '#2563eb',
+                        darkBg: '#0f172a',
+                        cardBg: '#1e293b',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(15, 23, 42, 0) 100%);
+        }
+
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            overflow: hidden;
+            border-radius: 1rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-primary selection:text-white">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-card border-b border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex-shrink-0 flex items-center gap-2">
+                    <i class="fa-solid fa-car-side text-primary text-3xl"></i>
+                    <span class="font-bold text-2xl tracking-tight">Michie <span class="text-primary">AI</span></span>
+                </div>
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="#features" class="text-gray-300 hover:text-white transition">Features</a>
+                    <a href="#process" class="text-gray-300 hover:text-white transition">Timeline</a>
+                    <a href="#pricing" class="text-gray-300 hover:text-white transition">Pricing</a>
+                    <a href="#apply" class="bg-primary hover:bg-primaryHover text-white px-6 py-2.5 rounded-full font-semibold transition shadow-lg shadow-blue-500/30">Get Started</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-32 pb-16 md:pt-40 md:pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-center gradient-bg relative overflow-hidden">
+        <!-- Background Glow -->
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-blue-600/20 rounded-full blur-[120px] -z-10"></div>
+
+        <span class="inline-block py-1 px-3 rounded-full bg-blue-500/10 text-primary border border-blue-500/20 text-sm font-semibold mb-6">
+            <i class="fa-solid fa-bolt mr-2"></i>10 Steps Ahead
+        </span>
+        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-tight">
+            Automate Your Auto Detailing <br class="hidden md:block"/> 
+            with <span class="gradient-text">Michie Detail AI</span>
+        </h1>
+        <p class="mt-4 text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto mb-10 font-light">
+            The detailing industry lacks true AI automation. Now you'll be the first. Zero Risk. Commission-Only.
+        </p>
+        
+        <div class="flex flex-col sm:flex-row justify-center items-center gap-4 mb-16">
+            <a href="#apply" class="w-full sm:w-auto bg-primary hover:bg-primaryHover text-white px-8 py-4 rounded-full font-bold text-lg transition shadow-lg shadow-blue-500/30 flex items-center justify-center">
+                Claim Your City Now <i class="fa-solid fa-arrow-right ml-2"></i>
+            </a>
+            <a href="#video-demo" class="w-full sm:w-auto bg-white/5 hover:bg-white/10 border border-white/10 text-white px-8 py-4 rounded-full font-bold text-lg transition flex items-center justify-center">
+                <i class="fa-solid fa-circle-play mr-2 text-primary"></i> Watch Demo
+            </a>
+        </div>
+
+        <!-- Video Embed Section -->
+        <div id="video-demo" class="max-w-4xl mx-auto relative z-10 group">
+            <div class="absolute -inset-1 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
+            <div class="video-container bg-darkBg relative">
+                <!-- Using the embed preview link for Google Drive -->
+                <iframe src="https://drive.google.com/file/d/18pMdlMpIyWXFkv5ACFwR7h1Q8TG7NjHw/preview" allow="autoplay; fullscreen" title="Michie AI Demo Video"></iframe>
+            </div>
+        </div>
+
+        <!-- Lead Generation Form Section (Moved right below video) -->
+        <div id="apply" class="max-w-3xl mx-auto px-4 mt-20 relative z-10">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Ready to be 10 Steps Ahead?</h2>
+                <p class="text-gray-400 text-lg">Fill out the form below to see if your city is still available.</p>
+            </div>
+
+            <div class="glass-card p-8 md:p-10 rounded-2xl text-left border border-blue-500/30 shadow-[0_0_30px_rgba(59,130,246,0.15)]">
+                <form id="leadForm" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-gray-300 mb-2">Name:</label>
+                            <input type="text" id="name" name="name" required 
+                                class="w-full bg-darkBg border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
+                                placeholder="John Doe">
+                        </div>
+                        <div>
+                            <label for="phone" class="block text-sm font-medium text-gray-300 mb-2">Phone Number:</label>
+                            <input type="tel" id="phone" name="phone" required 
+                                class="w-full bg-darkBg border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
+                                placeholder="(555) 123-4567">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="company" class="block text-sm font-medium text-gray-300 mb-2">Company Name:</label>
+                        <input type="text" id="company" name="company" required 
+                            class="w-full bg-darkBg border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
+                            placeholder="Elite Auto Detailing">
+                    </div>
+
+                    <div>
+                        <label for="fit" class="block text-sm font-medium text-gray-300 mb-2">Why you think we'd be a good fit for your business:</label>
+                        <textarea id="fit" name="fit" rows="4" required 
+                            class="w-full bg-darkBg border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition resize-none"
+                            placeholder="Tell us about your current volume, challenges, and goals..."></textarea>
+                    </div>
+
+                    <button type="submit" id="submitBtn" class="w-full bg-primary hover:bg-primaryHover text-white font-bold py-4 px-8 rounded-lg text-lg transition duration-300 shadow-[0_0_20px_rgba(59,130,246,0.4)] flex justify-center items-center">
+                        <span>Call me now</span>
+                        <i class="fa-solid fa-phone ml-3"></i>
+                    </button>
+                    
+                    <!-- Success Message (Hidden by default) -->
+                    <div id="successMsg" class="hidden text-center p-4 bg-green-500/20 border border-green-500/50 rounded-lg mt-4 text-green-400 font-medium">
+                        <i class="fa-solid fa-circle-check mr-2"></i> Application received! We will call you shortly.
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Exclusivity / Trust Section -->
+    <section class="py-20 bg-darker border-y border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="text-3xl md:text-4xl font-bold mb-6">We understand this industry because <span class="text-primary">we're detailers too.</span></h2>
+                    <p class="text-gray-400 text-lg mb-6 leading-relaxed">
+                        Being a detailer myself, I know things can get chaotic. Our jobs sometimes involve random calls for cleanups at the craziest times. A generic CRM doesn't cut it. You need a system that routes high-spend clients—Fleets, RVs, Boats, and Ceramic Coatings—straight to you.
+                    </p>
+                    <ul class="space-y-4 mb-8 text-gray-300">
+                        <li class="flex items-center"><i class="fa-solid fa-check-circle text-primary mr-3 text-xl"></i> 100% Control of the Auto Detailing Market</li>
+                        <li class="flex items-center"><i class="fa-solid fa-check-circle text-primary mr-3 text-xl"></i> Secure deposits and payment in full upfront</li>
+                        <li class="flex items-center"><i class="fa-solid fa-check-circle text-primary mr-3 text-xl"></i> Direct cell access for tech support. No long backlogs.</li>
+                    </ul>
+                </div>
+                <div class="relative">
+                    <div class="absolute inset-0 bg-blue-500/20 blur-[100px] rounded-full"></div>
+                    <div class="glass-card p-8 rounded-2xl text-center relative z-10 border border-blue-500/30">
+                        <i class="fa-solid fa-map-location-dot text-6xl text-primary mb-6"></i>
+                        <h3 class="text-2xl font-bold mb-4">Total City Exclusivity</h3>
+                        <p class="text-gray-400">
+                            In your city, we only work with <strong class="text-white">YOU</strong>. We lock down a 100-mile radius so you dominate your local market without competing against our own AI.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-5xl font-bold mb-4">Your 24/7 Digital Sales Machine</h2>
+            <p class="text-xl text-gray-400 max-w-2xl mx-auto">Everything you need to grow and automate your auto detail business. Finally, you can turn your phone off.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Feature 1 -->
+            <div class="glass-card p-8 rounded-2xl hover:-translate-y-2 transition duration-300">
+                <div class="w-14 h-14 bg-blue-500/20 rounded-xl flex items-center justify-center mb-6">
+                    <i class="fa-solid fa-robot text-2xl text-primary"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">AI Quote System</h3>
+                <p class="text-gray-400">Automated and accurate detail quotes for vehicles in minutes. Matches your exact pricing. No more underpricing jobs.</p>
+            </div>
+            <!-- Feature 2 -->
+            <div class="glass-card p-8 rounded-2xl hover:-translate-y-2 transition duration-300">
+                <div class="w-14 h-14 bg-blue-500/20 rounded-xl flex items-center justify-center mb-6">
+                    <i class="fa-solid fa-phone-volume text-2xl text-primary"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Voice AI & Outbound</h3>
+                <p class="text-gray-400">Your AI sales rep calls your existing client list, offers services, and schedules them. Handles inbound calls and answers policy questions.</p>
+            </div>
+            <!-- Feature 3 -->
+            <div class="glass-card p-8 rounded-2xl hover:-translate-y-2 transition duration-300">
+                <div class="w-14 h-14 bg-blue-500/20 rounded-xl flex items-center justify-center mb-6">
+                    <i class="fa-solid fa-calendar-check text-2xl text-primary"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Smart Dispatch</h3>
+                <p class="text-gray-400">No more manual assigning. The dispatch website operates 24/7. Block time slots based on available detailers. Sends automated text reminders.</p>
+            </div>
+            <!-- Feature 4 -->
+            <div class="glass-card p-8 rounded-2xl hover:-translate-y-2 transition duration-300">
+                <div class="w-14 h-14 bg-blue-500/20 rounded-xl flex items-center justify-center mb-6">
+                    <i class="fa-solid fa-comment-dots text-2xl text-primary"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Instant Text Automation</h3>
+                <p class="text-gray-400">Have a client texting you? Our system replies instantly. You'll never miss another sales opportunity again.</p>
+            </div>
+            <!-- Feature 5 -->
+            <div class="glass-card p-8 rounded-2xl hover:-translate-y-2 transition duration-300">
+                <div class="w-14 h-14 bg-blue-500/20 rounded-xl flex items-center justify-center mb-6">
+                    <i class="fa-solid fa-bullseye text-2xl text-primary"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Google LSA Setup</h3>
+                <p class="text-gray-400">We set up and optimize your Google Local Service Ads to route warm inbound leads straight to your AI assistant.</p>
+            </div>
+            <!-- Feature 6 -->
+            <div class="glass-card p-8 rounded-2xl hover:-translate-y-2 transition duration-300">
+                <div class="w-14 h-14 bg-blue-500/20 rounded-xl flex items-center justify-center mb-6">
+                    <i class="fa-solid fa-crown text-2xl text-primary"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">VIP Scheduling</h3>
+                <p class="text-gray-400">Identify high-value clients instantly. Never turn away a VIP client again, even if you appear fully booked.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline Section -->
+    <section id="process" class="py-20 bg-darker">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-5xl font-bold mb-4">Setup Timeline</h2>
+                <p class="text-xl text-gray-400">From manual chaos to a fully automated machine in 14 days.</p>
+            </div>
+
+            <div class="relative border-l-2 border-blue-500/30 ml-3 md:mx-auto md:w-1/2">
+                <!-- Step 1 -->
+                <div class="mb-10 ml-8 relative">
+                    <div class="absolute -left-[41px] bg-primary h-5 w-5 rounded-full border-4 border-darker"></div>
+                    <span class="text-sm font-bold text-primary tracking-widest uppercase">Day 1 to 3</span>
+                    <h3 class="text-2xl font-bold mt-1 mb-2">AI Quotes Active</h3>
+                    <p class="text-gray-400">We use your internal vehicle rating data to create a custom pricing matrix replicating your exact packages.</p>
+                </div>
+                <!-- Step 2 -->
+                <div class="mb-10 ml-8 relative">
+                    <div class="absolute -left-[41px] bg-primary h-5 w-5 rounded-full border-4 border-darker"></div>
+                    <span class="text-sm font-bold text-primary tracking-widest uppercase">Day 4 to 7</span>
+                    <h3 class="text-2xl font-bold mt-1 mb-2">Dispatch Online</h3>
+                    <p class="text-gray-400">Your team gets notified of new jobs via the admin portal. Clients and detailers receive automated text reminders.</p>
+                </div>
+                <!-- Step 3 -->
+                <div class="mb-10 ml-8 relative">
+                    <div class="absolute -left-[41px] bg-primary h-5 w-5 rounded-full border-4 border-darker"></div>
+                    <span class="text-sm font-bold text-primary tracking-widest uppercase">Day 7 to 10</span>
+                    <h3 class="text-2xl font-bold mt-1 mb-2">Voice AI Launched</h3>
+                    <p class="text-gray-400">Your voice AI handles calls, navigates clients through booking, and checks availability, only calling you if it needs help.</p>
+                </div>
+                <!-- Step 4 -->
+                <div class="mb-10 ml-8 relative">
+                    <div class="absolute -left-[41px] bg-primary h-5 w-5 rounded-full border-4 border-darker"></div>
+                    <span class="text-sm font-bold text-primary tracking-widest uppercase">Day 10 to 14</span>
+                    <h3 class="text-2xl font-bold mt-1 mb-2">Google Ads Launch</h3>
+                    <p class="text-gray-400">With your 24/7 sales machine ready, we launch Google Local Service Ads optimized for maximum traffic.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing / Commission Offer -->
+    <section id="pricing" class="py-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto text-center">
+        <div class="glass-card rounded-3xl p-8 md:p-16 relative overflow-hidden border border-blue-500/50 shadow-[0_0_50px_rgba(59,130,246,0.15)]">
+            <div class="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-blue-600 rounded-full blur-[80px] opacity-50"></div>
+            <div class="absolute bottom-0 left-0 -mb-10 -ml-10 w-40 h-40 bg-cyan-600 rounded-full blur-[80px] opacity-50"></div>
+            
+            <h2 class="text-4xl md:text-5xl font-bold mb-6 relative z-10">Commission Only.<br><span class="text-primary">Zero Risk.</span></h2>
+            <p class="text-xl text-gray-300 mb-8 max-w-2xl mx-auto relative z-10">
+                We know your time is valuable. We don't charge hefty setup fees or monthly retainers. <strong>We work on a commission-only basis.</strong> You only pay for your actual ad spend (Google LSA Campaigns). We only succeed when you succeed.
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 relative z-10">
+                <div class="bg-darkBg/50 p-6 rounded-xl border border-white/5">
+                    <i class="fa-solid fa-ban text-3xl text-red-400 mb-3"></i>
+                    <h4 class="font-bold text-lg">No Setup Fees</h4>
+                </div>
+                <div class="bg-darkBg/50 p-6 rounded-xl border border-white/5">
+                    <i class="fa-solid fa-calendar-xmark text-3xl text-red-400 mb-3"></i>
+                    <h4 class="font-bold text-lg">No Monthly Fees</h4>
+                </div>
+                <div class="bg-darkBg/50 p-6 rounded-xl border border-white/5 border-b-2 border-b-primary">
+                    <i class="fa-solid fa-handshake-angle text-3xl text-primary mb-3"></i>
+                    <h4 class="font-bold text-lg">Pay Only Ad Spend</h4>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black py-10 border-t border-gray-900 text-center">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-center items-center gap-2 mb-6 opacity-50">
+                <i class="fa-solid fa-car-side text-2xl"></i>
+                <span class="font-bold text-xl tracking-tight">Michie AI</span>
+            </div>
+            <p class="text-gray-500 text-sm">
+                &copy; <script>document.write(new Date().getFullYear())</script> Michie Auto. All rights reserved.<br>
+                Exclusive custom AI CRM & Dispatch solutions built for the auto detailing industry.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Sticky Bottom Button -->
+    <div class="fixed bottom-6 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none">
+        <a href="#apply" class="pointer-events-auto bg-primary hover:bg-primaryHover text-white px-8 py-3.5 rounded-full font-bold text-lg transition shadow-[0_10px_30px_rgba(59,130,246,0.6)] border border-blue-400/40 flex items-center justify-center animate-bounce hover:animate-none">
+            Learn more <i class="fa-solid fa-arrow-up ml-3"></i>
+        </a>
+    </div>
+
+    <!-- Form Handling Script -->
+    <script>
+        document.getElementById('leadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Collect Data
+            const formData = {
+                name: document.getElementById('name').value,
+                phone: document.getElementById('phone').value,
+                company: document.getElementById('company').value,
+                fit: document.getElementById('fit').value
+            };
+            
+            // Visual feedback on button
+            const btn = document.getElementById('submitBtn');
+            const originalContent = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Processing...';
+            btn.disabled = true;
+            btn.classList.add('opacity-75');
+
+            // Construct the SMS message for the business owner
+            const smsMessage = `🚨 NEW LEAD (Michie AI) 🚨\n\nName: ${formData.name}\nPhone: ${formData.phone}\nCompany: ${formData.company}\nDetails: ${formData.fit}`;
+
+            try {
+                // Using the backend SMS endpoint from your other site
+                await fetch('https://client-notifications.onrender.com/send-sms', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        to: "+14052955189", // <-- CHANGE THIS to the cell number you want the leads texted to (Include +1)
+                        message_body: smsMessage 
+                    })
+                });
+
+                // Success UI update
+                btn.classList.add('hidden');
+                document.getElementById('successMsg').classList.remove('hidden');
+                
+                // Form reset
+                document.getElementById('leadForm').reset();
+                console.log("Lead Submitted & SMS Sent:", formData);
+                
+            } catch (error) {
+                console.error("Error submitting lead:", error);
+                btn.innerHTML = 'Error! Try Again.';
+                btn.disabled = false;
+                btn.classList.remove('opacity-75');
+                alert("There was an issue sending your request. Please try again.");
+            }
+        });
+    </script>
+</body>
+</html>
