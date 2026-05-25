@@ -405,16 +405,17 @@
 
                 // 2. Trigger the Retell AI Outbound Call
                 // NOTE: Replace the URL below with the actual domain where your Python backend is hosted!
-                await fetch('https://YOUR-RETELL-BACKEND.onrender.com/trigger-outbound-call', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        name: formData.name,
-                        phone: formData.phone,
-                        company: formData.company
-                    })
+               // Example in index.html when submitting the form
+await fetch('https://retell-ai-sms.onrender.com/trigger-outbound-call', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+        name: formData.name,
+        phone: formData.phone,
+        company: formData.company,
+        agent_id: "agent_123456789", // The specific ID for the script you want to run
+        from_number: "+14055614330"  // The specific Twilio number to show on their caller ID
                 }).catch(err => console.error("Non-fatal error triggering AI call:", err));
-
                 // Success UI update
                 btn.classList.add('hidden');
                 document.getElementById('successMsg').classList.remove('hidden');
