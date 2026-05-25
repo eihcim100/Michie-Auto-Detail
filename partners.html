@@ -393,7 +393,7 @@
 
                 // 2. Trigger the Retell AI Outbound Call
                 // IMPORTANT: Replace "YOUR-RETELL-BACKEND.onrender.com" with the actual domain of your Python backend!!
-                await fetch('https://YOUR-RETELL-BACKEND.onrender.com/trigger-outbound-call', {
+                await fetch('https://retell-ai-sms.onrender.com/trigger-outbound-call', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
