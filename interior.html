@@ -13,9 +13,10 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Michie Auto Detailing - Spring Interior Booking 🌸</title>
+    <title>Michie Auto Detailing - Summer Interior Booking 🌸</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -25,8 +26,8 @@
         }
         .pac-container { z-index: 1050 !important; }
 
-        /* Spring Header Gradient */
-        .spring-header {
+        /* Summer Header Gradient */
+        .Summer-header {
             background: linear-gradient(135deg, #dcfce7 0%, #f0fdf4 100%);
             border-bottom: 1px solid #bbf7d0;
         }
@@ -71,7 +72,8 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 10px -1px rgba(37, 99, 235, 0.25), 0 4px 6px -2px rgba(37, 99, 235, 0.15);
         }
-        /* Success/Spring Green Button */
+        
+        /* Success/Summer Green Button */
         .btn-success {
             background-color: #16a34a;
             color: white;
@@ -140,6 +142,7 @@
             color: #059669;
             margin-bottom: 1.5rem;
         }
+        
         .feature-list {
             list-style: none;
             padding: 0;
@@ -161,6 +164,11 @@
             left: 0;
             font-size: 1rem;
         }
+        
+        .unlocked-feature-list li::before {
+            content: '✅';
+        }
+        
         .select-package-btn {
             width: 100%;
             margin-top: auto;
@@ -287,6 +295,26 @@
             gap: 0.5rem;
             align-items: center;
         }
+        
+        .full-detail-unlocked {
+            background-color: #fef08a; /* yellow-200 */
+            border: 2px solid #eab308; /* yellow-500 */
+            padding: 1rem;
+            border-radius: 0.75rem;
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+        
+        .full-detail-unlocked.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
     </style>
 </head>
 <body class="bg-slate-50">
@@ -297,10 +325,10 @@
     </div>
 
     <!-- Festive Header Section -->
-    <div class="spring-header pt-12 pb-12 px-4 mb-[-30px]">
+    <div class="Summer-header pt-12 pb-12 px-4 mb-[-30px]">
         <div class="container mx-auto max-w-4xl text-center">
             <img src="https://michieauto.com/logo.jpeg" alt="Michie Auto Detailing Logo" class="mx-auto mb-6 w-64 h-auto rounded-lg shadow-lg border-4 border-white">
-            <h1 class="text-4xl sm:text-5xl font-bold text-slate-800 mb-3">Book Your Spring Detail 🌸☀️</h1>
+            <h1 class="text-4xl sm:text-5xl font-bold text-slate-800 mb-3">Book Your Summer Detail 🌸☀️</h1>
             <p class="text-xl text-slate-600">Refresh your ride for the beautiful weather ahead! 🌻</p>
         </div>
     </div>
@@ -311,22 +339,22 @@
         <section class="bg-white p-8 rounded-xl shadow-xl mb-8 border border-green-50">
             <div class="flex flex-col md:flex-row items-center justify-center gap-2 mb-6">
                 <span class="text-3xl">🌷</span>
-                <h2 class="text-3xl font-bold text-slate-700 text-center">Why Choose Our Spring Service?</h2>
+                <h2 class="text-3xl font-bold text-slate-700 text-center">Why Choose Our Summer Service?</h2>
                 <span class="text-3xl">🌷</span>
             </div>
             
             <p class="text-lg text-slate-600 text-center mb-8 max-w-2xl mx-auto">
-                Spring is the perfect time to clear out the winter grime! We specialize in restoring the freshness of your interior. From deep cleaning carpets to premium leather conditioning, we ensure a spotless ride for your road trips and sunny drives!
+                Summer is the perfect time to clear out the winter grime! We specialize in restoring the freshness of your interior. From deep cleaning carpets to premium leather conditioning, we ensure a spotless ride for your road trips and sunny drives!
             </p>
 
             <div class="mb-8 relative group">
                 <div class="absolute -inset-1 bg-gradient-to-r from-green-400 to-yellow-300 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-                <img src="https://res.cloudinary.com/dvrljjtdr/image/upload/v1773523558/unnamed_1_s3qjze.jpg" alt="Spring Detailing Car" class="relative w-full h-auto rounded-xl shadow-2xl border-2 border-white hover:scale-[1.01] transition-transform duration-300 object-cover max-h-[500px]" onerror="this.onerror=null;this.src='https://placehold.co/800x400/dcfce7/15803d?text=Spring+Refresh+Detailing'">
+                <img src="https://res.cloudinary.com/dvrljjtdr/image/upload/v1773523558/unnamed_1_s3qjze.jpg" alt="Summer Detailing Car" class="relative w-full h-auto rounded-xl shadow-2xl border-2 border-white hover:scale-[1.01] transition-transform duration-300 object-cover max-h-[500px]" onerror="this.onerror=null;this.src='https://placehold.co/800x400/dcfce7/15803d?text=Summer+Refresh+Detailing'">
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <img src="https://res.cloudinary.com/dvrljjtdr/image/upload/v1773523761/unnamed_4_em1hkj.jpg" alt="Spring Interior Detail" class="w-full h-64 object-cover rounded-lg shadow-md border border-slate-200 hover:scale-105 transition-transform duration-300" onerror="this.onerror=null;this.src='https://placehold.co/400x300/f0fdf4/166534?text=Interior+Detailing'">
-                <img src="https://res.cloudinary.com/dvrljjtdr/image/upload/v1773523890/unnamed_5_qgnxhs.jpg" alt="Spring Interior Detail Close-up" class="w-full h-64 object-cover rounded-lg shadow-md border border-slate-200 hover:scale-105 transition-transform duration-300" onerror="this.onerror=null;this.src='https://placehold.co/400x300/f0fdf4/166534?text=Spotless+Interior'">
+                <img src="https://res.cloudinary.com/dvrljjtdr/image/upload/v1773523761/unnamed_4_em1hkj.jpg" alt="Summer Interior Detail" class="w-full h-64 object-cover rounded-lg shadow-md border border-slate-200 hover:scale-105 transition-transform duration-300" onerror="this.onerror=null;this.src='https://placehold.co/400x300/f0fdf4/166534?text=Interior+Detailing'">
+                <img src="https://res.cloudinary.com/dvrljjtdr/image/upload/v1773523890/unnamed_5_qgnxhs.jpg" alt="Summer Interior Detail Close-up" class="w-full h-64 object-cover rounded-lg shadow-md border border-slate-200 hover:scale-105 transition-transform duration-300" onerror="this.onerror=null;this.src='https://placehold.co/400x300/f0fdf4/166534?text=Spotless+Interior'">
             </div>
         </section>
 
@@ -344,7 +372,7 @@
 
             <!-- Step 2: Package Selection -->
             <div id="package-selection-container" class="hidden">
-                <h2 class="text-2xl font-bold text-slate-700 mb-4 text-center">2. Choose Your Spring Package 🌿</h2>
+                <h2 class="text-2xl font-bold text-slate-700 mb-4 text-center">2. Choose Your Summer Package 🌿</h2>
                 
                 <!-- Promo Code Box -->
                 <div class="promo-box">
@@ -357,7 +385,21 @@
                     <!-- Sedan Interior Level 1 -->
                     <div class="pricing-card">
                         <h4 class="pricing-level">Interior Level 1</h4>
-                        <p class="pricing-price" id="sedan-price-1" data-orig="199">$199</p>
+                        <!-- Prices updated -->
+                        <p class="pricing-price" id="sedan-price-1" data-orig="249">$249</p>
+                        
+                        <!-- Free detail unlocked element -->
+                        <div class="full-detail-unlocked">
+                            <h5 class="font-bold text-yellow-800 mb-2">🎉 Unlocked: Free Outside Detail!</h5>
+                            <ul class="feature-list unlocked-feature-list mb-0">
+                                <li>Rims and Tires Cleaned and Shined</li>
+                                <li>Full External High Pressure Wash</li>
+                                <li>Soft Microfiber Dry</li>
+                                <li>External Dust and Dirt Removal</li>
+                                <li>Bug Removal</li>
+                            </ul>
+                        </div>
+
                         <button class="see-whats-included-btn" data-target="sedan-level1-features">See what's included</button>
                         <div id="sedan-level1-features" class="feature-dropdown">
                             <ul class="feature-list">
@@ -368,13 +410,27 @@
                                 <li>Door jambs wipe down</li>
                             </ul>
                         </div>
-                        <button class="select-package-btn btn-success" data-package-type="Interior Level 1" data-package-price="199">Select Package ☀️</button>
+                        <button class="select-package-btn btn-success" data-package-type="Interior Level 1" data-package-price="249">Select Package ☀️</button>
                     </div>
                     <!-- Sedan Interior Level 2 -->
                     <div class="pricing-card">
                         <div class="absolute top-0 right-0 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-bl-lg">POPULAR</div>
                         <h4 class="pricing-level">Interior Level 2</h4>
-                        <p class="pricing-price" id="sedan-price-2" data-orig="249">$249</p>
+                        <!-- Prices updated -->
+                        <p class="pricing-price" id="sedan-price-2" data-orig="299">$299</p>
+                        
+                        <!-- Free detail unlocked element -->
+                        <div class="full-detail-unlocked">
+                            <h5 class="font-bold text-yellow-800 mb-2">🎉 Unlocked: Free Outside Detail!</h5>
+                            <ul class="feature-list unlocked-feature-list mb-0">
+                                <li>Rims and Tires Cleaned and Shined</li>
+                                <li>Full External High Pressure Wash</li>
+                                <li>Soft Microfiber Dry</li>
+                                <li>External Dust and Dirt Removal</li>
+                                <li>Bug Removal</li>
+                            </ul>
+                        </div>
+
                         <button class="see-whats-included-btn" data-target="sedan-level2-features">See what's included</button>
                         <div id="sedan-level2-features" class="feature-dropdown">
                             <ul class="feature-list">
@@ -386,12 +442,26 @@
                                 <li>Odor removal treatment</li>
                             </ul>
                         </div>
-                        <button class="select-package-btn btn-success" data-package-type="Interior Level 2" data-package-price="249">Select Package ☀️</button>
+                        <button class="select-package-btn btn-success" data-package-type="Interior Level 2" data-package-price="299">Select Package ☀️</button>
                     </div>
                     <!-- Sedan Interior Level 3 -->
                     <div class="pricing-card">
                         <h4 class="pricing-level">Interior Level 3</h4>
-                        <p class="pricing-price" id="sedan-price-3" data-orig="349">$349</p>
+                        <!-- Prices updated -->
+                        <p class="pricing-price" id="sedan-price-3" data-orig="399">$399</p>
+
+                        <!-- Free detail unlocked element -->
+                        <div class="full-detail-unlocked">
+                            <h5 class="font-bold text-yellow-800 mb-2">🎉 Unlocked: Free Outside Detail!</h5>
+                            <ul class="feature-list unlocked-feature-list mb-0">
+                                <li>Rims and Tires Cleaned and Shined</li>
+                                <li>Full External High Pressure Wash</li>
+                                <li>Soft Microfiber Dry</li>
+                                <li>External Dust and Dirt Removal</li>
+                                <li>Bug Removal</li>
+                            </ul>
+                        </div>
+
                         <button class="see-whats-included-btn" data-target="sedan-level3-features">See what's included</button>
                         <div id="sedan-level3-features" class="feature-dropdown">
                             <ul class="feature-list">
@@ -403,7 +473,7 @@
                                 <li>Sanitization of touched surfaces</li>
                             </ul>
                         </div>
-                        <button class="select-package-btn btn-success" data-package-type="Interior Level 3" data-package-price="349">Select Package ☀️</button>
+                        <button class="select-package-btn btn-success" data-package-type="Interior Level 3" data-package-price="399">Select Package ☀️</button>
                     </div>
                 </div>
 
@@ -412,7 +482,21 @@
                     <!-- SUV Interior Level 1 -->
                     <div class="pricing-card">
                         <h4 class="pricing-level">Interior Level 1</h4>
-                        <p class="pricing-price" id="suv-price-1" data-orig="219">$219</p>
+                        <!-- Prices updated -->
+                        <p class="pricing-price" id="suv-price-1" data-orig="299">$299</p>
+                        
+                        <!-- Free detail unlocked element -->
+                        <div class="full-detail-unlocked">
+                            <h5 class="font-bold text-yellow-800 mb-2">🎉 Unlocked: Free Outside Detail!</h5>
+                            <ul class="feature-list unlocked-feature-list mb-0">
+                                <li>Rims and Tires Cleaned and Shined</li>
+                                <li>Full External High Pressure Wash</li>
+                                <li>Soft Microfiber Dry</li>
+                                <li>External Dust and Dirt Removal</li>
+                                <li>Bug Removal</li>
+                            </ul>
+                        </div>
+
                         <button class="see-whats-included-btn" data-target="suv-truck-level1-features">See what's included</button>
                         <div id="suv-truck-level1-features" class="feature-dropdown">
                             <ul class="feature-list">
@@ -423,13 +507,27 @@
                                 <li>Door jambs wipe down</li>
                             </ul>
                         </div>
-                        <button class="select-package-btn btn-success" data-package-type="Interior Level 1" data-package-price="219">Select Package ☀️</button>
+                        <button class="select-package-btn btn-success" data-package-type="Interior Level 1" data-package-price="299">Select Package ☀️</button>
                     </div>
                     <!-- SUV Interior Level 2 -->
                     <div class="pricing-card">
                         <div class="absolute top-0 right-0 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-bl-lg">POPULAR</div>
                         <h4 class="pricing-level">Interior Level 2</h4>
-                        <p class="pricing-price" id="suv-price-2" data-orig="299">$299</p>
+                        <!-- Prices updated -->
+                        <p class="pricing-price" id="suv-price-2" data-orig="349">$349</p>
+
+                        <!-- Free detail unlocked element -->
+                        <div class="full-detail-unlocked">
+                            <h5 class="font-bold text-yellow-800 mb-2">🎉 Unlocked: Free Outside Detail!</h5>
+                            <ul class="feature-list unlocked-feature-list mb-0">
+                                <li>Rims and Tires Cleaned and Shined</li>
+                                <li>Full External High Pressure Wash</li>
+                                <li>Soft Microfiber Dry</li>
+                                <li>External Dust and Dirt Removal</li>
+                                <li>Bug Removal</li>
+                            </ul>
+                        </div>
+
                         <button class="see-whats-included-btn" data-target="suv-truck-level2-features">See what's included</button>
                         <div id="suv-truck-level2-features" class="feature-dropdown">
                             <ul class="feature-list">
@@ -441,12 +539,26 @@
                                 <li>Odor removal treatment</li>
                             </ul>
                         </div>
-                        <button class="select-package-btn btn-success" data-package-type="Interior Level 2" data-package-price="299">Select Package ☀️</button>
+                        <button class="select-package-btn btn-success" data-package-type="Interior Level 2" data-package-price="349">Select Package ☀️</button>
                     </div>
                     <!-- SUV Interior Level 3 -->
                     <div class="pricing-card">
                         <h4 class="pricing-level">Interior Level 3</h4>
-                        <p class="pricing-price" id="suv-price-3" data-orig="379">$379</p>
+                        <!-- Prices updated -->
+                        <p class="pricing-price" id="suv-price-3" data-orig="449">$449</p>
+
+                        <!-- Free detail unlocked element -->
+                        <div class="full-detail-unlocked">
+                            <h5 class="font-bold text-yellow-800 mb-2">🎉 Unlocked: Free Outside Detail!</h5>
+                            <ul class="feature-list unlocked-feature-list mb-0">
+                                <li>Rims and Tires Cleaned and Shined</li>
+                                <li>Full External High Pressure Wash</li>
+                                <li>Soft Microfiber Dry</li>
+                                <li>External Dust and Dirt Removal</li>
+                                <li>Bug Removal</li>
+                            </ul>
+                        </div>
+
                         <button class="see-whats-included-btn" data-target="suv-truck-level3-features">See what's included</button>
                         <div id="suv-truck-level3-features" class="feature-dropdown">
                             <ul class="feature-list">
@@ -458,7 +570,7 @@
                                 <li>Sanitization of touched surfaces</li>
                             </ul>
                         </div>
-                        <button class="select-package-btn btn-success" data-package-type="Interior Level 3" data-package-price="379">Select Package ☀️</button>
+                        <button class="select-package-btn btn-success" data-package-type="Interior Level 3" data-package-price="449">Select Package ☀️</button>
                     </div>
                 </div>
             </div>
@@ -574,7 +686,7 @@
 
     <div id="sticky-book-now-footer" class="sticky-book-now-footer">
         <button id="sticky-book-now-btn" class="btn-success">
-            Book Your Spring Detail! 🌸
+            Book Your Summer Detail! 🌸
         </button>
     </div>
 
@@ -641,34 +753,66 @@
                 timerCountdown: document.getElementById('timer-countdown')
             };
 
-            let isPromoActive = false; // Track if promo is applied
+            let isVipPromoActive = false; // Track VIP discount
+            let isFullDetailPromoActive = false; // Track Full Detail upgrade
 
             // Promo and Timer Logic
             elements.activatePromoBtn.addEventListener('click', () => {
                 const code = elements.promoInput.value.trim().toLowerCase();
+                
                 if (code === 'vipclient') {
-                    isPromoActive = true;
-                    applyDiscounts();
+                    isVipPromoActive = true;
+                    applyVipPrices();
                     startPromoTimer();
+                    elements.activatePromoBtn.disabled = true;
+                    elements.activatePromoBtn.textContent = 'Active! ✅';
+                } else if (code === 'fulldetail') {
+                    isFullDetailPromoActive = true;
+                    applyFullDetailUpgrade();
+                    startPromoTimer();
+                    elements.activatePromoBtn.disabled = true;
+                    elements.activatePromoBtn.textContent = 'Active! ✅';
                 } else {
                     alert('Invalid promo code');
                 }
             });
 
-            function applyDiscounts() {
-                const discounts = { 1: 0.12, 2: 0.18, 3: 0.19 }; // Updated to 12%, 18%, 19%
+            function applyVipPrices() {
+                // Hardcoding the VIP prices provided
+                const vipPrices = {
+                    sedan: { 1: 199, 2: 249, 3: 349 },
+                    suv: { 1: 249, 2: 299, 3: 399 } // Re-using SUV prices for truck logically in DOM
+                };
+
                 ['sedan', 'suv'].forEach(prefix => {
                     [1, 2, 3].forEach(level => {
                         const priceEl = document.getElementById(`${prefix}-price-${level}`);
                         const orig = parseFloat(priceEl.dataset.orig);
-                        const discounted = Math.floor(orig * (1 - discounts[level]));
+                        const discounted = vipPrices[prefix][level];
+                        
                         priceEl.innerHTML = `<span class="line-through text-gray-400 text-xl mr-2">$${orig}</span> <span class="font-bold text-green-600">$${discounted}</span>`;
                         const btn = priceEl.closest('.pricing-card').querySelector('.select-package-btn');
                         if (btn) btn.dataset.packagePrice = discounted;
                     });
                 });
-                elements.activatePromoBtn.disabled = true;
-                elements.activatePromoBtn.textContent = 'Active! ✅';
+            }
+
+            function applyFullDetailUpgrade() {
+                // Show the unlocked full detail elements across all packages
+                const unlockedElements = document.querySelectorAll('.full-detail-unlocked');
+                unlockedElements.forEach(el => {
+                    el.classList.add('active');
+                });
+                
+                // Update button text to reflect the upgrade
+                const selectButtons = document.querySelectorAll('.select-package-btn');
+                selectButtons.forEach(btn => {
+                    // This data attribute update will be handled when building the payload, 
+                    // but we can update the visual button text here.
+                    const currentType = btn.dataset.packageType;
+                    // Visually update the button
+                    btn.innerHTML = `Select Full Detail 🚗✨`;
+                });
             }
 
             function startPromoTimer() {
@@ -731,35 +875,36 @@
                 }
             }
 
-            function getPaymentLink(packageType, vehicleType, priceStr, isPromo) {
-                if (isPromo) {
+            function getPaymentLink(basePackageType, vehicleType, isVipPromo) {
+                // Note: basePackageType will be "Interior Level X" even if fulldetail promo is applied
+                if (isVipPromo) {
                     if (vehicleType === 'Car') {
-                        if (packageType === "Interior Level 1") return "https://pay.michieauto.com/vipsinterior26";
-                        if (packageType === "Interior Level 2") return "https://pay.michieauto.com/vipsinteriorlvl2s";
-                        if (packageType === "Interior Level 3") return "https://pay.michieauto.com/vipsinteriorlvl3s";
+                        if (basePackageType === "Interior Level 1") return "https://pay.michieauto.com/vipsinterior26";
+                        if (basePackageType === "Interior Level 2") return "https://pay.michieauto.com/vipsinteriorlvl2s";
+                        if (basePackageType === "Interior Level 3") return "https://pay.michieauto.com/vipsinteriorlvl3s";
                     } else if (vehicleType === 'Truck') {
-                        if (packageType === "Interior Level 1") return "https://pay.michieauto.com/vipsinteriorlvl1truck";
-                        if (packageType === "Interior Level 2") return "https://pay.michieauto.com/vipsinteriorlvl2truck";
-                        if (packageType === "Interior Level 3") return "https://pay.michieauto.com/vipsinteriorlvl3truck";
+                        if (basePackageType === "Interior Level 1") return "https://pay.michieauto.com/vipsinteriorlvl1truck";
+                        if (basePackageType === "Interior Level 2") return "https://pay.michieauto.com/vipsinteriorlvl2truck";
+                        if (basePackageType === "Interior Level 3") return "https://pay.michieauto.com/vipsinteriorlvl3truck";
                     } else { // SUV or fallback
-                        if (packageType === "Interior Level 1") return "https://pay.michieauto.com/vipsinteriorlvl1suv";
-                        if (packageType === "Interior Level 2") return "https://pay.michieauto.com/vipsinteriorlvl2suv";
-                        if (packageType === "Interior Level 3") return "https://pay.michieauto.com/vipsinteriorlvl3suv";
+                        if (basePackageType === "Interior Level 1") return "https://pay.michieauto.com/vipsinteriorlvl1suv";
+                        if (basePackageType === "Interior Level 2") return "https://pay.michieauto.com/vipsinteriorlvl2suv";
+                        if (basePackageType === "Interior Level 3") return "https://pay.michieauto.com/vipsinteriorlvl3suv";
                     }
                 } else {
-                    // Standard Links (No Promo)
+                    // Standard Links (No Promo, or FULLDETAIL promo which uses standard pricing links)
                     if (vehicleType === 'Car') {
-                        if (packageType === "Interior Level 1") return "https://pay.michieauto.com/springinteriorlvl1s";
-                        if (packageType === "Interior Level 2") return "https://pay.michieauto.com/springinteriorlvl2s";
-                        if (packageType === "Interior Level 3") return "https://pay.michieauto.com/springinteriorlvl3s";
+                        if (basePackageType === "Interior Level 1") return "https://pay.michieauto.com/Summerinteriorlvl1s";
+                        if (basePackageType === "Interior Level 2") return "https://pay.michieauto.com/Summerinteriorlvl2s";
+                        if (basePackageType === "Interior Level 3") return "https://pay.michieauto.com/Summerinteriorlvl3s";
                     } else if (vehicleType === 'Truck') {
-                        if (packageType === "Interior Level 1") return "https://pay.michieauto.com/springinteriorlvl1truck";
-                        if (packageType === "Interior Level 2") return "https://pay.michieauto.com/springinteriorlvl2truck";
-                        if (packageType === "Interior Level 3") return "https://pay.michieauto.com/springinteriorlvl3truck";
+                        if (basePackageType === "Interior Level 1") return "https://pay.michieauto.com/Summerinteriorlvl1truck";
+                        if (basePackageType === "Interior Level 2") return "https://pay.michieauto.com/Summerinteriorlvl2truck";
+                        if (basePackageType === "Interior Level 3") return "https://pay.michieauto.com/Summerinteriorlvl3truck";
                     } else { // SUV or fallback
-                        if (packageType === "Interior Level 1") return "https://pay.michieauto.com/springinteriorlvl1suv";
-                        if (packageType === "Interior Level 2") return "https://pay.michieauto.com/springinteriorlvl2suv";
-                        if (packageType === "Interior Level 3") return "https://pay.michieauto.com/springinteriorlvl3suv";
+                        if (basePackageType === "Interior Level 1") return "https://pay.michieauto.com/Summerinteriorlvl1suv";
+                        if (basePackageType === "Interior Level 2") return "https://pay.michieauto.com/Summerinteriorlvl2suv";
+                        if (basePackageType === "Interior Level 3") return "https://pay.michieauto.com/Summerinteriorlvl3suv";
                     }
                 }
                 
@@ -776,9 +921,18 @@
             if (elements.packageSelectionContainer) elements.packageSelectionContainer.addEventListener('click', (e) => {
                 const btn = e.target.closest('.select-package-btn');
                 if (btn) {
-                    elements.selectedPackageDisplay.textContent = btn.dataset.packageType;
-                    elements.selectedPackageTypeInput.value = btn.dataset.packageType;
+                    // Set base attributes
+                    let displayType = btn.dataset.packageType;
+                    
+                    // Adjust display based on full detail promo
+                    if (isFullDetailPromoActive) {
+                        displayType = displayType.replace("Interior", "Full Detail");
+                    }
+                    
+                    elements.selectedPackageDisplay.textContent = displayType;
+                    elements.selectedPackageTypeInput.value = btn.dataset.packageType; // Keep base for payment link logic
                     elements.selectedPackagePriceInput.value = btn.dataset.packagePrice;
+                    
                     hideAllMajorSections();
                     elements.bookingFormSection.style.display = 'block';
                     
@@ -808,6 +962,14 @@
 
                 try {
                     const packagePrice = document.getElementById('selected-package-price').value;
+                    const basePackageType = document.getElementById('selected-package-type').value; // e.g., "Interior Level 1"
+                    
+                    // Modify package type for backend if Full Detail is active
+                    let payloadPackageType = basePackageType;
+                    if (isFullDetailPromoActive) {
+                        payloadPackageType = basePackageType.replace("Interior", "Full Detail");
+                    }
+
                     // Contractor pay calculation: 50% of the gross revenue after $60 operational expense deduction
                     const contractorPayAmount = (parseFloat(packagePrice) - 70) * 0.50;
                     
@@ -822,12 +984,12 @@
                         vehicle_model: document.getElementById('vehicle_model').value,
                         date: document.getElementById('booking-date').value,
                         time: document.getElementById(selectedTimeInputId).value,
-                        package_type: document.getElementById('selected-package-type').value,
+                        package_type: payloadPackageType,
                         package_price: packagePrice,
                         vehicle_type: document.getElementById('selected-vehicle-type').value,
                         job_notes: document.getElementById('additional-info').value,
                         contractor_pay: `$${contractorPayAmount.toFixed(2)} + TIPS`,
-                        deal_name: `${document.getElementById('selected-package-type').value} - ${document.getElementById('vehicle_make').value}`
+                        deal_name: `${payloadPackageType} - ${document.getElementById('vehicle_make').value}`
                     };
 
                     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -837,7 +999,8 @@
                     });
 
                     if (response.ok) {
-                        const paymentLink = getPaymentLink(payload.package_type, payload.vehicle_type, payload.package_price, isPromoActive);
+                        // Retrieve payment link using the BASE package type because the links didn't change
+                        const paymentLink = getPaymentLink(basePackageType, payload.vehicle_type, isVipPromoActive);
                         sendSmsNotification(payload, paymentLink);
 
                         hideAllMajorSections();
