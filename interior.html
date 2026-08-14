@@ -970,8 +970,8 @@
                         payloadPackageType = basePackageType.replace("Interior", "Full Detail");
                     }
 
-                    // Contractor pay calculation: 50% of the gross revenue after $60 operational expense deduction
-                    const contractorPayAmount = (parseFloat(packagePrice) - 70) * 0.50;
+                    // Contractor pay calculation: 25% of gross amount
+                    const contractorPayAmount = parseFloat(packagePrice) * 0.25;
                     
                     const payload = {
                         full_name: document.getElementById('full_name').value,
