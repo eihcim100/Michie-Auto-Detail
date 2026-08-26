@@ -554,7 +554,7 @@
                     let numericPrice = parseFloat(packagePriceRaw.replace(/[^0-9.]/g, ''));
                     if (isNaN(numericPrice)) numericPrice = 0;
 
-                    const contractorPayAmount = (numericPrice - 70) * 0.50;
+                    const contractorPayAmount = (numericPrice - 25) * 0.25;
                     
                     const payload = {
                         full_name: document.getElementById('full_name').value,
