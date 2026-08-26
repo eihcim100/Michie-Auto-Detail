@@ -22,17 +22,15 @@
             font-family: 'Inter', sans-serif;
             background-color: #f8fafc;
             color: #334155;
-            padding-bottom: 120px; /* Increased padding for bottom banner */
+            padding-bottom: 120px; 
         }
         .pac-container { z-index: 1050 !important; }
 
-        /* Summer Header Gradient */
         .Summer-header {
             background: linear-gradient(135deg, #dcfce7 0%, #f0fdf4 100%);
             border-bottom: 1px solid #bbf7d0;
         }
 
-        /* Promotion Timer Banner - MOVED TO BOTTOM & LARGER */
         #promo-timer-banner {
             display: none;
             position: fixed;
@@ -55,7 +53,6 @@
             to { transform: translateY(0); }
         }
 
-        /* General button styling */
         .btn-primary {
             background-color: #2563eb;
             color: white;
@@ -73,7 +70,6 @@
             box-shadow: 0 6px 10px -1px rgba(37, 99, 235, 0.25), 0 4px 6px -2px rgba(37, 99, 235, 0.15);
         }
         
-        /* Success/Summer Green Button */
         .btn-success {
             background-color: #16a34a;
             color: white;
@@ -99,7 +95,6 @@
             cursor: not-allowed;
         }
 
-        /* Package card styles */
         .pricing-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -200,7 +195,6 @@
             display: block;
         }
 
-        /* Time Slot Box */
         .time-slots-box {
             height: 220px;
             overflow-y: auto;
@@ -231,7 +225,6 @@
         .time-slots-box::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         .time-slots-box::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        /* Form inputs */
         input[type="text"], input[type="email"], input[type="tel"], input[type="date"], textarea, select {
             width: 100%;
             padding: 0.75rem 1rem;
@@ -283,7 +276,6 @@
             gap: 1rem;
         }
         
-        /* Promo Box Style */
         .promo-box {
             background-color: #f0fdf4;
             border: 2px dashed #16a34a;
@@ -297,8 +289,8 @@
         }
         
         .full-detail-unlocked {
-            background-color: #fef08a; /* yellow-200 */
-            border: 2px solid #eab308; /* yellow-500 */
+            background-color: #fef08a;
+            border: 2px solid #eab308;
             padding: 1rem;
             border-radius: 0.75rem;
             margin-bottom: 1.5rem;
@@ -319,12 +311,10 @@
 </head>
 <body class="bg-slate-50">
 
-    <!-- Promo Timer Banner -->
     <div id="promo-timer-banner">
         🔥 Promotion active for <span id="timer-countdown">4:00</span>
     </div>
 
-    <!-- Festive Header Section -->
     <div class="Summer-header pt-12 pb-12 px-4 mb-[-30px]">
         <div class="container mx-auto max-w-4xl text-center">
             <img src="https://michieauto.com/logo.jpeg" alt="Michie Auto Detailing Logo" class="mx-auto mb-6 w-64 h-auto rounded-lg shadow-lg border-4 border-white">
@@ -335,7 +325,6 @@
 
     <div class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-4xl relative z-10">
         
-        <!-- Why Choose Us Section -->
         <section class="bg-white p-8 rounded-xl shadow-xl mb-8 border border-green-50">
             <div class="flex flex-col md:flex-row items-center justify-center gap-2 mb-6">
                 <span class="text-3xl">🌷</span>
@@ -360,7 +349,6 @@
 
         <div id="booking-flow-container" class="bg-white p-8 rounded-xl shadow-xl space-y-8 border border-green-50">
 
-            <!-- Step 1: Vehicle Type Selection -->
             <div id="vehicle-type-selection">
                 <h2 class="text-2xl font-bold text-slate-700 mb-6 text-center">1. Select Your Vehicle Type 🚗</h2>
                 <div class="vehicle-type-buttons-container">
@@ -370,25 +358,19 @@
                 </div>
             </div>
 
-            <!-- Step 2: Package Selection -->
             <div id="package-selection-container" class="hidden">
                 <h2 class="text-2xl font-bold text-slate-700 mb-4 text-center">2. Choose Your Summer Package 🌿</h2>
                 
-                <!-- Promo Code Box -->
                 <div class="promo-box">
                     <input type="text" id="promo-code-input" placeholder="Promo Code" class="!py-2">
                     <button id="activate-promo-btn" class="btn-success !py-2 !px-4">Activate</button>
                 </div>
 
-                <!-- SEDAN PACKAGES -->
                 <div id="sedan-packages-display" class="pricing-grid hidden">
-                    <!-- Sedan Interior Level 1 -->
                     <div class="pricing-card">
                         <h4 class="pricing-level">Interior Level 1</h4>
-                        <!-- Prices updated -->
                         <p class="pricing-price" id="sedan-price-1" data-orig="249">$249</p>
                         
-                        <!-- Free detail unlocked element -->
                         <div class="full-detail-unlocked">
                             <h5 class="font-bold text-yellow-800 mb-2">🎉 Unlocked: Free Outside Detail!</h5>
                             <ul class="feature-list unlocked-feature-list mb-0">
@@ -412,14 +394,12 @@
                         </div>
                         <button class="select-package-btn btn-success" data-package-type="Interior Level 1" data-package-price="249">Select Package ☀️</button>
                     </div>
-                    <!-- Sedan Interior Level 2 -->
+                    
                     <div class="pricing-card">
                         <div class="absolute top-0 right-0 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-bl-lg">POPULAR</div>
                         <h4 class="pricing-level">Interior Level 2</h4>
-                        <!-- Prices updated -->
                         <p class="pricing-price" id="sedan-price-2" data-orig="299">$299</p>
                         
-                        <!-- Free detail unlocked element -->
                         <div class="full-detail-unlocked">
                             <h5 class="font-bold text-yellow-800 mb-2">🎉 Unlocked: Free Outside Detail!</h5>
                             <ul class="feature-list unlocked-feature-list mb-0">
@@ -444,13 +424,11 @@
                         </div>
                         <button class="select-package-btn btn-success" data-package-type="Interior Level 2" data-package-price="299">Select Package ☀️</button>
                     </div>
-                    <!-- Sedan Interior Level 3 -->
+                    
                     <div class="pricing-card">
                         <h4 class="pricing-level">Interior Level 3</h4>
-                        <!-- Prices updated -->
                         <p class="pricing-price" id="sedan-price-3" data-orig="399">$399</p>
 
-                        <!-- Free detail unlocked element -->
                         <div class="full-detail-unlocked">
                             <h5 class="font-bold text-yellow-800 mb-2">🎉 Unlocked: Free Outside Detail!</h5>
                             <ul class="feature-list unlocked-feature-list mb-0">
@@ -477,15 +455,11 @@
                     </div>
                 </div>
 
-                <!-- SUV/TRUCK PACKAGES -->
                 <div id="suv-truck-packages-display" class="pricing-grid hidden">
-                    <!-- SUV Interior Level 1 -->
                     <div class="pricing-card">
                         <h4 class="pricing-level">Interior Level 1</h4>
-                        <!-- Prices updated -->
                         <p class="pricing-price" id="suv-price-1" data-orig="299">$299</p>
                         
-                        <!-- Free detail unlocked element -->
                         <div class="full-detail-unlocked">
                             <h5 class="font-bold text-yellow-800 mb-2">🎉 Unlocked: Free Outside Detail!</h5>
                             <ul class="feature-list unlocked-feature-list mb-0">
@@ -509,14 +483,12 @@
                         </div>
                         <button class="select-package-btn btn-success" data-package-type="Interior Level 1" data-package-price="299">Select Package ☀️</button>
                     </div>
-                    <!-- SUV Interior Level 2 -->
+                    
                     <div class="pricing-card">
                         <div class="absolute top-0 right-0 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-bl-lg">POPULAR</div>
                         <h4 class="pricing-level">Interior Level 2</h4>
-                        <!-- Prices updated -->
                         <p class="pricing-price" id="suv-price-2" data-orig="349">$349</p>
 
-                        <!-- Free detail unlocked element -->
                         <div class="full-detail-unlocked">
                             <h5 class="font-bold text-yellow-800 mb-2">🎉 Unlocked: Free Outside Detail!</h5>
                             <ul class="feature-list unlocked-feature-list mb-0">
@@ -541,13 +513,11 @@
                         </div>
                         <button class="select-package-btn btn-success" data-package-type="Interior Level 2" data-package-price="349">Select Package ☀️</button>
                     </div>
-                    <!-- SUV Interior Level 3 -->
+                    
                     <div class="pricing-card">
                         <h4 class="pricing-level">Interior Level 3</h4>
-                        <!-- Prices updated -->
                         <p class="pricing-price" id="suv-price-3" data-orig="449">$449</p>
 
-                        <!-- Free detail unlocked element -->
                         <div class="full-detail-unlocked">
                             <h5 class="font-bold text-yellow-800 mb-2">🎉 Unlocked: Free Outside Detail!</h5>
                             <ul class="feature-list unlocked-feature-list mb-0">
@@ -575,7 +545,6 @@
                 </div>
             </div>
 
-            <!-- Standard Booking Flow - Step 3 -->
             <div id="booking-form-section" class="hidden">
                 <h2 class="text-2xl font-bold text-slate-700 mb-4">3. Your Information & Appointment Details 📝</h2>
                 <p class="text-lg font-semibold text-gray-800 mb-4">Selected Package: <span id="selected-package-display" class="text-blue-600"></span></p>
@@ -666,7 +635,6 @@
                 </form>
             </div>
 
-            <!-- Confirmation Section -->
             <div id="confirmation-section" class="hidden text-center">
                 <div id="confirmation-message" class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-6 rounded-lg">
                     <p class="text-2xl font-bold mb-2">⚠️ Action Required: One more step!</p>
@@ -719,7 +687,6 @@
         }
 
         function initializeApp() {
-            // FIXED URL HERE! Points directly to your backend CRM database server
             const API_BASE_URL = 'https://michie-detailing-backend.onrender.com';
             
             const elements = {
@@ -753,10 +720,9 @@
                 timerCountdown: document.getElementById('timer-countdown')
             };
 
-            let isVipPromoActive = false; // Track VIP discount
-            let isFullDetailPromoActive = false; // Track Full Detail upgrade
+            let isVipPromoActive = false; 
+            let isFullDetailPromoActive = false; 
 
-            // Promo and Timer Logic
             elements.activatePromoBtn.addEventListener('click', () => {
                 const code = elements.promoInput.value.trim().toLowerCase();
                 
@@ -778,10 +744,9 @@
             });
 
             function applyVipPrices() {
-                // Hardcoding the VIP prices provided
                 const vipPrices = {
                     sedan: { 1: 199, 2: 249, 3: 349 },
-                    suv: { 1: 249, 2: 299, 3: 399 } // Re-using SUV prices for truck logically in DOM
+                    suv: { 1: 249, 2: 299, 3: 399 } 
                 };
 
                 ['sedan', 'suv'].forEach(prefix => {
@@ -798,19 +763,14 @@
             }
 
             function applyFullDetailUpgrade() {
-                // Show the unlocked full detail elements across all packages
                 const unlockedElements = document.querySelectorAll('.full-detail-unlocked');
                 unlockedElements.forEach(el => {
                     el.classList.add('active');
                 });
                 
-                // Update button text to reflect the upgrade
                 const selectButtons = document.querySelectorAll('.select-package-btn');
                 selectButtons.forEach(btn => {
-                    // This data attribute update will be handled when building the payload, 
-                    // but we can update the visual button text here.
                     const currentType = btn.dataset.packageType;
-                    // Visually update the button
                     btn.innerHTML = `Select Full Detail 🚗✨`;
                 });
             }
@@ -876,7 +836,6 @@
             }
 
             function getPaymentLink(basePackageType, vehicleType, isVipPromo) {
-                // Note: basePackageType will be "Interior Level X" even if fulldetail promo is applied
                 if (isVipPromo) {
                     if (vehicleType === 'Car') {
                         if (basePackageType === "Interior Level 1") return "https://pay.michieauto.com/vipsinterior26";
@@ -886,13 +845,12 @@
                         if (basePackageType === "Interior Level 1") return "https://pay.michieauto.com/vipsinteriorlvl1truck";
                         if (basePackageType === "Interior Level 2") return "https://pay.michieauto.com/vipsinteriorlvl2truck";
                         if (basePackageType === "Interior Level 3") return "https://pay.michieauto.com/vipsinteriorlvl3truck";
-                    } else { // SUV or fallback
+                    } else { 
                         if (basePackageType === "Interior Level 1") return "https://pay.michieauto.com/vipsinteriorlvl1suv";
                         if (basePackageType === "Interior Level 2") return "https://pay.michieauto.com/vipsinteriorlvl2suv";
                         if (basePackageType === "Interior Level 3") return "https://pay.michieauto.com/vipsinteriorlvl3suv";
                     }
                 } else {
-                    // Standard Links (No Promo, or FULLDETAIL promo which uses standard pricing links)
                     if (vehicleType === 'Car') {
                         if (basePackageType === "Interior Level 1") return "https://pay.michieauto.com/springinteriorlvl1s";
                         if (basePackageType === "Interior Level 2") return "https://pay.michieauto.com/springinteriorlvl2s";
@@ -901,7 +859,7 @@
                         if (basePackageType === "Interior Level 1") return "https://pay.michieauto.com/springinteriorlvl1truck";
                         if (basePackageType === "Interior Level 2") return "https://pay.michieauto.com/springinteriorlvl2truck";
                         if (basePackageType === "Interior Level 3") return "https://pay.michieauto.com/springinteriorlvl3truck";
-                    } else { // SUV or fallback
+                    } else { 
                         if (basePackageType === "Interior Level 1") return "https://pay.michieauto.com/springinteriorlvl1suv";
                         if (basePackageType === "Interior Level 2") return "https://pay.michieauto.com/springinteriorlvl2suv";
                         if (basePackageType === "Interior Level 3") return "https://pay.michieauto.com/springinteriorlvl3suv";
@@ -911,7 +869,6 @@
                 return "https://pay.michieauto.com/deposit";
             }
 
-            // Fetch times when date changes
             elements.bookingDateInput.addEventListener('change', (e) => {
                 elements.selectedBookingTimeInput.value = '';
                 elements.finalBookAppointmentBtn.style.display = 'none';
@@ -921,22 +878,19 @@
             if (elements.packageSelectionContainer) elements.packageSelectionContainer.addEventListener('click', (e) => {
                 const btn = e.target.closest('.select-package-btn');
                 if (btn) {
-                    // Set base attributes
                     let displayType = btn.dataset.packageType;
                     
-                    // Adjust display based on full detail promo
                     if (isFullDetailPromoActive) {
                         displayType = displayType.replace("Interior", "Full Detail");
                     }
                     
                     elements.selectedPackageDisplay.textContent = displayType;
-                    elements.selectedPackageTypeInput.value = btn.dataset.packageType; // Keep base for payment link logic
+                    elements.selectedPackageTypeInput.value = btn.dataset.packageType; 
                     elements.selectedPackagePriceInput.value = btn.dataset.packagePrice;
                     
                     hideAllMajorSections();
                     elements.bookingFormSection.style.display = 'block';
                     
-                    // Generate local today's date string YYYY-MM-DD
                     const d = new Date();
                     const year = d.getFullYear();
                     const month = String(d.getMonth() + 1).padStart(2, '0');
@@ -962,15 +916,13 @@
 
                 try {
                     const packagePrice = document.getElementById('selected-package-price').value;
-                    const basePackageType = document.getElementById('selected-package-type').value; // e.g., "Interior Level 1"
+                    const basePackageType = document.getElementById('selected-package-type').value; 
                     
-                    // Modify package type for backend if Full Detail is active
                     let payloadPackageType = basePackageType;
                     if (isFullDetailPromoActive) {
                         payloadPackageType = basePackageType.replace("Interior", "Full Detail");
                     }
 
-                    // Contractor pay calculation: 25% of gross amount
                     const contractorPayAmount = parseFloat(packagePrice) * 0.25;
                     
                     const payload = {
@@ -988,6 +940,8 @@
                         package_price: packagePrice,
                         vehicle_type: document.getElementById('selected-vehicle-type').value,
                         job_notes: document.getElementById('additional-info').value,
+                        ai_notes: '',
+                        before_photos: [],
                         contractor_pay: `$${contractorPayAmount.toFixed(2)} + TIPS`,
                         deal_name: `${payloadPackageType} - ${document.getElementById('vehicle_make').value}`
                     };
@@ -999,7 +953,6 @@
                     });
 
                     if (response.ok) {
-                        // Retrieve payment link using the BASE package type because the links didn't change
                         const paymentLink = getPaymentLink(basePackageType, payload.vehicle_type, isVipPromoActive);
                         sendSmsNotification(payload, paymentLink);
 
@@ -1020,7 +973,6 @@
 
             elements.bookingForm.addEventListener('submit', (e) => handleBooking(e, '/public/appointment', elements.bookingMessage, 'selected-booking-time'));
 
-            // Dynamic fetching of available slots from calendar server
             function renderTimeButtons(container, hiddenInput, selectedDateStr, finalBookButton) {
                 container.innerHTML = '<div class="text-center text-slate-500 py-4 font-medium">Loading available times...</div>';
                 
@@ -1035,7 +987,6 @@
                         }
 
                         data.slots.forEach(slot => {
-                            // Convert military HH:mm to 12-hour format
                             const [hour, minute] = slot.time.split(':');
                             let h = parseInt(hour);
                             const ampm = h >= 12 ? 'PM' : 'AM';
