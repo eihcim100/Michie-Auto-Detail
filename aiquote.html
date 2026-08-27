@@ -9,6 +9,7 @@
       gtag('js', new Date());
 
       gtag('config', 'G-6Y327JERG9');
+      gtag('config', 'AW-10782185640'); // <-- ADDED: Google Ads Config
     </script>
 
     <!-- TikTok Pixel Code Start -->
@@ -648,6 +649,16 @@
                     if (response.ok) {
                         const paymentLink = getPaymentLink(payload.package_price);
                         
+                        // --- GOOGLE ADS PPC CONVERSION TRACKING START ---
+                        if (typeof gtag === 'function') {
+                            gtag('event', 'conversion', {
+                                'send_to': 'AW-10782185640/SdSYCIiVxugcEKixrJUo', 
+                                'value': numericPrice, 
+                                'currency': 'USD'
+                            });
+                        }
+                        // --- GOOGLE ADS PPC CONVERSION TRACKING END ---
+
                         // --- TIKTOK PIXEL TRACKING START ---
                         try {
                             const hashedEmail = await sha256(payload.email.trim().toLowerCase());
