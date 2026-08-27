@@ -435,32 +435,45 @@
                         console.error(err);
                         document.getElementById('dynamic-header').innerHTML = `Error: Could not load quote.`;
                     });
-} else if (urlParams.has('name') && urlParams.has('price') && urlParams.has('pkg')) {
-                // Fallback for Legacy URL parameters
-                const uName = urlParams.get('name');
-                const uPhone = urlParams.get('phone');
-                const uYear = urlParams.get('year');
-                const uMake = urlParams.get('make');
-                const uModel = urlParams.get('model');
-                const uPkgRaw = urlParams.get('pkg'); 
-                const uPrice = urlParams.get('price');
-                const uVType = urlParams.get('vtype') || 'Car';
-                const uSummary = urlParams.get('summary'); 
-
-                // NEW: Helper to decode the Base64 obfuscated URL parameters
+} else if ((urlParams.has('name') && urlParams.has('price')) || (urlParams.has('nm') && urlParams.has('prc'))) {
+                
+                // Helper to decode the Base64 obfuscated URL parameters
                 const decodeSafeBase64 = (str) => {
                     if (!str) return null;
-                    try { return decodeURIComponent(escape(atob(str))); } catch(e) { return str; } // Fallback if plain text
+                    try { return decodeURIComponent(escape(atob(str))); } catch(e) { return str; }
                 };
 
-                // Pull and decode detailer notes
-                globalAiNotes = decodeSafeBase64(urlParams.get('detailer_notes')) || uSummary || '';
+                // Catch either the new Obscured keys OR the old legacy keys
+                const uName = urlParams.get('nm') || urlParams.get('name');
+                const uPhone = urlParams.get('num') || urlParams.get('phone');
+                const uYear = urlParams.get('yr') || urlParams.get('year');
+                const uMake = urlParams.get('mk') || urlParams.get('make');
+                const uModel = urlParams.get('mdl') || urlParams.get('model');
+                const uPkgRaw = urlParams.get('pk') || urlParams.get('pkg'); 
+                const uPrice = urlParams.get('prc') || urlParams.get('price');
+                const uVType = urlParams.get('vt') || urlParams.get('vtype') || 'Car';
+                const uSummary = urlParams.get('smry') || urlParams.get('summary'); 
+
+                // Pull and decode detailer notes (codisc)
+                globalAiNotes = decodeSafeBase64(urlParams.get('codisc')) || decodeSafeBase64(urlParams.get('detailer_notes')) || uSummary || '';
                 
-                // Pull and decode contractor pay
-                const cpay = decodeSafeBase64(urlParams.get('contractor_pay')) || decodeSafeBase64(urlParams.get('cpay'));
+                // Pull and decode contractor pay (calc)
+                const cpay = decodeSafeBase64(urlParams.get('calc')) || decodeSafeBase64(urlParams.get('contractor_pay')) || decodeSafeBase64(urlParams.get('cpay'));
                 if (cpay) {
                     globalContractorPay = cpay;
                 } else {
+                    let numericPrice = parseFloat(String(uPrice).replace(/[^0-9.]/g, ''));
+                    if (isNaN(numericPrice)) numericPrice = 0;
+                    const contractorPayAmount = (numericPrice - 25) * 0.25;
+                    globalContractorPay = `$${contractorPayAmount.toFixed(2)} + TIPS`;
+                }
+
+                // Parse Photos (px)
+                const photosParam = urlParams.get('px') || urlParams.get('photos');
+                globalBeforePhotos = photosParam ? JSON.parse(decodeURIComponent(photosParam)) : [];
+
+                populateUI(uName, uPhone, uYear, uMake, uModel, uPkgRaw, uPrice, uVType, uSummary);
+            } else {
                     let numericPrice = parseFloat(String(uPrice).replace(/[^0-9.]/g, ''));
                     if (isNaN(numericPrice)) numericPrice = 0;
                     const contractorPayAmount = (numericPrice - 25) * 0.25;
