@@ -614,7 +614,8 @@
                 return `https://pay.michieauto.com/pay-${snappedPrice}`;
             }
 
-            elements.bookingDateInput.addEventListener('change', (e) => {
+            elements.bookingDateInput.addEventListener('change', (e) => 
+                {
                 elements.selectedBookingTimeInput.value = '';
                 elements.finalBookAppointmentBtn.style.display = 'none';
                 renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, e.target.value, elements.finalBookAppointmentBtn);
