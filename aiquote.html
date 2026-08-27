@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-6Y327JERG9"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
 
-  gtag('config', 'G-6Y327JERG9');
-</script>
+      gtag('config', 'G-6Y327JERG9');
+    </script>
 
     <!-- TikTok Pixel Code Start -->
     <script>
@@ -435,7 +436,7 @@
                         console.error(err);
                         document.getElementById('dynamic-header').innerHTML = `Error: Could not load quote.`;
                     });
-} else if ((urlParams.has('name') && urlParams.has('price')) || (urlParams.has('nm') && urlParams.has('prc'))) {
+            } else if ((urlParams.has('name') && urlParams.has('price')) || (urlParams.has('nm') && urlParams.has('prc'))) {
                 
                 // Helper to decode the Base64 obfuscated URL parameters
                 const decodeSafeBase64 = (str) => {
@@ -474,15 +475,7 @@
 
                 populateUI(uName, uPhone, uYear, uMake, uModel, uPkgRaw, uPrice, uVType, uSummary);
             } else {
-                    let numericPrice = parseFloat(String(uPrice).replace(/[^0-9.]/g, ''));
-                    if (isNaN(numericPrice)) numericPrice = 0;
-                    const contractorPayAmount = (numericPrice - 25) * 0.25;
-                    globalContractorPay = `$${contractorPayAmount.toFixed(2)} + TIPS`;
-                }
-
-                globalBeforePhotos = urlParams.get('photos') ? JSON.parse(decodeURIComponent(urlParams.get('photos'))) : [];
-
-                populateUI(uName, uPhone, uYear, uMake, uModel, uPkgRaw, uPrice, uVType, uSummary);
+                document.getElementById('dynamic-header').innerHTML = `Error: Missing AI parameters.`;
             }
 
             function populateUI(uName, uPhone, uYear, uMake, uModel, uPkgRaw, uPrice, uVType, uSummary) {
@@ -614,8 +607,7 @@
                 return `https://pay.michieauto.com/pay-${snappedPrice}`;
             }
 
-            elements.bookingDateInput.addEventListener('change', (e) => 
-                {
+            elements.bookingDateInput.addEventListener('change', (e) => {
                 elements.selectedBookingTimeInput.value = '';
                 elements.finalBookAppointmentBtn.style.display = 'none';
                 renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, e.target.value, elements.finalBookAppointmentBtn);
@@ -665,16 +657,6 @@
                     if (response.ok) {
                         const paymentLink = getPaymentLink(payload.package_price);
                         
-                        // --- GOOGLE ADS PPC CONVERSION TRACKING START ---
-                        if (typeof gtag === 'function') {
-                            gtag('event', 'conversion', {
-                                'send_to': 'AW-10782185640/SdSYCIiVxugcEKixrJUo', 
-                                'value': numericPrice, 
-                                'currency': 'USD'
-                            });
-                        }
-                        // --- GOOGLE ADS PPC CONVERSION TRACKING END ---
-
                         // --- TIKTOK PIXEL TRACKING START ---
                         try {
                             const hashedEmail = await sha256(payload.email.trim().toLowerCase());
@@ -764,6 +746,7 @@
                         container.innerHTML = '<div class="text-center text-red-500 py-4">Error loading times. Please try again or choose another date.</div>';
                     });
             }
+        }
         document.addEventListener('DOMContentLoaded', initializeApp);
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk&libraries=places&callback=initBookingPage" async defer></script>
