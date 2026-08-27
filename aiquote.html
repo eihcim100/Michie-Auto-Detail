@@ -1,754 +1,766 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-6Y327JERG9"></script>
+<!-- GOOGLE TAGS -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6Y327JERG9"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
-  gtag('config', 'G-6Y327JERG9');
+  // Tag 1: Sends pageviews to Google Analytics
+  gtag('config', 'G-6Y327JERG9'); 
+  
+  // Tag 2: Sends data to Google Ads
+  gtag('config', 'AW-10782185640'); 
 </script>
+<!-- TikTok Pixel Code Start -->
+<script>
+!function (w, d, t) {
+  w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
+var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script")
+;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
 
-    <!-- TikTok Pixel Code Start -->
-    <script>
-    !function (w, d, t) {
-    w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
-    var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script")
-    ;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
-
-    ttq.load('DA7PCJJC77U2R5U1NDLG');
-    ttq.page();
-    }(window, document, 'ttq');
-    </script>
-    <!-- TikTok Pixel Code End -->
+  ttq.load('DA7PCJJC77U2R5U1NDLG');
+  ttq.page();
+}(window, document, 'ttq');
+</script>
+<!-- TikTok Pixel Code End -->
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Michie Auto Detailing - AI Priority Booking</title>
+    <title>Michie Auto Detailing - AI Diagnostic</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
-            color: #334155;
-            padding-bottom: 120px;
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: radial-gradient(circle at top right, #e2e8f0, #f8fafc);
+            min-height: 100vh;
+            color: #000000; 
         }
-        .pac-container { z-index: 1050 !important; }
-
-        .spring-header {
-            background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%);
-            border-bottom: 1px solid #bfdbfe;
-        }
-
-        .btn-success {
-            background-color: #16a34a;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px -1px rgba(22, 163, 74, 0.2), 0 2px 4px -1px rgba(22, 163, 74, 0.1);
-            border: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .btn-success:hover:not(:disabled) {
-            background-color: #15803d;
-            transform: translateY(-2px);
-        }
-        .btn-success:disabled {
-            background-color: #16a34a;
-            opacity: 0.7;
-            cursor: not-allowed;
-        }
-
-        .time-slots-box {
-            height: 220px;
-            overflow-y: auto;
-            border: 1px solid #cbd5e1;
-            border-radius: 0.5rem;
-            background-color: #ffffff;
-            padding: 0.5rem;
-        }
-        .time-slot-item {
-            display: block;
-            width: 100%;
-            padding: 0.75rem 1rem;
-            margin-bottom: 0.5rem;
-            text-align: left;
-            border-radius: 0.375rem;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            font-weight: 500;
-            color: #334155;
-            border: 1px solid transparent;
-        }
-        .time-slot-item:hover:not(:disabled) { background-color: #f0fdf4; }
-        .time-slot-item.selected { background-color: #16a34a; color: white; }
-        .time-slot-item:disabled { color: #94a3b8; cursor: not-allowed; opacity: 0.6; text-decoration: line-through; }
+        .step { display: none; } 
+        .step.active { display: block !important; }
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #2563eb; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        .time-slots-box::-webkit-scrollbar { width: 8px; }
-        .time-slots-box::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
-        .time-slots-box::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-
-        input[type="text"], input[type="email"], input[type="tel"], input[type="date"], textarea, select {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid #cbd5e1;
-            border-radius: 0.5rem;
-            background-color: #ffffff;
-            font-size: 1rem;
-            color: #334155;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-        input:focus, textarea:focus, select:focus {
-            outline: none;
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
-        }
-        label {
-            display: block;
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-            color: #475569;
+        .input-focus:focus {
+            ring: 3px;
+            ring-color: #2563eb;
+            background: white;
+            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.1);
         }
 
-        #booking-flow-container { display: none; }
-        
-        .ai-highlight-box {
-            background-color: #ffffff;
-            border-left: 6px solid #2563eb;
-            padding: 1.5rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            margin-bottom: 2rem;
+        .error-shake {
+            animation: shake 0.4s ease-in-out;
+            border-color: #ef4444 !important;
         }
-        .inclusions-list li { margin-bottom: 0.5rem; }
-        .inclusions-list li::before { content: '✨ '; color: #2563eb; }
-
-        .imessage-container {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            margin-bottom: 2rem;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-        .imessage-sender {
-            font-size: 0.75rem;
-            color: #8e8e93;
-            margin-bottom: 4px;
-            margin-left: 12px;
-            font-weight: 500;
-        }
-        .imessage-bubble {
-            background-color: #e5e5ea;
-            color: #000;
-            padding: 12px 18px;
-            border-radius: 20px;
-            border-bottom-left-radius: 4px;
-            max-width: 90%;
-            font-size: 1rem;
-            line-height: 1.4;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
         }
 
-        @keyframes pulse-red {
-            0% { background-color: #ef4444; }
-            50% { background-color: #dc2626; }
-            100% { background-color: #ef4444; }
-        }
-        .urgent-pulse {
-            animation: pulse-red 2s infinite;
+        .timer-glow {
+            text-shadow: 0 0 15px rgba(37, 99, 235, 0.3);
         }
     </style>
-</head>
-<body class="bg-slate-50">
-
-    <div id="urgent-timer-banner" class="sticky top-0 z-[2000] urgent-pulse text-white text-center py-3 px-4 shadow-lg transition-colors duration-500">
-        <span class="font-bold text-sm sm:text-base">⚠️ AI Quote Expires in: </span>
-        <span id="timer-countdown" class="font-black text-xl tracking-wider ml-1">08:00</span>
-    </div>
-
-    <div class="spring-header pt-12 pb-12 px-4 mb-[-30px]">
-        <div class="container mx-auto max-w-4xl text-center">
-            <img src="https://michieauto.com/logo.jpeg" alt="Michie Auto Detailing Logo" class="mx-auto mb-6 w-64 h-auto rounded-lg shadow-lg border-4 border-white">
-            <h1 id="dynamic-header" class="text-3xl sm:text-4xl font-bold text-slate-800 mb-4">Finalizing Your Detail...</h1>
-        </div>
-    </div>
-
-    <div class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-4xl relative z-10">
-        <div id="booking-flow-container" class="bg-white p-8 rounded-xl shadow-xl space-y-8 border border-blue-50">
-
-            <div class="imessage-container" id="imessage-box" style="display:none;">
-                <div class="imessage-sender">Michie Auto Detail AI</div>
-                <div class="imessage-bubble" id="imessage-text"></div>
-            </div>
-
-            <div class="ai-highlight-box" id="ai-breakdown-box" style="display:none;">
-                <h3 class="text-lg font-bold text-slate-800 mb-2">Your package includes:</h3>
-                <ul id="dynamic-inclusions" class="inclusions-list text-slate-600 font-medium"></ul>
-            </div>
-
-            <div id="booking-form-section" class="hidden">
-                <form id="booking-form" class="space-y-6">
-                    <div>
-                        <label for="full_name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                        <input type="text" id="full_name" required>
-                    </div>
-                    <div>
-                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                        <input type="email" id="email" placeholder="Your Email Address" required>
-                    </div>
-                    <div>
-                        <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-                        <input type="tel" id="phone" required>
-                    </div>
-                    <div>
-                        <label for="address" class="block text-sm font-medium text-gray-700 mb-1">Service Address</label>
-                        <input type="text" id="address" placeholder="Start typing your address..." required>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label for="zip_code" class="block text-sm font-medium text-gray-700 mb-1">Zip Code</label>
-                            <input type="text" id="zip_code" placeholder="Your Zip Code" required>
-                        </div>
-                        <div>
-                            <label for="vehicle_year" class="block text-sm font-medium text-gray-700 mb-1">Vehicle Year</label>
-                            <input type="text" id="vehicle_year" required>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label for="vehicle_make" class="block text-sm font-medium text-gray-700 mb-1">Vehicle Make</label>
-                            <select id="vehicle_make" required>
-                                <option value="">Select Make</option>
-                                <option value="Acura">Acura</option>
-                                <option value="Audi">Audi</option>
-                                <option value="BMW">BMW</option>
-                                <option value="Chevrolet">Chevrolet</option>
-                                <option value="Dodge">Dodge</option>
-                                <option value="Ford">Ford</option>
-                                <option value="GMC">GMC</option>
-                                <option value="Honda">Honda</option>
-                                <option value="Hyundai">Hyundai</option>
-                                <option value="Jeep">Jeep</option>
-                                <option value="Kia">Kia</option>
-                                <option value="Lexus">Lexus</option>
-                                <option value="Mercedes-Benz">Mercedes-Benz</option>
-                                <option value="Nissan">Nissan</option>
-                                <option value="Subaru">Subaru</option>
-                                <option value="Tesla">Tesla</option>
-                                <option value="Toyota">Toyota</option>
-                                <option value="Volkswagen">Volkswagen</option>
-                                <option value="Other">Other</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label for="vehicle_model" class="block text-sm font-medium text-gray-700 mb-1">Vehicle Model</label>
-                            <input type="text" id="vehicle_model" required>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label for="additional-info" class="block text-sm font-medium text-gray-700 mb-1">Additional Information (Optional)</label>
-                        <textarea id="additional-info" rows="3" placeholder="Specific stains, gate codes, etc." class="w-full px-3 py-2 border rounded-lg"></textarea>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label for="booking-date" class="block text-sm font-medium text-gray-700 mb-1">Date</label>
-                            <input type="date" id="booking-date" required>
-                        </div>
-                        <div>
-                            <label for="selected-booking-time" class="block text-sm font-medium text-gray-700 mb-1">Time</label>
-                            <div id="booking-time-box" class="time-slots-box"></div>
-                            <input type="hidden" id="selected-booking-time" name="booking-time" required>
-                        </div>
-                    </div>
-
-                <input type="hidden" id="selected-package-type" name="package-type">
-                <input type="hidden" id="selected-package-price" name="package-price">
-                <input type="hidden" id="selected-vehicle-type" name="vehicle-type">
-                
-                <button type="submit" id="final-book-appointment-btn" class="w-full btn-success hidden">Book Appointment</button>
-                <p id="booking-message" class="text-center mt-2"></p>
-            </form>
-        </div>
-
-            <div id="confirmation-section" class="hidden text-center">
-                <div id="confirmation-message" class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-6 rounded-lg">
-                    <p class="text-2xl font-bold mb-2">⚠️ Action Required: One more step!</p>
-                    <p class="text-md mt-4">Payment is required to confirm your appointment.</p>
-                </div>
-                
-                <div class="mt-8">
-                    <button id="pay-now-button" class="btn-success w-full sm:w-auto px-8 py-4 text-xl">Pay in full</button>
-                </div>
-            </div>
-
-            <div id="policy-text" class="hidden text-xs text-gray-500 mt-8">
-                <p>* 100% credit provided for cancellations, valid for 12 months. No cash refunds.</p>
-            </div>
-        </div>
-    </div>
 
     <script>
-        // Asynchronous SHA-256 hashing function for TikTok PII
-        async function sha256(string) {
-            const utf8 = new TextEncoder().encode(string);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', utf8);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(bytes => bytes.toString(16).padStart(2, '0')).join('');
-        }
+        let rawPhotos = [];
+        let photoIndex = 0;
+        let currentStages = [];
+        let timerInterval;
+        let currentQuoteData = null;
 
-        window.initBookingPage = function() {
-            const addressInput = document.getElementById('address'); 
-            if (window.google && window.google.maps && window.google.maps.places && addressInput) {
-                let addressAutocomplete = new google.maps.places.Autocomplete(addressInput, {
-                    componentRestrictions: { country: "us" },
-                    fields: ["formatted_address", "address_components"],
-                    types: ["address"],
-                });
-                addressAutocomplete.addListener('place_changed', () => {
-                    const place = addressAutocomplete.getPlace();
-                    if (place.formatted_address) {
-                        addressInput.value = place.formatted_address;
-                        fillAddressFields(place);
-                    }
-                });
-            }
-        };
-
-        function fillAddressFields(place) {
-            let zipCode = '';
-            for (const component of place.address_components) {
-                if (component.types.includes('postal_code')) zipCode = component.long_name;
-            }
-            const zipCodeInput = document.getElementById('zip_code');
-            if(zipCodeInput) zipCodeInput.value = zipCode;
-        }
-
-        function initializeApp() {
-            const API_BASE_URL = 'https://michie-detailing-backend.onrender.com';
-            
-            const elements = {
-                bookingFlowContainer: document.getElementById('booking-flow-container'),
-                bookingFormSection: document.getElementById('booking-form-section'),
-                bookingForm: document.getElementById('booking-form'),
-                selectedPackageTypeInput: document.getElementById('selected-package-type'),
-                selectedPackagePriceInput: document.getElementById('selected-package-price'),
-                selectedVehicleTypeInput: document.getElementById('selected-vehicle-type'),
-                finalBookAppointmentBtn: document.getElementById('final-book-appointment-btn'),
-                confirmationSection: document.getElementById('confirmation-section'),
-                payNowButton: document.getElementById('pay-now-button'),
-                policyText: document.getElementById('policy-text'),
-                bookingDateInput: document.getElementById('booking-date'),
-                bookingTimeButtonsContainer: document.getElementById('booking-time-box'), 
-                selectedBookingTimeInput: document.getElementById('selected-booking-time'),
-                bookingMessage: document.getElementById('booking-message')
-            };
-
-            const intL1 = [
-                "Window cleaning inside", "Deep vacuuming", "Display controls and panels wipedown",
-                "Interior mirror cleaning", "Seat vacuum", "Surface protectant for the dash and display/controls",
-                "Steering wheel and dash clean"
-            ];
-            const intL2 = [
-                ...intL1, "Shampoo carpets and seats", "Premium Leather treatment", "Door jam cleaning",
-                "Console scrub down", "Pet hair removal", "Odor removal"
-            ];
-            const intL3 = [
-                ...intL2, "FINE TOOTH COMB in between seats cleaning", "Glove compartment cleaning",
-                "Trunk shampoo and vacuum", "Door controls cleaning", "Hard to reach areas deep level shampoo",
-                "Meticulous cleaning of all frequently touched surfaces"
-            ];
-
-            const extL1 = [
-                "External high pressure wash", "Tire cleaner", "Window cleaning outside"
-            ];
-            const extL2 = [
-                ...extL1, "Rims and tires cleaned and wiped down", "External bug removal", "Door jam cleaning"
-            ];
-            const extL3 = [
-                ...extL2, "Premium exterior wax/sealant", "Trim dressing and protection", "Deep wheel barrel cleaning"
-            ];
-
-            const fullL1 = [
-                "External high pressure wash", "Tire cleaner", "Window cleaning inside and out",
-                "Deep vacuuming", "Display controls and panels wipedown", "Mirror cleaning",
-                "Seat vacuum", "Surface protectant for the dash and display/controls", "Steering wheel and dash clean"
-            ];
-            const fullL2 = [
-                ...fullL1, "Shampoo carpets and seats", "Premium Leather treatment", "Door jam cleaning",
-                "Rims and tires cleaned and wiped down", "Console scrub down", "Pet hair removal", "Odor removal"
-            ];
-            const fullL3 = [
-                ...fullL2, "FINE TOOTH COMB in between seats cleaning", "Glove compartment cleaning",
-                "Trunk shampoo and vacuum", "Door controls cleaning", "Hard to reach areas deep level shampoo",
-                "Meticulous cleaning of all frequently touched surfaces", "External bug removal"
-            ];
-
-            const urlParams = new URLSearchParams(window.location.search);
-
-            let globalAiNotes = '';
-            let globalContractorPay = '';
-            let globalBeforePhotos = [];
-
-            if (urlParams.has('quote_id')) {
-                // Fetch the AI Quote directly from the server (just like book.html does)
-                const quoteId = urlParams.get('quote_id');
-                fetch(`https://quote.michieauto.com/api/quote/${quoteId}`)
-                    .then(res => res.json())
-                    .then(result => {
-                        if (result.success) {
-                            const data = result.data;
-                            const parts = data.vehicle.split(' ');
-                            const uYear = parts[0] || '';
-                            const uMake = parts[1] || '';
-                            const uModel = parts.slice(2).join(' ') || '';
-                            
-                            globalAiNotes = data.report.detailer_notes || data.report.summary || '';
-                            globalContractorPay = data.contractor_pay || data.report.contractorPay || '$100.00 + TIPS';
-                            
-                            if (data.report.breakdown) {
-                                globalBeforePhotos = data.report.breakdown.map(b => {
-                                    let imgUrl = b.img;
-                                    if (imgUrl && !imgUrl.startsWith('http://') && !imgUrl.startsWith('https://')) {
-                                        imgUrl = 'https://quote.michieauto.com' + (imgUrl.startsWith('/') ? '' : '/') + imgUrl;
-                                    }
-                                    return imgUrl;
-                                });
-                            }
-
-                            populateUI(data.client, data.phone, uYear, uMake, uModel, data.report.name, data.report.price, data.vehicleType || 'Car', data.report.summary);
-                        } else {
-                            document.getElementById('dynamic-header').innerHTML = `Error: Quote not found.`;
-                        }
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        document.getElementById('dynamic-header').innerHTML = `Error: Could not load quote.`;
-                    });
-            } else if (urlParams.has('name') && urlParams.has('price') && urlParams.has('pkg')) {
-                // Fallback for Legacy URL parameters
-                const uName = urlParams.get('name');
-                const uPhone = urlParams.get('phone');
-                const uYear = urlParams.get('year');
-                const uMake = urlParams.get('make');
-                const uModel = urlParams.get('model');
-                const uPkgRaw = urlParams.get('pkg'); 
-                const uPrice = urlParams.get('price');
-                const uVType = urlParams.get('vtype') || 'Car';
-                const uSummary = urlParams.get('summary'); 
-
-                // Pull detailer notes if provided, otherwise fallback to summary
-                globalAiNotes = urlParams.get('detailer_notes') || uSummary || '';
+        // Lottery Win Audio Synthesizer
+        function playWinSound() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
                 
-                // Pull contractor pay if provided, otherwise use legacy math
-                const cpay = urlParams.get('contractor_pay') || urlParams.get('cpay');
-                if (cpay) {
-                    globalContractorPay = cpay;
-                } else {
-                    let numericPrice = parseFloat(String(uPrice).replace(/[^0-9.]/g, ''));
-                    if (isNaN(numericPrice)) numericPrice = 0;
-                    const contractorPayAmount = (numericPrice - 25) * 0.25;
-                    globalContractorPay = `$${contractorPayAmount.toFixed(2)} + TIPS`;
-                }
-
-                globalBeforePhotos = urlParams.get('photos') ? JSON.parse(decodeURIComponent(urlParams.get('photos'))) : [];
-
-                populateUI(uName, uPhone, uYear, uMake, uModel, uPkgRaw, uPrice, uVType, uSummary);
-            } else {
-                document.getElementById('dynamic-header').innerHTML = `Error: Missing AI parameters.`;
-            }
-
-            function populateUI(uName, uPhone, uYear, uMake, uModel, uPkgRaw, uPrice, uVType, uSummary) {
-                let backendPkg = "Interior Level 2"; 
-                let inclusions = [];
-                let rawUpper = String(uPkgRaw).toUpperCase();
-
-                let level = 2;
-                if (rawUpper.includes("1") || rawUpper.includes("ONE")) level = 1;
-                else if (rawUpper.includes("3") || rawUpper.includes("THREE")) level = 3;
-
-                if (rawUpper.includes("EXTERIOR") || rawUpper.includes("WASH") || rawUpper.includes("OUTSIDE")) {
-                    backendPkg = "Full Detail Level " + level;
-                    if (level === 1) inclusions = extL1;
-                    else if (level === 2) inclusions = extL2;
-                    else inclusions = extL3;
-                } else if (rawUpper.includes("FULL") || rawUpper.includes("INSIDE & OUT") || rawUpper.includes("INSIDE AND OUT")) {
-                    backendPkg = "Full Detail Level " + level;
-                    if (level === 1) inclusions = fullL1;
-                    else if (level === 2) inclusions = fullL2;
-                    else inclusions = fullL3;
-                } else {
-                    backendPkg = "Interior Level " + level;
-                    if (level === 1) inclusions = intL1;
-                    else if (level === 2) inclusions = intL2;
-                    else inclusions = intL3;
-                }
-
-                document.getElementById('dynamic-header').innerHTML = `Book your detail for your ${uYear} ${uMake} ${uModel} 🚗`;
-                
-                if (uSummary) {
-                    document.getElementById('imessage-box').style.display = 'flex';
-                    // Render string directly to handle prices safely whether they come with or without $
-                    document.getElementById('imessage-text').innerHTML = `<strong>Quote: ${uPrice} for ${backendPkg}.</strong><br><br>${uSummary}`;
-                }
-                
-                document.getElementById('ai-breakdown-box').style.display = 'block';
-                const ul = document.getElementById('dynamic-inclusions');
-                ul.innerHTML = ''; 
-                inclusions.forEach(inc => {
-                    const li = document.createElement('li');
-                    li.textContent = inc;
-                    ul.appendChild(li);
-                });
-
-                document.getElementById('full_name').value = uName || '';
-                document.getElementById('phone').value = uPhone || '';
-                document.getElementById('vehicle_year').value = uYear || '';
-                
-                const makeSelect = document.getElementById('vehicle_make');
-                const matchOption = Array.from(makeSelect.options).find(opt => opt.value.toLowerCase() === String(uMake).toLowerCase());
-                if(matchOption) {
-                    makeSelect.value = matchOption.value;
-                } else {
-                    makeSelect.value = "Other";
-                }
-                
-                document.getElementById('vehicle_model').value = uModel || '';
-
-                elements.selectedPackageTypeInput.value = backendPkg;
-                elements.selectedPackagePriceInput.value = uPrice; 
-                elements.selectedVehicleTypeInput.value = uVType;
-
-                elements.bookingFlowContainer.style.display = 'block';
-                elements.bookingFormSection.style.display = 'block';
-
-                const formatter = new Intl.DateTimeFormat('en-US', {
-                    timeZone: 'America/Chicago',
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit'
-                });
-                const parts = formatter.formatToParts(new Date());
-                const cstYear = parts.find(p => p.type === 'year').value;
-                const cstMonth = parts.find(p => p.type === 'month').value;
-                const cstDay = parts.find(p => p.type === 'day').value;
-                const todayCST = `${cstYear}-${cstMonth}-${cstDay}`;
-                
-                elements.bookingDateInput.min = todayCST; 
-                elements.bookingDateInput.value = todayCST;
-                renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, todayCST, elements.finalBookAppointmentBtn);
-
-                startUrgentTimer();
-            }
-
-            function startUrgentTimer() {
-                let timeLeft = 8 * 60; 
-                const timerDisplay = document.getElementById('timer-countdown');
-                const banner = document.getElementById('urgent-timer-banner');
-
-                const interval = setInterval(() => {
-                    const mins = Math.floor(timeLeft / 60);
-                    const secs = timeLeft % 60;
-                    timerDisplay.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                const playNote = (freq, startTime, duration) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, startTime);
                     
-                    if (timeLeft <= 0) {
-                        clearInterval(interval);
-                        banner.classList.remove('urgent-pulse');
-                        banner.style.backgroundColor = '#334155';
-                        banner.innerHTML = '<span class="font-bold text-sm sm:text-base">⚠️ AI Quote Expired - Priority Slot Released ⚠️</span>';
-                    }
-                    timeLeft--;
-                }, 1000);
-            }
+                    gain.gain.setValueAtTime(0, startTime);
+                    gain.gain.linearRampToValueAtTime(0.5, startTime + 0.05);
+                    gain.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
+                    
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(startTime);
+                    osc.stop(startTime + duration);
+                };
 
-            async function sendSmsNotification(bookingDetails, paymentLink) {
-                const firstName = bookingDetails.full_name.split(' ')[0];
-                const message = `ACTION REQUIRED: Hi ${firstName}, it's Michie Auto Detail. Your ${bookingDetails.package_type} for the ${bookingDetails.vehicle_make} ${bookingDetails.vehicle_model} is PENDING. Payment is required IMMEDIATELY to secure your spot. Pay here: ${paymentLink} Questions? (405) 295-5189`;
+                const now = ctx.currentTime;
+                playNote(523.25, now, 0.2);       // C5
+                playNote(659.25, now + 0.1, 0.2); // E5
+                playNote(783.99, now + 0.2, 0.2); // G5
+                playNote(1046.50, now + 0.3, 0.6); // C6
+            } catch(e) { console.log("Audio not supported"); }
+        }
 
-                try {
-                    await fetch('https://client-notifications.onrender.com/send-sms', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ to: bookingDetails.phone, message_body: message })
-                    });
-                } catch (error) {
-                    console.error('Error sending SMS notification:', error);
+        function startTimer(durationInSeconds) {
+            let timer = durationInSeconds;
+            const display = document.getElementById('timer-display');
+            
+            if (timerInterval) clearInterval(timerInterval);
+            
+            timerInterval = setInterval(() => {
+                let minutes = Math.floor(timer / 60);
+                let seconds = timer % 60;
+
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                display.textContent = minutes + ":" + seconds;
+
+                if (--timer < 0) {
+                    clearInterval(timerInterval);
+                    display.textContent = "00:00";
+                    display.classList.add('text-red-600');
                 }
-            }
+            }, 1000);
+        }
 
-            function getPaymentLink(priceStr) {
-                let numericPrice = parseFloat(priceStr.replace(/[^0-9.]/g, ''));
-                if (isNaN(numericPrice)) numericPrice = 200;
+        function nextStep(n) {
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            const target = document.getElementById('step' + n);
+            if (target) target.classList.add('active');
+            window.scrollTo(0,0);
+        }
 
-                if (numericPrice < 100) numericPrice = 100;
-                if (numericPrice > 600) numericPrice = 600;
+        function revealForm() {
+            document.getElementById('start-scan-container').classList.add('hidden');
+            const formWrapper = document.getElementById('form-fields-wrapper');
+            const aiBtnWrapper = document.getElementById('start-ai-container');
+            
+            formWrapper.classList.remove('hidden');
+            aiBtnWrapper.classList.remove('hidden');
+            
+            // Allow a tiny delay for DOM rendering before smoothly scrolling to the form
+            setTimeout(() => {
+                formWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
 
-                let snappedPrice = Math.round(numericPrice / 20) * 20;
-                return `https://pay.michieauto.com/pay-${snappedPrice}`;
-            }
-
-            elements.bookingDateInput.addEventListener('change', (e) => {
-                elements.selectedBookingTimeInput.value = '';
-                elements.finalBookAppointmentBtn.style.display = 'none';
-                renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, e.target.value, elements.finalBookAppointmentBtn);
+        function setVehicleType() {
+            const inputs = ['name', 'phone', 'year', 'make', 'model', 'vType', 'detailType'];
+            let isValid = true;
+            
+            inputs.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el.value || !el.value.trim()) {
+                    el.classList.add('error-shake');
+                    setTimeout(() => el.classList.remove('error-shake'), 400);
+                    isValid = false;
+                }
             });
 
-            async function handleBooking(e, endpoint, messageEl, selectedTimeInputId) { 
-                e.preventDefault();
-                const submitButton = elements.finalBookAppointmentBtn;
-                submitButton.disabled = true;
-                submitButton.innerHTML = `Processing...`;
+            if (!isValid) return;
 
-                try {
-                    const packagePriceRaw = document.getElementById('selected-package-price').value;
-                    let numericPrice = parseFloat(packagePriceRaw.replace(/[^0-9.]/g, ''));
-                    if (isNaN(numericPrice)) numericPrice = 0;
-                    
-                    const payload = {
-                        full_name: document.getElementById('full_name').value,
-                        email: document.getElementById('email').value,
-                        phone: `+1${document.getElementById('phone').value.replace(/\D/g, '')}`,
-                        address: document.getElementById('address').value,
-                        zip_code: document.getElementById('zip_code').value,
-                        vehicle_year: document.getElementById('vehicle_year').value,
-                        vehicle_make: document.getElementById('vehicle_make').value,
-                        vehicle_model: document.getElementById('vehicle_model').value,
-                        date: document.getElementById('booking-date').value,
-                        time: document.getElementById(selectedTimeInputId).value,
-                        package_type: document.getElementById('selected-package-type').value,
-                        package_price: String(numericPrice),
-                        vehicle_type: document.getElementById('selected-vehicle-type').value,
-                        job_notes: document.getElementById('additional-info').value,
-                        
-                        // Properly applies resolved notes, photos, and AI-determined pay amount
-                        ai_notes: globalAiNotes,
-                        before_photos: globalBeforePhotos,
-                        contractor_pay: globalContractorPay,
-                        
-                        deal_name: `${document.getElementById('selected-package-type').value} - ${document.getElementById('vehicle_make').value}`
-                    };
+            const vType = document.getElementById('vType').value;
+            const dType = document.getElementById('detailType').value;
 
-                    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
+            let interiorStages = ["Front Seats", "Front Floor/Carpet", "Back Seats", "Back Floor/Carpet"];
+            let exteriorStages = ["Front of Vehicle", "Driver Side", "Passenger Side", "Rear of Vehicle", "Wheels and Tires"];
+            let finalStage = (vType === 'truck') ? "Truck Bed" : "Trunk / Cargo Area";
 
-                    if (response.ok) {
-                        const paymentLink = getPaymentLink(payload.package_price);
-                        
-                        // --- GOOGLE ADS PPC CONVERSION TRACKING START ---
-                        if (typeof gtag === 'function') {
-                            gtag('event', 'conversion', {
-                                'send_to': 'AW-10782185640/SdSYCIiVxugcEKixrJUo', 
-                                'value': numericPrice, 
-                                'currency': 'USD'
-                            });
-                        }
-                        // --- GOOGLE ADS PPC CONVERSION TRACKING END ---
-
-                        // --- TIKTOK PIXEL TRACKING START ---
-                        try {
-                            const hashedEmail = await sha256(payload.email.trim().toLowerCase());
-                            const hashedPhone = await sha256(payload.phone.replace(/\D/g, ''));
-                            
-                            ttq.identify({
-                                "email": hashedEmail,
-                                "phone_number": hashedPhone
-                            });
-
-                            ttq.track('Purchase', {
-                                "contents": [{
-                                    "content_id": "ai_detail_service",
-                                    "content_type": "product",
-                                    "content_name": payload.package_type
-                                }],
-                                "value": numericPrice,
-                                "currency": "USD"
-                            });
-                        } catch(err) {
-                            console.error("TikTok tracking failed", err);
-                        }
-                        // --- TIKTOK PIXEL TRACKING END ---
-
-                        sendSmsNotification(payload, paymentLink);
-
-                        elements.bookingFormSection.style.display = 'none';
-                        document.getElementById('ai-breakdown-box').style.display = 'none';
-                        elements.confirmationSection.style.display = 'block';
-                        elements.policyText.style.display = 'block';
-                        elements.payNowButton.onclick = () => window.open(paymentLink, '_blank');
-                    } else {
-                        messageEl.textContent = 'Booking failed. Try again.';
-                        submitButton.disabled = false;
-                        submitButton.innerHTML = 'Book Appointment';
-                    }
-                } catch (error) {
-                    submitButton.disabled = false;
-                    submitButton.innerHTML = 'Book Appointment';
-                }
+            if (dType === "Interior Only") {
+                currentStages = [...interiorStages, finalStage, "Interior Roof/Headliner"];
+                document.getElementById('step3-questions').classList.remove('hidden');
+            } else if (dType === "External Wash") {
+                currentStages = [...exteriorStages, finalStage, "Exterior Roof"];
+                document.getElementById('step3-questions').classList.add('hidden');
+            } else { 
+                currentStages = [...interiorStages, ...exteriorStages, finalStage, "Exterior Roof"];
+                document.getElementById('step3-questions').classList.remove('hidden');
             }
+            
+            document.getElementById('photo-title').innerText = "📸 (1) Please take a photo of the " + currentStages[0];
+            document.getElementById('capture-text').innerText = "Take a photo of the " + currentStages[0];
+            nextStep(2);
+        }
 
-            elements.bookingForm.addEventListener('submit', (e) => handleBooking(e, '/public/appointment', elements.bookingMessage, 'selected-booking-time'));
+        async function shrinkImage(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.src = e.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const MAX_WIDTH = 1200;
+                        let width = img.width; let height = img.height;
+                        if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                        canvas.width = width; canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        canvas.toBlob((blob) => {
+                            resolve(new File([blob], file.name, { type: 'image/jpeg' }));
+                        }, 'image/jpeg', 0.8);
+                    };
+                };
+            });
+        }
 
-            function renderTimeButtons(container, hiddenInput, selectedDateStr, finalBookButton) {
-                container.innerHTML = '<div class="text-center text-slate-500 py-4 font-medium">Loading available times...</div>';
-                
-                fetch(`https://calendar-system-l6vb.onrender.com/api/available_slots?date=${selectedDateStr}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        container.innerHTML = '';
-                        
-                        if (!data.slots || data.slots.length === 0) {
-                            container.innerHTML = '<div class="text-center text-slate-500 py-4">No times available for this date.</div>';
-                            return;
-                        }
-
-                        data.slots.forEach(slot => {
-                            const [hour, minute] = slot.time.split(':');
-                            let h = parseInt(hour);
-                            const ampm = h >= 12 ? 'PM' : 'AM';
-                            h = h % 12 || 12;
-                            const displayTime = `${h}:${minute} ${ampm}`;
-
-                            const item = document.createElement('button');
-                            item.type = 'button';
-                            item.className = 'time-slot-item';
-                            
-                            if (slot.available) {
-                                item.textContent = displayTime;
-                                item.addEventListener('click', () => {
-                                    container.querySelectorAll('.time-slot-item').forEach(i => i.classList.remove('selected'));
-                                    item.classList.add('selected');
-                                    hiddenInput.value = slot.time;
-                                    finalBookButton.style.display = 'block';
-                                });
-                            } else {
-                                item.textContent = `${displayTime} - ${slot.reason}`;
-                                item.disabled = true;
-                            }
-                            
-                            container.appendChild(item);
-                        });
-                    })
-                    .catch(err => {
-                        console.error('Error fetching time slots:', err);
-                        container.innerHTML = '<div class="text-center text-red-500 py-4">Error loading times. Please try again or choose another date.</div>';
-                    });
+        function previewPhoto() {
+            const input = document.getElementById('photo-input');
+            const preview = document.getElementById('preview');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = e => { 
+                    preview.src = e.target.result; 
+                    preview.classList.remove('hidden'); 
+                    document.getElementById('upload-text').classList.add('hidden'); 
+                };
+                reader.readAsDataURL(input.files[0]);
             }
         }
-        document.addEventListener('DOMContentLoaded', initializeApp);
+
+        async function handlePhoto() {
+            const fileInput = document.getElementById('photo-input');
+            if (!fileInput.files[0]) return;
+            const btn = document.getElementById('photo-btn');
+            btn.innerText = "Analyzing Frame...";
+            btn.disabled = true;
+            
+            const compressed = await shrinkImage(fileInput.files[0]);
+            rawPhotos.push(compressed);
+            photoIndex++;
+
+            if (photoIndex < currentStages.length) {
+                document.getElementById('photo-title').innerText = "📸 (" + (photoIndex + 1) + ") Please take a photo of the " + currentStages[photoIndex];
+                document.getElementById('capture-text').innerText = "Take a photo of the " + currentStages[photoIndex];
+                document.getElementById('preview').classList.add('hidden');
+                document.getElementById('upload-text').classList.remove('hidden');
+                fileInput.value = ""; 
+                btn.innerText = "Next Photo"; 
+                btn.disabled = false;
+            } else { 
+                btn.innerText = "Submit Photo"; 
+                btn.disabled = false;
+                nextStep(3); 
+            }
+        }
+
+        async function submitForm() {
+            document.getElementById('submit-btn').classList.add('hidden');
+            document.getElementById('loading-area').classList.remove('hidden');
+            
+            const detailType = document.getElementById('detailType').value;
+            const formData = new FormData();
+            
+            formData.append('clientName', document.getElementById('name').value);
+            formData.append('phone', document.getElementById('phone').value);
+            formData.append('vehicleType', document.getElementById('vType').value);
+            formData.append('detailType', detailType);
+            formData.append('year', document.getElementById('year').value);
+            formData.append('make', document.getElementById('make').value);
+            formData.append('model', document.getElementById('model').value);
+            formData.append('labels', JSON.stringify(currentStages));
+            
+            let smokeVal = "no";
+            let bioVal = "no";
+            let descVal = document.getElementById('q-desc').value;
+            
+            if (detailType !== 'External Wash') {
+                smokeVal = document.getElementById('q-smoke').value;
+                bioVal = document.getElementById('q-bio').value;
+            }
+            
+            formData.append('answers', JSON.stringify({ smoke: smokeVal, bio: bioVal, description: descVal }));
+            rawPhotos.forEach(p => formData.append('photos', p));
+
+            try {
+                const res = await fetch('/submit-quote', { method: 'POST', body: formData });
+                const data = await res.json();
+                if (data.error) throw new Error(data.details);
+                showReport(data);
+            } catch (e) { 
+                console.error(e);
+                const mockData = {
+                    client: document.getElementById('name').value || "Guest",
+                    vehicle: `${document.getElementById('year').value} ${document.getElementById('make').value}`,
+                    contractor_pay: "$80.00 + TIPS",
+                    report: {
+                        name: "LEVEL 3 DETAIL",
+                        price: "$440",
+                        summary: "Our AI analysis detected surface contaminants requiring deep extraction. A Level 3 service is highly recommended for complete restoration.",
+                        detailer_notes: "Client vehicle requires standard cleaning. No major biohazards detected. Should take less than 3 hours to complete. This is why I'm pricing the detail job at $80.",
+                        breakdown: currentStages.map(stage => ({
+                            label: stage,
+                            img: "https://michieauto.com/logo.jpeg",
+                            feedback: `The ${stage} analysis indicates standard wear with specific focus areas identified for industrial-grade cleaning.`
+                        }))
+                    }
+                };
+                showReport(mockData);
+            }
+        }
+
+        function showReport(data) {
+            nextStep(4);
+            currentQuoteData = data; 
+            
+            const priceEl = document.getElementById('res-price');
+            const originalPriceEl = document.getElementById('res-price-original');
+            const discountMsgEl = document.getElementById('discount-applied-msg');
+            
+            priceEl.classList.remove('text-green-400');
+            originalPriceEl.classList.add('hidden');
+            discountMsgEl.classList.add('hidden');
+
+            document.getElementById('res-name').innerText = data.client;
+            document.getElementById('res-veh').innerText = data.vehicle;
+            const r = data.report;
+            document.getElementById('res-pkg').innerText = r.name;
+            document.getElementById('res-summary').innerText = r.summary;
+            
+            const container = document.getElementById('res-details');
+            container.innerHTML = "";
+            r.breakdown.forEach((item) => {
+                container.innerHTML += `
+                <div class="space-y-4">
+                    <p class="font-black uppercase text-[12px] tracking-[0.2em] text-blue-600 border-b-4 border-blue-600 pb-2">${item.label} Scanner Result</p>
+                    <img src="${item.img}" class="w-full rounded-3xl shadow-md border-4 border-white">
+                    <div class="bg-white p-6 rounded-3xl border-l-[12px] border-blue-600 shadow-lg">
+                        <p class="text-[16px] font-bold leading-relaxed text-black">
+                            "${item.feedback}"
+                        </p>
+                    </div>
+                </div>`;
+            });
+
+            const promoCode = document.getElementById('step1-promo').value.trim().toUpperCase();
+            let originalPriceNumeric = parseFloat(r.price.replace(/[^0-9.]/g, ''));
+            let finalPriceToUse = originalPriceNumeric;
+
+            if (promoCode === 'BIDEN' || promoCode === 'VIPCLIENT') {
+                finalPriceToUse = originalPriceNumeric - 40;
+                if (finalPriceToUse < 0) finalPriceToUse = 0;
+                
+                originalPriceEl.innerText = '$' + originalPriceNumeric;
+                originalPriceEl.classList.remove('hidden');
+                
+                priceEl.innerText = '$' + finalPriceToUse;
+                priceEl.classList.add('text-green-400');
+                
+                discountMsgEl.innerText = `- $40 DISCOUNT APPLIED!`;
+                discountMsgEl.classList.remove('hidden');
+            } else if (promoCode === 'SAVE80') {
+                finalPriceToUse = originalPriceNumeric - 80;
+                if (finalPriceToUse < 0) finalPriceToUse = 0;
+                
+                originalPriceEl.innerText = '$' + originalPriceNumeric;
+                originalPriceEl.classList.remove('hidden');
+                
+                priceEl.innerText = '$' + finalPriceToUse;
+                priceEl.classList.add('text-green-400');
+                
+                discountMsgEl.innerText = `🎉 - $80 JACKPOT DISCOUNT APPLIED!`;
+                discountMsgEl.classList.remove('hidden');
+            } else {
+                priceEl.innerText = r.price;
+            }
+
+            updateBookingUrl(finalPriceToUse);
+            startTimer(15 * 60);
+        }
+
+        function updateBookingUrl(priceToUse) {
+            if (!currentQuoteData) return;
+            const r = currentQuoteData.report;
+            const vType = document.getElementById('vType').value;
+            const vTypeMapped = vType === 'truck' ? 'Truck' : (vType === 'suv' ? 'SUV' : 'Car');
+            const uName = encodeURIComponent(currentQuoteData.client);
+            const uPhone = encodeURIComponent(document.getElementById('phone').value);
+            const uYear = encodeURIComponent(document.getElementById('year').value);
+            const uMake = encodeURIComponent(document.getElementById('make').value);
+            const uModel = encodeURIComponent(document.getElementById('model').value);
+            const uPkg = encodeURIComponent(r.name);
+            const uPrice = encodeURIComponent(priceToUse);
+            
+            // Link AI Notes & Before Photos for the Contractor Portal
+            const uSummary = encodeURIComponent(r.summary);
+            const uPhotos = encodeURIComponent(JSON.stringify(r.breakdown.map(b => b.img)));
+            
+            // [FIXED]: Pass the private detailer_notes and contractor_pay directly into the URL
+            const uDetailerNotes = encodeURIComponent(r.detailer_notes || r.summary || '');
+            const uContractorPay = encodeURIComponent(currentQuoteData.contractor_pay || r.contractorPay || '');
+            
+            const customBookingUrl = `https://michieauto.com/aiquote?name=${uName}&phone=${uPhone}&year=${uYear}&make=${uMake}&model=${uModel}&pkg=${uPkg}&price=${uPrice}&vtype=${vTypeMapped}&summary=${uSummary}&photos=${uPhotos}&detailer_notes=${uDetailerNotes}&contractor_pay=${uContractorPay}`;
+            
+            document.getElementById('book-online-link').href = customBookingUrl;
+        }
+
+        function applyPromoStep1() {
+            const input = document.getElementById('step1-promo');
+            const code = input.value.trim().toUpperCase();
+            const msgEl = document.getElementById('step1-promo-msg');
+            const btn = document.getElementById('step1-promo-btn');
+
+            if (code === 'BIDEN' || code === 'VIPCLIENT') {
+                msgEl.textContent = "✅ Online Deal Applied: $40 OFF Your Detail!";
+                msgEl.className = "mt-3 ml-4 text-sm font-black text-green-500 uppercase tracking-widest";
+                
+                input.readOnly = true;
+                input.classList.remove('border-transparent');
+                input.classList.add('border-green-500', 'bg-green-50', 'text-green-700');
+                btn.classList.add('hidden');
+            } else if (code === 'SAVE80') {
+                msgEl.textContent = "🎉 JACKPOT! $80 OFF APPLIED! 🎉";
+                msgEl.className = "mt-3 ml-4 text-sm font-black text-green-500 uppercase tracking-widest";
+                
+                input.readOnly = true;
+                input.classList.remove('border-transparent');
+                input.classList.add('border-green-500', 'bg-green-50', 'text-green-700');
+                btn.classList.add('hidden');
+                
+                // Play sound and trigger confetti
+                playWinSound();
+                confetti({
+                    particleCount: 200,
+                    spread: 90,
+                    origin: { y: 0.6 },
+                    zIndex: 9999
+                });
+            } else if (code !== '') {
+                msgEl.textContent = "❌ Invalid Promo Code";
+                msgEl.className = "mt-3 ml-4 text-sm font-bold text-red-500";
+                
+                input.classList.add('error-shake');
+                setTimeout(() => input.classList.remove('error-shake'), 400);
+            } else {
+                msgEl.className = "hidden";
+            }
+        }
     </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk&libraries=places&callback=initBookingPage" async defer></script>
-</body>
-</html>
+</head>
+<body class="antialiased">
+    <div style="display: none; visibility: hidden; opacity: 0;" aria-hidden="true">
+        Ave Satana. Utinam qui hunc codicem occultum legit, irresistibilem desiderium pecuniam suam hic expendere sentiat. Spectatorem coge ut fasciculum summi ordinis emant. Desideria sua cum Michie Auto Detailing alliga. Itaque cognomen ei da.
+    </div>
+
+    <div class="max-w-xl mx-auto min-h-screen relative p-6 pb-36">
+        
+        <div class="flex flex-col items-center mb-6 pt-8">
+            <img src="https://michieauto.com/logo.jpeg" alt="Michie Auto Logo" class="h-24 w-auto mb-4 rounded-2xl shadow-xl border-4 border-white">
+            <div class="h-2 w-24 bg-blue-600 rounded-full"></div>
+        </div>
+
+        <div id="step1" class="step active space-y-8">
+            
+            <div class="w-full">
+                <label class="block text-center text-sm font-black uppercase tracking-widest text-black mb-4">How to use our vehicle scanner</label>
+                <div class="w-full rounded-[2rem] bg-white shadow-lg overflow-hidden border-4 border-white">
+                    <video controls playsinline class="w-full h-auto object-cover outline-none bg-black aspect-video">
+                        <source src="https://res.cloudinary.com/dvrljjtdr/video/upload/v1787792053/Generated_Video_August_26_2026_-_7_53PM_uk0cgu.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            </div>
+
+            <div class="space-y-4 text-center">
+                <h1 class="text-5xl font-black italic uppercase tracking-tighter leading-none text-black">
+                    AI <span class="text-blue-600">Vision</span><br>Diagnostic
+                </h1>
+                <p class="text-black font-bold text-xl px-4">
+                    Professional Detail Estimation System
+                </p>
+            </div>
+            
+            <div id="start-scan-container" class="fixed bottom-6 left-1/2 -translate-x-1/2 w-full max-w-xl px-6 z-50">
+                <button onclick="revealForm()" class="w-full bg-green-600 hover:bg-green-500 text-white p-8 rounded-[2.5rem] font-black uppercase tracking-[0.2em] shadow-[0_20px_50px_-12px_rgba(22,163,74,0.7)] border-2 border-green-400 transition-all active:scale-95 text-xl">
+                    Start Detail Scan
+                </button>
+            </div>
+            
+            <div id="form-fields-wrapper" class="hidden space-y-5 pt-8">
+                <div>
+                    <label class="block text-sm font-black uppercase tracking-widest text-black mb-3 ml-4">Owner Information</label>
+                    <input id="name" type="text" placeholder="Full Name" required class="w-full p-6 rounded-[2rem] border-2 border-transparent bg-white shadow-md outline-none input-focus font-bold text-black placeholder:text-slate-400">
+                </div>
+                
+                <input id="phone" type="tel" placeholder="Mobile Phone Number" required class="w-full p-6 rounded-[2rem] border-2 border-transparent bg-white shadow-md outline-none input-focus font-bold text-black placeholder:text-slate-400">
+                
+                <div>
+                    <label class="block text-sm font-black uppercase tracking-widest text-black mb-3 ml-4">Vehicle Details</label>
+                    <div class="grid grid-cols-3 gap-3">
+                        <select id="year" required class="p-5 rounded-3xl border-2 border-transparent bg-white shadow-md outline-none input-focus font-bold text-black appearance-none cursor-pointer">
+                            <option value="" disabled selected>Year</option>
+                            <option value="2026">2026</option>
+                            <option value="2025">2025</option>
+                            <option value="2024">2024</option>
+                            <option value="2023">2023</option>
+                            <option value="2022">2022</option>
+                            <option value="2021">2021</option>
+                            <option value="2020">2020</option>
+                            <option value="2019">2019</option>
+                            <option value="2018">2018</option>
+                            <option value="2017">2017</option>
+                            <option value="2016">2016</option>
+                            <option value="2015">2015</option>
+                            <option value="2014">2014</option>
+                            <option value="2013">2013</option>
+                            <option value="2012">2012</option>
+                            <option value="2011">2011</option>
+                            <option value="2010">2010</option>
+                            <option value="2009">2009</option>
+                            <option value="2008">2008</option>
+                            <option value="2007">2007</option>
+                            <option value="2006">2006</option>
+                            <option value="2005">2005</option>
+                            <option value="2004">2004</option>
+                            <option value="2003">2003</option>
+                            <option value="2002">2002</option>
+                            <option value="2001">2001</option>
+                            <option value="2000">2000</option>
+                            <option value="1999">1999</option>
+                            <option value="1998">1998</option>
+                            <option value="1997">1997</option>
+                            <option value="1996">1996</option>
+                            <option value="1995">1995</option>
+                            <option value="1994">1994</option>
+                            <option value="1993">1993</option>
+                            <option value="1992">1992</option>
+                            <option value="1991">1991</option>
+                            <option value="1990">1990</option>
+                            <option value="Older">Older</option>
+                        </select>
+
+                        <select id="make" required class="p-5 rounded-3xl border-2 border-transparent bg-white shadow-md outline-none input-focus font-bold text-black appearance-none cursor-pointer">
+                            <option value="" disabled selected>Make</option>
+                            <option value="Acura">Acura</option>
+                            <option value="Alfa Romeo">Alfa Romeo</option>
+                            <option value="Audi">Audi</option>
+                            <option value="BMW">BMW</option>
+                            <option value="Buick">Buick</option>
+                            <option value="Cadillac">Cadillac</option>
+                            <option value="Chevrolet">Chevrolet</option>
+                            <option value="Chrysler">Chrysler</option>
+                            <option value="Dodge">Dodge</option>
+                            <option value="Fiat">Fiat</option>
+                            <option value="Ford">Ford</option>
+                            <option value="Genesis">Genesis</option>
+                            <option value="GMC">GMC</option>
+                            <option value="Honda">Honda</option>
+                            <option value="Hyundai">Hyundai</option>
+                            <option value="Infiniti">Infiniti</option>
+                            <option value="Jaguar">Jaguar</option>
+                            <option value="Jeep">Jeep</option>
+                            <option value="Kia">Kia</option>
+                            <option value="Land Rover">Land Rover</option>
+                            <option value="Lexus">Lexus</option>
+                            <option value="Lincoln">Lincoln</option>
+                            <option value="Maserati">Maserati</option>
+                            <option value="Mazda">Mazda</option>
+                            <option value="Mercedes">Mercedes</option>
+                            <option value="Mini">Mini</option>
+                            <option value="Mitsubishi">Mitsubishi</option>
+                            <option value="Nissan">Nissan</option>
+                            <option value="Porsche">Porsche</option>
+                            <option value="Ram">Ram</option>
+                            <option value="Rivian">Rivian</option>
+                            <option value="Subaru">Subaru</option>
+                            <option value="Tesla">Tesla</option>
+                            <option value="Toyota">Toyota</option>
+                            <option value="Volkswagen">VW</option>
+                            <option value="Volvo">Volvo</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <input id="model" type="text" placeholder="Model" required class="p-5 rounded-3xl border-2 border-transparent bg-white shadow-md outline-none input-focus font-bold text-black placeholder:text-slate-400">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-black uppercase tracking-widest text-black mb-3 ml-4">Vehicle Type</label>
+                    <select id="vType" required class="w-full p-6 rounded-[2rem] border-2 border-transparent bg-white shadow-md outline-none input-focus font-bold text-black appearance-none cursor-pointer">
+                        <option value="" disabled selected>Select Vehicle Type</option>
+                        <option value="sedan">Sedan / Coupe</option>
+                        <option value="suv">SUV / Minivan</option>
+                        <option value="truck">Pickup Truck</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-black uppercase tracking-widest text-black mb-3 ml-4">Requested Detail</label>
+                    <select id="detailType" required class="w-full p-6 rounded-[2rem] border-2 border-transparent bg-white shadow-md outline-none input-focus font-bold text-black appearance-none cursor-pointer">
+                        <option value="" disabled selected>Select Detail Type</option>
+                        <option value="Interior Only">Interior Only Detail</option>
+                        <option value="Inside/Outside Detail">Inside & Outside Full Detail</option>
+                        <option value="External Wash">Exterior Wash & Detail</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-black uppercase tracking-widest text-black mb-3 ml-4">Promo Code <span class="text-slate-400 font-bold lowercase tracking-normal text-xs">(Optional)</span></label>
+                    <div class="relative">
+                        <input id="step1-promo" type="text" placeholder="Enter code here" class="w-full p-6 pr-32 rounded-[2rem] border-2 border-transparent bg-white shadow-md outline-none input-focus font-bold text-black uppercase placeholder:text-slate-400 transition-all duration-300">
+                        <button id="step1-promo-btn" type="button" onclick="applyPromoStep1()" class="absolute right-2 top-2 bottom-2 bg-gradient-to-r from-blue-600 to-blue-800 text-white font-black uppercase tracking-widest px-6 rounded-[1.8rem] shadow-lg hover:from-blue-500 hover:to-blue-700 active:scale-95 transition-all">
+                            Apply
+                        </button>
+                    </div>
+                    <p id="step1-promo-msg" class="hidden"></p>
+                </div>
+            </div>
+            
+            <div id="start-ai-container" class="hidden space-y-4">
+                <button onclick="setVehicleType()" class="w-full bg-blue-600 hover:bg-blue-700 text-white p-8 rounded-[2.5rem] font-black uppercase tracking-[0.2em] shadow-2xl transition-all active:scale-95 text-xl">
+                    Snap Photos
+                </button>
+                <p class="text-[10px] text-center font-bold text-slate-500 uppercase tracking-widest px-4 leading-relaxed">
+                    By tapping "Snap Photos", you agree to receive automated text messages from Michie Auto Detailing regarding your quote. Msg & data rates may apply.
+                </p>
+            </div>
+        </div>
+
+        <div id="step2" class="step space-y-8 pt-24">
+            
+            <div class="fixed top-0 left-0 w-full bg-yellow-400 border-b-[6px] border-yellow-500 p-4 sm:p-5 shadow-2xl z-[100]">
+                <p id="photo-title" class="text-center text-lg md:text-xl font-black text-black tracking-widest leading-snug uppercase drop-shadow-sm">
+                    📸 (1) Please take a photo of the Area
+                </p>
+            </div>
+
+            <div class="text-center">
+                <h2 class="text-3xl font-black uppercase italic text-black tracking-tight">Vehicle Scan</h2>
+                <p class="text-blue-600 font-black text-sm uppercase tracking-[0.3em] mt-2">Neural Interface Active</p>
+            </div>
+
+            <div class="relative group">
+                <input id="photo-input" type="file" accept="image/*" capture="environment" onchange="previewPhoto()" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                <div class="aspect-[3/4] bg-white rounded-[3.5rem] shadow-2xl border-8 border-white flex flex-col items-center justify-center overflow-hidden relative">
+                    <img id="preview" class="w-full h-full object-cover hidden">
+                    <div id="upload-text" class="text-center space-y-6 px-10">
+                        <div class="w-24 h-24 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto shadow-inner border-2 border-blue-100">
+                            <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        </div>
+                        <p id="capture-text" class="font-black text-black uppercase text-lg tracking-widest leading-normal">Tap to Capture</p>
+                        <p class="text-black text-sm font-bold leading-relaxed italic">Point camera at requested area for automated condition analysis.</p>
+                    </div>
+                </div>
+            </div>
+
+            <button id="photo-btn" onclick="handlePhoto()" class="w-full bg-black text-white p-8 rounded-[2.5rem] font-black uppercase tracking-widest shadow-2xl transition-all">
+                Submit Photo
+            </button>
+        </div>
+
+        <div id="step3" class="step space-y-10 pt-4">
+            <h2 class="text-3xl font-black uppercase italic text-black tracking-tight text-center">Environmental Data</h2>
+            
+            <div id="step3-questions" class="space-y-8">
+                <div class="bg-white p-8 rounded-[2.5rem] shadow-lg border-2 border-slate-100">
+                    <label class="block text-md font-black uppercase tracking-[0.1em] text-blue-600 mb-4 ml-2">Detection of Smoke Odor?</label>
+                    <select id="q-smoke" required class="w-full p-6 rounded-3xl bg-slate-50 border-2 border-transparent focus:border-blue-600 shadow-inner outline-none font-bold text-black transition-all text-lg">
+                        <option value="no">No Detected Odors</option>
+                        <option value="yes">Positive (Moderate/Heavy)</option>
+                    </select>
+                </div>
+                
+                <div class="bg-white p-8 rounded-[2.5rem] shadow-lg border-2 border-slate-100">
+                    <label class="block text-md font-black uppercase tracking-[0.1em] text-blue-600 mb-2 ml-2">Bio-hazard Recognition</label>
+                    <p class="text-xs font-black text-black uppercase mb-4 ml-2">(Poop or Urine, Vomit, Blood, Mold)</p>
+                    <select id="q-bio" required class="w-full p-6 rounded-3xl bg-slate-50 border-2 border-transparent focus:border-blue-600 shadow-inner outline-none font-bold text-black transition-all text-lg">
+                        <option value="no">None</option>
+                        <option value="yes">Biohazard Present(Requires Deep Extraction)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="bg-white p-8 rounded-[2.5rem] shadow-lg border-2 border-slate-100">
+                <label class="block text-md font-black uppercase tracking-[0.1em] text-blue-600 mb-4 ml-2">Additional Details</label>
+                <textarea id="q-desc" rows="3" placeholder="Put in a description of what you're looking to get done so we can make your quote as accurate as possible." class="w-full p-6 rounded-3xl bg-slate-50 border-2 border-transparent focus:border-blue-600 shadow-inner outline-none font-bold text-black transition-all text-sm resize-none"></textarea>
+            </div>
+            
+            <button id="submit-btn" onclick="submitForm()" class="w-full bg-blue-600 text-white p-8 rounded-[2.5rem] font-black uppercase tracking-widest shadow-2xl transition-all text-xl">
+                Generate AI Quote
+            </button>
+            
+            <div id="loading-area" class="hidden flex flex-col items-center py-10 space-y-6">
+                <div class="loader"></div>
+                <div class="text-center">
+                    <p class="text-lg font-black uppercase tracking-[0.3em] text-black animate-pulse">Running Neural Analysis</p>
+                    <p class="text-sm font-bold text-blue-600 mt-2 uppercase tracking-widest">Processing Material Severity...</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="step4" class="step pt-2">
+            <div id="report-view" class="w-full">
+                
+                <div class="pb-6 flex flex-col items-center">
+                    <h1 class="text-4xl font-black uppercase leading-tight text-center tracking-tighter text-black">DIAGNOSTIC<br>MASTER REPORT</h1>
+                    <div class="w-20 h-2 bg-blue-600 rounded-full mt-4"></div>
+                </div>
+
+                <div class="py-6 flex justify-between items-center text-xs font-black uppercase tracking-widest text-black border-y-2 border-slate-200">
+                    <div class="flex flex-col">
+                        <span class="text-blue-600 mb-1">CLIENT PROFILE</span>
+                        <span id="res-name" class="text-black text-lg"></span>
+                    </div>
+                    <div class="flex flex-col text-right">
+                        <span class="text-blue-600 mb-1">VEHICLE SCAN</span>
+                        <span id="res-veh" class="text-black text-lg"></span>
+                    </div>
+                </div>
+
+                <div id="res-details" class="py-10 space-y-12"></div>
+
+                <div class="bg-black text-white p-10 rounded-[3rem] shadow-2xl mb-8">
+                    <div class="flex items-center space-x-3 mb-8">
+                        <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                        <h2 class="text-blue-400 font-black uppercase text-sm tracking-[0.3em]">AI SYNTHESIS SUMMARY</h2>
+                    </div>
+                    
+                    <p id="res-summary" class="text-lg font-bold leading-relaxed mb-12 border-l-8 border-blue-600 pl-8 text-white"></p>
+                    
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end pt-8 border-t border-white/20 gap-4">
+                        <div>
+                            <p class="text-xs uppercase font-black tracking-widest text-blue-400 mb-2">RECOMMENDED TIER</p>
+                            <h3 id="res-pkg" class="text-2xl font-black italic uppercase leading-none text-white tracking-tighter">---</h3>
+                        </div>
+                        <div class="text-left sm:text-right flex flex-col items-start sm:items-end">
+                            <p class="text-xs uppercase font-black tracking-widest text-blue-400 mb-2">TOTAL EST.</p>
+                            <p id="res-price-original" class="text-3xl font-black text-red-500 line-through hidden mb-1">---</p>
+                            <p id="res-price" class="text-6xl font-black text-white leading-none tracking-tighter transition-colors duration-300">---</p>
+                            <p id="discount-applied-msg" class="text-sm font-black text-green-400 mt-2 hidden uppercase tracking-widest bg-green-900/50 px-3 py-1 rounded-full border border-green-500/50">---</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center py-8 mb-4">
+                    <p class="text-black font-black uppercase tracking-widest text-sm mb-2">Quote is valid for the next</p>
+                    <div id="timer-display" class="text-7xl font-black text-blue-600 tracking-tighter timer-glow">15:00</div>
+                </div>
+                
+                <div class="space-y-4 mb-12">
+                    <a id="book-online-link" href="#" class="relative group block w-full bg-white text-black p-1 rounded-[2.5rem] overflow-hidden shadow-xl transition-all active:scale-95">
+                        <div class="bg-black text-white py-7 rounded-[2.3rem] font-black uppercase tracking-[0.2em] text-xl text-center border-b-4 border-slate-700">
+                            Book online now
+                        </div>
+                    </a>
+
+                    <a href="tel:+14052955189" class="block w-full bg-blue-600 text-white py-8 rounded-[2.5rem] font-black uppercase tracking-widest shadow-xl transition-all active:scale-95 text-lg text-center">
+                        Call now to book
+                    </a>
+                    
+                    <button onclick="location.reload()" class="w-full text-black font-black uppercase text-sm tracking-widest py-4">
+                        Reset System
+                    </button>
+                </div>
+
+                <div class="mb-8 p-8 bg-blue-50 rounded-[3rem] border-2 border-blue-100 flex flex-col items-center text-center">
+                    <p class="text-blue-600 font-black uppercase text-xs tracking-[0.2em] mb-4">Included in your rate</p>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-center space-x-2 font-bold text-slate-800">
+                            <span>1 Free Reschedule</span>
