@@ -435,7 +435,7 @@
                         console.error(err);
                         document.getElementById('dynamic-header').innerHTML = `Error: Could not load quote.`;
                     });
-            } else if (urlParams.has('name') && urlParams.has('price') && urlParams.has('pkg')) {
+} else if (urlParams.has('name') && urlParams.has('price') && urlParams.has('pkg')) {
                 // Fallback for Legacy URL parameters
                 const uName = urlParams.get('name');
                 const uPhone = urlParams.get('phone');
@@ -447,11 +447,17 @@
                 const uVType = urlParams.get('vtype') || 'Car';
                 const uSummary = urlParams.get('summary'); 
 
-                // Pull detailer notes if provided, otherwise fallback to summary
-                globalAiNotes = urlParams.get('detailer_notes') || uSummary || '';
+                // NEW: Helper to decode the Base64 obfuscated URL parameters
+                const decodeSafeBase64 = (str) => {
+                    if (!str) return null;
+                    try { return decodeURIComponent(escape(atob(str))); } catch(e) { return str; } // Fallback if plain text
+                };
+
+                // Pull and decode detailer notes
+                globalAiNotes = decodeSafeBase64(urlParams.get('detailer_notes')) || uSummary || '';
                 
-                // Pull contractor pay if provided, otherwise use legacy math
-                const cpay = urlParams.get('contractor_pay') || urlParams.get('cpay');
+                // Pull and decode contractor pay
+                const cpay = decodeSafeBase64(urlParams.get('contractor_pay')) || decodeSafeBase64(urlParams.get('cpay'));
                 if (cpay) {
                     globalContractorPay = cpay;
                 } else {
@@ -464,8 +470,6 @@
                 globalBeforePhotos = urlParams.get('photos') ? JSON.parse(decodeURIComponent(urlParams.get('photos'))) : [];
 
                 populateUI(uName, uPhone, uYear, uMake, uModel, uPkgRaw, uPrice, uVType, uSummary);
-            } else {
-                document.getElementById('dynamic-header').innerHTML = `Error: Missing AI parameters.`;
             }
 
             function populateUI(uName, uPhone, uYear, uMake, uModel, uPkgRaw, uPrice, uVType, uSummary) {
