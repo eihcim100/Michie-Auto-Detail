@@ -397,7 +397,47 @@
 
             const urlParams = new URLSearchParams(window.location.search);
 
-            if(urlParams.has('name') && urlParams.has('price') && urlParams.has('pkg')) {
+            let globalAiNotes = '';
+            let globalContractorPay = '';
+            let globalBeforePhotos = [];
+
+            if (urlParams.has('quote_id')) {
+                // Fetch the AI Quote directly from the server (just like book.html does)
+                const quoteId = urlParams.get('quote_id');
+                fetch(`https://quote.michieauto.com/api/quote/${quoteId}`)
+                    .then(res => res.json())
+                    .then(result => {
+                        if (result.success) {
+                            const data = result.data;
+                            const parts = data.vehicle.split(' ');
+                            const uYear = parts[0] || '';
+                            const uMake = parts[1] || '';
+                            const uModel = parts.slice(2).join(' ') || '';
+                            
+                            globalAiNotes = data.report.detailer_notes || data.report.summary || '';
+                            globalContractorPay = data.contractor_pay || data.report.contractorPay || '$100.00 + TIPS';
+                            
+                            if (data.report.breakdown) {
+                                globalBeforePhotos = data.report.breakdown.map(b => {
+                                    let imgUrl = b.img;
+                                    if (imgUrl && !imgUrl.startsWith('http://') && !imgUrl.startsWith('https://')) {
+                                        imgUrl = 'https://quote.michieauto.com' + (imgUrl.startsWith('/') ? '' : '/') + imgUrl;
+                                    }
+                                    return imgUrl;
+                                });
+                            }
+
+                            populateUI(data.client, data.phone, uYear, uMake, uModel, data.report.name, data.report.price, data.vehicleType || 'Car', data.report.summary);
+                        } else {
+                            document.getElementById('dynamic-header').innerHTML = `Error: Quote not found.`;
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        document.getElementById('dynamic-header').innerHTML = `Error: Could not load quote.`;
+                    });
+            } else if (urlParams.has('name') && urlParams.has('price') && urlParams.has('pkg')) {
+                // Fallback for Legacy URL parameters
                 const uName = urlParams.get('name');
                 const uPhone = urlParams.get('phone');
                 const uYear = urlParams.get('year');
@@ -408,9 +448,31 @@
                 const uVType = urlParams.get('vtype') || 'Car';
                 const uSummary = urlParams.get('summary'); 
 
+                // Pull detailer notes if provided, otherwise fallback to summary
+                globalAiNotes = urlParams.get('detailer_notes') || uSummary || '';
+                
+                // Pull contractor pay if provided, otherwise use legacy math
+                const cpay = urlParams.get('contractor_pay') || urlParams.get('cpay');
+                if (cpay) {
+                    globalContractorPay = cpay;
+                } else {
+                    let numericPrice = parseFloat(String(uPrice).replace(/[^0-9.]/g, ''));
+                    if (isNaN(numericPrice)) numericPrice = 0;
+                    const contractorPayAmount = (numericPrice - 25) * 0.25;
+                    globalContractorPay = `$${contractorPayAmount.toFixed(2)} + TIPS`;
+                }
+
+                globalBeforePhotos = urlParams.get('photos') ? JSON.parse(decodeURIComponent(urlParams.get('photos'))) : [];
+
+                populateUI(uName, uPhone, uYear, uMake, uModel, uPkgRaw, uPrice, uVType, uSummary);
+            } else {
+                document.getElementById('dynamic-header').innerHTML = `Error: Missing AI parameters.`;
+            }
+
+            function populateUI(uName, uPhone, uYear, uMake, uModel, uPkgRaw, uPrice, uVType, uSummary) {
                 let backendPkg = "Interior Level 2"; 
                 let inclusions = [];
-                let rawUpper = uPkgRaw.toUpperCase();
+                let rawUpper = String(uPkgRaw).toUpperCase();
 
                 let level = 2;
                 if (rawUpper.includes("1") || rawUpper.includes("ONE")) level = 1;
@@ -437,7 +499,8 @@
                 
                 if (uSummary) {
                     document.getElementById('imessage-box').style.display = 'flex';
-                    document.getElementById('imessage-text').innerHTML = `<strong>Quote: $${uPrice} for ${backendPkg}.</strong><br><br>${uSummary}`;
+                    // Render string directly to handle prices safely whether they come with or without $
+                    document.getElementById('imessage-text').innerHTML = `<strong>Quote: ${uPrice} for ${backendPkg}.</strong><br><br>${uSummary}`;
                 }
                 
                 document.getElementById('ai-breakdown-box').style.display = 'block';
@@ -449,19 +512,19 @@
                     ul.appendChild(li);
                 });
 
-                document.getElementById('full_name').value = uName;
-                document.getElementById('phone').value = uPhone;
-                document.getElementById('vehicle_year').value = uYear;
+                document.getElementById('full_name').value = uName || '';
+                document.getElementById('phone').value = uPhone || '';
+                document.getElementById('vehicle_year').value = uYear || '';
                 
                 const makeSelect = document.getElementById('vehicle_make');
-                const matchOption = Array.from(makeSelect.options).find(opt => opt.value.toLowerCase() === uMake.toLowerCase());
+                const matchOption = Array.from(makeSelect.options).find(opt => opt.value.toLowerCase() === String(uMake).toLowerCase());
                 if(matchOption) {
                     makeSelect.value = matchOption.value;
                 } else {
                     makeSelect.value = "Other";
                 }
                 
-                document.getElementById('vehicle_model').value = uModel;
+                document.getElementById('vehicle_model').value = uModel || '';
 
                 elements.selectedPackageTypeInput.value = backendPkg;
                 elements.selectedPackagePriceInput.value = uPrice; 
@@ -487,9 +550,6 @@
                 renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, todayCST, elements.finalBookAppointmentBtn);
 
                 startUrgentTimer();
-
-            } else {
-                document.getElementById('dynamic-header').innerHTML = `Error: Missing AI parameters.`;
             }
 
             function startUrgentTimer() {
@@ -554,8 +614,6 @@
                     const packagePriceRaw = document.getElementById('selected-package-price').value;
                     let numericPrice = parseFloat(packagePriceRaw.replace(/[^0-9.]/g, ''));
                     if (isNaN(numericPrice)) numericPrice = 0;
-
-                    const contractorPayAmount = (numericPrice - 25) * 0.25;
                     
                     const payload = {
                         full_name: document.getElementById('full_name').value,
@@ -573,10 +631,11 @@
                         vehicle_type: document.getElementById('selected-vehicle-type').value,
                         job_notes: document.getElementById('additional-info').value,
                         
-                        ai_notes: urlParams.get('summary') || '',
-                        before_photos: urlParams.get('photos') ? JSON.parse(decodeURIComponent(urlParams.get('photos'))) : [],
+                        // Properly applies resolved notes, photos, and AI-determined pay amount
+                        ai_notes: globalAiNotes,
+                        before_photos: globalBeforePhotos,
+                        contractor_pay: globalContractorPay,
                         
-                        contractor_pay: `$${contractorPayAmount.toFixed(2)} + TIPS`,
                         deal_name: `${document.getElementById('selected-package-type').value} - ${document.getElementById('vehicle_make').value}`
                     };
 
