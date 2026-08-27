@@ -300,6 +300,14 @@
     </div>
 
     <script>
+        // Asynchronous SHA-256 hashing function for TikTok PII
+        async function sha256(string) {
+            const utf8 = new TextEncoder().encode(string);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', utf8);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(bytes => bytes.toString(16).padStart(2, '0')).join('');
+        }
+
         window.initBookingPage = function() {
             const addressInput = document.getElementById('address'); 
             if (window.google && window.google.maps && window.google.maps.places && addressInput) {
@@ -581,6 +589,30 @@
                     if (response.ok) {
                         const paymentLink = getPaymentLink(payload.package_price);
                         
+                        // --- TIKTOK PIXEL TRACKING START ---
+                        try {
+                            const hashedEmail = await sha256(payload.email.trim().toLowerCase());
+                            const hashedPhone = await sha256(payload.phone.replace(/\D/g, ''));
+                            
+                            ttq.identify({
+                                "email": hashedEmail,
+                                "phone_number": hashedPhone
+                            });
+
+                            ttq.track('CompleteRegistration', {
+                                "contents": [{
+                                    "content_id": "ai_detail_service",
+                                    "content_type": "product",
+                                    "content_name": payload.package_type
+                                }],
+                                "value": numericPrice,
+                                "currency": "USD"
+                            });
+                        } catch(err) {
+                            console.error("TikTok tracking failed", err);
+                        }
+                        // --- TIKTOK PIXEL TRACKING END ---
+
                         sendSmsNotification(payload, paymentLink);
 
                         elements.bookingFormSection.style.display = 'none';
