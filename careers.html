@@ -247,23 +247,23 @@
                             
                             <ul class="space-y-5">
                                 <li class="flex items-start gap-4">
-                                    <div class="mt-1 bg-brand-600/30 text-brand-400 rounded-full p-1"><i class="fa-solid fa-check text-sm w-4 h-4 flex items-center justify-center"></i></div>
+                                    <div class="mt-1 bg-brand-500 text-white rounded-full p-1.5 shadow-lg shadow-brand-500/50"><i class="fa-solid fa-check text-sm w-4 h-4 flex items-center justify-center"></i></div>
                                     <span class="text-white text-lg">Pass a full criminal background check</span>
                                 </li>
                                 <li class="flex items-start gap-4">
-                                    <div class="mt-1 bg-brand-600/30 text-brand-400 rounded-full p-1"><i class="fa-solid fa-check text-sm w-4 h-4 flex items-center justify-center"></i></div>
+                                    <div class="mt-1 bg-brand-500 text-white rounded-full p-1.5 shadow-lg shadow-brand-500/50"><i class="fa-solid fa-check text-sm w-4 h-4 flex items-center justify-center"></i></div>
                                     <span class="text-white text-lg">Have a working vehicle you can use to commute to the clients' addresses</span>
                                 </li>
                                 <li class="flex items-start gap-4">
-                                    <div class="mt-1 bg-brand-600/30 text-brand-400 rounded-full p-1"><i class="fa-solid fa-check text-sm w-4 h-4 flex items-center justify-center"></i></div>
+                                    <div class="mt-1 bg-brand-500 text-white rounded-full p-1.5 shadow-lg shadow-brand-500/50"><i class="fa-solid fa-check text-sm w-4 h-4 flex items-center justify-center"></i></div>
                                     <span class="text-white text-lg">Ability to accept at least 2 jobs per week</span>
                                 </li>
                                 <li class="flex items-start gap-4">
-                                    <div class="mt-1 bg-brand-600/30 text-brand-400 rounded-full p-1"><i class="fa-solid fa-check text-sm w-4 h-4 flex items-center justify-center"></i></div>
+                                    <div class="mt-1 bg-brand-500 text-white rounded-full p-1.5 shadow-lg shadow-brand-500/50"><i class="fa-solid fa-check text-sm w-4 h-4 flex items-center justify-center"></i></div>
                                     <span class="text-white text-lg">You've detailed at least 20 cars in the past on a professional basis (for an employer or for yourself)</span>
                                 </li>
                                 <li class="flex items-start gap-4">
-                                    <div class="mt-1 bg-brand-600/30 text-brand-400 rounded-full p-1"><i class="fa-solid fa-check text-sm w-4 h-4 flex items-center justify-center"></i></div>
+                                    <div class="mt-1 bg-brand-500 text-white rounded-full p-1.5 shadow-lg shadow-brand-500/50"><i class="fa-solid fa-check text-sm w-4 h-4 flex items-center justify-center"></i></div>
                                     <span class="text-white text-lg">You have all required supplies (Including a shampoo extractor)</span>
                                 </li>
                             </ul>
@@ -401,11 +401,9 @@
                     
                     <div class="p-8" id="application-form-container">
                         <!-- 
-                            IMPORTANT: Replace your@email.com with the actual email address 
-                            where you want to receive the applications.
-                            The first time you submit, FormSubmit will ask you to confirm your email address.
+                            IMPORTANT: Form is set to send via FormSubmit to andrew@michieauto.com
                         -->
-                        <form id="contractor-form" action="https://formsubmit.co/your@email.com" method="POST" class="space-y-6">
+                        <form id="contractor-form" action="https://formsubmit.co/andrew@michieauto.com" method="POST" enctype="multipart/form-data" class="space-y-6">
                             
                             <!-- FormSubmit Configuration Fields -->
                             <input type="hidden" name="_subject" value="New Contractor Application - Michie Auto Detailing">
@@ -491,6 +489,47 @@
                                 </div>
                             </div>
 
+                            <div class="border-t border-gray-200 pt-6">
+                                <h3 class="text-lg font-bold text-gray-900 mb-4">Identity & Background Verification</h3>
+                                
+                                <div class="space-y-6">
+                                    <div class="bg-blue-50 border border-blue-100 p-4 rounded-xl">
+                                        <div class="flex items-start gap-3">
+                                            <i class="fa-solid fa-shield-halved text-blue-500 mt-1"></i>
+                                            <div>
+                                                <p class="text-sm text-blue-800 font-medium mb-1">Secure Encrypted Upload</p>
+                                                <p class="text-xs text-blue-600">Please provide clear photos of your valid driver's license. Files are transmitted securely over TLS/HTTPS directly to our verification team.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Driver's License (Front) <span class="text-red-500">*</span></label>
+                                            <input type="file" name="License Front" accept="image/*,.pdf" required class="w-full px-4 py-2 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Driver's License (Back) <span class="text-red-500">*</span></label>
+                                            <input type="file" name="License Back" accept="image/*,.pdf" required class="w-full px-4 py-2 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Are you able to pay the $29 background check fee today? <span class="text-red-500">*</span></label>
+                                        <div class="flex gap-4">
+                                            <label class="flex items-center gap-2 cursor-pointer">
+                                                <input type="radio" name="Can Pay Fee Today" value="Yes" required class="w-4 h-4 text-brand-600 focus:ring-brand-500">
+                                                <span>Yes</span>
+                                            </label>
+                                            <label class="flex items-center gap-2 cursor-pointer">
+                                                <input type="radio" name="Can Pay Fee Today" value="No" class="w-4 h-4 text-brand-600 focus:ring-brand-500">
+                                                <span>No</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="pt-6">
                                 <button type="submit" class="w-full bg-brand-600 hover:bg-brand-500 text-white px-6 py-4 rounded-xl font-bold text-lg shadow-lg transition-all flex justify-center items-center gap-2">
                                     Submit Application <i class="fa-solid fa-paper-plane"></i>
@@ -505,6 +544,17 @@
                             </div>
                             <h3 class="text-2xl font-bold text-gray-900 mb-2">Application Received!</h3>
                             <p class="text-gray-600 mb-8 max-w-md mx-auto">Thank you for applying to Michie Auto Detailing. Our team will review your application and reach out via email shortly to schedule your video interview.</p>
+                            
+                            <div id="payment-action-container" class="hidden mb-8 max-w-md mx-auto">
+                                <div class="bg-brand-50 border border-brand-100 p-6 rounded-xl text-left">
+                                    <h4 class="text-lg font-bold text-brand-900 mb-2">Next Step: Background Check</h4>
+                                    <p class="text-brand-700 text-sm mb-4">You indicated you are ready to proceed with your background check. Click below to complete the $29 payment to expedite your application process.</p>
+                                    <a href="https://pay.michieauto.com/ContractorBackgroundCheck" target="_blank" class="w-full flex justify-center items-center gap-2 bg-brand-600 hover:bg-brand-500 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition-colors">
+                                        Pay background check fee <i class="fa-solid fa-arrow-up-right-from-square text-sm"></i>
+                                    </a>
+                                </div>
+                            </div>
+
                             <button onclick="resetFormAndGoHome()" class="bg-gray-900 hover:bg-gray-800 text-white px-8 py-3 rounded-lg font-semibold transition-colors">
                                 Return to Homepage
                             </button>
@@ -586,6 +636,16 @@
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             
+            // Check if they said "Yes" to paying today
+            const canPayToday = form.querySelector('input[name="Can Pay Fee Today"]:checked')?.value === "Yes";
+            const paymentContainer = document.getElementById('payment-action-container');
+            
+            if(canPayToday) {
+                paymentContainer.classList.remove('hidden');
+            } else {
+                paymentContainer.classList.add('hidden');
+            }
+
             // Change button state while submitting
             const originalBtnText = submitBtn.innerHTML;
             submitBtn.innerHTML = 'Submitting... <i class="fa-solid fa-spinner fa-spin"></i>';
