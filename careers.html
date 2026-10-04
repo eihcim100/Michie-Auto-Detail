@@ -401,9 +401,10 @@
                     
                     <div class="p-8" id="application-form-container">
                         <!-- 
-                            IMPORTANT: Form is set to send via FormSubmit to andrew@michieauto.com
+                            IMPORTANT: Form is set to send natively to an invisible iframe to guarantee file uploads work.
                         -->
-                        <form id="contractor-form" action="https://formsubmit.co/andrew@michieauto.com" method="POST" enctype="multipart/form-data" class="space-y-6">
+                        <iframe name="hidden_iframe" id="hidden_iframe" class="hidden" title="Hidden frame for form submission"></iframe>
+                        <form id="contractor-form" target="hidden_iframe" action="https://formsubmit.co/2d9b9b96d3c4063b7e29b820db676faa" method="POST" enctype="multipart/form-data" class="space-y-6">
                             
                             <!-- FormSubmit Configuration Fields -->
                             <input type="hidden" name="_subject" value="New Contractor Application - Michie Auto Detailing">
@@ -506,11 +507,11 @@
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div>
                                             <label class="block text-sm font-medium text-gray-700 mb-2">Driver's License (Front) <span class="text-red-500">*</span></label>
-                                            <input type="file" name="License Front" accept="image/*,.pdf" required class="w-full px-4 py-2 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+                                            <input type="file" name="License_Front" accept="image/*,.pdf" required class="w-full px-4 py-2 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none transition-all">
                                         </div>
                                         <div>
                                             <label class="block text-sm font-medium text-gray-700 mb-2">Driver's License (Back) <span class="text-red-500">*</span></label>
-                                            <input type="file" name="License Back" accept="image/*,.pdf" required class="w-full px-4 py-2 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+                                            <input type="file" name="License_Back" accept="image/*,.pdf" required class="w-full px-4 py-2 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none transition-all">
                                         </div>
                                     </div>
 
@@ -632,9 +633,12 @@
         const formContainer = document.getElementById('application-form-container');
         const successMessage = document.getElementById('success-message');
         const submitBtn = form.querySelector('button[type="submit"]');
+        const hiddenIframe = document.getElementById('hidden_iframe');
+        let isSubmitting = false;
 
         form.addEventListener('submit', function(e) {
-            e.preventDefault();
+            // DO NOT preventDefault! Let the form submit natively to the hidden iframe.
+            isSubmitting = true;
             
             // Check if they said "Yes" to paying today
             const canPayToday = form.querySelector('input[name="Can Pay Fee Today"]:checked')?.value === "Yes";
@@ -646,46 +650,29 @@
                 paymentContainer.classList.add('hidden');
             }
 
-            // Change button state while submitting
-            const originalBtnText = submitBtn.innerHTML;
-            submitBtn.innerHTML = 'Submitting... <i class="fa-solid fa-spinner fa-spin"></i>';
+            // Change button state while submitting (useful for larger file uploads)
+            submitBtn.innerHTML = 'Uploading Files... <i class="fa-solid fa-spinner fa-spin"></i>';
             submitBtn.disabled = true;
-            
-            // Collect form data
-            const formData = new FormData(form);
-            
-            // Send data via fetch API to formsubmit.co
-            fetch(form.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'Accept': 'application/json'
-                }
-            })
-            .then(response => {
-                if (response.ok) {
-                    // Show success state
-                    form.classList.add('hidden');
-                    successMessage.classList.remove('hidden');
-                    
-                    // Scroll to top of the form container
-                    window.scrollTo({
-                        top: 0,
-                        behavior: 'smooth'
-                    });
-                } else {
-                    throw new Error('Form submission failed');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Oops! There was a problem submitting your form. Please make sure you have replaced "your@email.com" in the form action attribute with your actual email address, and verified it with FormSubmit.co.');
-            })
-            .finally(() => {
-                // Restore button state
-                submitBtn.innerHTML = originalBtnText;
+        });
+
+        // Listen for the iframe load event to know when FormSubmit has finished processing
+        hiddenIframe.addEventListener('load', function() {
+            if (isSubmitting) {
+                // Show success state
+                form.classList.add('hidden');
+                successMessage.classList.remove('hidden');
+                
+                // Scroll to top of the form container
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+                
+                // Restore button state for future
+                submitBtn.innerHTML = 'Submit Application <i class="fa-solid fa-paper-plane"></i>';
                 submitBtn.disabled = false;
-            });
+                isSubmitting = false;
+            }
         });
 
         function resetFormAndGoHome() {
