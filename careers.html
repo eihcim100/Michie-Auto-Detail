@@ -22,7 +22,7 @@
                             100: '#e0f2fe',
                             500: '#0ea5e9',
                             600: '#0284c7',
-                            900: '#0f172a', // Deep slate for contrast
+                            900: '#0f172a',
                         }
                     },
                     backgroundImage: {
@@ -32,8 +32,8 @@
             }
         }
     </script>
+    
     <style>
-        /* Custom scrollbar for a polished look */
         ::-webkit-scrollbar {
             width: 10px;
         }
@@ -64,11 +64,9 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20 items-center">
                 <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="showView('landing')">
-                    <i class="fa-solid fa-car-sparkles text-brand-600 text-3xl mr-3"></i>
-                    <span class="font-bold text-xl tracking-tight text-brand-900">Michie<br><span class="text-sm font-medium text-gray-500 uppercase tracking-wider">Auto Detailing LLC</span></span>
+                    <img src="https://michieauto.com/logo.jpeg" alt="Michie Auto Detailing Logo" class="h-12 md:h-14 w-auto object-contain mix-blend-multiply">
                 </div>
                 
-                <!-- Desktop Menu -->
                 <div class="hidden md:flex space-x-8 items-center" id="nav-links">
                     <a href="#benefits" class="text-gray-600 hover:text-brand-600 font-medium transition-colors">Benefits</a>
                     <a href="#requirements" class="text-gray-600 hover:text-brand-600 font-medium transition-colors">Requirements</a>
@@ -78,7 +76,6 @@
                     </button>
                 </div>
 
-                <!-- Mobile Menu Button -->
                 <div class="md:hidden flex items-center">
                     <button id="mobile-menu-btn" class="text-gray-600 hover:text-brand-600 focus:outline-none p-2">
                         <i class="fa-solid fa-bars text-2xl"></i>
@@ -87,7 +84,6 @@
             </div>
         </div>
         
-        <!-- Mobile Menu Panel -->
         <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 shadow-lg absolute w-full">
             <div class="px-4 pt-2 pb-6 space-y-1">
                 <a href="#benefits" class="block px-3 py-3 text-base font-medium text-gray-700 hover:text-brand-600 hover:bg-gray-50 rounded-md">Benefits</a>
@@ -102,7 +98,6 @@
 
     <main id="app-container">
         
-        <!-- ==================== VIEW 1: LANDING PAGE ==================== -->
         <div id="view-landing" class="block">
             
             <section class="relative bg-hero-pattern bg-cover bg-center bg-no-repeat pt-32 pb-20 lg:pt-48 lg:pb-32">
@@ -116,7 +111,7 @@
                             <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-brand-500">Earn $30-$40 per hour.</span>
                         </h1>
                         <p class="text-lg sm:text-xl text-gray-300 mb-8 max-w-2xl mx-auto lg:mx-0 font-light leading-relaxed">
-                            Launch your independent detailing business with Michie. If you already have approved supplies, your only upfront cost is a <span class="font-bold text-white border-b-2 border-brand-500">$29 background check</span> (or get our complete required toolkit for under $1,000). Work on your own schedule while we handle the sales, marketing, and customer service. All you need to do is detail.
+                            Launch your independent detailing business with Michie. If you already have approved supplies, your only upfront cost is a $29 background check. Need gear? Get our complete required toolkit for under $1,000. Work on your own schedule while we handle the sales, marketing and customer service. All you need to do is detail.
                         </p>
                         <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                             <button onclick="showView('application')" class="bg-brand-600 hover:bg-brand-500 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-xl shadow-brand-500/40 transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
@@ -129,7 +124,6 @@
                     </div>
                     
                     <div class="lg:w-2/5 hidden lg:block">
-                        <!-- Decorative element / Quick Stats -->
                         <div class="bg-white/10 backdrop-blur-md border border-white/20 p-8 rounded-2xl shadow-2xl">
                             <h3 class="text-white text-xl font-bold mb-6 border-b border-white/10 pb-4">Why Detail With Us?</h3>
                             <ul class="space-y-5">
@@ -159,7 +153,6 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                        <!-- Benefit 1 -->
                         <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100 hover:border-brand-200 hover:shadow-xl hover:shadow-brand-100/50 transition-all duration-300 group">
                             <div class="w-12 h-12 bg-white rounded-xl shadow-sm border border-gray-100 flex items-center justify-center text-brand-600 text-xl mb-5 group-hover:scale-110 group-hover:bg-brand-600 group-hover:text-white transition-all">
                                 <i class="fa-solid fa-star"></i>
@@ -168,7 +161,6 @@
                             <p class="text-gray-600 text-sm leading-relaxed">Earn customers instantly with an already established, trusted brand in the auto detailing industry.</p>
                         </div>
                         
-                        <!-- Benefit 2 -->
                         <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100 hover:border-brand-200 hover:shadow-xl hover:shadow-brand-100/50 transition-all duration-300 group">
                             <div class="w-12 h-12 bg-white rounded-xl shadow-sm border border-gray-100 flex items-center justify-center text-brand-600 text-xl mb-5 group-hover:scale-110 group-hover:bg-brand-600 group-hover:text-white transition-all">
                                 <i class="fa-solid fa-bullhorn"></i>
@@ -177,7 +169,6 @@
                             <p class="text-gray-600 text-sm leading-relaxed">We handle all the marketing and customer service, so you never have to worry about finding your next client.</p>
                         </div>
 
-                        <!-- Benefit 3 -->
                         <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100 hover:border-brand-200 hover:shadow-xl hover:shadow-brand-100/50 transition-all duration-300 group">
                             <div class="w-12 h-12 bg-white rounded-xl shadow-sm border border-gray-100 flex items-center justify-center text-brand-600 text-xl mb-5 group-hover:scale-110 group-hover:bg-brand-600 group-hover:text-white transition-all">
                                 <i class="fa-solid fa-mobile-screen"></i>
@@ -186,7 +177,6 @@
                             <p class="text-gray-600 text-sm leading-relaxed">Accept or decline jobs via our easy-to-use portal. See make, model, year, package, date, and zip code before accepting.</p>
                         </div>
 
-                        <!-- Benefit 4 -->
                         <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100 hover:border-brand-200 hover:shadow-xl hover:shadow-brand-100/50 transition-all duration-300 group">
                             <div class="w-12 h-12 bg-white rounded-xl shadow-sm border border-gray-100 flex items-center justify-center text-brand-600 text-xl mb-5 group-hover:scale-110 group-hover:bg-brand-600 group-hover:text-white transition-all">
                                 <i class="fa-solid fa-shield-halved"></i>
@@ -195,7 +185,6 @@
                             <p class="text-gray-600 text-sm leading-relaxed">Enjoy guaranteed pay for completed work, plus a cancellation fee straight to you if the client no-shows.</p>
                         </div>
 
-                        <!-- Benefit 5 -->
                         <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100 hover:border-brand-200 hover:shadow-xl hover:shadow-brand-100/50 transition-all duration-300 group">
                             <div class="w-12 h-12 bg-white rounded-xl shadow-sm border border-gray-100 flex items-center justify-center text-brand-600 text-xl mb-5 group-hover:scale-110 group-hover:bg-brand-600 group-hover:text-white transition-all">
                                 <i class="fa-solid fa-magnifying-glass"></i>
@@ -204,7 +193,6 @@
                             <p class="text-gray-600 text-sm leading-relaxed">Know exact details and vehicle condition information beforehand to set realistic expectations with clients.</p>
                         </div>
 
-                        <!-- Benefit 6 -->
                         <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100 hover:border-brand-200 hover:shadow-xl hover:shadow-brand-100/50 transition-all duration-300 group">
                             <div class="w-12 h-12 bg-white rounded-xl shadow-sm border border-gray-100 flex items-center justify-center text-brand-600 text-xl mb-5 group-hover:scale-110 group-hover:bg-brand-600 group-hover:text-white transition-all">
                                 <i class="fa-solid fa-credit-card"></i>
@@ -213,7 +201,6 @@
                             <p class="text-gray-600 text-sm leading-relaxed">All sales and payments are fully handled securely by our team, ensuring you'll always be paid on time.</p>
                         </div>
 
-                        <!-- Benefit 7 -->
                         <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100 hover:border-brand-200 hover:shadow-xl hover:shadow-brand-100/50 transition-all duration-300 group">
                             <div class="w-12 h-12 bg-white rounded-xl shadow-sm border border-gray-100 flex items-center justify-center text-brand-600 text-xl mb-5 group-hover:scale-110 group-hover:bg-brand-600 group-hover:text-white transition-all">
                                 <i class="fa-solid fa-arrow-trend-up"></i>
@@ -222,7 +209,6 @@
                             <p class="text-gray-600 text-sm leading-relaxed">Special jobs mean higher pay. The more work you put in, the more money you make. Your earnings are in your hands.</p>
                         </div>
 
-                        <!-- Benefit 8 -->
                         <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100 hover:border-brand-200 hover:shadow-xl hover:shadow-brand-100/50 transition-all duration-300 group">
                             <div class="w-12 h-12 bg-white rounded-xl shadow-sm border border-gray-100 flex items-center justify-center text-brand-600 text-xl mb-5 group-hover:scale-110 group-hover:bg-brand-600 group-hover:text-white transition-all">
                                 <i class="fa-solid fa-hand-holding-dollar"></i>
@@ -234,7 +220,6 @@
                 </div>
             </section>
 
-            <!-- ==================== PORTAL DEMO SECTION ==================== -->
             <section id="portal-demo" class="py-20 bg-gray-50 border-y border-gray-200 overflow-hidden">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="text-center mb-16">
@@ -244,7 +229,6 @@
                     </div>
 
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8 items-stretch">
-                        <!-- Step 1 -->
                         <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 flex flex-col transform transition-transform hover:-translate-y-1">
                             <div class="flex items-center gap-4 mb-4">
                                 <div class="w-10 h-10 bg-brand-100 text-brand-600 rounded-full flex items-center justify-center font-bold text-xl shrink-0">1</div>
@@ -261,7 +245,6 @@
                             </div>
                         </div>
                         
-                        <!-- Step 2 -->
                         <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 flex flex-col transform transition-transform hover:-translate-y-1">
                             <div class="flex items-center gap-4 mb-4">
                                 <div class="w-10 h-10 bg-brand-100 text-brand-600 rounded-full flex items-center justify-center font-bold text-xl shrink-0">2</div>
@@ -279,7 +262,6 @@
                         </div>
                     </div>
                     
-                    <!-- Step 3 (Full Width) -->
                     <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 transform transition-transform hover:-translate-y-1">
                         <div class="md:flex items-center justify-between mb-8 gap-8">
                             <div class="md:w-1/2">
@@ -303,7 +285,6 @@
                 </div>
             </section>
 
-            <!-- ==================== QUALITY INSPECTION SECTION ==================== -->
             <section id="quality-inspection" class="py-20 bg-white overflow-hidden">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="text-center mb-16">
@@ -318,7 +299,6 @@
                     </div>
 
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-                        <!-- Score Image -->
                         <div class="bg-gray-50 rounded-2xl shadow-lg p-8 border border-gray-100 transform transition-transform hover:-translate-y-1">
                             <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-3">
                                 <div class="w-10 h-10 bg-brand-100 text-brand-600 rounded-lg flex items-center justify-center"><i class="fa-solid fa-chart-line"></i></div> 
@@ -334,7 +314,6 @@
                             </div>
                         </div>
 
-                        <!-- Inspection Images -->
                         <div class="bg-gray-50 rounded-2xl shadow-lg p-8 border border-gray-100 transform transition-transform hover:-translate-y-1">
                             <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-3">
                                 <div class="w-10 h-10 bg-brand-100 text-brand-600 rounded-lg flex items-center justify-center"><i class="fa-solid fa-magnifying-glass-chart"></i></div> 
@@ -354,7 +333,6 @@
             </section>
 
             <section id="requirements" class="py-20 bg-brand-900 relative overflow-hidden">
-                <!-- Background decorative elements -->
                 <div class="absolute top-0 right-0 -mr-20 -mt-20 w-72 h-72 rounded-full bg-brand-600 opacity-10 blur-3xl"></div>
                 <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-96 h-96 rounded-full bg-brand-500 opacity-10 blur-3xl"></div>
                 
@@ -388,7 +366,6 @@
                             </ul>
                         </div>
                         
-                        <!-- Amazon Supply Cart Callout -->
                         <div class="lg:w-1/2 w-full">
                             <div class="bg-white rounded-2xl p-8 shadow-2xl relative">
                                 <div class="absolute -top-5 right-8 bg-amber-500 text-brand-900 font-bold px-4 py-1 rounded-full shadow-lg transform rotate-3">
@@ -430,25 +407,21 @@
                     </div>
 
                     <div class="relative">
-                        <!-- Connecting Line (Desktop) -->
                         <div class="hidden md:block absolute top-1/2 left-0 w-full h-1 bg-brand-200 -translate-y-1/2 z-0"></div>
                         
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10 mb-8">
-                            <!-- Step 1 -->
                             <div class="bg-white rounded-2xl p-6 shadow-md border border-gray-100 text-center relative pt-12">
                                 <div class="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-brand-600 text-white rounded-full flex items-center justify-center text-xl font-bold shadow-lg border-4 border-gray-50">1</div>
                                 <h3 class="text-lg font-bold text-gray-900 mb-2">Apply Online</h3>
                                 <p class="text-gray-600 text-sm">Complete our short online application form to express your interest.</p>
                             </div>
                             
-                            <!-- Step 2 -->
                             <div class="bg-white rounded-2xl p-6 shadow-md border border-gray-100 text-center relative pt-12">
                                 <div class="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-brand-600 text-white rounded-full flex items-center justify-center text-xl font-bold shadow-lg border-4 border-gray-50">2</div>
                                 <h3 class="text-lg font-bold text-gray-900 mb-2">Video Interview</h3>
                                 <p class="text-gray-600 text-sm">Pass an initial interview screening via video chat to see if you're right for the team.</p>
                             </div>
 
-                            <!-- Step 3 -->
                             <div class="bg-white rounded-2xl p-6 shadow-md border border-gray-100 text-center relative pt-12">
                                 <div class="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-brand-600 text-white rounded-full flex items-center justify-center text-xl font-bold shadow-lg border-4 border-gray-50">3</div>
                                 <h3 class="text-lg font-bold text-gray-900 mb-2">Verification</h3>
@@ -457,21 +430,18 @@
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
-                            <!-- Step 4 -->
                             <div class="bg-white rounded-2xl p-6 shadow-md border border-gray-100 text-center relative pt-12">
                                 <div class="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-brand-600 text-white rounded-full flex items-center justify-center text-xl font-bold shadow-lg border-4 border-gray-50">4</div>
                                 <h3 class="text-lg font-bold text-gray-900 mb-2">Background Check</h3>
                                 <p class="text-gray-600 text-sm">Pay a non-refundable $29 background check fee and pass your screening.</p>
                             </div>
                             
-                            <!-- Step 5 -->
                             <div class="bg-white rounded-2xl p-6 shadow-md border border-gray-100 text-center relative pt-12">
                                 <div class="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-brand-600 text-white rounded-full flex items-center justify-center text-xl font-bold shadow-lg border-4 border-gray-50">5</div>
                                 <h3 class="text-lg font-bold text-gray-900 mb-2">Onboarding & Contract</h3>
                                 <p class="text-gray-600 text-sm">Sign your contract, complete short onboarding, and gain access to the job portal.</p>
                             </div>
 
-                            <!-- Step 6 -->
                             <div class="bg-white rounded-2xl p-6 shadow-md border border-gray-100 text-center relative pt-12">
                                 <div class="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-brand-600 text-white rounded-full flex items-center justify-center text-xl font-bold shadow-lg border-4 border-gray-50">6</div>
                                 <h3 class="text-lg font-bold text-gray-900 mb-2">First Job & Inspection</h3>
@@ -503,7 +473,6 @@
             </footer>
         </div>
 
-        <!-- ==================== VIEW 2: APPLICATION FORM (SIMULATED SEPARATE PAGE) ==================== -->
         <div id="view-application" class="hidden min-h-screen bg-gray-50 pt-24 pb-12">
             <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
                 
@@ -519,17 +488,13 @@
                     </div>
                     
                     <div class="p-8" id="application-form-container">
-                        <!-- 
-                            IMPORTANT: Form is set to send natively to an invisible iframe to guarantee file uploads work.
-                        -->
                         <iframe name="hidden_iframe" id="hidden_iframe" class="hidden" title="Hidden frame for form submission"></iframe>
                         <form id="contractor-form" target="hidden_iframe" action="https://formsubmit.co/andrew@michieauto.com" method="POST" enctype="multipart/form-data" class="space-y-6">
                             
-                            <!-- FormSubmit Configuration Fields -->
                             <input type="hidden" name="_subject" value="New Contractor Application - Michie Auto Detailing LLC">
                             <input type="hidden" name="_captcha" value="false">
                             <input type="hidden" name="_template" value="table">
-                            <input type="hidden" name="_next" value="false"> <!-- We handle the success state with JS instead of redirecting -->
+                            <input type="hidden" name="_next" value="false"> 
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
@@ -657,7 +622,6 @@
                             </div>
                         </form>
                         
-                        <!-- Success Message (Hidden initially) -->
                         <div id="success-message" class="hidden text-center py-12 fade-in">
                             <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
                                 <i class="fa-solid fa-check text-4xl text-green-500"></i>
@@ -684,7 +648,6 @@
             </div>
         </div>
 
-        <!-- Image Lightbox Modal -->
         <div id="image-modal" class="fixed inset-0 z-[100] hidden bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
             <button onclick="closeImageModal()" class="absolute top-4 right-4 md:top-8 md:right-8 text-white hover:text-brand-400 focus:outline-none z-[101] transition-colors p-2">
                 <i class="fa-solid fa-xmark text-4xl"></i>
@@ -697,133 +660,138 @@
     </main>
 
     <script>
-        // --- Mobile Menu Toggle ---
         const mobileMenuBtn = document.getElementById('mobile-menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
         
-        mobileMenuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
+        if (mobileMenuBtn && mobileMenu) {
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
 
-        // Close mobile menu when a link is clicked
-        const mobileLinks = mobileMenu.querySelectorAll('a, button');
+        const mobileLinks = mobileMenu?.querySelectorAll('a, button') || [];
         mobileLinks.forEach(link => {
             link.addEventListener('click', () => {
                 mobileMenu.classList.add('hidden');
             });
         });
 
-        // --- Navbar Scroll Effect ---
         window.addEventListener('scroll', () => {
             const nav = document.getElementById('navbar');
-            if (window.scrollY > 10) {
-                nav.classList.add('shadow-md');
-                nav.classList.replace('bg-white/95', 'bg-white');
-            } else {
-                nav.classList.remove('shadow-md');
-                nav.classList.replace('bg-white', 'bg-white/95');
+            if (nav) {
+                if (window.scrollY > 10) {
+                    nav.classList.add('shadow-md');
+                    nav.classList.replace('bg-white/95', 'bg-white');
+                } else {
+                    nav.classList.remove('shadow-md');
+                    nav.classList.replace('bg-white', 'bg-white/95');
+                }
             }
         });
 
-        // --- SPA View Routing Logic ---
-        function showView(viewName) {
+        window.showView = function(viewName) {
             const landingView = document.getElementById('view-landing');
             const applicationView = document.getElementById('view-application');
             const navLinks = document.getElementById('nav-links');
-            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const menuBtn = document.getElementById('mobile-menu-btn');
 
             if (viewName === 'landing') {
-                landingView.style.display = 'block';
-                landingView.classList.add('fade-in');
-                applicationView.style.display = 'none';
+                if(landingView) {
+                    landingView.style.display = 'block';
+                    landingView.classList.add('fade-in');
+                }
+                if(applicationView) applicationView.style.display = 'none';
                 
-                // Show nav links on landing page
-                navLinks.classList.remove('md:hidden');
-                navLinks.classList.add('md:flex');
-                mobileMenuBtn.classList.remove('hidden');
+                if(navLinks) {
+                    navLinks.classList.remove('md:hidden');
+                    navLinks.classList.add('md:flex');
+                }
+                if(menuBtn) menuBtn.classList.remove('hidden');
                 
                 window.scrollTo(0, 0);
             } else if (viewName === 'application') {
-                landingView.style.display = 'none';
-                applicationView.style.display = 'block';
-                applicationView.classList.add('fade-in');
+                if(landingView) landingView.style.display = 'none';
+                if(applicationView) {
+                    applicationView.style.display = 'block';
+                    applicationView.classList.add('fade-in');
+                }
                 
-                // Hide page-specific nav links on application page for cleaner UI
-                navLinks.classList.remove('md:flex');
-                navLinks.classList.add('md:hidden');
-                mobileMenuBtn.classList.add('hidden');
+                if(navLinks) {
+                    navLinks.classList.remove('md:flex');
+                    navLinks.classList.add('md:hidden');
+                }
+                if(menuBtn) menuBtn.classList.add('hidden');
                 
                 window.scrollTo(0, 0);
             }
-        }
+        };
 
-        // --- Form Submission Logic ---
         const form = document.getElementById('contractor-form');
-        const formContainer = document.getElementById('application-form-container');
         const successMessage = document.getElementById('success-message');
-        const submitBtn = form.querySelector('button[type="submit"]');
+        const submitBtn = form?.querySelector('button[type="submit"]');
         const hiddenIframe = document.getElementById('hidden_iframe');
         let isSubmitting = false;
 
-        form.addEventListener('submit', function(e) {
-            // DO NOT preventDefault! Let the form submit natively to the hidden iframe.
-            isSubmitting = true;
-            
-            // Check if they said "Yes" to paying today
-            const canPayToday = form.querySelector('input[name="Can Pay Fee Today"]:checked')?.value === "Yes";
-            const paymentContainer = document.getElementById('payment-action-container');
-            
-            if(canPayToday) {
-                paymentContainer.classList.remove('hidden');
-            } else {
-                paymentContainer.classList.add('hidden');
-            }
-
-            // Change button state while submitting (useful for larger file uploads)
-            submitBtn.innerHTML = 'Uploading Files... <i class="fa-solid fa-spinner fa-spin"></i>';
-            submitBtn.disabled = true;
-        });
-
-        // Listen for the iframe load event to know when FormSubmit has finished processing
-        hiddenIframe.addEventListener('load', function() {
-            if (isSubmitting) {
-                // Show success state
-                form.classList.add('hidden');
-                successMessage.classList.remove('hidden');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                isSubmitting = true;
                 
-                // Scroll to top of the form container
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
+                const canPayToday = form.querySelector('input[name="Can Pay Fee Today"]:checked')?.value === "Yes";
+                const paymentContainer = document.getElementById('payment-action-container');
                 
-                // Restore button state for future
-                submitBtn.innerHTML = 'Submit Application <i class="fa-solid fa-paper-plane"></i>';
-                submitBtn.disabled = false;
-                isSubmitting = false;
-            }
-        });
+                if (paymentContainer) {
+                    if(canPayToday) {
+                        paymentContainer.classList.remove('hidden');
+                    } else {
+                        paymentContainer.classList.add('hidden');
+                    }
+                }
 
-        function resetFormAndGoHome() {
-            // Reset the form UI
-            form.reset();
-            form.classList.remove('hidden');
-            successMessage.classList.add('hidden');
-            
-            // Go back to landing page
-            showView('landing');
+                if (submitBtn) {
+                    submitBtn.innerHTML = 'Uploading Files... <i class="fa-solid fa-spinner fa-spin"></i>';
+                    submitBtn.disabled = true;
+                }
+            });
         }
 
-        // --- Image Lightbox Logic ---
+        if (hiddenIframe) {
+            hiddenIframe.addEventListener('load', function() {
+                if (isSubmitting) {
+                    if (form) form.classList.add('hidden');
+                    if (successMessage) successMessage.classList.remove('hidden');
+                    
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                    
+                    if (submitBtn) {
+                        submitBtn.innerHTML = 'Submit Application <i class="fa-solid fa-paper-plane"></i>';
+                        submitBtn.disabled = false;
+                    }
+                    isSubmitting = false;
+                }
+            });
+        }
+
+        window.resetFormAndGoHome = function() {
+            if (form) {
+                form.reset();
+                form.classList.remove('hidden');
+            }
+            if (successMessage) successMessage.classList.add('hidden');
+            window.showView('landing');
+        };
+
         const imageModal = document.getElementById('image-modal');
         const modalImage = document.getElementById('modal-image');
         const modalBackdrop = document.getElementById('modal-backdrop');
 
-        function openImageModal(imageSrc) {
+        window.openImageModal = function(imageSrc) {
+            if (!imageModal || !modalImage) return;
             modalImage.src = imageSrc;
             imageModal.classList.remove('hidden');
             
-            // Small delay to allow display:block to apply before animating opacity/scale
             setTimeout(() => {
                 imageModal.classList.remove('opacity-0');
                 imageModal.classList.add('opacity-100');
@@ -831,37 +799,35 @@
                 modalImage.classList.add('scale-100');
             }, 10);
             
-            // Prevent body scrolling
             document.body.style.overflow = 'hidden';
-        }
+        };
 
-        function closeImageModal() {
+        window.closeImageModal = function() {
+            if (!imageModal || !modalImage) return;
             imageModal.classList.remove('opacity-100');
             imageModal.classList.add('opacity-0');
             modalImage.classList.remove('scale-100');
             modalImage.classList.add('scale-95');
             
-            // Wait for transition to finish before hiding
             setTimeout(() => {
                 imageModal.classList.add('hidden');
-                modalImage.src = ''; // Clear source to prevent brief flash on next open
+                modalImage.src = ''; 
             }, 300);
 
-            // Restore body scrolling
             document.body.style.overflow = '';
+        };
+
+        if (imageModal) {
+            imageModal.addEventListener('click', (e) => {
+                if (e.target === imageModal || e.target === modalBackdrop) {
+                    window.closeImageModal();
+                }
+            });
         }
 
-        // Close modal on click outside image
-        imageModal.addEventListener('click', (e) => {
-            if (e.target === imageModal || e.target === modalBackdrop) {
-                closeImageModal();
-            }
-        });
-
-        // Close on Escape key
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && !imageModal.classList.contains('hidden')) {
-                closeImageModal();
+            if (e.key === 'Escape' && imageModal && !imageModal.classList.contains('hidden')) {
+                window.closeImageModal();
             }
         });
     </script>
