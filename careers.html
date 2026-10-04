@@ -400,33 +400,44 @@
                     </div>
                     
                     <div class="p-8" id="application-form-container">
-                        <form id="contractor-form" class="space-y-6">
+                        <!-- 
+                            IMPORTANT: Replace your@email.com with the actual email address 
+                            where you want to receive the applications.
+                            The first time you submit, FormSubmit will ask you to confirm your email address.
+                        -->
+                        <form id="contractor-form" action="https://formsubmit.co/your@email.com" method="POST" class="space-y-6">
                             
+                            <!-- FormSubmit Configuration Fields -->
+                            <input type="hidden" name="_subject" value="New Contractor Application - Michie Auto Detailing">
+                            <input type="hidden" name="_captcha" value="false">
+                            <input type="hidden" name="_template" value="table">
+                            <input type="hidden" name="_next" value="false"> <!-- We handle the success state with JS instead of redirecting -->
+
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label for="firstName" class="block text-sm font-medium text-gray-700 mb-1">First Name <span class="text-red-500">*</span></label>
-                                    <input type="text" id="firstName" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all">
+                                    <input type="text" id="firstName" name="First Name" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all">
                                 </div>
                                 <div>
                                     <label for="lastName" class="block text-sm font-medium text-gray-700 mb-1">Last Name <span class="text-red-500">*</span></label>
-                                    <input type="text" id="lastName" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all">
+                                    <input type="text" id="lastName" name="Last Name" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all">
                                 </div>
                             </div>
                             
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address <span class="text-red-500">*</span></label>
-                                    <input type="email" id="email" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all">
+                                    <input type="email" id="email" name="Email" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all">
                                 </div>
                                 <div>
                                     <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number <span class="text-red-500">*</span></label>
-                                    <input type="tel" id="phone" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all">
+                                    <input type="tel" id="phone" name="Phone Number" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all">
                                 </div>
                             </div>
 
                             <div>
                                 <label for="zip" class="block text-sm font-medium text-gray-700 mb-1">Primary Zip Code (Operating Area) <span class="text-red-500">*</span></label>
-                                <input type="text" id="zip" required class="w-full md:w-1/2 px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all">
+                                <input type="text" id="zip" name="Zip Code" required class="w-full md:w-1/2 px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all">
                             </div>
 
                             <div class="border-t border-gray-200 pt-6">
@@ -437,11 +448,11 @@
                                         <label class="block text-sm font-medium text-gray-700 mb-2">Have you professionally detailed at least 20 cars? <span class="text-red-500">*</span></label>
                                         <div class="flex gap-4">
                                             <label class="flex items-center gap-2 cursor-pointer">
-                                                <input type="radio" name="experience" value="yes" required class="w-4 h-4 text-brand-600 focus:ring-brand-500">
+                                                <input type="radio" name="Detailed 20+ Cars" value="Yes" required class="w-4 h-4 text-brand-600 focus:ring-brand-500">
                                                 <span>Yes, I have</span>
                                             </label>
                                             <label class="flex items-center gap-2 cursor-pointer">
-                                                <input type="radio" name="experience" value="no" class="w-4 h-4 text-brand-600 focus:ring-brand-500">
+                                                <input type="radio" name="Detailed 20+ Cars" value="No" class="w-4 h-4 text-brand-600 focus:ring-brand-500">
                                                 <span>No, not yet</span>
                                             </label>
                                         </div>
@@ -451,11 +462,11 @@
                                         <label class="block text-sm font-medium text-gray-700 mb-2">Do you have a reliable vehicle for commuting to clients? <span class="text-red-500">*</span></label>
                                         <div class="flex gap-4">
                                             <label class="flex items-center gap-2 cursor-pointer">
-                                                <input type="radio" name="vehicle" value="yes" required class="w-4 h-4 text-brand-600 focus:ring-brand-500">
+                                                <input type="radio" name="Reliable Vehicle" value="Yes" required class="w-4 h-4 text-brand-600 focus:ring-brand-500">
                                                 <span>Yes</span>
                                             </label>
                                             <label class="flex items-center gap-2 cursor-pointer">
-                                                <input type="radio" name="vehicle" value="no" class="w-4 h-4 text-brand-600 focus:ring-brand-500">
+                                                <input type="radio" name="Reliable Vehicle" value="No" class="w-4 h-4 text-brand-600 focus:ring-brand-500">
                                                 <span>No</span>
                                             </label>
                                         </div>
@@ -463,17 +474,17 @@
 
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-2">Supply Status <span class="text-red-500">*</span></label>
-                                        <select id="supplies" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all bg-white">
+                                        <select id="supplies" name="Supply Status" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all bg-white">
                                             <option value="">Select an option...</option>
-                                            <option value="have_all">I have all required supplies (including extractor)</option>
-                                            <option value="need_some">I have some, but need to buy others (via Amazon list)</option>
-                                            <option value="need_all">I need to purchase the full kit (< $1000)</option>
+                                            <option value="Has all supplies">I have all required supplies (including extractor)</option>
+                                            <option value="Needs some supplies">I have some, but need to buy others (via Amazon list)</option>
+                                            <option value="Needs full kit">I need to purchase the full kit (< $1000)</option>
                                         </select>
                                     </div>
                                     
                                     <div>
                                         <label class="flex items-start gap-3 cursor-pointer mt-6">
-                                            <input type="checkbox" required class="mt-1 w-4 h-4 text-brand-600 focus:ring-brand-500 rounded">
+                                            <input type="checkbox" name="Understands $29 Fee" value="Yes" required class="mt-1 w-4 h-4 text-brand-600 focus:ring-brand-500 rounded">
                                             <span class="text-sm text-gray-600">I understand that if I pass the interview, I will be required to pay a non-refundable $29 fee for a background check.</span>
                                         </label>
                                     </div>
@@ -570,20 +581,50 @@
         const form = document.getElementById('contractor-form');
         const formContainer = document.getElementById('application-form-container');
         const successMessage = document.getElementById('success-message');
+        const submitBtn = form.querySelector('button[type="submit"]');
 
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             
-            // In a real application, you would send data to a server here.
-            // For this frontend demo, we simulate a successful submission.
+            // Change button state while submitting
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.innerHTML = 'Submitting... <i class="fa-solid fa-spinner fa-spin"></i>';
+            submitBtn.disabled = true;
             
-            form.classList.add('hidden');
-            successMessage.classList.remove('hidden');
+            // Collect form data
+            const formData = new FormData(form);
             
-            // Scroll to top of the form container
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
+            // Send data via fetch API to formsubmit.co
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Show success state
+                    form.classList.add('hidden');
+                    successMessage.classList.remove('hidden');
+                    
+                    // Scroll to top of the form container
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                } else {
+                    throw new Error('Form submission failed');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Oops! There was a problem submitting your form. Please make sure you have replaced "your@email.com" in the form action attribute with your actual email address, and verified it with FormSubmit.co.');
+            })
+            .finally(() => {
+                // Restore button state
+                submitBtn.innerHTML = originalBtnText;
+                submitBtn.disabled = false;
             });
         });
 
