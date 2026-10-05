@@ -730,3 +730,321 @@
                 
                 if (code === 'vipclient') {
                     isVipPromoActive = true;
+                    applyVipPrices();
+                    startPromoTimer();
+                    elements.activatePromoBtn.disabled = true;
+                    elements.activatePromoBtn.textContent = 'Active! ✅';
+                } else if (code === 'fulldetail') {
+                    isFullDetailPromoActive = true;
+                    applyFullDetailUpgrade();
+                    startPromoTimer();
+                    elements.activatePromoBtn.disabled = true;
+                    elements.activatePromoBtn.textContent = 'Active! ✅';
+                } else {
+                    alert('Invalid promo code');
+                }
+            });
+
+            function applyVipPrices() {
+                const vipPrices = {
+                    sedan: { 1: 199, 2: 249, 3: 349 },
+                    suv: { 1: 249, 2: 299, 3: 399 } 
+                };
+
+                ['sedan', 'suv'].forEach(prefix => {
+                    [1, 2, 3].forEach(level => {
+                        const priceEl = document.getElementById(`${prefix}-price-${level}`);
+                        const orig = parseFloat(priceEl.dataset.orig);
+                        const discounted = vipPrices[prefix][level];
+                        
+                        priceEl.innerHTML = `<span class="line-through text-gray-400 text-xl mr-2">$${orig}</span> <span class="font-bold text-green-600">$${discounted}</span>`;
+                        const btn = priceEl.closest('.pricing-card').querySelector('.select-package-btn');
+                        if (btn) btn.dataset.packagePrice = discounted;
+                    });
+                });
+            }
+
+            function applyFullDetailUpgrade() {
+                const unlockedElements = document.querySelectorAll('.full-detail-unlocked');
+                unlockedElements.forEach(el => {
+                    el.classList.add('active');
+                });
+                
+                const selectButtons = document.querySelectorAll('.select-package-btn');
+                selectButtons.forEach(btn => {
+                    const currentType = btn.dataset.packageType;
+                    btn.innerHTML = `Select Full Detail 🚗✨`;
+                });
+            }
+
+            function startPromoTimer() {
+                elements.timerBanner.style.display = 'block';
+                let timeLeft = 240;
+                const interval = setInterval(() => {
+                    const mins = Math.floor(timeLeft / 60);
+                    const secs = timeLeft % 60;
+                    elements.timerCountdown.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                    if (timeLeft <= 0) {
+                        clearInterval(interval);
+                        elements.timerBanner.style.backgroundColor = "#64748b";
+                        elements.timerBanner.textContent = "Expired";
+                    }
+                    timeLeft--;
+                }, 1000);
+            }
+
+            function hideAllMajorSections() {
+                [elements.vehicleTypeSelection, elements.packageSelectionContainer, elements.bookingFormSection, elements.confirmationSection, elements.policyText]
+                    .forEach(el => el && (el.style.display = 'none'));
+            }
+
+            if (elements.stickyBookNowBtn) {
+                elements.stickyBookNowBtn.addEventListener('click', () => {
+                    hideAllMajorSections();
+                    elements.bookingFlowContainer.style.display = 'block';
+                    elements.vehicleTypeSelection.style.display = 'block';
+                    setTimeout(() => elements.bookingFlowContainer.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+                });
+            }
+
+            const handleVehicleClick = (type) => {
+                hideAllMajorSections();
+                elements.packageSelectionContainer.style.display = 'block';
+                elements.sedanPackagesDisplay.style.display = type === 'car' ? 'grid' : 'none';
+                elements.suvTruckPackagesDisplay.style.display = type !== 'car' ? 'grid' : 'none';
+                elements.selectedVehicleTypeInput.value = type.charAt(0).toUpperCase() + type.slice(1);
+                elements.stickyBookNowFooter.style.display = 'none';
+            };
+
+            [elements.selectCarBtn, elements.selectTruckBtn, elements.selectSuvBtn].forEach((btn, i) => {
+                const types = ['car', 'truck', 'suv'];
+                btn.addEventListener('click', () => handleVehicleClick(types[i]));
+            });
+
+            async function sendSmsNotification(bookingDetails, paymentLink) {
+                const firstName = bookingDetails.full_name.split(' ')[0];
+                const message = `ACTION REQUIRED: Hi ${firstName}, it's Michie Auto Detail. Your ${bookingDetails.package_type} for the ${bookingDetails.vehicle_make} ${bookingDetails.vehicle_model} is PENDING. Payment is required IMMEDIATELY to secure your spot. Pay here: ${paymentLink} Questions? (405) 295-5189`;
+
+                try {
+                    await fetch('https://client-notifications.onrender.com/send-sms', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ to: bookingDetails.phone, message_body: message })
+                    });
+                    console.log('SMS notification sent successfully.');
+                } catch (error) {
+                    console.error('Error sending SMS notification:', error);
+                }
+            }
+
+            function getPaymentLink(basePackageType, vehicleType, isVipPromo) {
+                if (isVipPromo) {
+                    if (vehicleType === 'Car') {
+                        if (basePackageType === "Interior Level 1") return "https://pay.michieauto.com/vipsinterior26";
+                        if (basePackageType === "Interior Level 2") return "https://pay.michieauto.com/vipsinteriorlvl2s";
+                        if (basePackageType === "Interior Level 3") return "https://pay.michieauto.com/vipsinteriorlvl3s";
+                    } else if (vehicleType === 'Truck') {
+                        if (basePackageType === "Interior Level 1") return "https://pay.michieauto.com/vipsinteriorlvl1truck";
+                        if (basePackageType === "Interior Level 2") return "https://pay.michieauto.com/vipsinteriorlvl2truck";
+                        if (basePackageType === "Interior Level 3") return "https://pay.michieauto.com/vipsinteriorlvl3truck";
+                    } else { 
+                        if (basePackageType === "Interior Level 1") return "https://pay.michieauto.com/vipsinteriorlvl1suv";
+                        if (basePackageType === "Interior Level 2") return "https://pay.michieauto.com/vipsinteriorlvl2suv";
+                        if (basePackageType === "Interior Level 3") return "https://pay.michieauto.com/vipsinteriorlvl3suv";
+                    }
+                } else {
+                    if (vehicleType === 'Car') {
+                        if (basePackageType === "Interior Level 1") return "https://pay.michieauto.com/springinteriorlvl1s";
+                        if (basePackageType === "Interior Level 2") return "https://pay.michieauto.com/springinteriorlvl2s";
+                        if (basePackageType === "Interior Level 3") return "https://pay.michieauto.com/springinteriorlvl3s";
+                    } else if (vehicleType === 'Truck') {
+                        if (basePackageType === "Interior Level 1") return "https://pay.michieauto.com/springinteriorlvl1truck";
+                        if (basePackageType === "Interior Level 2") return "https://pay.michieauto.com/springinteriorlvl2truck";
+                        if (basePackageType === "Interior Level 3") return "https://pay.michieauto.com/springinteriorlvl3truck";
+                    } else { 
+                        if (basePackageType === "Interior Level 1") return "https://pay.michieauto.com/springinteriorlvl1suv";
+                        if (basePackageType === "Interior Level 2") return "https://pay.michieauto.com/springinteriorlvl2suv";
+                        if (basePackageType === "Interior Level 3") return "https://pay.michieauto.com/springinteriorlvl3suv";
+                    }
+                }
+                return "https://pay.michieauto.com/deposit";
+            }
+
+            // --- Updated logic: Fetch available slots based on Date AND Zip Code ---
+            elements.checkZipInput.addEventListener('input', (e) => {
+                if (e.target.value.length === 5 && elements.bookingDateInput.value) {
+                    elements.selectedBookingTimeInput.value = '';
+                    elements.bookingForm.classList.add('hidden');
+                    renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, elements.bookingDateInput.value, e.target.value, elements.bookingForm);
+                }
+            });
+
+            elements.bookingDateInput.addEventListener('change', (e) => {
+                elements.selectedBookingTimeInput.value = '';
+                elements.bookingForm.classList.add('hidden');
+                
+                if (elements.checkZipInput.value.length === 5) {
+                    renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, e.target.value, elements.checkZipInput.value, elements.bookingForm);
+                } else {
+                    elements.bookingTimeButtonsContainer.innerHTML = '<div class="text-center text-slate-500 py-4 font-medium">Enter your 5-digit Zip Code and Date to view available times.</div>';
+                }
+            });
+
+            if (elements.packageSelectionContainer) elements.packageSelectionContainer.addEventListener('click', (e) => {
+                const btn = e.target.closest('.select-package-btn');
+                if (btn) {
+                    let displayType = btn.dataset.packageType;
+                    
+                    if (isFullDetailPromoActive) {
+                        displayType = displayType.replace("Interior", "Full Detail");
+                    }
+                    
+                    elements.selectedPackageDisplay.textContent = displayType;
+                    elements.selectedPackageTypeInput.value = btn.dataset.packageType; 
+                    elements.selectedPackagePriceInput.value = btn.dataset.packagePrice;
+                    
+                    hideAllMajorSections();
+                    elements.bookingFormSection.style.display = 'block';
+                    elements.bookingForm.classList.add('hidden'); 
+                    
+                    const d = new Date();
+                    const year = d.getFullYear();
+                    const month = String(d.getMonth() + 1).padStart(2, '0');
+                    const day = String(d.getDate()).padStart(2, '0');
+                    const todayStr = `${year}-${month}-${day}`;
+                    
+                    elements.bookingDateInput.value = todayStr;
+                    elements.selectedBookingTimeInput.value = ''; 
+                    
+                    if (elements.checkZipInput.value.length === 5) {
+                        renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, todayStr, elements.checkZipInput.value, elements.bookingForm);
+                    } else {
+                        elements.bookingTimeButtonsContainer.innerHTML = '<div class="text-center text-slate-500 py-4 font-medium">Enter your 5-digit Zip Code and Date to view available times.</div>';
+                    }
+                } else if (e.target.classList.contains('see-whats-included-btn')) {
+                    const dropdown = document.getElementById(e.target.dataset.target);
+                    dropdown.classList.toggle('show');
+                    e.target.textContent = dropdown.classList.contains('show') ? 'Hide details' : "See what's included";
+                }
+            });
+
+            async function handleBooking(e, endpoint, messageEl, selectedTimeInputId) { 
+                e.preventDefault();
+                const submitButton = elements.finalBookAppointmentBtn;
+                submitButton.disabled = true;
+                submitButton.innerHTML = `Processing...`;
+
+                try {
+                    const packagePrice = document.getElementById('selected-package-price').value;
+                    const basePackageType = document.getElementById('selected-package-type').value; 
+                    
+                    let payloadPackageType = basePackageType;
+                    if (isFullDetailPromoActive) {
+                        payloadPackageType = basePackageType.replace("Interior", "Full Detail");
+                    }
+
+                    const contractorPayAmount = parseFloat(packagePrice) * 0.25;
+                    
+                    const payload = {
+                        full_name: document.getElementById('full_name').value,
+                        email: document.getElementById('email').value,
+                        phone: `+1${document.getElementById('phone').value.replace(/\D/g, '')}`,
+                        address: document.getElementById('address').value,
+                        zip_code: document.getElementById('check-zip').value, // Use the verified zip code 
+                        vehicle_year: document.getElementById('vehicle_year').value,
+                        vehicle_make: document.getElementById('vehicle_make').value,
+                        vehicle_model: document.getElementById('vehicle_model').value,
+                        date: document.getElementById('booking-date').value,
+                        time: document.getElementById(selectedTimeInputId).value,
+                        package_type: payloadPackageType,
+                        package_price: packagePrice,
+                        vehicle_type: document.getElementById('selected-vehicle-type').value,
+                        job_notes: document.getElementById('additional-info').value,
+                        ai_notes: '',
+                        before_photos: [],
+                        contractor_pay: `$${contractorPayAmount.toFixed(2)} + TIPS`,
+                        deal_name: `${payloadPackageType} - ${document.getElementById('vehicle_make').value}`
+                    };
+
+                    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.ok) {
+                        const paymentLink = getPaymentLink(basePackageType, payload.vehicle_type, isVipPromoActive);
+                        sendSmsNotification(payload, paymentLink);
+
+                        hideAllMajorSections();
+                        elements.confirmationSection.style.display = 'block';
+                        elements.policyText.style.display = 'block';
+                        elements.payNowButton.onclick = () => window.open(paymentLink, '_blank');
+                    } else {
+                        messageEl.textContent = 'Booking failed. Try again.';
+                        submitButton.disabled = false;
+                        submitButton.innerHTML = 'Book Appointment';
+                    }
+                } catch (error) {
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = 'Book Appointment';
+                }
+            }
+
+            elements.bookingForm.addEventListener('submit', (e) => handleBooking(e, '/public/appointment', elements.bookingMessage, 'selected-booking-time'));
+
+            function renderTimeButtons(container, hiddenInput, selectedDateStr, zipCodeStr, formToReveal) {
+                container.innerHTML = '<div class="text-center text-slate-500 py-4 font-medium">Checking available pros in your area...</div>';
+                
+                // Add zip_code parameter to properly test contractor radius limits
+                fetch(`https://calendar-system-l6vb.onrender.com/api/available_slots?date=${selectedDateStr}&zip_code=${zipCodeStr}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        container.innerHTML = '';
+                        
+                        if (!data.slots || data.slots.length === 0) {
+                            container.innerHTML = '<div class="text-center text-slate-500 py-4">No times available for this date.</div>';
+                            return;
+                        }
+
+                        data.slots.forEach(slot => {
+                            const [hour, minute] = slot.time.split(':');
+                            let h = parseInt(hour);
+                            const ampm = h >= 12 ? 'PM' : 'AM';
+                            h = h % 12 || 12;
+                            const displayTime = `${h}:${minute} ${ampm}`;
+
+                            const item = document.createElement('button');
+                            item.type = 'button';
+                            item.className = 'time-slot-item';
+                            
+                            if (slot.available) {
+                                item.textContent = displayTime;
+                                item.addEventListener('click', () => {
+                                    container.querySelectorAll('.time-slot-item').forEach(i => i.classList.remove('selected'));
+                                    item.classList.add('selected');
+                                    hiddenInput.value = slot.time;
+                                    
+                                    // Reveal the rest of the form upon valid slot selection
+                                    formToReveal.classList.remove('hidden');
+                                    setTimeout(() => formToReveal.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+                                });
+                            } else {
+                                item.textContent = `${displayTime} - ${slot.reason}`;
+                                item.disabled = true;
+                            }
+                            
+                            container.appendChild(item);
+                        });
+                    })
+                    .catch(err => {
+                        console.error('Error fetching time slots:', err);
+                        container.innerHTML = '<div class="text-center text-red-500 py-4">Error loading times. Please try again or choose another date.</div>';
+                    });
+            }
+        }
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB133ISKHPtat18iloHDlqm2QHBv133sOk&libraries=places&callback=initBookingPage" async defer></script>
+</body>
+</html>
