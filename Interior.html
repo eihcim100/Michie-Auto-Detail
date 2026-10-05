@@ -196,30 +196,14 @@
         }
 
         .time-slots-box {
-            height: 220px;
+            max-height: 400px;
             overflow-y: auto;
             border: 1px solid #cbd5e1;
-            border-radius: 0.5rem;
+            border-radius: 0.75rem;
             background-color: #ffffff;
-            padding: 0.5rem;
+            padding: 1.25rem;
+            box-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
         }
-        .time-slot-item {
-            display: block;
-            width: 100%;
-            padding: 0.75rem 1rem;
-            margin-bottom: 0.5rem;
-            text-align: left;
-            border-radius: 0.375rem;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            font-weight: 500;
-            color: #334155;
-            border: 1px solid transparent;
-        }
-        .time-slot-item:hover:not(:disabled) { background-color: #f0fdf4; }
-        .time-slot-item.selected { background-color: #16a34a; color: white; }
-        .time-slot-item:disabled { color: #94a3b8; cursor: not-allowed; opacity: 0.6; text-decoration: line-through; }
-        
         .time-slots-box::-webkit-scrollbar { width: 8px; }
         .time-slots-box::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
         .time-slots-box::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
@@ -549,24 +533,32 @@
                 <h2 class="text-2xl font-bold text-slate-700 mb-2 text-center">3. Check Availability 📅</h2>
                 <p class="text-lg font-semibold text-gray-800 mb-6 text-center">Selected Package: <span id="selected-package-display" class="text-blue-600"></span></p>
                 
-                <!-- Availability Check (Forces Zip Code First) -->
-                <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 mb-6">
+                <!-- Smart Multi-Day Availability Check (Forces Zip Code First) -->
+                <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 mb-6 shadow-sm">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div>
                             <label for="check-zip" class="block text-sm font-medium text-gray-700 mb-1">Service Zip Code</label>
                             <input type="text" id="check-zip" placeholder="e.g. 75201" required maxlength="5" class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 outline-none transition-all">
                         </div>
                         <div>
-                            <label for="booking-date" class="block text-sm font-medium text-gray-700 mb-1">Date</label>
-                            <input type="date" id="booking-date" required class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 outline-none transition-all">
+                            <label for="booking-start-date" class="block text-sm font-medium text-gray-700 mb-1">Search From Date</label>
+                            <input type="date" id="booking-start-date" required class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 outline-none transition-all cursor-pointer">
                         </div>
                     </div>
                     
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Available Times</label>
-                        <div id="booking-time-box" class="time-slots-box">
-                            <div class="text-center text-slate-500 py-4 font-medium">Enter your 5-digit Zip Code and Date to view available times.</div>
+                    <div class="mt-6">
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="block text-sm font-bold text-gray-700">Available Times (Next 7 Days)</label>
                         </div>
+                        <div id="booking-time-box" class="time-slots-box">
+                            <div class="text-center text-slate-500 py-8 font-medium">
+                                <span class="text-4xl block mb-3">📍</span>
+                                Enter your 5-digit Zip Code to view open times in your area.
+                            </div>
+                        </div>
+                        
+                        <!-- Hidden inputs to store the final chosen date & time -->
+                        <input type="hidden" id="selected-booking-date" name="booking-date" required>
                         <input type="hidden" id="selected-booking-time" name="booking-time" required>
                     </div>
                 </div>
@@ -712,8 +704,9 @@
                 payNowButton: document.getElementById('pay-now-button'),
                 policyText: document.getElementById('policy-text'),
                 checkZipInput: document.getElementById('check-zip'),
-                bookingDateInput: document.getElementById('booking-date'),
+                bookingStartDateInput: document.getElementById('booking-start-date'),
                 bookingTimeButtonsContainer: document.getElementById('booking-time-box'), 
+                selectedBookingDateInput: document.getElementById('selected-booking-date'),
                 selectedBookingTimeInput: document.getElementById('selected-booking-time'),
                 bookingMessage: document.getElementById('booking-message'),
                 promoInput: document.getElementById('promo-code-input'),
@@ -870,23 +863,164 @@
                 return "https://pay.michieauto.com/deposit";
             }
 
-            // --- Updated logic: Fetch available slots based on Date AND Zip Code ---
+            // --- Multi-Day Smart Availability Logic ---
+            function addDays(dateStr, days) {
+                const [y, m, d] = dateStr.split('-');
+                const dateObj = new Date(y, m - 1, d);
+                dateObj.setDate(dateObj.getDate() + days);
+                const ny = dateObj.getFullYear();
+                const nm = String(dateObj.getMonth() + 1).padStart(2, '0');
+                const nd = String(dateObj.getDate()).padStart(2, '0');
+                return `${ny}-${nm}-${nd}`;
+            }
+
+            async function renderMultiDayTimeButtons(container, hiddenDateInput, hiddenTimeInput, startDateStr, zipCodeStr, formToReveal) {
+                const datesToFetch = [];
+                // Generate next 7 days based on the start date chosen
+                for(let i=0; i<7; i++) {
+                    datesToFetch.push(addDays(startDateStr, i));
+                }
+                
+                container.innerHTML = `
+                    <div class="text-center text-slate-500 py-8 font-medium animate-pulse">
+                        <span class="text-2xl mb-2 block">🔍</span>
+                        Scanning schedule for the next 7 days...<br>
+                        <span class="text-sm font-normal mt-2 block">Checking driver availability in ${zipCodeStr}</span>
+                    </div>`;
+                
+                try {
+                    // Fetch all 7 days concurrently for speed
+                    const promises = datesToFetch.map(date => 
+                        fetch(`https://calendar-system-l6vb.onrender.com/api/available_slots?date=${date}&zip_code=${zipCodeStr}`)
+                        .then(res => res.json())
+                    );
+                    
+                    const results = await Promise.all(promises);
+                    container.innerHTML = '';
+                    
+                    let foundAny = false;
+                    
+                    results.forEach(data => {
+                        if(!data || !data.date) return;
+                        
+                        const [year, month, day] = data.date.split('-');
+                        const d = new Date(year, month - 1, day);
+                        const dateDisplay = d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+                        
+                        const availableSlots = (data.slots || []).filter(s => s.available);
+                        
+                        const dayContainer = document.createElement('div');
+                        dayContainer.className = 'mb-5 pb-5 border-b border-slate-100 last:border-0 last:mb-0 last:pb-0';
+                        
+                        const dayHeader = document.createElement('h4');
+                        
+                        if (availableSlots.length > 0) {
+                            foundAny = true;
+                            dayHeader.className = 'font-bold text-slate-800 mb-3';
+                            dayHeader.textContent = dateDisplay + ':';
+                            dayContainer.appendChild(dayHeader);
+                            
+                            const slotsGrid = document.createElement('div');
+                            slotsGrid.className = 'flex flex-wrap gap-2';
+                            
+                            availableSlots.forEach(slot => {
+                                const [hour, minute] = slot.time.split(':');
+                                let h = parseInt(hour);
+                                const ampm = h >= 12 ? 'PM' : 'AM';
+                                h = h % 12 || 12;
+                                const displayTime = `${h}:${minute} ${ampm}`;
+                                
+                                const btn = document.createElement('button');
+                                btn.type = 'button';
+                                btn.className = 'slot-btn px-4 py-2 border border-green-200 bg-green-50 rounded-lg font-bold text-green-700 hover:bg-green-600 hover:text-white hover:border-green-600 transition-all shadow-sm';
+                                btn.textContent = displayTime;
+                                
+                                btn.addEventListener('click', () => {
+                                    // Deselect all
+                                    container.querySelectorAll('.slot-btn').forEach(b => {
+                                        b.classList.remove('bg-green-600', 'text-white', 'border-green-600', 'ring-2', 'ring-green-400', 'ring-offset-1');
+                                        b.classList.add('bg-green-50', 'text-green-700', 'border-green-200');
+                                    });
+                                    // Select this
+                                    btn.classList.add('bg-green-600', 'text-white', 'border-green-600', 'ring-2', 'ring-green-400', 'ring-offset-1');
+                                    btn.classList.remove('bg-green-50', 'text-green-700', 'border-green-200');
+                                    
+                                    // Set the actual targeted inputs
+                                    hiddenDateInput.value = data.date;
+                                    hiddenTimeInput.value = slot.time;
+                                    
+                                    // Reveal rest of form
+                                    formToReveal.classList.remove('hidden');
+                                    setTimeout(() => formToReveal.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+                                });
+                                
+                                slotsGrid.appendChild(btn);
+                            });
+                            dayContainer.appendChild(slotsGrid);
+                        } else {
+                            dayHeader.className = 'font-medium text-slate-400 mb-1 italic';
+                            dayHeader.textContent = `${dateDisplay} (Fully booked)`;
+                            dayContainer.appendChild(dayHeader);
+                        }
+                        
+                        container.appendChild(dayContainer);
+                    });
+                    
+                    if (!foundAny) {
+                        const noMsg = document.createElement('div');
+                        noMsg.className = 'text-center text-slate-600 py-4';
+                        noMsg.innerHTML = 'No availability found in the next 7 days.<br>';
+                        
+                        const nextWeekBtn = document.createElement('button');
+                        nextWeekBtn.type = 'button';
+                        nextWeekBtn.className = 'mt-3 px-4 py-2 bg-slate-200 hover:bg-slate-300 rounded-lg font-medium text-slate-800 shadow-sm transition-all';
+                        nextWeekBtn.textContent = 'Check Next 7 Days ➡️';
+                        nextWeekBtn.addEventListener('click', () => {
+                            const newStart = addDays(startDateStr, 7);
+                            document.getElementById('booking-start-date').value = newStart;
+                            document.getElementById('booking-start-date').dispatchEvent(new Event('change'));
+                        });
+                        
+                        noMsg.appendChild(nextWeekBtn);
+                        container.appendChild(noMsg);
+                    }
+                    
+                } catch(err) {
+                    console.error('Error fetching time slots:', err);
+                    container.innerHTML = '<div class="text-center text-red-500 py-4">Error loading times. Please check your connection and try again.</div>';
+                }
+            }
+
             elements.checkZipInput.addEventListener('input', (e) => {
-                if (e.target.value.length === 5 && elements.bookingDateInput.value) {
+                if (e.target.value.length === 5 && elements.bookingStartDateInput.value) {
+                    elements.selectedBookingDateInput.value = '';
                     elements.selectedBookingTimeInput.value = '';
                     elements.bookingForm.classList.add('hidden');
-                    renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, elements.bookingDateInput.value, e.target.value, elements.bookingForm);
+                    renderMultiDayTimeButtons(
+                        elements.bookingTimeButtonsContainer, 
+                        elements.selectedBookingDateInput, 
+                        elements.selectedBookingTimeInput, 
+                        elements.bookingStartDateInput.value, 
+                        e.target.value, 
+                        elements.bookingForm
+                    );
                 }
             });
 
-            elements.bookingDateInput.addEventListener('change', (e) => {
+            elements.bookingStartDateInput.addEventListener('change', (e) => {
+                elements.selectedBookingDateInput.value = '';
                 elements.selectedBookingTimeInput.value = '';
                 elements.bookingForm.classList.add('hidden');
                 
                 if (elements.checkZipInput.value.length === 5) {
-                    renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, e.target.value, elements.checkZipInput.value, elements.bookingForm);
-                } else {
-                    elements.bookingTimeButtonsContainer.innerHTML = '<div class="text-center text-slate-500 py-4 font-medium">Enter your 5-digit Zip Code and Date to view available times.</div>';
+                    renderMultiDayTimeButtons(
+                        elements.bookingTimeButtonsContainer, 
+                        elements.selectedBookingDateInput, 
+                        elements.selectedBookingTimeInput, 
+                        e.target.value, 
+                        elements.checkZipInput.value, 
+                        elements.bookingForm
+                    );
                 }
             });
 
@@ -913,13 +1047,21 @@
                     const day = String(d.getDate()).padStart(2, '0');
                     const todayStr = `${year}-${month}-${day}`;
                     
-                    elements.bookingDateInput.value = todayStr;
+                    // Set min attribute to today so they don't search the past
+                    elements.bookingStartDateInput.min = todayStr;
+                    elements.bookingStartDateInput.value = todayStr;
+                    elements.selectedBookingDateInput.value = '';
                     elements.selectedBookingTimeInput.value = ''; 
                     
                     if (elements.checkZipInput.value.length === 5) {
-                        renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, todayStr, elements.checkZipInput.value, elements.bookingForm);
-                    } else {
-                        elements.bookingTimeButtonsContainer.innerHTML = '<div class="text-center text-slate-500 py-4 font-medium">Enter your 5-digit Zip Code and Date to view available times.</div>';
+                        renderMultiDayTimeButtons(
+                            elements.bookingTimeButtonsContainer, 
+                            elements.selectedBookingDateInput, 
+                            elements.selectedBookingTimeInput, 
+                            todayStr, 
+                            elements.checkZipInput.value, 
+                            elements.bookingForm
+                        );
                     }
                 } else if (e.target.classList.contains('see-whats-included-btn')) {
                     const dropdown = document.getElementById(e.target.dataset.target);
@@ -928,7 +1070,7 @@
                 }
             });
 
-            async function handleBooking(e, endpoint, messageEl, selectedTimeInputId) { 
+            async function handleBooking(e, endpoint, messageEl, selectedDateInputId, selectedTimeInputId) { 
                 e.preventDefault();
                 const submitButton = elements.finalBookAppointmentBtn;
                 submitButton.disabled = true;
@@ -954,7 +1096,7 @@
                         vehicle_year: document.getElementById('vehicle_year').value,
                         vehicle_make: document.getElementById('vehicle_make').value,
                         vehicle_model: document.getElementById('vehicle_model').value,
-                        date: document.getElementById('booking-date').value,
+                        date: document.getElementById(selectedDateInputId).value, // The actual date of the selected slot
                         time: document.getElementById(selectedTimeInputId).value,
                         package_type: payloadPackageType,
                         package_price: packagePrice,
@@ -991,57 +1133,7 @@
                 }
             }
 
-            elements.bookingForm.addEventListener('submit', (e) => handleBooking(e, '/public/appointment', elements.bookingMessage, 'selected-booking-time'));
-
-            function renderTimeButtons(container, hiddenInput, selectedDateStr, zipCodeStr, formToReveal) {
-                container.innerHTML = '<div class="text-center text-slate-500 py-4 font-medium">Checking available pros in your area...</div>';
-                
-                // Add zip_code parameter to properly test contractor radius limits
-                fetch(`https://calendar-system-l6vb.onrender.com/api/available_slots?date=${selectedDateStr}&zip_code=${zipCodeStr}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        container.innerHTML = '';
-                        
-                        if (!data.slots || data.slots.length === 0) {
-                            container.innerHTML = '<div class="text-center text-slate-500 py-4">No times available for this date.</div>';
-                            return;
-                        }
-
-                        data.slots.forEach(slot => {
-                            const [hour, minute] = slot.time.split(':');
-                            let h = parseInt(hour);
-                            const ampm = h >= 12 ? 'PM' : 'AM';
-                            h = h % 12 || 12;
-                            const displayTime = `${h}:${minute} ${ampm}`;
-
-                            const item = document.createElement('button');
-                            item.type = 'button';
-                            item.className = 'time-slot-item';
-                            
-                            if (slot.available) {
-                                item.textContent = displayTime;
-                                item.addEventListener('click', () => {
-                                    container.querySelectorAll('.time-slot-item').forEach(i => i.classList.remove('selected'));
-                                    item.classList.add('selected');
-                                    hiddenInput.value = slot.time;
-                                    
-                                    // Reveal the rest of the form upon valid slot selection
-                                    formToReveal.classList.remove('hidden');
-                                    setTimeout(() => formToReveal.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
-                                });
-                            } else {
-                                item.textContent = `${displayTime} - ${slot.reason}`;
-                                item.disabled = true;
-                            }
-                            
-                            container.appendChild(item);
-                        });
-                    })
-                    .catch(err => {
-                        console.error('Error fetching time slots:', err);
-                        container.innerHTML = '<div class="text-center text-red-500 py-4">Error loading times. Please try again or choose another date.</div>';
-                    });
-            }
+            elements.bookingForm.addEventListener('submit', (e) => handleBooking(e, '/public/appointment', elements.bookingMessage, 'selected-booking-date', 'selected-booking-time'));
         }
         document.addEventListener('DOMContentLoaded', initializeApp);
     </script>
