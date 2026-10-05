@@ -267,7 +267,7 @@
                             <input type="date" id="booking-date" required>
                         </div>
                         <div>
-                            <label for="selected-booking-time" class="block text-sm font-medium text-gray-700 mb-1">Time</label>
+                            <label for="selected-booking-time" class="block text-sm font-medium text-gray-700 mb-1">Time (Live Availability)</label>
                             <div id="booking-time-box" class="time-slots-box"></div>
                             <input type="hidden" id="selected-booking-time" name="booking-time" required>
                         </div>
@@ -332,7 +332,13 @@
                 if (component.types.includes('postal_code')) zipCode = component.long_name;
             }
             const zipCodeInput = document.getElementById('zip_code');
-            if(zipCodeInput) zipCodeInput.value = zipCode;
+            if(zipCodeInput) {
+                zipCodeInput.value = zipCode;
+                // Dispatch blur event to trigger calendar reload with the new zip code
+                if (document.getElementById('booking-date').value) {
+                    zipCodeInput.dispatchEvent(new Event('blur'));
+                }
+            }
         }
 
         function initializeApp() {
@@ -402,7 +408,6 @@
             let globalBeforePhotos = [];
 
             if (urlParams.has('quote_id')) {
-                // Fetch the AI Quote directly from the server (just like book.html does)
                 const quoteId = urlParams.get('quote_id');
                 fetch(`https://quote.michieauto.com/api/quote/${quoteId}`)
                     .then(res => res.json())
@@ -438,13 +443,11 @@
                     });
             } else if ((urlParams.has('name') && urlParams.has('price')) || (urlParams.has('nm') && urlParams.has('prc'))) {
                 
-                // Helper to decode the Base64 obfuscated URL parameters
                 const decodeSafeBase64 = (str) => {
                     if (!str) return null;
                     try { return decodeURIComponent(escape(atob(str))); } catch(e) { return str; }
                 };
 
-                // Catch either the new Obscured keys OR the old legacy keys
                 const uName = urlParams.get('nm') || urlParams.get('name');
                 const uPhone = urlParams.get('num') || urlParams.get('phone');
                 const uYear = urlParams.get('yr') || urlParams.get('year');
@@ -455,10 +458,8 @@
                 const uVType = urlParams.get('vt') || urlParams.get('vtype') || 'Car';
                 const uSummary = urlParams.get('smry') || urlParams.get('summary'); 
 
-                // Pull and decode detailer notes (codisc)
                 globalAiNotes = decodeSafeBase64(urlParams.get('codisc')) || decodeSafeBase64(urlParams.get('detailer_notes')) || uSummary || '';
                 
-                // Pull and decode contractor pay (calc)
                 const cpay = decodeSafeBase64(urlParams.get('calc')) || decodeSafeBase64(urlParams.get('contractor_pay')) || decodeSafeBase64(urlParams.get('cpay'));
                 if (cpay) {
                     globalContractorPay = cpay;
@@ -469,7 +470,6 @@
                     globalContractorPay = `$${contractorPayAmount.toFixed(2)} + TIPS`;
                 }
 
-                // Parse Photos (px)
                 const photosParam = urlParams.get('px') || urlParams.get('photos');
                 globalBeforePhotos = photosParam ? JSON.parse(decodeURIComponent(photosParam)) : [];
 
@@ -508,7 +508,6 @@
                 
                 if (uSummary) {
                     document.getElementById('imessage-box').style.display = 'flex';
-                    // Render string directly to handle prices safely whether they come with or without $
                     document.getElementById('imessage-text').innerHTML = `<strong>Quote: ${uPrice} for ${backendPkg}.</strong><br><br>${uSummary}`;
                 }
                 
@@ -556,7 +555,10 @@
                 
                 elements.bookingDateInput.min = todayCST; 
                 elements.bookingDateInput.value = todayCST;
-                renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, todayCST, elements.finalBookAppointmentBtn);
+
+                // Load initial slots based on current ZIP (if any)
+                const initialZip = document.getElementById('zip_code').value.trim();
+                renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, todayCST, initialZip, elements.finalBookAppointmentBtn);
 
                 startUrgentTimer();
             }
@@ -607,12 +609,27 @@
                 return `https://pay.michieauto.com/pay-${snappedPrice}`;
             }
 
+            // --- Dynamic Calendar Triggers ---
+            
+            // Reload calendar when date changes
             elements.bookingDateInput.addEventListener('change', (e) => {
                 elements.selectedBookingTimeInput.value = '';
                 elements.finalBookAppointmentBtn.style.display = 'none';
-                renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, e.target.value, elements.finalBookAppointmentBtn);
+                const zipCodeVal = document.getElementById('zip_code').value.trim();
+                renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, e.target.value, zipCodeVal, elements.finalBookAppointmentBtn);
             });
 
+            // Reload calendar when zip code is updated
+            document.getElementById('zip_code').addEventListener('blur', (e) => {
+                const currentDate = elements.bookingDateInput.value;
+                if (currentDate) {
+                    elements.selectedBookingTimeInput.value = '';
+                    elements.finalBookAppointmentBtn.style.display = 'none';
+                    renderTimeButtons(elements.bookingTimeButtonsContainer, elements.selectedBookingTimeInput, currentDate, e.target.value.trim(), elements.finalBookAppointmentBtn);
+                }
+            });
+
+            // --- Book Submission Logic ---
             async function handleBooking(e, endpoint, messageEl, selectedTimeInputId) { 
                 e.preventDefault();
                 const submitButton = elements.finalBookAppointmentBtn;
@@ -640,7 +657,6 @@
                         vehicle_type: document.getElementById('selected-vehicle-type').value,
                         job_notes: document.getElementById('additional-info').value,
                         
-                        // Properly applies resolved notes, photos, and AI-determined pay amount
                         ai_notes: globalAiNotes,
                         before_photos: globalBeforePhotos,
                         contractor_pay: globalContractorPay,
@@ -657,7 +673,6 @@
                     if (response.ok) {
                         const paymentLink = getPaymentLink(payload.package_price);
 
-                        // --- GOOGLE ADS PPC CONVERSION TRACKING START ---
                         if (typeof gtag === 'function') {
                             gtag('event', 'conversion', {
                                 'send_to': 'AW-10782185640/SdSYCIiVxugcEKixrJUo', 
@@ -665,9 +680,7 @@
                                 'currency': 'USD'
                             });
                         }
-                        // --- GOOGLE ADS PPC CONVERSION TRACKING END ---
                         
-                        // --- TIKTOK PIXEL TRACKING START ---
                         try {
                             const hashedEmail = await sha256(payload.email.trim().toLowerCase());
                             const hashedPhone = await sha256(payload.phone.replace(/\D/g, ''));
@@ -689,7 +702,6 @@
                         } catch(err) {
                             console.error("TikTok tracking failed", err);
                         }
-                        // --- TIKTOK PIXEL TRACKING END ---
 
                         sendSmsNotification(payload, paymentLink);
 
@@ -711,20 +723,29 @@
 
             elements.bookingForm.addEventListener('submit', (e) => handleBooking(e, '/public/appointment', elements.bookingMessage, 'selected-booking-time'));
 
-            function renderTimeButtons(container, hiddenInput, selectedDateStr, finalBookButton) {
+            // --- Updated Time Slots Renderer with Zip Code Logic ---
+            function renderTimeButtons(container, hiddenInput, selectedDateStr, zipCodeStr, finalBookButton) {
                 container.innerHTML = '<div class="text-center text-slate-500 py-4 font-medium">Loading available times...</div>';
                 
-                fetch(`https://calendar-system-l6vb.onrender.com/api/available_slots?date=${selectedDateStr}`)
+                let fetchUrl = `https://calendar-system-l6vb.onrender.com/api/available_slots?date=${selectedDateStr}`;
+                if (zipCodeStr) {
+                    fetchUrl += `&zip_code=${encodeURIComponent(zipCodeStr)}`;
+                }
+                
+                fetch(fetchUrl)
                     .then(res => res.json())
                     .then(data => {
                         container.innerHTML = '';
                         
-                        if (!data.slots || data.slots.length === 0) {
-                            container.innerHTML = '<div class="text-center text-slate-500 py-4">No times available for this date.</div>';
+                        // Filter out unavailable slots immediately
+                        const availableSlots = (data.slots || []).filter(s => s.available);
+
+                        if (availableSlots.length === 0) {
+                            container.innerHTML = '<div class="text-center text-slate-500 font-bold py-6 px-4 bg-slate-50 rounded-lg border border-slate-200">Fully booked on this day.<br><span class="text-sm font-normal text-slate-400">Please select another date.</span></div>';
                             return;
                         }
 
-                        data.slots.forEach(slot => {
+                        availableSlots.forEach(slot => {
                             const [hour, minute] = slot.time.split(':');
                             let h = parseInt(hour);
                             const ampm = h >= 12 ? 'PM' : 'AM';
@@ -734,19 +755,14 @@
                             const item = document.createElement('button');
                             item.type = 'button';
                             item.className = 'time-slot-item';
+                            item.textContent = displayTime;
                             
-                            if (slot.available) {
-                                item.textContent = displayTime;
-                                item.addEventListener('click', () => {
-                                    container.querySelectorAll('.time-slot-item').forEach(i => i.classList.remove('selected'));
-                                    item.classList.add('selected');
-                                    hiddenInput.value = slot.time;
-                                    finalBookButton.style.display = 'block';
-                                });
-                            } else {
-                                item.textContent = `${displayTime} - ${slot.reason}`;
-                                item.disabled = true;
-                            }
+                            item.addEventListener('click', () => {
+                                container.querySelectorAll('.time-slot-item').forEach(i => i.classList.remove('selected'));
+                                item.classList.add('selected');
+                                hiddenInput.value = slot.time;
+                                finalBookButton.style.display = 'block';
+                            });
                             
                             container.appendChild(item);
                         });
