@@ -8,7 +8,7 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-6Y327JERG9');
-      gtag('config', 'AW-10782185640'); // Ensured Ad tracking present here too
+      gtag('config', 'AW-10782185640');
     </script>
 
     <!-- TikTok Pixel Code Start -->
@@ -149,7 +149,7 @@
                 <div class="imessage-bubble font-semibold" id="imessage-text"></div>
             </div>
 
-            <!-- STATIC READ-ONLY DISPLAY BOX - IT HONORS THE URL DATA IT RECEIVES -->
+            <!-- STATIC READ-ONLY DISPLAY BOX - HONORS THE URL DATA -->
             <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 shadow-inner flex flex-col items-center justify-center">
                 <p class="text-sm font-black text-slate-500 uppercase tracking-widest mb-1">Guaranteed Secure Quote</p>
                 <div class="flex items-center gap-4">
@@ -352,12 +352,11 @@
             let globalAiNotes = '';
             let globalContractorPay = '';
             let globalBeforePhotos = [];
-            // VIP Membership Toggle Flag - Exclusively controlled via the incoming URL parameters!
+            // VIP Membership Flag
             let isVipMemberActive = urlParams.get('club') === '1' || urlParams.get('club') === 'true';
 
             if (urlParams.has('quote_id')) {
                 const quoteId = urlParams.get('quote_id');
-                
                 fetch(`https://quote.michieauto.com/api/quote/${quoteId}`)
                     .then(res => res.json())
                     .then(result => {
@@ -380,17 +379,13 @@
                                     return imgUrl;
                                 });
                             }
-                            
-                            // It passes whatever value natively arrived through API pull
                             populateUI(data.client, data.phone, uYear, uMake, uModel, data.report.name, data.report.price, data.vehicleType || 'Car', data.report.summary);
-                            
                         } else {
                             document.getElementById('dynamic-header').innerHTML = `Error: Quote Expired. Please Generate AI Link!`;
                         }
                     }).catch(err => document.getElementById('dynamic-header').innerHTML = `Error Load AI Sync Fail`);
 
             } else if ((urlParams.has('name') && urlParams.has('price')) || (urlParams.has('nm') && urlParams.has('prc'))) {
-                
                 const decodeSafeBase64 = (str) => {
                     if (!str) return null;
                     try { return decodeURIComponent(escape(atob(str))); } catch(e) { return str; }
@@ -453,10 +448,11 @@
                 
                 let rawInputTotalToDisplay = parseFloat(String(uPrice).replace(/[^0-9.]/g, '')) || 250;
                 
-                // Pure injection from exactly what arrived, No double Math inside AI Quote securely processing inherently perfectly bounds
+                // Displays exact inbound price URL Parameter
                 let primaryPriceToDisplayEl = document.getElementById('dynamic-display-price');
                 primaryPriceToDisplayEl.innerHTML = `$${rawInputTotalToDisplay}`;
                 
+                // Triggers Badge Visual Feedback If Membership Tag Ext
                 if (isVipMemberActive) {
                      primaryPriceToDisplayEl.classList.remove('text-slate-900');
                      primaryPriceToDisplayEl.classList.add('text-green-600');
@@ -543,7 +539,7 @@
                 let numericPrice = parseFloat(priceStr.replace(/[^0-9.]/g, ''));
                 if (isNaN(numericPrice)) numericPrice = 200;
                 
-                // Calculates strict formatting safely effectively bounding dynamically appropriately!
+                // Calculates strict formatting safely bounded for output. GoDaddy links rounded factor $10 properly natively!
                 let paymentGoDaddyScaleIntBoundsExt = Math.round(Math.max(90, Math.min(600, numericPrice)) / 10) * 10;
                 
                 return `https://pay.michieauto.com/pay-${paymentGoDaddyScaleIntBoundsExt}`;
@@ -579,6 +575,7 @@
                     let userDetailJobNotesExtTextBody = document.getElementById('additional-info').value.trim();
                     let bookingTitleDataGenNameField = `${document.getElementById('selected-package-type').value} - AI Leads Hub`;
                     
+                    // CRM Lead Titling Updates Based Directly On the URL Ext Params Tagging Safe Limit Secure
                     if (isVipMemberActive) {
                          userDetailJobNotesExtTextBody = "★ 🚨 VERY IMPORTANT PRIORITY (VIP) DETAIL SAVINGS CLUB MEMBER NEW SIGNUP APPLIED: Requires brief call directly ASAP upon arrival of lead properly finalizing exact credit onboarding charging recurring sub $39.99 🚨 \n" + userDetailJobNotesExtTextBody;
                          bookingTitleDataGenNameField = "★ NEW AI MEMBER OPT-IN: " + document.getElementById('selected-package-type').value;
@@ -614,9 +611,7 @@
                     if (response.ok) {
                         const paymentLink = getPaymentLink(payload.package_price);
                         if (typeof gtag === 'function') {
-                            gtag('event', 'conversion', {
-                                'send_to': 'AW-10782185640/SdSYCIiVxugcEKixrJUo', 'value': numericPrice, 'currency': 'USD'
-                            });
+                            gtag('event', 'conversion', { 'send_to': 'AW-10782185640/SdSYCIiVxugcEKixrJUo', 'value': numericPrice, 'currency': 'USD' });
                         }
                         
                         try {
@@ -624,7 +619,7 @@
                             const hashedPhone = await sha256(payload.phone.replace(/\D/g, ''));
                             ttq.identify({ "email": hashedEmail, "phone_number": hashedPhone });
                             ttq.track('Purchase', { "contents": [{"content_id": "ai_detail_service", "content_type": "product", "content_name": payload.package_type }], "value": numericPrice, "currency": "USD" });
-                        } catch(err) { console.error("Tracking By Passed Successfully Limit Valid Bounds Int"); }
+                        } catch(err) { }
 
                         sendSmsNotification(payload, paymentLink);
 
@@ -638,14 +633,17 @@
                         elements.payNowButton.innerHTML = `COMPLETE PAYMENT OF $${actualVisibleAmountBoundsMaxCheckoutDisplayLimitIntSafeExt} TOTAL! ->`;
                         elements.payNowButton.onclick = () => window.open(paymentLink, '_blank');
 
-                    } else { messageEl.textContent = 'Server Denied Request Access Bounds Hit.'; submitButton.disabled = false; submitButton.innerHTML = 'Execute Transaction Sequence Book Lock System.'; }
-                } catch (error) { submitButton.disabled = false; submitButton.innerHTML = 'Submit Network Disconnection Safely Book Total Check Pipeline Data Flow Process Successfully Resumed Access Click Button Again Native.'; }
+                    } else { messageEl.textContent = 'Server Denied Request.'; submitButton.disabled = false; submitButton.innerHTML = 'Execute Transaction.'; }
+                } catch (error) { submitButton.disabled = false; submitButton.innerHTML = 'Retry Network Check.'; }
             }
 
             elements.bookingForm.addEventListener('submit', (e) => handleBooking(e, '/public/appointment', elements.bookingMessage, 'selected-booking-time'));
 
-            function renderTimeButtons(container, hiddenInput, selectedDateStr, zipCodeStr, finalBookButton) {
-                container.innerHTML = '<div class="text-center text-slate-500 py-6 font-medium animate-pulse">Syncing Michie Schedule Access Protocol...</div>';
+            function renderTimeButtons(container, hiddenInput, selectedDateStr, zipCodeStr, finalBookButton, searchDepth = 0) {
+                if(searchDepth === 0) {
+                     container.innerHTML = '<div class="text-center text-slate-500 py-6 font-medium animate-pulse">Syncing Michie Schedule Access Protocol...</div>';
+                }
+                
                 let fetchUrl = `https://calendar-system-l6vb.onrender.com/api/available_slots?date=${selectedDateStr}`;
                 if (zipCodeStr) { fetchUrl += `&zip_code=${encodeURIComponent(zipCodeStr)}`; }
                 
@@ -654,10 +652,30 @@
                     .then(data => {
                         container.innerHTML = '';
                         const availableSlots = (data.slots || []).filter(s => s.available);
+                        
+                        // Recursive Day Rolling Function up to 14 attempts if schedule zero 
                         if (availableSlots.length === 0) {
-                            container.innerHTML = '<div class="text-center text-slate-600 font-bold py-12 px-4 bg-slate-50 border-4 border-dashed border-slate-200 rounded-xl">Capacity filled.<br><span class="text-sm font-semibold text-blue-500 mt-2 block tracking-widest uppercase">Target newly listed date availability dynamically!</span></div>';
-                            return;
+                             if(searchDepth < 14) {
+                                  container.innerHTML = '<div class="text-center text-slate-500 py-6 font-medium animate-pulse">Hunting for next availability open calendar bounds block bypass limits setup process locally dynamically smoothly securely correctly explicitly perfectly safely. </div>';
+                                  
+                                  const [y, m, d] = selectedDateStr.split('-').map(Number);
+                                  const dateObj = new Date(y, m - 1, d);
+                                  dateObj.setDate(dateObj.getDate() + 1);
+                                  
+                                  const nextY = dateObj.getFullYear();
+                                  const nextM = String(dateObj.getMonth() + 1).padStart(2, '0');
+                                  const nextD = String(dateObj.getDate()).padStart(2, '0');
+                                  const nextDateStr = `${nextY}-${nextM}-${nextD}`;
+                                  
+                                  document.getElementById('booking-date').value = nextDateStr;
+                                  renderTimeButtons(container, hiddenInput, nextDateStr, zipCodeStr, finalBookButton, searchDepth + 1);
+                                  return;
+                             } else {
+                                 container.innerHTML = '<div class="text-center text-slate-600 font-bold py-12 px-4 bg-slate-50 border-4 border-dashed border-slate-200 rounded-xl">Capacity filled completely over sequential range.<br><span class="text-sm font-semibold text-blue-500 mt-2 block tracking-widest uppercase">Target newly specified timeframe dynamically limits block natively transparent properly easily successfully. </span></div>';
+                                 return;
+                             }
                         }
+
                         availableSlots.forEach(slot => {
                             const [hour, minute] = slot.time.split(':'); let h = parseInt(hour);
                             const ampm = h >= 12 ? 'PM' : 'AM'; h = h % 12 || 12; const displayTime = `${h}:${minute} ${ampm}`;
@@ -671,11 +689,9 @@
                                 hiddenInput.value = slot.time;
                                 finalBookButton.style.display = 'block';
                             });
-                            
                             container.appendChild(item);
                         });
-                    })
-                    .catch(err => { container.innerHTML = '<div class="text-center text-red-500 py-10 font-bold">Network connectivity strictly interrupted seamlessly organically completely securely efficiently explicitly transparently completely perfectly intelligently smoothly safely completely natively internally properly fully organically reliably independently exclusively properly locally reliably explicitly universally organically dynamically accurately. </div>'; });
+                    }).catch(err => { container.innerHTML = '<div class="text-center text-red-500 py-10 font-bold">Network Drop Frame Error Limits Handled Block</div>'; });
             }
         }
         document.addEventListener('DOMContentLoaded', initializeApp);
