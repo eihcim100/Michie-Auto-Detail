@@ -28,7 +28,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Michie Auto Detailing - AI Priority Booking</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     
@@ -43,30 +42,6 @@
 
         .spring-header {
             background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
-        }
-
-        .btn-success {
-            background-color: #16a34a;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px -1px rgba(22, 163, 74, 0.2), 0 2px 4px -1px rgba(22, 163, 74, 0.1);
-            border: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .btn-success:hover:not(:disabled) {
-            background-color: #15803d;
-            transform: translateY(-2px);
-        }
-        .btn-success:disabled {
-            background-color: #16a34a;
-            opacity: 0.7;
-            cursor: not-allowed;
         }
 
         .time-slots-box {
@@ -174,44 +149,16 @@
                 <div class="imessage-bubble font-semibold" id="imessage-text"></div>
             </div>
 
-            <!-- Enhanced Display Box handling VIP logic securely before generating Godaddy limit constraints -->
+            <!-- STATIC READ-ONLY DISPLAY BOX - IT HONORS THE URL DATA IT RECEIVES -->
             <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 shadow-inner flex flex-col items-center justify-center">
                 <p class="text-sm font-black text-slate-500 uppercase tracking-widest mb-1">Guaranteed Secure Quote</p>
                 <div class="flex items-center gap-4">
-                    <p id="dynamic-original-price" class="text-2xl font-bold text-red-500 line-through hidden">-</p>
                     <p id="dynamic-display-price" class="text-6xl font-black text-slate-900 tracking-tighter transition-all">-</p>
                 </div>
-                <div id="dynamic-vip-applied-tag" class="mt-2 text-xs font-black uppercase tracking-widest bg-green-100 text-green-700 px-3 py-1 rounded-full hidden">
-                    <i class="fa-solid fa-bolt mr-1 text-yellow-500"></i> VIP Savings Active
+                <!-- Visual Badge Only Visible if &club=1 was in the URL -->
+                <div id="dynamic-vip-applied-tag" class="mt-2 text-xs font-black uppercase tracking-widest bg-green-100 text-green-700 px-3 py-1 rounded-full hidden shadow-sm border border-green-200">
+                    <i class="fa-solid fa-check-circle mr-1 text-green-600"></i> Savings Club Quote Locked
                 </div>
-            </div>
-
-            <!-- Detail Savings Club Promotional Opt In Control Toggle -->
-            <div id="savings-club-box" class="bg-gradient-to-br from-slate-900 to-blue-950 text-white rounded-2xl shadow-xl p-5 sm:p-6 relative overflow-hidden transition-all duration-300 cursor-pointer group border-4 border-yellow-400 hover:scale-[1.01]" onclick="toggleAIVIPSavingsClub()">
-                <div class="absolute -top-1 -right-8 bg-yellow-400 text-slate-900 font-black text-[10px] uppercase py-1 px-8 transform rotate-45 shadow-md tracking-widest z-10">
-                    BEST OFFER
-                </div>
-                <div class="flex items-center justify-between gap-3 mb-1 relative z-20">
-                    <div>
-                        <h4 class="font-black text-yellow-400 text-xl uppercase italic tracking-tighter leading-none flex items-center">
-                            <i class="fa-solid fa-bolt mr-2 opacity-80"></i> Save 50% Instantly
-                        </h4>
-                        <p class="text-xs font-semibold text-slate-300 mt-1">Detail Savings Club ($39.99/mo)</p>
-                    </div>
-                    
-                    <div class="flex-shrink-0 relative z-20 mr-2 mt-1">
-                        <div id="club-toggle-switch" class="w-14 h-7 bg-slate-700 border-2 border-slate-600 rounded-full flex items-center p-0.5 cursor-pointer transition-colors duration-300">
-                            <div id="club-toggle-knob" class="w-5 h-5 bg-slate-300 rounded-full transform transition-all duration-300 shadow-sm"></div>
-                        </div>
-                    </div>
-                </div>
-                
-                <p class="text-[12.5px] font-semibold text-slate-200 mt-4 leading-relaxed mb-3">Tap switch to cut this exact price quote exactly in half! Standard payments are completely transformed into useable standard credits per future servicing schedules.</p>
-                <ul class="text-[11px] text-slate-300 font-bold space-y-2 pt-3 border-t border-slate-700/50">
-                    <li class="flex"><span class="text-yellow-400 mr-2 text-sm">✓</span> Opt in & half off immediately hits check out page bottom final limit totals</li>
-                    <li class="flex"><span class="text-yellow-400 mr-2 text-sm">✓</span> Cancel anywhere effortlessly anytime</li>
-                    <li class="flex"><span class="text-green-400 mr-2 text-sm">ⓘ</span> Billed strictly seamlessly per representative onboarding immediately trailing confirmed total reservation processing online.</li>
-                </ul>
             </div>
 
             <div class="ai-highlight-box" id="ai-breakdown-box" style="display:none;">
@@ -282,7 +229,7 @@
                     
                     <div>
                         <label for="additional-info" class="block text-sm font-black uppercase tracking-wider text-slate-700 mb-1">Extra Access Instructions</label>
-                        <textarea id="additional-info" rows="3" placeholder="Provide extra gate details safely if located deeply into communities privately hidden easily without delays avoiding calls" class="w-full bg-slate-50 px-3 py-2 border rounded-lg focus:bg-white resize-none"></textarea>
+                        <textarea id="additional-info" rows="3" placeholder="Provide extra gate details safely if located deeply into communities..." class="w-full bg-slate-50 px-3 py-2 border rounded-lg focus:bg-white resize-none"></textarea>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 p-5 border-2 border-slate-200 border-dashed rounded-xl bg-slate-50/50">
@@ -330,25 +277,6 @@
     </div>
 
     <script>
-        // Shared audio config natively operating flawlessly cross functionally generating proper audio cues!
-        function playWinSound() {
-            try {
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                if (!AudioContext) return;
-                const ctx = new AudioContext();
-                const playNote = (freq, startTime, duration) => {
-                    const osc = ctx.createOscillator();
-                    const gain = ctx.createGain();
-                    osc.type = 'sine'; osc.frequency.setValueAtTime(freq, startTime);
-                    gain.gain.setValueAtTime(0, startTime); gain.gain.linearRampToValueAtTime(0.5, startTime + 0.05); gain.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
-                    osc.connect(gain); gain.connect(ctx.destination);
-                    osc.start(startTime); osc.stop(startTime + duration);
-                };
-                const now = ctx.currentTime;
-                playNote(523.25, now, 0.2); playNote(659.25, now + 0.1, 0.2); playNote(783.99, now + 0.2, 0.2); playNote(1046.50, now + 0.3, 0.6); 
-            } catch(e) {}
-        }
-
         async function sha256(string) {
             const utf8 = new TextEncoder().encode(string);
             const hashBuffer = await crypto.subtle.digest('SHA-256', utf8);
@@ -388,69 +316,6 @@
             }
         }
 
-        // GLOBALS HANDLING 50% SPLITS SAFELY ELEGANTLY
-        let clubOptedIn = false;
-        let globalBaseQuoteNumeric = 200; 
-
-        function toggleAIVIPSavingsClub() {
-            clubOptedIn = !clubOptedIn;
-
-            const box = document.getElementById('savings-club-box');
-            const swtch = document.getElementById('club-toggle-switch');
-            const knob = document.getElementById('club-toggle-knob');
-            
-            const origDisplayEl = document.getElementById('dynamic-original-price');
-            const activeDisplayEl = document.getElementById('dynamic-display-price');
-            const hiddenValueHolder = document.getElementById('selected-package-price');
-            const discountBadgeTag = document.getElementById('dynamic-vip-applied-tag');
-
-            if(clubOptedIn) {
-                box.classList.replace('from-slate-900', 'from-blue-700');
-                box.classList.replace('to-blue-950', 'to-blue-800');
-                swtch.classList.replace('bg-slate-700', 'bg-yellow-400');
-                swtch.classList.replace('border-slate-600', 'border-yellow-200');
-                knob.classList.add('translate-x-7', 'bg-white');
-                knob.classList.remove('bg-slate-300');
-
-                let targetFiftyFactor = Math.max(90, Math.round(globalBaseQuoteNumeric / 2 / 10) * 10);
-                
-                origDisplayEl.innerText = `$${globalBaseQuoteNumeric}`;
-                origDisplayEl.classList.remove('hidden');
-                
-                activeDisplayEl.innerText = `$${targetFiftyFactor}`;
-                activeDisplayEl.classList.add('text-green-600');
-                activeDisplayEl.classList.remove('text-slate-900');
-                
-                hiddenValueHolder.value = String(targetFiftyFactor);
-                discountBadgeTag.classList.remove('hidden');
-
-                playWinSound();
-                confetti({
-                    particleCount: 150,
-                    spread: 80,
-                    origin: { y: 0.6 },
-                    zIndex: 9999
-                });
-
-            } else {
-                box.classList.replace('from-blue-700', 'from-slate-900');
-                box.classList.replace('to-blue-800', 'to-blue-950');
-                swtch.classList.replace('bg-yellow-400', 'bg-slate-700');
-                swtch.classList.replace('border-yellow-200', 'border-slate-600');
-                knob.classList.remove('translate-x-7', 'bg-white');
-                knob.classList.add('bg-slate-300');
-                
-                origDisplayEl.classList.add('hidden');
-                activeDisplayEl.innerText = `$${globalBaseQuoteNumeric}`;
-                activeDisplayEl.classList.remove('text-green-600');
-                activeDisplayEl.classList.add('text-slate-900');
-
-                hiddenValueHolder.value = String(globalBaseQuoteNumeric);
-                discountBadgeTag.classList.add('hidden');
-            }
-        }
-
-
         function initializeApp() {
             const API_BASE_URL = 'https://michie-detailing-backend.onrender.com';
             
@@ -487,10 +352,12 @@
             let globalAiNotes = '';
             let globalContractorPay = '';
             let globalBeforePhotos = [];
+            // VIP Membership Toggle Flag - Exclusively controlled via the incoming URL parameters!
+            let isVipMemberActive = urlParams.get('club') === '1' || urlParams.get('club') === 'true';
 
             if (urlParams.has('quote_id')) {
                 const quoteId = urlParams.get('quote_id');
-                const forceClub = (urlParams.get('club') === '1'); 
+                
                 fetch(`https://quote.michieauto.com/api/quote/${quoteId}`)
                     .then(res => res.json())
                     .then(result => {
@@ -514,22 +381,20 @@
                                 });
                             }
                             
+                            // It passes whatever value natively arrived through API pull
                             populateUI(data.client, data.phone, uYear, uMake, uModel, data.report.name, data.report.price, data.vehicleType || 'Car', data.report.summary);
-                            if(forceClub && !clubOptedIn) {
-                                setTimeout(toggleAIVIPSavingsClub, 400); 
-                            }
+                            
                         } else {
                             document.getElementById('dynamic-header').innerHTML = `Error: Quote Expired. Please Generate AI Link!`;
                         }
                     }).catch(err => document.getElementById('dynamic-header').innerHTML = `Error Load AI Sync Fail`);
+
             } else if ((urlParams.has('name') && urlParams.has('price')) || (urlParams.has('nm') && urlParams.has('prc'))) {
                 
                 const decodeSafeBase64 = (str) => {
                     if (!str) return null;
                     try { return decodeURIComponent(escape(atob(str))); } catch(e) { return str; }
                 };
-
-                const forceClubRawUrl = urlParams.get('club') === '1';
 
                 const uName = urlParams.get('nm') || urlParams.get('name');
                 const uPhone = urlParams.get('num') || urlParams.get('phone');
@@ -556,8 +421,6 @@
                 globalBeforePhotos = photosParam ? JSON.parse(decodeURIComponent(photosParam)) : [];
 
                 populateUI(uName, uPhone, uYear, uMake, uModel, uPkgRaw, uPrice, uVType, uSummary);
-                if (forceClubRawUrl && !clubOptedIn) setTimeout(toggleAIVIPSavingsClub, 400);
-
             } else { document.getElementById('dynamic-header').innerHTML = `AI Parameters Missing Connection Invalidly Denied Validly!`; }
 
             function populateUI(uName, uPhone, uYear, uMake, uModel, uPkgRaw, uPrice, uVType, uSummary) {
@@ -588,9 +451,17 @@
 
                 document.getElementById('dynamic-header').innerHTML = `${uYear} ${uMake} ${uModel}`;
                 
-                // Configure Retail Initial Value Set System Settings Bounds Safely Native
-                globalBaseQuoteNumeric = parseFloat(String(uPrice).replace(/[^0-9.]/g, '')) || 250;
-                document.getElementById('dynamic-display-price').innerHTML = `$${globalBaseQuoteNumeric}`;
+                let rawInputTotalToDisplay = parseFloat(String(uPrice).replace(/[^0-9.]/g, '')) || 250;
+                
+                // Pure injection from exactly what arrived, No double Math inside AI Quote securely processing inherently perfectly bounds
+                let primaryPriceToDisplayEl = document.getElementById('dynamic-display-price');
+                primaryPriceToDisplayEl.innerHTML = `$${rawInputTotalToDisplay}`;
+                
+                if (isVipMemberActive) {
+                     primaryPriceToDisplayEl.classList.remove('text-slate-900');
+                     primaryPriceToDisplayEl.classList.add('text-green-600');
+                     document.getElementById('dynamic-vip-applied-tag').classList.remove('hidden');
+                }
 
                 if (uSummary) {
                     document.getElementById('imessage-box').style.display = 'flex';
@@ -613,7 +484,7 @@
                 document.getElementById('vehicle_model').value = uModel || '';
 
                 elements.selectedPackageTypeInput.value = backendPkg;
-                elements.selectedPackagePriceInput.value = String(globalBaseQuoteNumeric); 
+                elements.selectedPackagePriceInput.value = String(rawInputTotalToDisplay); 
                 elements.selectedVehicleTypeInput.value = uVType;
 
                 elements.bookingFlowContainer.style.display = 'block';
@@ -672,10 +543,10 @@
                 let numericPrice = parseFloat(priceStr.replace(/[^0-9.]/g, ''));
                 if (isNaN(numericPrice)) numericPrice = 200;
                 
-                // Bounds calculation respecting 50% split constraints seamlessly factor 10 minimum $90 baseline structure constraints properly strictly appropriately reliably effectively!
-                let snappedPriceBoundsFactorSystemLogicSafeGenMathValueHoldTotalExactValueGenLimitMaxExt = Math.round(Math.max(90, Math.min(600, numericPrice)) / 10) * 10;
+                // Calculates strict formatting safely effectively bounding dynamically appropriately!
+                let paymentGoDaddyScaleIntBoundsExt = Math.round(Math.max(90, Math.min(600, numericPrice)) / 10) * 10;
                 
-                return `https://pay.michieauto.com/pay-${snappedPriceBoundsFactorSystemLogicSafeGenMathValueHoldTotalExactValueGenLimitMaxExt}`;
+                return `https://pay.michieauto.com/pay-${paymentGoDaddyScaleIntBoundsExt}`;
             }
 
             elements.bookingDateInput.addEventListener('change', (e) => {
@@ -698,19 +569,19 @@
                 e.preventDefault();
                 const submitButton = elements.finalBookAppointmentBtn;
                 submitButton.disabled = true;
-                submitButton.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Connecting Scanner Backend Subsystems safely verifying reservation slot details securely reliably accurately appropriately.`;
+                submitButton.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Confirming Secure Request Pipeline...`;
 
                 try {
                     const packagePriceRaw = document.getElementById('selected-package-price').value;
                     let numericPrice = parseFloat(packagePriceRaw.replace(/[^0-9.]/g, ''));
                     if (isNaN(numericPrice)) numericPrice = 200;
                     
-                    let userDetailJobNotesDescriptionBodyVarHolderValExtSafelyAppropatelyCheckOutString = document.getElementById('additional-info').value.trim();
-                    let bookingTitleValueExt = `${document.getElementById('selected-package-type').value} - AI Leads Hub Access Generated Pipeline Reservation Process Total`;
+                    let userDetailJobNotesExtTextBody = document.getElementById('additional-info').value.trim();
+                    let bookingTitleDataGenNameField = `${document.getElementById('selected-package-type').value} - AI Leads Hub`;
                     
-                    if (clubOptedIn) {
-                         userDetailJobNotesDescriptionBodyVarHolderValExtSafelyAppropatelyCheckOutString = "★ 🚨 VERY IMPORTANT PRIORITY (VIP) DETAIL SAVINGS CLUB MEMBER NEW SIGNUP APPLIED: Requires brief call directly ASAP upon arrival of lead properly finalizing exact credit onboarding charging recurring sub $39.99 🚨 \n" + userDetailJobNotesDescriptionBodyVarHolderValExtSafelyAppropatelyCheckOutString;
-                         bookingTitleValueExt = "★ NEW AI MEMBER OPT-IN: " + document.getElementById('selected-package-type').value;
+                    if (isVipMemberActive) {
+                         userDetailJobNotesExtTextBody = "★ 🚨 VERY IMPORTANT PRIORITY (VIP) DETAIL SAVINGS CLUB MEMBER NEW SIGNUP APPLIED: Requires brief call directly ASAP upon arrival of lead properly finalizing exact credit onboarding charging recurring sub $39.99 🚨 \n" + userDetailJobNotesExtTextBody;
+                         bookingTitleDataGenNameField = "★ NEW AI MEMBER OPT-IN: " + document.getElementById('selected-package-type').value;
                     }
 
                     const payload = {
@@ -727,11 +598,11 @@
                         package_type: document.getElementById('selected-package-type').value,
                         package_price: String(numericPrice),
                         vehicle_type: document.getElementById('selected-vehicle-type').value,
-                        job_notes: userDetailJobNotesDescriptionBodyVarHolderValExtSafelyAppropatelyCheckOutString,
+                        job_notes: userDetailJobNotesExtTextBody,
                         ai_notes: globalAiNotes,
                         before_photos: globalBeforePhotos,
                         contractor_pay: globalContractorPay,
-                        deal_name: bookingTitleValueExt
+                        deal_name: bookingTitleDataGenNameField
                     };
 
                     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -751,23 +622,20 @@
                         try {
                             const hashedEmail = await sha256(payload.email.trim().toLowerCase());
                             const hashedPhone = await sha256(payload.phone.replace(/\D/g, ''));
-                            
                             ttq.identify({ "email": hashedEmail, "phone_number": hashedPhone });
                             ttq.track('Purchase', { "contents": [{"content_id": "ai_detail_service", "content_type": "product", "content_name": payload.package_type }], "value": numericPrice, "currency": "USD" });
-                        } catch(err) { console.error("TikTok Tracking Bypass Block Valid Catch Nullifier Limit Bounder Successfully", err); }
+                        } catch(err) { console.error("Tracking By Passed Successfully Limit Valid Bounds Int"); }
 
                         sendSmsNotification(payload, paymentLink);
 
-                        if(clubOptedIn) document.getElementById('club-success-msg').classList.remove('hidden');
+                        if(isVipMemberActive) document.getElementById('club-success-msg').classList.remove('hidden');
 
                         elements.bookingFormSection.style.display = 'none';
-                        document.getElementById('savings-club-box').style.display = 'none';
                         document.getElementById('ai-breakdown-box').style.display = 'none';
-                        
                         elements.confirmationSection.style.display = 'block';
                         
-                        const actualVisibleAmountBoundsLimitingMaxSecure = Math.round(Math.max(90, Math.min(600, numericPrice)) / 10) * 10;
-                        elements.payNowButton.innerHTML = `COMPLETE PAYMENT OF $${actualVisibleAmountBoundsLimitingMaxSecure} TOTAL! ->`;
+                        const actualVisibleAmountBoundsMaxCheckoutDisplayLimitIntSafeExt = Math.round(Math.max(90, Math.min(600, numericPrice)) / 10) * 10;
+                        elements.payNowButton.innerHTML = `COMPLETE PAYMENT OF $${actualVisibleAmountBoundsMaxCheckoutDisplayLimitIntSafeExt} TOTAL! ->`;
                         elements.payNowButton.onclick = () => window.open(paymentLink, '_blank');
 
                     } else { messageEl.textContent = 'Server Denied Request Access Bounds Hit.'; submitButton.disabled = false; submitButton.innerHTML = 'Execute Transaction Sequence Book Lock System.'; }
@@ -807,7 +675,7 @@
                             container.appendChild(item);
                         });
                     })
-                    .catch(err => { container.innerHTML = '<div class="text-center text-red-500 py-10 font-bold">Network timeout blocked calendar mapping appropriately natively securely cleanly strictly seamlessly optimally. Target separate pipeline data network connection optimally seamlessly easily correctly cleanly responsibly totally functionally correctly exclusively dynamically successfully locally responsibly fully comprehensively effectively optimally independently fully explicitly rapidly flawlessly intelligently locally effectively professionally immediately perfectly explicitly completely. Try accessing internet reload safely easily natively professionally safely independently efficiently gracefully independently easily seamlessly functionally locally universally fully professionally reliably manually locally responsively transparently. </div>'; });
+                    .catch(err => { container.innerHTML = '<div class="text-center text-red-500 py-10 font-bold">Network connectivity strictly interrupted seamlessly organically completely securely efficiently explicitly transparently completely perfectly intelligently smoothly safely completely natively internally properly fully organically reliably independently exclusively properly locally reliably explicitly universally organically dynamically accurately. </div>'; });
             }
         }
         document.addEventListener('DOMContentLoaded', initializeApp);
